@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -237,5 +237,29 @@
   </data>
   <data name="tool_stAr_act" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\tool_StAr_act.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="tool_edit" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\tool_edit.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="tool_edit_act" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\tool_edit_act.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="tool_numb" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\tool_numb.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="tool_numb_act" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\tool_numb_act.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="tool_txtL" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\tool_txtL.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="tool_txtL_act" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\tool_txtL_act.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="tool_txtR" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\tool_txtR.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="tool_txtR_act" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\tool_txtR_act.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

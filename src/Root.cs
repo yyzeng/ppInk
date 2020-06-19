@@ -24,7 +24,7 @@ namespace gInk
 		{
 			if (m.Msg == 0x0312)
 			{
-				//Keys key = (Keys)(((int)m.LParam >> 16) & 0xFFFF);                  // The key of the hotkey that was pressed.
+                //Keys key = (Keys)(((int)m.LParam >> 16) & 0xFFFF);                  // The key of the hotkey that was pressed.
                 //int modifier = (int)m.LParam & 0xFFFF;       // The modifier of the hotkey that was pressed.
                 //int id = m.WParam.ToInt32();                                        // The id of the hotkey that was pressed.
 
@@ -39,8 +39,15 @@ namespace gInk
 		public Local Local = new Local();
 		public const int MaxPenCount = 10;
 
-		// options
-		public bool[] PenEnabled = new bool[MaxPenCount];
+        public Guid TYPE_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 0, 0);
+        public Guid TEXT_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 0, 1);
+        public Guid TEXTX_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 0, 2);
+        public Guid TEXTY_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 0, 3);
+        public Guid TEXTHALIGN_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 0, 4);
+        public Guid TEXTVALIGN_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 0, 5);
+        public Guid ISTAG_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 0, 6);
+        // options
+        public bool[] PenEnabled = new bool[MaxPenCount];
         public bool ToolsEnabled = true;
         public bool EraserEnabled = true;
 		public bool PointerEnabled = true;
@@ -121,6 +128,9 @@ namespace gInk
         public double ArrowAngle = 15 * Math.PI /180;   // 15°
         public double ArrowLen = 0.0185 * System.Windows.SystemParameters.PrimaryScreenWidth; // == 1.85% of screen width
 
+        public int TagNumbering = 1;
+        public int TextSize = 25;
+
         public Root()
 		{
 			for (int p = 0; p < MaxPenCount; p++)
@@ -159,6 +169,7 @@ namespace gInk
 
         public void callshortcut()
         {
+            TagNumbering = 1; //reset tag counter 
             if (FormCollection == null && FormDisplay == null)
             {
                 if (callForm != null) callForm.Hide();
@@ -274,6 +285,10 @@ namespace gInk
 		{
 			if (UndoDepth <= 0)
 				return;
+            if(FormCollection.IC.Ink.Strokes[FormCollection.IC.Ink.Strokes.Count - 1].ExtendedProperties.Contains(ISTAG_GUID))
+            {
+                TagNumbering--;
+            }
 
 			UndoP--;
 			if (UndoP < 0)
@@ -296,7 +311,15 @@ namespace gInk
 				return;
 
 			FormCollection.IC.Ink.Strokes.Move(x, y);
-
+            // for texts
+            foreach(Stroke st in FormCollection.IC.Ink.Strokes)
+            {
+                if (st.ExtendedProperties.Contains(TEXTX_GUID))
+                {
+                    st.ExtendedProperties.Add(TEXTX_GUID, (int)(st.ExtendedProperties[TEXTX_GUID].Data) + x);
+                    st.ExtendedProperties.Add(TEXTY_GUID, (int)(st.ExtendedProperties[TEXTY_GUID].Data) + y);
+                }
+            }
 			FormDisplay.ClearCanvus();
 			FormDisplay.DrawStrokes();
 			FormDisplay.DrawButtons(true);
@@ -564,7 +587,8 @@ namespace gInk
 
 					int tempi = 0;
 					float tempf = 0;
-					switch (sName)
+                    string[] tab;
+                    switch (sName)
 					{
 						case "LANGUAGE_FILE":
 							ChangeLanguage(sPara);
@@ -613,12 +637,18 @@ namespace gInk
                                 ToolsEnabled = false;
                             break;
                         case "ARROW":           // angle in degrees, len in % of the screen width
-                            string[] tab2 = sPara.Split(',');
-                            if (tab2.Length != 2) break;
-                            if (float.TryParse(tab2[0], out tempf))
+                            tab = sPara.Split(',');
+                            if (tab.Length != 2) break;
+                            if (float.TryParse(tab[0], out tempf))
                                 ArrowAngle = tempf * Math.PI / 180;
-                            if (float.TryParse(tab2[1], out tempf))
+                            if (float.TryParse(tab[1], out tempf))
                                 ArrowLen = tempf / 100.0 * System.Windows.SystemParameters.PrimaryScreenWidth;
+                            break;
+                        case "TEXT_SIZE":           // size of the text in % of the screen, also defines the size of the
+                            tab = sPara.Split(',');
+                            if (tab.Length != 1) break;
+                            if (float.TryParse(tab[0], out tempf))
+                                TextSize = (int)(tempf / 100.0 * System.Windows.SystemParameters.PrimaryScreenWidth);
                             break;
                         case "ERASER_ICON":
 							if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
@@ -693,7 +723,7 @@ namespace gInk
 								CanvasCursor = 1;
 							break;
 						case "WINDOW_POS": // if not defined, no window else 2 to 4 integers Top,Left,[Width/Height,[Opacity]]
-							string [] tab = sPara.Split(',');
+							tab = sPara.Split(',');
 							if (tab.Length >= 2) { FormTop = Int32.Parse(tab[0]);FormLeft = Int32.Parse(tab[1]); };
 							if (tab.Length >= 3 ) { FormWidth = Int32.Parse(tab[2]); }
 							if (tab.Length >= 4) { FormOpacity = Int32.Parse(tab[3]); }
@@ -831,6 +861,9 @@ namespace gInk
                             break;
                         case "ARROW":           // angle in degrees, len in % of the screen width
                             sPara = (ArrowAngle / Math.PI * 180.0).ToString()+","+ (ArrowLen / System.Windows.SystemParameters.PrimaryScreenWidth * 100.0).ToString();
+                            break;
+                        case "TEXT_SIZE":           // size of the tag in % of the screen
+                            sPara = (TextSize / System.Windows.SystemParameters.PrimaryScreenWidth *100.0).ToString();
                             break;
                         case "ERASER_ICON":
 							if (EraserEnabled)
@@ -998,6 +1031,16 @@ namespace gInk
 			trayIcon.Dispose();
 			Application.Exit();
 		}
+
+        public int HiMetricToPixel(double hi)
+        {
+            return Convert.ToInt32(hi * 0.037795280352161);
+        }
+
+        public int PixelToHiMetric(double pi)
+        {
+            return Convert.ToInt32(pi / 0.037795280352161);
+        }
 
 		[DllImport("user32.dll")]
 		private static extern int RegisterHotKey(IntPtr hwnd, int id, int fsModifiers, int vk);

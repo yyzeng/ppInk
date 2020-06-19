@@ -86,6 +86,18 @@ namespace gInk
             btEnAr.Height = (int)(gpButtons.Height * 0.48);
             btEnAr.Width = btEnAr.Height;
             btEnAr.Top = (int)(gpButtons.Height * 0.52);
+            btNumb.Height = (int)(gpButtons.Height * 0.48);
+            btNumb.Width = btNumb.Height;
+            btNumb.Top = (int)(gpButtons.Height * 0.02);
+            btEdit.Height = (int)(gpButtons.Height * 0.48);
+            btEdit.Width = btEdit.Height;
+            btEdit.Top = (int)(gpButtons.Height * 0.52);
+            btTxtL.Height = (int)(gpButtons.Height * 0.48);
+            btTxtL.Width = btTxtL.Height;
+            btTxtL.Top = (int)(gpButtons.Height * 0.02);
+            btTxtR.Height = (int)(gpButtons.Height * 0.48);
+            btTxtR.Width = btTxtR.Height;
+            btTxtR.Top = (int)(gpButtons.Height * 0.52);
 
 
             btEraser.Height = (int)(gpButtons.Height * 0.85);
@@ -168,6 +180,16 @@ namespace gInk
                 btStAr.Left = cumulatedleft;
                 btEnAr.Left = cumulatedleft;
                 cumulatedleft += (int)(btStAr.Width * 1.1);
+                btNumb.Visible = true;
+                btEdit.Visible = true;
+                btNumb.Left = cumulatedleft;
+                btEdit.Left = cumulatedleft;
+                cumulatedleft += (int)(btStAr.Width * 1.1);
+                btTxtL.Visible = true;
+                btTxtR.Visible = true;
+                btTxtL.Left = cumulatedleft;
+                btTxtR.Left = cumulatedleft;
+                cumulatedleft += (int)(btStAr.Width * 1.1);
             }
             else
             {
@@ -177,6 +199,10 @@ namespace gInk
                 btOval.Visible = false;
                 btStAr.Visible = false;
                 btEnAr.Visible = false;
+                btNumb.Visible = false;
+                btEdit.Visible = false;
+                btTxtL.Visible = false;
+                btTxtR.Visible = false;
             }
 
             cumulatedleft += (int)(btDock.Width * 0.5);
@@ -468,7 +494,7 @@ namespace gInk
 			this.toolTip.SetToolTip(this.btStop, Root.Local.ButtonNameExit);
 		}
 
-        private void AddEllipseStroke(int CursorX0, int CursorY0, int CursorX, int CursorY)
+        private Stroke AddEllipseStroke(int CursorX0, int CursorY0, int CursorX, int CursorY)
         {
             int NB_PTS = 36 * 3;
             Point[] pts = new Point[NB_PTS + 1];
@@ -485,9 +511,10 @@ namespace gInk
             st.DrawingAttributes.AntiAliased = true;
             st.DrawingAttributes.FitToCurve = true;
             Root.FormCollection.IC.Ink.Strokes.Add(st);
+            return st;
         }
 
-        private void AddRectStroke(int CursorX0, int CursorY0, int CursorX, int CursorY)
+        private Stroke AddRectStroke(int CursorX0, int CursorY0, int CursorX, int CursorY)
         {
             Point[] pts = new Point[5];
             pts[0] = new Point(CursorX0, CursorY0);
@@ -502,9 +529,10 @@ namespace gInk
             st.DrawingAttributes.AntiAliased = true;
             st.DrawingAttributes.FitToCurve = false;
             Root.FormCollection.IC.Ink.Strokes.Add(st);
+            return st;
         }
 
-        private void AddLineStroke(int CursorX0, int CursorY0, int CursorX, int CursorY)
+        private Stroke AddLineStroke(int CursorX0, int CursorY0, int CursorX, int CursorY)
         {
             Point[] pts = new Point[2];
             pts[0] = new Point(CursorX0, CursorY0);
@@ -516,9 +544,10 @@ namespace gInk
             st.DrawingAttributes.AntiAliased = true;
             st.DrawingAttributes.FitToCurve = false;
             Root.FormCollection.IC.Ink.Strokes.Add(st);
+            return st;
         }
 
-        private void AddArrowStroke(int CursorX0, int CursorY0, int CursorX, int CursorY)
+        private Stroke AddArrowStroke(int CursorX0, int CursorY0, int CursorX, int CursorY)
         // arrow at starting point
         {
             Point[] pts = new Point[5];
@@ -536,8 +565,96 @@ namespace gInk
             st.DrawingAttributes.AntiAliased = true;
             st.DrawingAttributes.FitToCurve = false;
             Root.FormCollection.IC.Ink.Strokes.Add(st);
+            return st;
         }
 
+        private Stroke AddNumberTagStroke(int CursorX0, int CursorY0, int CursorX, int CursorY,string txt)
+        // arrow at starting point
+        {
+            Stroke st = AddEllipseStroke(CursorX0, CursorY0, (int)(CursorX0 + Root.TextSize*1.2), (int)(CursorY0 + Root.TextSize*1.2));
+            Point pt = new Point(CursorX0, CursorY0);
+            IC.Renderer.PixelToInkSpace(Root.FormDisplay.gOneStrokeCanvus, ref pt);
+            st.ExtendedProperties.Add(Root.ISTAG_GUID, true);
+            st.ExtendedProperties.Add(Root.TEXT_GUID, txt);
+            st.ExtendedProperties.Add(Root.TEXTX_GUID, pt.X);
+            st.ExtendedProperties.Add(Root.TEXTY_GUID, pt.Y);
+            //st.ExtendedProperties.Add(Root.TEXTFORMAT_GUID, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.WordBreak);
+            st.ExtendedProperties.Add(Root.TEXTHALIGN_GUID, StringAlignment.Center);
+            st.ExtendedProperties.Add(Root.TEXTVALIGN_GUID, StringAlignment.Center);            
+            return st;
+        }
+
+        private Stroke AddTextStroke(int CursorX0, int CursorY0, int CursorX, int CursorY, string txt, StringAlignment Align)
+        // arrow at starting point
+        {
+            Point pt = new Point(CursorX0, CursorY0);
+            IC.Renderer.PixelToInkSpace(Root.FormDisplay.gOneStrokeCanvus, ref pt);
+            Point[] pts = new Point[1];
+            pts[0]=pt;
+            Stroke st = Root.FormCollection.IC.Ink.CreateStroke(pts);
+            st.DrawingAttributes = Root.FormCollection.IC.DefaultDrawingAttributes.Clone();
+            st.DrawingAttributes.Width = 0; // no width to hide the point;
+            st.ExtendedProperties.Add(Root.TEXT_GUID, txt);
+            st.ExtendedProperties.Add(Root.TEXTX_GUID, pt.X);
+            st.ExtendedProperties.Add(Root.TEXTY_GUID, pt.Y);
+            st.ExtendedProperties.Add(Root.TEXTHALIGN_GUID, Align);
+            st.ExtendedProperties.Add(Root.TEXTVALIGN_GUID, StringAlignment.Near);
+            return st;
+        }
+
+        private DialogResult ModifyTextInStroke(Stroke stk, string txt)
+        {
+            void InputML_TextChanged(object sender, EventArgs e)
+            {
+                string t = ((TextBox)sender).Text;
+                if (t.Length == 0) t = " ";
+                stk.ExtendedProperties.Remove(Root.TEXT_GUID);
+                stk.ExtendedProperties.Add(Root.TEXT_GUID, t);
+                Root.FormDisplay.ClearCanvus();
+                Root.FormDisplay.DrawStrokes();
+                Root.FormDisplay.UpdateFormDisplay(true);
+            }
+            tiSlide.Stop();
+            IC.Enabled = false;
+            ToThrough();
+            FormInput inp = new FormInput();
+            inp.Text = "Edit Text";
+            inp.captionLbl.Text = "Text Input";
+            inp.InputML.Text = txt;
+            inp.InputML.Visible = true;
+            inp.ActiveControl = inp.InputML;
+            inp.InputML.TextChanged += InputML_TextChanged;
+            DialogResult ret = inp.ShowDialog();
+            if (ret == DialogResult.Cancel)
+                stk.ExtendedProperties.Add(Root.TEXT_GUID, txt);
+            tiSlide.Start();
+            IC.Enabled = true;
+            ToUnThrough();
+            return ret;
+        }
+
+        private float NearestStroke(Point pt,bool ptInPixel, out Stroke minStroke,out float pos)
+        {
+            if(ptInPixel)
+                IC.Renderer.PixelToInkSpace(IC.Handle, ref pt);
+
+            float dst = 10000000000;
+            float dst1 = dst;
+            float pos1;
+            pos = 0;
+            minStroke = IC.Ink.Strokes[0];
+            foreach (Stroke st in IC.Ink.Strokes)
+            {
+                pos1 = st.NearestPoint(pt, out dst1);
+                if ((dst1 < dst) && (st.ExtendedProperties.Contains(Root.TEXT_GUID)))
+                {
+                    dst = dst1;
+                    minStroke = st;
+                    pos = pos1;
+                }
+            };
+            return dst;
+        }
 
         private void IC_Stroke(object sender, InkCollectorStrokeEventArgs e)
 		{
@@ -560,9 +677,42 @@ namespace gInk
                     AddArrowStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY);
                 else if ((Root.ToolSelected == 5) && (Root.CursorX0 != Int32.MinValue))
                     AddArrowStroke(Root.CursorX, Root.CursorY, Root.CursorX0, Root.CursorY0);
+                else if (Root.ToolSelected == 6)
+                {
+                    Stroke st= AddNumberTagStroke(Root.CursorX, Root.CursorY, Root.CursorX, Root.CursorY,Root.TagNumbering.ToString());
+                    Root.TagNumbering++;
+                }
+                else if (Root.ToolSelected == 7) // Edit
+                {
+                    float pos;
+                    Stroke minStroke;
+                    if (NearestStroke(new Point(Root.CursorX, Root.CursorY), true, out minStroke, out pos) < Root.PixelToHiMetric(Root.TextSize * 1.5))
+                    {
+                        ModifyTextInStroke(minStroke, (string)(minStroke.ExtendedProperties[Root.TEXT_GUID].Data));
+                        SelectTool(0);
+                    }
+                }
+                else if (Root.ToolSelected == 8)
+                {
+                    Stroke st=AddTextStroke(Root.CursorX, Root.CursorY, Root.CursorX, Root.CursorY,"Text", StringAlignment.Near);
+                    Root.FormDisplay.DrawStrokes();
+                    Root.FormDisplay.UpdateFormDisplay(true);
+                    ModifyTextInStroke(st, (string)(st.ExtendedProperties[Root.TEXT_GUID].Data));
+                    SelectTool(0);
+                }
+                else if (Root.ToolSelected == 9)
+                {
+                    Stroke st = AddTextStroke(Root.CursorX, Root.CursorY, Root.CursorX, Root.CursorY, "Text", StringAlignment.Far);
+                    Root.FormDisplay.DrawStrokes();
+                    Root.FormDisplay.UpdateFormDisplay(true);
+                    ModifyTextInStroke(st, (string)(st.ExtendedProperties[Root.TEXT_GUID].Data));
+                    SelectTool(0);
+                }
             }
             SaveUndoStrokes();
+            Root.FormDisplay.ClearCanvus();
             Root.FormDisplay.DrawStrokes();
+            Root.FormDisplay.DrawButtons(true);
             Root.FormDisplay.UpdateFormDisplay(true);
 		}
 
@@ -790,8 +940,8 @@ namespace gInk
 			while (exc && exceptiontick < 3);
 		}
 
-        public void SelectTool(int tool) 
-        // Hand (0),Line(1),Rect(2),Oval(3),StartArrow(4),EndArrow(5)
+        public void SelectTool(int tool)
+        // Hand (0),Line(1),Rect(2),Oval(3),StartArrow(4),EndArrow(5),NumberTag(6),Edit(7),txtLeftAligned(8),txtRightAligned(9)
         {
             btHand.BackgroundImage = global::gInk.Properties.Resources.tool_hand;
             btLine.BackgroundImage = global::gInk.Properties.Resources.tool_line;
@@ -799,6 +949,10 @@ namespace gInk
             btOval.BackgroundImage = global::gInk.Properties.Resources.tool_oval;
             btStAr.BackgroundImage = global::gInk.Properties.Resources.tool_stAr;
             btEnAr.BackgroundImage = global::gInk.Properties.Resources.tool_enAr;
+            btNumb.BackgroundImage = global::gInk.Properties.Resources.tool_numb;
+            btEdit.BackgroundImage = global::gInk.Properties.Resources.tool_edit;
+            btTxtL.BackgroundImage = global::gInk.Properties.Resources.tool_txtL;
+            btTxtR.BackgroundImage = global::gInk.Properties.Resources.tool_txtR;
             if (tool == 0)
             {
                 btHand.BackgroundImage = global::gInk.Properties.Resources.tool_hand_act;
@@ -814,6 +968,14 @@ namespace gInk
                 btStAr.BackgroundImage = global::gInk.Properties.Resources.tool_stAr_act;
             else if (tool == 5)
                 btEnAr.BackgroundImage = global::gInk.Properties.Resources.tool_enAr_act;
+            else if (tool == 6)
+                btNumb.BackgroundImage = global::gInk.Properties.Resources.tool_numb_act;
+            else if (tool == 7)
+                btEdit.BackgroundImage = global::gInk.Properties.Resources.tool_edit_act;
+            else if (tool == 8)
+                btTxtL.BackgroundImage = global::gInk.Properties.Resources.tool_txtL_act;
+            else if (tool == 9)
+                btTxtR.BackgroundImage = global::gInk.Properties.Resources.tool_txtR_act;
             Root.ToolSelected = tool;
             Root.UponButtonsUpdate |= 0x2;
         }
@@ -1632,7 +1794,43 @@ namespace gInk
                 i = 4;
             else if (((Button)sender).Name.Contains("EnAr"))
                 i = 5;
-
+            else if (((Button)sender).Name.Contains("Numb"))
+            {
+                if (Root.ToolSelected == 6) // if already selected, we open the index dialog
+                {
+                    tiSlide.Stop();
+                    IC.Enabled = false;
+                    ToThrough();
+                    int k = -1;
+                    FormInput inp = new FormInput();
+                    inp.Text = "Tag Numbering";
+                    inp.captionLbl.Text = "Enter Starting Number";
+                    inp.InputSL.Text = "";
+                    inp.InputSL.Visible = true;
+                    inp.ActiveControl = inp.InputSL;
+                    while (!Int32.TryParse(inp.InputSL.Text, out k))
+                    {
+                        inp.InputSL.Text = Root.TagNumbering.ToString();
+                        if (inp.ShowDialog() == DialogResult.Cancel)
+                        {
+                            inp.InputSL.Text = "";
+                            break;
+                        }
+                    }
+                    tiSlide.Start();
+                    IC.Enabled = true;
+                    ToUnThrough();
+                    if (inp.InputSL.Text.Length == 0) return;
+                    Root.TagNumbering = k;
+                }
+                i = 6;
+            }
+            else if (((Button)sender).Name.Contains("Edit"))
+                i = 7;
+            else if (((Button)sender).Name.Contains("TxtL"))
+                i = 8;
+            else if (((Button)sender).Name.Contains("TxtR"))
+                i = 9;
             if(i>=0)
                 SelectPen(LastPenSelected);
             SelectTool(i);

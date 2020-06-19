@@ -84,6 +84,7 @@ namespace gInk
             //SelectObject(blankcanvusDc, BlankCanvus);
             gCanvus = Graphics.FromHdc(canvusDc);
 			gCanvus.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
+            gCanvus.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
 			gOneStrokeCanvus = Graphics.FromHdc(onestrokeDc);
 			gOneStrokeCanvus.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
             gOutCanvus = Graphics.FromHdc(OutcanvusDc);
@@ -237,15 +238,30 @@ namespace gInk
 
 		public void DrawStrokes()
 		{
-            if (Root.InkVisible)
-                Root.FormCollection.IC.Renderer.Draw(gCanvus, Root.FormCollection.IC.Ink.Strokes);
+            DrawStrokes(gCanvus);
 		}
 
 		public void DrawStrokes(Graphics g)
 		{
 			if (Root.InkVisible)
-				Root.FormCollection.IC.Renderer.Draw(g, Root.FormCollection.IC.Ink.Strokes);
-		}
+            {
+                Root.FormCollection.IC.Renderer.Draw(g, Root.FormCollection.IC.Ink.Strokes);
+                foreach(Stroke st in Root.FormCollection.IC.Ink.Strokes)
+                {
+                    if(st.ExtendedProperties.Contains(Root.TEXT_GUID))
+                    {
+                        Point pt = new Point((int)(st.ExtendedProperties[Root.TEXTX_GUID].Data), (int)(st.ExtendedProperties[Root.TEXTY_GUID].Data));
+                        Root.FormCollection.IC.Renderer.InkSpaceToPixel(g, ref pt);
+                        System.Drawing.StringFormat stf = new System.Drawing.StringFormat(System.Drawing.StringFormatFlags.NoClip);
+                        stf.Alignment = (System.Drawing.StringAlignment)(st.ExtendedProperties[Root.TEXTHALIGN_GUID].Data);
+                        stf.LineAlignment = (System.Drawing.StringAlignment)(st.ExtendedProperties[Root.TEXTVALIGN_GUID].Data);
+                        g.DrawString((string)(st.ExtendedProperties[Root.TEXT_GUID].Data), new Font("Arial", (int)(Root.TextSize), FontStyle.Bold, GraphicsUnit.Pixel), new SolidBrush(st.DrawingAttributes.Color), pt.X,pt.Y, stf);                        
+                       
+                    }
+                     }
+
+            }
+        }
 
 		public void MoveStrokes(int dy)
 		{

@@ -72,6 +72,12 @@
     <Compile Include="CallForm.Designer.cs">
       <DependentUpon>CallForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormInput.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormInput.Designer.cs">
+      <DependentUpon>FormInput.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormAbout.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -115,6 +121,9 @@
     <Compile Include="Root.cs" />
     <EmbeddedResource Include="CallForm.resx">
       <DependentUpon>CallForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormInput.resx">
+      <DependentUpon>FormInput.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormAbout.resx">
       <DependentUpon>FormAbout.cs</DependentUpon>
@@ -213,13 +222,21 @@
     <None Include="buttonback.png" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="tool_edit.png" />
+    <Content Include="tool_edit_act.png" />
     <Content Include="tool_enAr.png" />
     <Content Include="tool_enAr_act.png" />
     <Content Include="tool_line_act.png" />
+    <Content Include="tool_numb.png" />
+    <Content Include="tool_numb_act.png" />
     <Content Include="tool_oval_act.png" />
     <Content Include="tool_rect_act.png" />
     <Content Include="tool_StAr.png" />
     <Content Include="tool_StAr_act.png" />
+    <Content Include="tool_txtL.png" />
+    <Content Include="tool_txtL_act.png" />
+    <Content Include="tool_txtR.png" />
+    <Content Include="tool_txtR_act.png" />
     <None Include="paneloption.png" />
     <None Include="visible_not.png" />
     <None Include="visible.png" />

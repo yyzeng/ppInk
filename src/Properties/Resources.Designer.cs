@@ -313,6 +313,26 @@ namespace gInk.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap tool_edit {
+            get {
+                object obj = ResourceManager.GetObject("tool_edit", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap tool_edit_act {
+            get {
+                object obj = ResourceManager.GetObject("tool_edit_act", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap tool_enAr {
             get {
                 object obj = ResourceManager.GetObject("tool_enAr", resourceCulture);
@@ -373,6 +393,26 @@ namespace gInk.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap tool_numb {
+            get {
+                object obj = ResourceManager.GetObject("tool_numb", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap tool_numb_act {
+            get {
+                object obj = ResourceManager.GetObject("tool_numb_act", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap tool_oval {
             get {
                 object obj = ResourceManager.GetObject("tool_oval", resourceCulture);
@@ -426,6 +466,46 @@ namespace gInk.Properties {
         public static System.Drawing.Bitmap tool_stAr_act {
             get {
                 object obj = ResourceManager.GetObject("tool_stAr_act", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap tool_txtL {
+            get {
+                object obj = ResourceManager.GetObject("tool_txtL", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap tool_txtL_act {
+            get {
+                object obj = ResourceManager.GetObject("tool_txtL_act", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap tool_txtR {
+            get {
+                object obj = ResourceManager.GetObject("tool_txtR", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap tool_txtR_act {
+            get {
+                object obj = ResourceManager.GetObject("tool_txtR_act", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
