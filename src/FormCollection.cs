@@ -342,7 +342,7 @@ namespace gInk
 			pboxPenWidthIndicator.Left = (int)Math.Sqrt(Root.GlobalPenWidth * 30);
 			gpPenWidth.Controls.Add(pboxPenWidthIndicator);
 
-			IC = new InkOverlay(this.Handle);
+            IC = new InkOverlay(this.Handle);
 			IC.CollectionMode = CollectionMode.InkOnly;
 			IC.AutoRedraw = false;
 			IC.DynamicRendering = false;
@@ -362,7 +362,7 @@ namespace gInk
 			//IC.Cursor = cursorred;
 			IC.Enabled = true;
 
-			image_exit = new Bitmap(btStop.Width, btStop.Height);
+            image_exit = new Bitmap(btStop.Width, btStop.Height);
 			Graphics g = Graphics.FromImage(image_exit);
 			g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
 			g.DrawImage(global::gInk.Properties.Resources.exit, 0, 0, btStop.Width, btStop.Height);
@@ -476,10 +476,10 @@ namespace gInk
 				}
 			}
 
-			LastTickTime = DateTime.Parse("1987-01-01");
+            LastTickTime = DateTime.Parse("1987-01-01");
 			tiSlide.Enabled = true;
 
-			ToTransparent();
+            ToTransparent();
 			ToTopMost();
 
 			this.toolTip.SetToolTip(this.btDock, Root.Local.ButtonNameDock);
@@ -747,9 +747,18 @@ namespace gInk
             //IC.Renderer.InkSpaceToPixel(Root.FormDisplay.gOneStrokeCanvus, ref p);
             Root.CursorX = p.X;
             Root.CursorY = p.Y;
-		}
+            if (Root.EraserMode) // we are deleting the nearest object for clicking...
+            {
+                float pos;
+                Stroke minStroke;
+                if (NearestStroke(new Point(Root.CursorX, Root.CursorY), true, out minStroke, out pos) < Root.PixelToHiMetric(Root.TextSize * 1.5))
+                {
+                    IC.Ink.DeleteStroke(minStroke);
+                }
+            }
+        }
 
-		private void IC_MouseDown(object sender, CancelMouseEventArgs e)
+        private void IC_MouseDown(object sender, CancelMouseEventArgs e)
 		{
 			if (Root.gpPenWidthVisible)
 			{
