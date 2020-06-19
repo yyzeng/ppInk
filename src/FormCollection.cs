@@ -36,8 +36,10 @@ namespace gInk
 
 		public int PrimaryLeft, PrimaryTop;
 
-		// http://www.csharp411.com/hide-form-from-alttab/
-		protected override CreateParams CreateParams
+        private int LastPenSelected=0;
+
+        // http://www.csharp411.com/hide-form-from-alttab/
+        protected override CreateParams CreateParams
 		{
 			get
 			{
@@ -541,16 +543,22 @@ namespace gInk
 		{
             if(Root.ToolSelected>0)
             {
+                if (Root.CursorX0 == Int32.MinValue) // process when clicking touchscreen with just a short press;
+                {
+                    Point p = System.Windows.Forms.Cursor.Position;
+                    Root.CursorX = p.X;
+                    Root.CursorY = p.Y;
+                }
                 IC.Ink.DeleteStroke(e.Stroke); // the stroke that was just inserted has to be replaced.
-                if (Root.ToolSelected == 1)
+                if ((Root.ToolSelected == 1) && (Root.CursorX0 != Int32.MinValue))
                     AddLineStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY);
-                else if (Root.ToolSelected == 2)
+                else if ((Root.ToolSelected == 2) && (Root.CursorX0 != Int32.MinValue))
                     AddRectStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY);
-                else if (Root.ToolSelected == 3)
+                else if ((Root.ToolSelected == 3) && (Root.CursorX0 != Int32.MinValue))
                     AddEllipseStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY);
-                else if (Root.ToolSelected == 4)
+                else if ((Root.ToolSelected == 4) && (Root.CursorX0 != Int32.MinValue))
                     AddArrowStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY);
-                else if (Root.ToolSelected == 5)
+                else if ((Root.ToolSelected == 5) && (Root.CursorX0 != Int32.MinValue))
                     AddArrowStroke(Root.CursorX, Root.CursorY, Root.CursorX0, Root.CursorY0);
             }
             SaveUndoStrokes();
@@ -585,6 +593,10 @@ namespace gInk
 			Root.FormDisplay.ClearCanvus(Root.FormDisplay.gOneStrokeCanvus);
             Root.FormDisplay.DrawStrokes(Root.FormDisplay.gOneStrokeCanvus);
 			Root.FormDisplay.DrawButtons(Root.FormDisplay.gOneStrokeCanvus, false);
+            Point p = System.Windows.Forms.Cursor.Position;
+            //IC.Renderer.InkSpaceToPixel(Root.FormDisplay.gOneStrokeCanvus, ref p);
+            Root.CursorX = p.X;
+            Root.CursorY = p.Y;
 		}
 
 		private void IC_MouseDown(object sender, CancelMouseEventArgs e)
@@ -614,9 +626,11 @@ namespace gInk
 			IC.Renderer.PixelToInkSpace(Root.FormDisplay.gOneStrokeCanvus, ref LasteXY);
             Root.CursorX0 = e.X;
             Root.CursorY0 = e.Y;
-		}
+            Root.CursorX = e.X;
+            Root.CursorY = e.Y;
+        }
 
-		public Point LasteXY;
+        public Point LasteXY;
 		private void IC_MouseMove(object sender, CancelMouseEventArgs e)
 		{
             Root.CursorX = e.X;
@@ -876,7 +890,8 @@ namespace gInk
 			}
 			else if (pen >= 0)
 			{
-				if (this.Cursor != System.Windows.Forms.Cursors.Default)
+                LastPenSelected = pen;
+                if (this.Cursor != System.Windows.Forms.Cursors.Default)
 					this.Cursor = System.Windows.Forms.Cursors.Default;
 
 				IC.DefaultDrawingAttributes = Root.PenAttr[pen].Clone();
@@ -1618,6 +1633,8 @@ namespace gInk
             else if (((Button)sender).Name.Contains("EnAr"))
                 i = 5;
 
+            if(i>=0)
+                SelectPen(LastPenSelected);
             SelectTool(i);
         }
 
