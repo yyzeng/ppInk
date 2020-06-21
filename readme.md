@@ -22,7 +22,7 @@ screenshot
 
 #### Download
 
-https://github.com/PubPub-zz/ppInk/releases/
+[https://github.com/PubPub-zz/ppInk/releases/](https://github.com/PubPub-zz/ppInk/releases/)
 
 #### How to use
 
@@ -82,8 +82,9 @@ to the next version of release for others to use.
 
 gInk  
 https://github.com/geovens/gInk  
+https://github.com/geovens/gInk  
 Weizhi Nai \@ 2019
 
 ppInk
 
-https://github.com/pubpub-zz/ppInk
+[https://github.com/pubpub-zz/ppInk](https://github.com/pubpub-zz/ppInk)
