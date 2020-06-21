@@ -586,24 +586,21 @@ namespace gInk
 			}
 
 			else if (Root.FormCollection.IC.CollectingInk && Root.EraserMode == false && Root.InkVisible)
-			{
-				//ClearCanvus();
-				//DrawStrokes();
-				//DrawButtons(false);
-				//UpdateFormDisplay();	
+			{ // Drawing in progress : we get the last stroke in the list, if we have to draw because not deleted and not a shape in progress
+              //we replace the rectangle containing the stroke by the saved one and 
+
 				if (Root.FormCollection.IC.Ink.Strokes.Count > 0)
 				{
 					Stroke stroke = Root.FormCollection.IC.Ink.Strokes[Root.FormCollection.IC.Ink.Strokes.Count - 1];
-					if (!stroke.Deleted)
-					{
+					if ((!stroke.Deleted) && (Root.ToolSelected == 0))
+                    {
 						Rectangle box = stroke.GetBoundingBox();
 						Point lt = new Point(box.Left, box.Top);
 						Point rb = new Point(box.Right + 1, box.Bottom + 1);
 						Root.FormCollection.IC.Renderer.InkSpaceToPixel(gCanvus, ref lt);
 						Root.FormCollection.IC.Renderer.InkSpaceToPixel(gCanvus, ref rb);
 						BitBlt(canvusDc, lt.X, lt.Y, rb.X - lt.X, rb.Y - lt.Y, onestrokeDc, lt.X, lt.Y, (uint)CopyPixelOperation.SourceCopy);
-                        if(Root.ToolSelected == 0)
-                            Root.FormCollection.IC.Renderer.Draw(gCanvus, stroke, Root.FormCollection.IC.DefaultDrawingAttributes);
+                        Root.FormCollection.IC.Renderer.Draw(gCanvus, stroke, Root.FormCollection.IC.DefaultDrawingAttributes);
 					}
 					UpdateFormDisplay(true);
 				}
