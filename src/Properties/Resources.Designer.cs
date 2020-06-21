@@ -373,6 +373,36 @@ namespace gInk.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap tool_hand_filledB {
+            get {
+                object obj = ResourceManager.GetObject("tool_hand_filledB", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap tool_hand_filledC {
+            get {
+                object obj = ResourceManager.GetObject("tool_hand_filledC", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap tool_hand_filledW {
+            get {
+                object obj = ResourceManager.GetObject("tool_hand_filledW", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap tool_line {
             get {
                 object obj = ResourceManager.GetObject("tool_line", resourceCulture);
@@ -433,6 +463,36 @@ namespace gInk.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap tool_oval_filledB {
+            get {
+                object obj = ResourceManager.GetObject("tool_oval_filledB", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap tool_oval_filledC {
+            get {
+                object obj = ResourceManager.GetObject("tool_oval_filledC", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap tool_oval_filledW {
+            get {
+                object obj = ResourceManager.GetObject("tool_oval_filledW", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap tool_rect {
             get {
                 object obj = ResourceManager.GetObject("tool_rect", resourceCulture);
@@ -446,6 +506,36 @@ namespace gInk.Properties {
         public static System.Drawing.Bitmap tool_rect_act {
             get {
                 object obj = ResourceManager.GetObject("tool_rect_act", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap tool_rect_filledB {
+            get {
+                object obj = ResourceManager.GetObject("tool_rect_filledB", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap tool_rect_filledC {
+            get {
+                object obj = ResourceManager.GetObject("tool_rect_filledC", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap tool_rect_filledW {
+            get {
+                object obj = ResourceManager.GetObject("tool_rect_filledW", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

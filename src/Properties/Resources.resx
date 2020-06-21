@@ -262,4 +262,31 @@
   <data name="tool_txtR_act" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\tool_txtR_act.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="tool_hand_filledB" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\tool_hand_filledB.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="tool_hand_filledC" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\tool_hand_filledC.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="tool_hand_filledW" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\tool_hand_filledW.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="tool_oval_filledB" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\tool_oval_filledB.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="tool_oval_filledC" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\tool_oval_filledC.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="tool_oval_filledW" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\tool_oval_filledW.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="tool_rect_filledB" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\tool_rect_filledB.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="tool_rect_filledC" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\tool_rect_filledC.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="tool_rect_filledW" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\tool_rect_filledW.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

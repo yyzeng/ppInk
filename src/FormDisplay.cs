@@ -245,10 +245,37 @@ namespace gInk
 		{
 			if (Root.InkVisible)
             {
-                Root.FormCollection.IC.Renderer.Draw(g, Root.FormCollection.IC.Ink.Strokes);
                 foreach(Stroke st in Root.FormCollection.IC.Ink.Strokes)
                 {
-                    if(st.ExtendedProperties.Contains(Root.TEXT_GUID))
+                    if (st.ExtendedProperties.Contains(Root.ISSTROKE_GUID))
+                        Root.FormCollection.IC.Renderer.Draw(g, st);
+                    else //Should not be drawn as a stroke : for the moment only filled values.
+                    {
+                        SolidBrush bru;
+                        if (st.ExtendedProperties.Contains(Root.ISFILLEDCOLOR_GUID))
+                            bru = new SolidBrush(Color.FromArgb(255-st.DrawingAttributes.Transparency, st.DrawingAttributes.Color));
+                        else if (st.ExtendedProperties.Contains(Root.ISFILLEDWHITE_GUID))
+                            bru = new SolidBrush(Color.White);
+                        else if (st.ExtendedProperties.Contains(Root.ISFILLEDBLACK_GUID))
+                            bru = new SolidBrush(Color.Black);
+                        else
+                            bru = new SolidBrush(Color.Purple);
+                        if(st.DrawingAttributes.FitToCurve)
+                        {
+                            Point[] pts = st.GetFlattenedBezierPoints(0); // 0 to get a good fitting curve
+                            Root.FormCollection.IC.Renderer.InkSpaceToPixel(g,ref pts);
+                            g.FillClosedCurve(bru, pts);
+                        }
+                        else
+                        {
+                            Point[] pts = st.GetPoints();
+                            Root.FormCollection.IC.Renderer.InkSpaceToPixel(g, ref pts);
+                            g.FillPolygon(bru, pts);
+
+                        }
+
+                    }
+                    if (st.ExtendedProperties.Contains(Root.TEXT_GUID))
                     {
                         Point pt = new Point((int)(st.ExtendedProperties[Root.TEXTX_GUID].Data), (int)(st.ExtendedProperties[Root.TEXTY_GUID].Data));
                         Root.FormCollection.IC.Renderer.InkSpaceToPixel(g, ref pt);
