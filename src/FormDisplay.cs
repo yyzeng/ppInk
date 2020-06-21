@@ -285,7 +285,7 @@ namespace gInk
                         g.DrawString((string)(st.ExtendedProperties[Root.TEXT_GUID].Data), new Font("Arial", (int)(Root.TextSize), FontStyle.Bold, GraphicsUnit.Pixel), new SolidBrush(st.DrawingAttributes.Color), pt.X,pt.Y, stf);                        
                        
                     }
-                     }
+                }
 
             }
         }
@@ -404,7 +404,10 @@ namespace gInk
 
         public void DrawLineOnGraphic(Graphics g, int CursorX0, int CursorY0, int CursorX, int CursorY)
         {
-            gOutCanvus.DrawLine(new Pen(Root.PenAttr[Root.CurrentPen].Color, Root.PenAttr[Root.CurrentPen].Width/ (float)26.45834),
+            //gOutCanvus.DrawLine(new Pen(Root.PenAttr[Root.CurrentPen].Color, Root.PenAttr[Root.CurrentPen].Width/ (float)26.45834),
+            //                        CursorX0, CursorY0 , CursorX, CursorY);
+            gOutCanvus.DrawLine(new Pen(Color.FromArgb (255- Root.FormCollection.IC.DefaultDrawingAttributes.Transparency,Root.FormCollection.IC.DefaultDrawingAttributes.Color),
+                                        Root.HiMetricToPixel(Root.FormCollection.IC.DefaultDrawingAttributes.Width)),
                                     CursorX0, CursorY0 , CursorX, CursorY);
         }
         public void DrawRectOnGraphic(Graphics g, int CursorX0, int CursorY0, int CursorX, int CursorY)
@@ -412,7 +415,8 @@ namespace gInk
             int dX = Math.Abs(CursorX - CursorX0);
             int dY = Math.Abs(CursorY - CursorY0);
 
-            gOutCanvus.DrawRectangle(new Pen(Root.PenAttr[Root.CurrentPen].Color, Root.PenAttr[Root.CurrentPen].Width / (float)26.45834),
+            gOutCanvus.DrawRectangle(new Pen(Color.FromArgb(255 - Root.FormCollection.IC.DefaultDrawingAttributes.Transparency, Root.FormCollection.IC.DefaultDrawingAttributes.Color),
+                                        Root.HiMetricToPixel(Root.FormCollection.IC.DefaultDrawingAttributes.Width)),
                                         Math.Min(CursorX0,CursorX), Math.Min(CursorY0, CursorY), dX, dY);
         }
         public void DrawEllipseOnGraphic(Graphics g, int CursorX0, int CursorY0, int CursorX, int CursorY)
@@ -420,7 +424,8 @@ namespace gInk
             int dX = Math.Abs(CursorX - CursorX0);
             int dY = Math.Abs(CursorY - CursorY0);
 
-            gOutCanvus.DrawEllipse(new Pen(Root.PenAttr[Root.CurrentPen].Color, Root.PenAttr[Root.CurrentPen].Width / (float)26.45834), 
+            gOutCanvus.DrawEllipse(new Pen(Color.FromArgb(255 - Root.FormCollection.IC.DefaultDrawingAttributes.Transparency, Root.FormCollection.IC.DefaultDrawingAttributes.Color),
+                                        Root.HiMetricToPixel(Root.FormCollection.IC.DefaultDrawingAttributes.Width)),
                                         CursorX0 - dX, CursorY0 - dY, 2 * dX, 2 * dY);
         }
 
@@ -428,7 +433,8 @@ namespace gInk
         {
             Point[] pts = new Point[5];
             double theta = Math.Atan2(CursorY - CursorY0, CursorX - CursorX0);
-            Pen p = new Pen(Root.PenAttr[Root.CurrentPen].Color, Root.PenAttr[Root.CurrentPen].Width / (float)26.45834);
+            Pen p = new Pen(Color.FromArgb(255 - Root.FormCollection.IC.DefaultDrawingAttributes.Transparency, Root.FormCollection.IC.DefaultDrawingAttributes.Color),
+                                        Root.HiMetricToPixel(Root.FormCollection.IC.DefaultDrawingAttributes.Width));
 
             gOutCanvus.DrawLine(p,CursorX0, CursorY0, (int)(CursorX0 + Math.Cos(theta + Root.ArrowAngle) * Root.ArrowLen), (int)(CursorY0 + Math.Sin(theta + Root.ArrowAngle) * Root.ArrowLen));
             gOutCanvus.DrawLine(p, CursorX0, CursorY0, (int)(CursorX0 + Math.Cos(theta - Root.ArrowAngle) * Root.ArrowLen), (int)(CursorY0 + Math.Sin(theta - Root.ArrowAngle) * Root.ArrowLen));
