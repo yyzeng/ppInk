@@ -659,11 +659,16 @@ namespace gInk
             float dst1 = dst;
             float pos1;
             pos = 0;
-            minStroke = IC.Ink.Strokes[0];
-            foreach (Stroke st in IC.Ink.Strokes)
+            //if (IC.Ink.Strokes.Count == 0)
+            //    return dst;
+            //minStroke = IC.Ink.Strokes[0];
+            minStroke = null;
+            //foreach (Stroke st in IC.Ink.Strokes)
+            for(int i=0;i<=IC.Ink.Strokes.Count-(butLast?2:1);i++)
             {
+                Stroke st= IC.Ink.Strokes[i];
                 pos1 = st.NearestPoint(pt, out dst1);
-                if ((dst1 < dst) && (st.ExtendedProperties.Contains(Root.TEXT_GUID)))
+                if ((dst1 < dst) && (!Search4Text ||(st.ExtendedProperties.Contains(Root.TEXT_GUID))))
                 {
                     dst = dst1;
                     minStroke = st;
@@ -802,7 +807,7 @@ namespace gInk
                 if ((Root.ToolSelected == 1) && (Root.CursorX0 != Int32.MinValue))
                     AddLineStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY);
                 else if ((Root.ToolSelected == 2) && (Root.CursorX0 != Int32.MinValue))
-                    AddRectStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY,Root.FilledSelected);
+                    AddRectStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY, Root.FilledSelected);
                 else if ((Root.ToolSelected == 3) && (Root.CursorX0 != Int32.MinValue))
                     AddEllipseStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY, Root.FilledSelected);
                 else if ((Root.ToolSelected == 4) && (Root.CursorX0 != Int32.MinValue))
@@ -1153,7 +1158,7 @@ namespace gInk
                 EnterEraserMode(false);
             }
             else if (tool == 1)
-                    btLine.BackgroundImage = global::gInk.Properties.Resources.tool_line_act;
+                btLine.BackgroundImage = global::gInk.Properties.Resources.tool_line_act;
             else if (tool == 2)
             {
                 if (Root.FilledSelected == 0)
@@ -1209,7 +1214,7 @@ namespace gInk
                 btPan.BackgroundImage = global::gInk.Properties.Resources.pan1_act;
             }
 
-            Root.ToolSelected = tool;
+                Root.ToolSelected = tool;
             Root.UponButtonsUpdate |= 0x2;
         }
 
