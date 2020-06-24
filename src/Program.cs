@@ -23,7 +23,6 @@ namespace gInk
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 
-			new Root();
             frm = new CallForm();
             frm.Root = new Root();
             if (frm.Root.FormTop >= 0)
