@@ -55,6 +55,7 @@ namespace gInk
         public Guid ISFILLEDCOLOR_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 1);
         public Guid ISFILLEDWHITE_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 2);
         public Guid ISFILLEDBLACK_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 3);
+        public Guid ISHIDDEN_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 4);
         // options
         public bool[] PenEnabled = new bool[MaxPenCount];
         public bool ToolsEnabled = true;
@@ -95,8 +96,8 @@ namespace gInk
 		public Hotkey Hotkey_Snap = new Hotkey();
 		public Hotkey Hotkey_Clear = new Hotkey();
 
-        public int ToolSelected = 0;
-        public int FilledSelected = 0;
+        public int ToolSelected = 0;        // indicates which tool (Hand,Line,...) is currently selected
+        public int FilledSelected = 0;      // indicates which filling (None, Selected color, ...) is currently select
         public bool EraserMode = false;
 		public bool Docked = false;
 		public bool PointerMode = false;
@@ -113,8 +114,9 @@ namespace gInk
 
 		public bool PanMode = false;
 		public bool InkVisible = true;
+        public bool DefaultMagnetActive= true;        // weither Magnet is active at start.
 
-		public Ink[] UndoStrokes;
+        public Ink[] UndoStrokes;
 		//public Ink UponUndoStrokes;
 		public int UndoP;
 		public int UndoDepth, RedoDepth;
@@ -660,6 +662,12 @@ namespace gInk
                             if (float.TryParse(tab[0], out tempf))
                                 TextSize = (int)(tempf / 100.0 * System.Windows.SystemParameters.PrimaryScreenWidth);
                             break;
+                        case "MAGNET":
+                            if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
+                                DefaultMagnetActive = false;
+                            else if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
+                                DefaultMagnetActive = true;
+                            break;
                         case "ERASER_ICON":
 							if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
 								EraserEnabled = false;
@@ -874,6 +882,8 @@ namespace gInk
                             break;
                         case "TEXT_SIZE":           // size of the tag in % of the screen
                             sPara = (TextSize / System.Windows.SystemParameters.PrimaryScreenWidth *100.0).ToString();
+                        case "MAGNET":
+                            sPara = DefaultMagnetActive ? "On" : "Off";
                             break;
                         case "ERASER_ICON":
 							if (EraserEnabled)

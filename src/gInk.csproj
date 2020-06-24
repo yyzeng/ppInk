@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -222,6 +222,9 @@
     <None Include="buttonback.png" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Magnetic.png" />
+    <Content Include="Magnetic_act.png" />
+    <None Include="pan1_act.png" />
     <Content Include="tool_edit.png" />
     <Content Include="tool_edit_act.png" />
     <Content Include="tool_enAr.png" />

@@ -71,7 +71,6 @@ namespace gInk
 			Canvus = InitCanvus.GetHbitmap(Color.FromArgb(0));
 			OneStrokeCanvus = InitCanvus.GetHbitmap(Color.FromArgb(0));
             OutCanvus = Init2Canvus.GetHbitmap(Color.FromArgb(0));
-            //BlankCanvus = InitCanvus.GetHbitmap(Color.FromArgb(0));
 
             IntPtr screenDc = GetDC(IntPtr.Zero);
             canvusDc = CreateCompatibleDC(screenDc);
@@ -80,11 +79,9 @@ namespace gInk
 			SelectObject(onestrokeDc, OneStrokeCanvus);
             OutcanvusDc = CreateCompatibleDC(screenDc);
             SelectObject(OutcanvusDc, OutCanvus);
-            //blankcanvusDc = CreateCompatibleDC(screenDc);
-            //SelectObject(blankcanvusDc, BlankCanvus);
             gCanvus = Graphics.FromHdc(canvusDc);
-			gCanvus.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
-            gCanvus.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+			gCanvus.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver; // source Over else we get some issues displaying text
+            gCanvus.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
 			gOneStrokeCanvus = Graphics.FromHdc(onestrokeDc);
 			gOneStrokeCanvus.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
             gOutCanvus = Graphics.FromHdc(OutcanvusDc);
@@ -98,6 +95,14 @@ namespace gInk
 				lastscreenbits = new byte[50000000];
 			}
 			ReleaseDC(IntPtr.Zero, screenDc);
+            /* PPzz : 
+             *     this is my understandarding about drawing: 
+             *     gCanvus is the graphics where in standard the strokes are drawn, I've introduced there also the drawing
+             *     gOnestrokeCanvus is filled with the current screen before drawing : it seems to be used when deleting(undo ?) a strike.
+             *     I've introduced gOutCanvus in order to have a graphics where I can draw in the inprogress shapes (Line,Ellipsis,Rectangular,Arrow) the previous ones, being strokes, are drawn on gCanvus
+             *     the timer1 refresh the window regularly
+             */
+          
          
             InitCanvus.Dispose();
             Init2Canvus.Dispose();
@@ -245,9 +250,11 @@ namespace gInk
 		{
 			if (Root.InkVisible)
             {
-                foreach(Stroke st in Root.FormCollection.IC.Ink.Strokes)
+                foreach (Stroke st in Root.FormCollection.IC.Ink.Strokes)
                 {
-                    if (st.ExtendedProperties.Contains(Root.ISSTROKE_GUID))
+                    if (st.ExtendedProperties.Contains(Root.ISHIDDEN_GUID))
+                        ;
+                    else if (st.ExtendedProperties.Contains(Root.ISSTROKE_GUID))
                         Root.FormCollection.IC.Renderer.Draw(g, st);
                     else //Should not be drawn as a stroke : for the moment only filled values.
                     {

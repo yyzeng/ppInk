@@ -31,7 +31,8 @@ namespace gInk
 			this.components = new System.ComponentModel.Container();
 			this.gpButtons = new System.Windows.Forms.Panel();
 			this.btInkVisible = new System.Windows.Forms.Button();
-			this.btPan = new System.Windows.Forms.Button();
+            this.btMagn = new System.Windows.Forms.Button();
+            this.btPan = new System.Windows.Forms.Button();
 			this.btDock = new System.Windows.Forms.Button();
 			this.btPenWidth = new System.Windows.Forms.Button();
 
@@ -66,7 +67,8 @@ namespace gInk
 			this.gpButtons.BackColor = System.Drawing.Color.WhiteSmoke;
 			this.gpButtons.Controls.Add(this.btInkVisible);
 			this.gpButtons.Controls.Add(this.btPan);
-			this.gpButtons.Controls.Add(this.btDock);
+            this.gpButtons.Controls.Add(this.btMagn);
+            this.gpButtons.Controls.Add(this.btDock);
 			this.gpButtons.Controls.Add(this.btPenWidth);
 
             this.gpButtons.Controls.Add(this.btHand);
@@ -121,8 +123,9 @@ namespace gInk
 			this.btPan.FlatAppearance.MouseDownBackColor = System.Drawing.Color.WhiteSmoke;
 			this.btPan.FlatAppearance.MouseOverBackColor = System.Drawing.Color.WhiteSmoke;
 			this.btPan.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.btPan.Image = global::gInk.Properties.Resources.pan;
-			this.btPan.Location = new System.Drawing.Point(978, 4);
+            this.btPan.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btPan.BackgroundImage = global::gInk.Properties.Resources.pan;
+            this.btPan.Location = new System.Drawing.Point(978, 4);
 			this.btPan.Name = "btPan";
 			this.btPan.Size = new System.Drawing.Size(69, 69);
 			this.btPan.TabIndex = 2;
@@ -132,10 +135,33 @@ namespace gInk
 			this.btPan.MouseDown += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseDown);
 			this.btPan.MouseMove += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseMove);
 			this.btPan.MouseUp += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseUp);
-			// 
-			// btDock
-			// 
-			this.btDock.BackColor = System.Drawing.Color.WhiteSmoke;
+            // 
+            // btMagn
+            // 
+            this.btMagn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.btMagn.FlatAppearance.BorderSize = 0;
+            this.btMagn.FlatAppearance.MouseDownBackColor = System.Drawing.Color.WhiteSmoke;
+            this.btMagn.FlatAppearance.MouseOverBackColor = System.Drawing.Color.WhiteSmoke;
+            this.btMagn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btMagn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            if(MagnEffect)
+                this.btMagn.BackgroundImage = global::gInk.Properties.Resources.Magnetic_act;
+            else
+                this.btMagn.BackgroundImage = global::gInk.Properties.Resources.Magnetic;
+            this.btMagn.Location = new System.Drawing.Point(978, 4);
+            this.btMagn.Name = "btMagn";
+            this.btMagn.Size = new System.Drawing.Size(69, 69);
+            this.btMagn.TabIndex = 2;
+            this.toolTip.SetToolTip(this.btMagn, "Magnetic drawing");
+            this.btMagn.UseVisualStyleBackColor = true;
+            this.btMagn.Click += new System.EventHandler(this.btMagn_Click);
+            this.btMagn.MouseDown += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseDown);
+            this.btMagn.MouseMove += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseMove);
+            this.btMagn.MouseUp += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseUp);
+            // 
+            // btDock
+            // 
+            this.btDock.BackColor = System.Drawing.Color.WhiteSmoke;
 			this.btDock.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
 			this.btDock.FlatAppearance.BorderSize = 0;
 			this.btDock.FlatAppearance.MouseDownBackColor = System.Drawing.Color.WhiteSmoke;
@@ -203,7 +229,6 @@ namespace gInk
             this.btLine.ForeColor = System.Drawing.Color.Transparent;
             this.btLine.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.btLine.BackgroundImage = global::gInk.Properties.Resources.tool_line;
-            this.btLine.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.btLine.Location = new System.Drawing.Point(489, 4);
             this.btLine.Name = "btLine";
             this.btLine.Size = new System.Drawing.Size(69, 69);
@@ -224,7 +249,6 @@ namespace gInk
             this.btRect.ForeColor = System.Drawing.Color.Transparent;
             this.btRect.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.btRect.BackgroundImage = global::gInk.Properties.Resources.tool_rect;
-            this.btRect.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.btRect.Location = new System.Drawing.Point(489, 4);
             this.btRect.Name = "btRect";
             this.btRect.Size = new System.Drawing.Size(69, 69);
@@ -245,7 +269,6 @@ namespace gInk
             this.btOval.ForeColor = System.Drawing.Color.Transparent;
             this.btOval.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.btOval.BackgroundImage = global::gInk.Properties.Resources.tool_oval;
-            this.btOval.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.btOval.Location = new System.Drawing.Point(489, 4);
             this.btOval.Name = "btOval";
             this.btOval.Size = new System.Drawing.Size(69, 69);
@@ -572,7 +595,7 @@ namespace gInk
         public System.Windows.Forms.Button btEnAr;
         public System.Windows.Forms.Button btNumb;
         public System.Windows.Forms.Button btEdit;
-        public System.Windows.Forms.Button btTxtL;
+        public System.Windows.Forms.Button btMagn;
         public System.Windows.Forms.Button btTxtR;
 
         public System.Windows.Forms.Button btEraser;
