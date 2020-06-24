@@ -41,7 +41,7 @@ The magnet activates some magnetic effect:
 
 #### Screen Shots
 
-![](media/ba61e8105d09bfcd20a138929ab1961c.png)
+![](screenshot1.png)
 
 screenshot
 
