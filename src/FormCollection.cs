@@ -519,12 +519,17 @@ namespace gInk
 
         private Stroke AddRectStroke(int CursorX0, int CursorY0, int CursorX, int CursorY,int FilledSelected)
         {
-            Point[] pts = new Point[5];
-            pts[0] = new Point(CursorX0, CursorY0);
-            pts[1] = new Point(CursorX0, CursorY);
-            pts[2] = new Point(CursorX, CursorY);
-            pts[3] = new Point(CursorX, CursorY0);
-            pts[4] = new Point(CursorX0, CursorY0);
+            Point[] pts = new Point[9];
+            int i = 0;
+            pts[i++] = new Point(CursorX0, CursorY0);
+            pts[i++] = new Point(CursorX0, (CursorY0+CursorY)/2);
+            pts[i++] = new Point(CursorX0, CursorY);
+            pts[i++] = new Point((CursorX0+CursorX)/2, CursorY);
+            pts[i++] = new Point(CursorX, CursorY);
+            pts[i++] = new Point(CursorX, (CursorY0 + CursorY) / 2);
+            pts[i++] = new Point(CursorX, CursorY0);
+            pts[i++] = new Point((CursorX0 + CursorX) / 2, CursorY0);
+            pts[i++] = new Point(CursorX0, CursorY0);
 
             IC.Renderer.PixelToInkSpace(Root.FormDisplay.gOneStrokeCanvus, ref pts);
             Stroke st = Root.FormCollection.IC.Ink.CreateStroke(pts);
