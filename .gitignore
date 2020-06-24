@@ -9,3 +9,7 @@ bin/crash.txt
 *.opensdf
 *.lnk
 *vshost.exe*
+.vs/
+
+media/
+

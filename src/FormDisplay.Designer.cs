@@ -1,4 +1,4 @@
-﻿namespace gInk
+namespace gInk
 {
 	partial class FormDisplay
 	{
@@ -28,37 +28,38 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
-			this.timer1 = new System.Windows.Forms.Timer(this.components);
-			this.SuspendLayout();
-			// 
-			// timer1
-			// 
-			this.timer1.Enabled = true;
-			this.timer1.Interval = 15;
-			this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-			// 
-			// FormDisplay
-			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(168F, 168F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-			this.BackColor = System.Drawing.Color.White;
-			this.ClientSize = new System.Drawing.Size(1410, 921);
-			this.ForeColor = System.Drawing.Color.Transparent;
-			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-			this.MaximizeBox = false;
-			this.MinimizeBox = false;
-			this.Name = "FormDisplay";
-			this.ShowInTaskbar = false;
-			this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-			this.Text = "Form1";
-			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormDisplay_FormClosed);
-			this.ResumeLayout(false);
+            this.components = new System.ComponentModel.Container();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.SuspendLayout();
+            // 
+            // timer1
+            // 
+            this.timer1.Enabled = true;
+            this.timer1.Interval = 15;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
+            // FormDisplay
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.BackColor = System.Drawing.Color.White;
+            this.ClientSize = new System.Drawing.Size(806, 526);
+            this.ForeColor = System.Drawing.Color.Transparent;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.Name = "FormDisplay";
+            this.ShowInTaskbar = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
+            this.Text = "Form1";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormDisplay_FormClosed);
+            this.ResumeLayout(false);
 
 		}
 
 		#endregion
 		public System.Windows.Forms.Timer timer1;
-	}
+    }
 }
 
