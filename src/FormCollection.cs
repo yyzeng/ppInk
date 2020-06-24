@@ -857,7 +857,10 @@ namespace gInk
             Root.FormDisplay.DrawStrokes();
             Root.FormDisplay.DrawButtons(true);
             Root.FormDisplay.UpdateFormDisplay(true);
-		}
+
+            Root.CursorX0 = Int32.MinValue;
+            Root.CursorY0 = Int32.MinValue;
+        }
 
 		private void SaveUndoStrokes()
 		{
