@@ -266,7 +266,8 @@ namespace gInk
                         else if (st.ExtendedProperties.Contains(Root.ISFILLEDBLACK_GUID))
                             bru = new SolidBrush(Color.Black);
                         else
-                            bru = new SolidBrush(Color.Purple);
+                            continue;
+                            //bru = new SolidBrush(Color.Purple);
                         if (st.DrawingAttributes.FitToCurve)
                         {
                             try

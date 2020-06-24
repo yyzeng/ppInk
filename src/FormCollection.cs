@@ -667,6 +667,8 @@ namespace gInk
             for(int i=0;i<=IC.Ink.Strokes.Count-(butLast?2:1);i++)
             {
                 Stroke st= IC.Ink.Strokes[i];
+                if (st.ExtendedProperties.Contains(Root.ISDELETION_GUID))
+                    continue;
                 pos1 = st.NearestPoint(pt, out dst1);
                 if ((dst1 < dst) && (!Search4Text ||(st.ExtendedProperties.Contains(Root.TEXT_GUID))))
                 {
@@ -858,6 +860,7 @@ namespace gInk
             Root.FormDisplay.DrawButtons(true);
             Root.FormDisplay.UpdateFormDisplay(true);
 
+            // reset the CursorX0/Y0 : this seems to introduce a wrong interim drawing
             Root.CursorX0 = Int32.MinValue;
             Root.CursorY0 = Int32.MinValue;
         }
@@ -901,6 +904,7 @@ namespace gInk
             Root.CursorY = p.Y;
             if (Root.EraserMode) // we are deleting the nearest object for clicking...
             {
+                e.Stroke.ExtendedProperties.Add(Root.ISDELETION_GUID,true);
                 float pos;
                 Stroke minStroke;
                 if (NearestStroke(new Point(Root.CursorX, Root.CursorY), true, out minStroke, out pos,false,false) < Root.PixelToHiMetric(Root.TextSize * 1.5))
