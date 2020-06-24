@@ -33,6 +33,8 @@
             this.InputML = new System.Windows.Forms.TextBox();
             this.InputSL = new System.Windows.Forms.TextBox();
             this.captionLbl = new System.Windows.Forms.Label();
+            this.FontBtn = new System.Windows.Forms.Button();
+            this.FontDlg = new System.Windows.Forms.FontDialog();
             this.SuspendLayout();
             // 
             // btOK
@@ -89,6 +91,22 @@
             this.captionLbl.TabIndex = 4;
             this.captionLbl.Text = "label1";
             // 
+            // FontBtn
+            // 
+            this.FontBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FontBtn.Location = new System.Drawing.Point(18, 125);
+            this.FontBtn.Name = "FontBtn";
+            this.FontBtn.Size = new System.Drawing.Size(75, 42);
+            this.FontBtn.TabIndex = 5;
+            this.FontBtn.Text = "Font";
+            this.FontBtn.UseVisualStyleBackColor = true;
+            this.FontBtn.Visible = false;
+            this.FontBtn.Click += new System.EventHandler(this.FontBtn_Click);
+            // 
+            // FontDlg
+            // 
+            this.FontDlg.FontMustExist = true;
+            // 
             // FormInput
             // 
             this.AcceptButton = this.btOK;
@@ -96,6 +114,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btCancel;
             this.ClientSize = new System.Drawing.Size(481, 179);
+            this.Controls.Add(this.FontBtn);
             this.Controls.Add(this.captionLbl);
             this.Controls.Add(this.InputSL);
             this.Controls.Add(this.InputML);
@@ -104,7 +123,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "FormInput";
             this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Input";
             this.TopMost = true;
             this.ResumeLayout(false);
@@ -119,5 +138,7 @@
         public  System.Windows.Forms.TextBox InputML;
         public  System.Windows.Forms.TextBox InputSL;
         public  System.Windows.Forms.Label captionLbl;
+        public System.Windows.Forms.Button FontBtn;
+        public System.Windows.Forms.FontDialog FontDlg;
     }
 }

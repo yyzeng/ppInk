@@ -45,9 +45,14 @@ namespace gInk
         public Guid TEXTY_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 0, 3);
         public Guid TEXTHALIGN_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 0, 4);
         public Guid TEXTVALIGN_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 0, 5);
+        public Guid TEXTFONT_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 0, 6);
+        public Guid TEXTFONTSIZE_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 0, 7);
+        public Guid TEXTFONTSTYLE_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 0, 8);
+        public Guid TEXTWIDTH_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 0, 9);
+        public Guid TEXTHEIGHT_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 0, 10);
 
-        public Guid ISSTROKE_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 1, 0);
-        public Guid ISTAG_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 1, 1);
+        public Guid ISSTROKE_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 1, 1);
+        public Guid ISTAG_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 1, 2);
         //not yet used : 
         //public Guid ISRECT_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 1, 2);
         //public Guid ISOVAL_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 1, 3);
@@ -142,6 +147,9 @@ namespace gInk
 
         public int TagNumbering = 1;
         public int TextSize = 25;
+        public string TextFont = "Arial";
+        public bool TextItalic = false;
+        public bool TextBold = false;
 
         public Root()
 		{
@@ -656,10 +664,21 @@ namespace gInk
                             if (float.TryParse(tab[1], out tempf))
                                 ArrowLen = tempf / 100.0 * System.Windows.SystemParameters.PrimaryScreenWidth;
                             break;
-                        case "TEXT_SIZE":           // size of the text in % of the screen, also defines the size of the
+                        case "TEXT":           // Font(string),italique(boolean),Bold(boolean),size(float) of the text in % of the screen, also defines the size of the
                             tab = sPara.Split(',');
-                            if (tab.Length != 1) break;
-                            if (float.TryParse(tab[0], out tempf))
+                            if (tab.Length != 4) break;
+                            TextFont = tab[0];
+                            string s = tab[1];
+                            if (s.ToUpper() == "FALSE" || s == "0" || s.ToUpper() == "OFF")
+                                TextItalic = false;
+                            else if (s.ToUpper() == "TRUE" || s == "1" || s.ToUpper() == "ON")
+                                TextItalic = true;
+                            s = tab[2];
+                            if (s.ToUpper() == "FALSE" || s == "0" || s.ToUpper() == "OFF")
+                                TextBold = false;
+                            else if (s.ToUpper() == "TRUE" || s == "1" || s.ToUpper() == "ON")
+                                TextBold = true;
+                            if (float.TryParse(tab[3], out tempf))
                                 TextSize = (int)(tempf / 100.0 * System.Windows.SystemParameters.PrimaryScreenWidth);
                             break;
                         case "MAGNET":
@@ -880,8 +899,9 @@ namespace gInk
                         case "ARROW":           // angle in degrees, len in % of the screen width
                             sPara = (ArrowAngle / Math.PI * 180.0).ToString()+","+ (ArrowLen / System.Windows.SystemParameters.PrimaryScreenWidth * 100.0).ToString();
                             break;
-                        case "TEXT_SIZE":           // size of the tag in % of the screen
-                            sPara = (TextSize / System.Windows.SystemParameters.PrimaryScreenWidth *100.0).ToString();
+                        case "TEXT":           // size of the tag in % of the screen
+                            sPara = TextFont+","+(TextItalic?"True":"False")+","+ (TextBold ? "True" : "False")+","+(TextSize / System.Windows.SystemParameters.PrimaryScreenWidth *100.0).ToString();
+                            break;
                         case "MAGNET":
                             sPara = DefaultMagnetActive ? "On" : "Off";
                             break;

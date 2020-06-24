@@ -599,7 +599,10 @@ namespace gInk
             st.ExtendedProperties.Add(Root.TEXTY_GUID, pt.Y);
             //st.ExtendedProperties.Add(Root.TEXTFORMAT_GUID, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.WordBreak);
             st.ExtendedProperties.Add(Root.TEXTHALIGN_GUID, StringAlignment.Center);
-            st.ExtendedProperties.Add(Root.TEXTVALIGN_GUID, StringAlignment.Center);            
+            st.ExtendedProperties.Add(Root.TEXTVALIGN_GUID, StringAlignment.Center);
+            st.ExtendedProperties.Add(Root.TEXTFONT_GUID, Root.TextFont);
+            st.ExtendedProperties.Add(Root.TEXTFONTSIZE_GUID, (float)Root.TextSize);
+            st.ExtendedProperties.Add(Root.TEXTFONTSTYLE_GUID, (Root.TextItalic ? FontStyle.Italic : FontStyle.Regular) | (Root.TextBold ? FontStyle.Bold : FontStyle.Regular));
             return st;
         }
 
@@ -618,6 +621,9 @@ namespace gInk
             st.ExtendedProperties.Add(Root.TEXTY_GUID, pt.Y);
             st.ExtendedProperties.Add(Root.TEXTHALIGN_GUID, Align);
             st.ExtendedProperties.Add(Root.TEXTVALIGN_GUID, StringAlignment.Near);
+            st.ExtendedProperties.Add(Root.TEXTFONT_GUID, Root.TextFont);
+            st.ExtendedProperties.Add(Root.TEXTFONTSIZE_GUID, (float)Root.TextSize);
+            st.ExtendedProperties.Add(Root.TEXTFONTSTYLE_GUID, (Root.TextItalic ? FontStyle.Italic : FontStyle.Regular) | (Root.TextBold ? FontStyle.Bold : FontStyle.Regular));
             setStrokeProperties(ref st, 0);
             Root.FormCollection.IC.Ink.Strokes.Add(st);
             return st;
@@ -625,32 +631,30 @@ namespace gInk
 
         private DialogResult ModifyTextInStroke(Stroke stk, string txt)
         {
-            void InputML_TextChanged(object sender, EventArgs e)
-            {
-                string t = ((TextBox)sender).Text;
-                if (t.Length == 0) t = " ";
-                stk.ExtendedProperties.Remove(Root.TEXT_GUID);
-                stk.ExtendedProperties.Add(Root.TEXT_GUID, t);
-                Root.FormDisplay.ClearCanvus();
-                Root.FormDisplay.DrawStrokes();
-                Root.FormDisplay.UpdateFormDisplay(true);
-            }
+            // required to access the dialog box
             tiSlide.Stop();
             IC.Enabled = false;
             ToThrough();
-            FormInput inp = new FormInput();
-            inp.Text = "Edit Text";
-            inp.captionLbl.Text = "Text Input";
-            inp.InputML.Text = txt;
-            inp.InputML.Visible = true;
-            inp.ActiveControl = inp.InputML;
-            inp.InputML.TextChanged += InputML_TextChanged;
+
+            FormInput inp = new FormInput("Edit Text", "Text Input", txt,true,Root, stk);
+
+            Point pt = stk.GetPoint(0);
+            IC.Renderer.InkSpaceToPixel(IC.Handle, ref pt);
+            inp.Top = pt.Y - inp.Height-10;
+            inp.Left = pt.X;
+            if((inp.Right>= System.Windows.SystemParameters.PrimaryScreenWidth)|| (inp.Top <= 0))
+            {   // if the dialog can not be displayed above the text we will display it in the middle of the primary screen
+                inp.Top = ((int)(System.Windows.SystemParameters.PrimaryScreenHeight)-inp.Height) / 2;
+                inp.Left = ((int)(System.Windows.SystemParameters.PrimaryScreenWidth) - inp.Width) / 2;
+            }
             DialogResult ret = inp.ShowDialog();
             if (ret == DialogResult.Cancel)
                 stk.ExtendedProperties.Add(Root.TEXT_GUID, txt);
+
             tiSlide.Start();
             IC.Enabled = true;
             ToUnThrough();
+
             return ret;
         }
 
@@ -815,7 +819,7 @@ namespace gInk
                     AddArrowStroke(Root.CursorX, Root.CursorY, Root.CursorX0, Root.CursorY0);
                 else if (Root.ToolSelected == 6)
                 {
-                    Stroke st= AddNumberTagStroke(Root.CursorX, Root.CursorY, Root.CursorX, Root.CursorY,Root.TagNumbering.ToString());
+                    Stroke st = AddNumberTagStroke(Root.CursorX, Root.CursorY, Root.CursorX, Root.CursorY, Root.TagNumbering.ToString());
                     Root.TagNumbering++;
                 }
                 else if (Root.ToolSelected == 7) // Edit
@@ -2032,25 +2036,21 @@ namespace gInk
                     IC.Enabled = false;
                     ToThrough();
                     int k = -1;
-                    FormInput inp = new FormInput();
-                    inp.Text = "Tag Numbering";
-                    inp.captionLbl.Text = "Enter Starting Number";
-                    inp.InputSL.Text = "";
-                    inp.InputSL.Visible = true;
-                    inp.ActiveControl = inp.InputSL;
-                    while (!Int32.TryParse(inp.InputSL.Text, out k))
+                    FormInput inp = new FormInput("Tag Numbering", "Enter Starting Number", "", false, null, null);
+
+                    while (!Int32.TryParse(inp.TextOut(), out k))
                     {
-                        inp.InputSL.Text = Root.TagNumbering.ToString();
+                        inp.TextIn(Root.TagNumbering.ToString());
                         if (inp.ShowDialog() == DialogResult.Cancel)
                         {
-                            inp.InputSL.Text = "";
+                            inp.TextIn("");
                             break;
                         }
                     }
                     tiSlide.Start();
                     IC.Enabled = true;
                     ToUnThrough();
-                    if (inp.InputSL.Text.Length == 0) return;
+                    if (inp.TextOut().Length == 0) return;
                     Root.TagNumbering = k;
                 }
                 i = 6;
