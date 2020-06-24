@@ -1217,7 +1217,7 @@ namespace gInk
                 }
             else if (tool == 10)
             {
-                SelectPen(0);
+                SelectPen(LastPenSelected);
                 btPan.BackgroundImage = global::gInk.Properties.Resources.pan1_act;
             }
 
@@ -2013,7 +2013,9 @@ namespace gInk
 			for (int b = 0; b < Root.MaxPenCount; b++)
 				if ((Button)sender == btPen[b])
 				{
-					SelectPen(b);
+                    if ((Root.ToolSelected == 10) || (Root.ToolSelected == 5)) // if move
+                        SelectTool(0);
+                    SelectPen(b);
 				}
 		}
         
@@ -2091,7 +2093,10 @@ namespace gInk
 				return;
 			}
             if (Root.ToolSelected != 10)
+            {
+                SelectPen(LastPenSelected);
                 SelectTool(10);
+            }
             else
 			    SelectPen(-3);
 		}
