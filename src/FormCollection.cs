@@ -626,7 +626,7 @@ namespace gInk
             // required to access the dialog box
             tiSlide.Stop();
             IC.Enabled = false;
-            ToThrough();
+            //ToThrough();
 
             FormInput inp = new FormInput("Edit Text", "Text Input", txt,true,Root, stk);
 
@@ -645,7 +645,7 @@ namespace gInk
 
             tiSlide.Start();
             IC.Enabled = true;
-            ToUnThrough();
+            //ToUnThrough();
 
             return ret;
         }
