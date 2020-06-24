@@ -80,24 +80,18 @@ namespace gInk
             btOval.Height = (int)(gpButtons.Height * 0.48);
             btOval.Width = btOval.Height;
             btOval.Top = (int)(gpButtons.Height * 0.52);
-            btStAr.Height = (int)(gpButtons.Height * 0.48);
-            btStAr.Width = btStAr.Height;
-            btStAr.Top = (int)(gpButtons.Height * 0.02);
-            btEnAr.Height = (int)(gpButtons.Height * 0.48);
-            btEnAr.Width = btEnAr.Height;
-            btEnAr.Top = (int)(gpButtons.Height * 0.52);
+            btArrow.Height = (int)(gpButtons.Height * 0.48);
+            btArrow.Width = btArrow.Height;
+            btArrow.Top = (int)(gpButtons.Height * 0.02);
             btNumb.Height = (int)(gpButtons.Height * 0.48);
             btNumb.Width = btNumb.Height;
-            btNumb.Top = (int)(gpButtons.Height * 0.02);
+            btNumb.Top = (int)(gpButtons.Height * 0.52);
+            btText.Height = (int)(gpButtons.Height * 0.48);
+            btText.Width = btText.Height;
+            btText.Top = (int)(gpButtons.Height * 0.02);
             btEdit.Height = (int)(gpButtons.Height * 0.48);
             btEdit.Width = btEdit.Height;
             btEdit.Top = (int)(gpButtons.Height * 0.52);
-            btTxtL.Height = (int)(gpButtons.Height * 0.48);
-            btTxtL.Width = btTxtL.Height;
-            btTxtL.Top = (int)(gpButtons.Height * 0.02);
-            btTxtR.Height = (int)(gpButtons.Height * 0.48);
-            btTxtR.Width = btTxtR.Height;
-            btTxtR.Top = (int)(gpButtons.Height * 0.52);
 
 
             btEraser.Height = (int)(gpButtons.Height * 0.85);
@@ -178,21 +172,16 @@ namespace gInk
                 btRect.Left = cumulatedleft;
                 btOval.Left = cumulatedleft;
                 cumulatedleft += (int)(btRect.Width * 1.1);
-                btStAr.Visible = true;
-                btEnAr.Visible = true;
-                btStAr.Left = cumulatedleft;
-                btEnAr.Left = cumulatedleft;
-                cumulatedleft += (int)(btStAr.Width * 1.1);
+                btArrow.Visible = true;
+                btArrow.Left = cumulatedleft;
                 btNumb.Visible = true;
-                btEdit.Visible = true;
                 btNumb.Left = cumulatedleft;
+                cumulatedleft += (int)(btArrow.Width * 1.1);
+                btText.Visible = true;
+                btText.Left = cumulatedleft;
+                btEdit.Visible = true;
                 btEdit.Left = cumulatedleft;
-                cumulatedleft += (int)(btStAr.Width * 1.1);
-                btTxtL.Visible = true;
-                btTxtR.Visible = true;
-                btTxtL.Left = cumulatedleft;
-                btTxtR.Left = cumulatedleft;
-                cumulatedleft += (int)(btStAr.Width * 1.1);
+                cumulatedleft += (int)(btArrow.Width * 1.1);
             }
             else
             {
@@ -200,12 +189,10 @@ namespace gInk
                 btLine.Visible = false;
                 btRect.Visible = false;
                 btOval.Visible = false;
-                btStAr.Visible = false;
-                btEnAr.Visible = false;
+                btArrow.Visible = false;
                 btNumb.Visible = false;
+                btText.Visible = false;
                 btEdit.Visible = false;
-                btTxtL.Visible = false;
-                btTxtR.Visible = false;
             }
 
             cumulatedleft += (int)(btDock.Width * 0.5);
@@ -832,9 +819,9 @@ namespace gInk
                         SelectTool(0, 0);
                     }
                 }
-                else if (Root.ToolSelected == 8)
+                else if ((Root.ToolSelected == 8) || (Root.ToolSelected == 9))  // new text
                 {
-                    Stroke st=AddTextStroke(Root.CursorX, Root.CursorY, Root.CursorX, Root.CursorY,"Text", StringAlignment.Near);
+                    Stroke st = AddTextStroke(Root.CursorX, Root.CursorY, Root.CursorX, Root.CursorY, "Text", (Root.ToolSelected == 8)?StringAlignment.Near:StringAlignment.Far);
                     Root.FormDisplay.DrawStrokes();
                     Root.FormDisplay.UpdateFormDisplay(true);
                     if (ModifyTextInStroke(st, (string)(st.ExtendedProperties[Root.TEXT_GUID].Data)) == DialogResult.Cancel)
@@ -851,13 +838,6 @@ namespace gInk
                         st.ExtendedProperties.Add(Root.TEXTWIDTH_GUID,layoutSize.Width);
                         st.ExtendedProperties.Add(Root.TEXTHEIGHT_GUID, layoutSize.Height);
                     }
-                else if (Root.ToolSelected == 9)
-                {
-                    Stroke st = AddTextStroke(Root.CursorX, Root.CursorY, Root.CursorX, Root.CursorY, "Text", StringAlignment.Far);
-                    Root.FormDisplay.DrawStrokes();
-                    Root.FormDisplay.UpdateFormDisplay(true);
-                    ModifyTextInStroke(st, (string)(st.ExtendedProperties[Root.TEXT_GUID].Data));
-                    SelectTool(0,0);
                 }
                 else if (Root.ToolSelected == 10)// Move : do Nothing
                     movedStroke = null;
@@ -1144,12 +1124,10 @@ namespace gInk
             btLine.BackgroundImage = global::gInk.Properties.Resources.tool_line;
             btRect.BackgroundImage = global::gInk.Properties.Resources.tool_rect;
             btOval.BackgroundImage = global::gInk.Properties.Resources.tool_oval;
-            btStAr.BackgroundImage = global::gInk.Properties.Resources.tool_stAr;
-            btEnAr.BackgroundImage = global::gInk.Properties.Resources.tool_enAr;
+            btArrow.BackgroundImage = global::gInk.Properties.Resources.tool_stAr;
             btNumb.BackgroundImage = global::gInk.Properties.Resources.tool_numb;
+            btText.BackgroundImage = global::gInk.Properties.Resources.tool_txtL;
             btEdit.BackgroundImage = global::gInk.Properties.Resources.tool_edit;
-            btTxtL.BackgroundImage = global::gInk.Properties.Resources.tool_txtL;
-            btTxtR.BackgroundImage = global::gInk.Properties.Resources.tool_txtR;
             int[] applicableTool = { 0, 2, 3 };
             if (filled >= 0)
                 Root.FilledSelected = filled;
@@ -1158,12 +1136,12 @@ namespace gInk
             else
                 Root.FilledSelected = 0;
             if (tool == 0)
-            {   
-                if(Root.FilledSelected ==0)
+            {
+                if (Root.FilledSelected == 0)
                     btHand.BackgroundImage = global::gInk.Properties.Resources.tool_hand_act;
                 else if (Root.FilledSelected == 1)
                     btHand.BackgroundImage = global::gInk.Properties.Resources.tool_hand_filledC;
-                else if (Root.FilledSelected==2)
+                else if (Root.FilledSelected == 2)
                     btHand.BackgroundImage = global::gInk.Properties.Resources.tool_hand_filledW;
                 else if (Root.FilledSelected == 3)
                     btHand.BackgroundImage = global::gInk.Properties.Resources.tool_hand_filledB;
@@ -1194,18 +1172,32 @@ namespace gInk
                 else if (Root.FilledSelected == 3)
                     btOval.BackgroundImage = global::gInk.Properties.Resources.tool_oval_filledB;
             }
-            else if (tool == 4)
-                btStAr.BackgroundImage = global::gInk.Properties.Resources.tool_stAr_act;
-            else if (tool == 5)
-                btEnAr.BackgroundImage = global::gInk.Properties.Resources.tool_enAr_act;
+            else if ((tool == 4) || (tool==5)) // also include tool=5
+                if((tool==5)||(Root.ToolSelected == 4))
+                {
+                    btArrow.BackgroundImage = global::gInk.Properties.Resources.tool_enAr_act;
+                    tool = 5;
+                }
+                else
+                {
+                    btArrow.BackgroundImage = global::gInk.Properties.Resources.tool_stAr_act;
+                    tool = 4;
+                }
             else if (tool == 6)
                 btNumb.BackgroundImage = global::gInk.Properties.Resources.tool_numb_act;
             else if (tool == 7)
                 btEdit.BackgroundImage = global::gInk.Properties.Resources.tool_edit_act;
-            else if (tool == 8)
-                btTxtL.BackgroundImage = global::gInk.Properties.Resources.tool_txtL_act;
-            else if (tool == 9)
-                btTxtR.BackgroundImage = global::gInk.Properties.Resources.tool_txtR_act;
+            else if ((tool == 8)|| (tool == 9))
+                if ((tool==9)||(Root.ToolSelected == 8))
+                {
+                    btText.BackgroundImage = global::gInk.Properties.Resources.tool_txtR_act;
+                    tool = 9;
+                }
+                else
+                {
+                    btText.BackgroundImage = global::gInk.Properties.Resources.tool_txtL_act;
+                    tool = 8;
+                }
             else if (tool == 10)
             {
                 SelectPen(0);
@@ -2024,10 +2016,8 @@ namespace gInk
                 i = 2;
             else if (((Button)sender).Name.Contains("Oval"))
                 i = 3;
-            else if (((Button)sender).Name.Contains("StAr"))
+            else if (((Button)sender).Name.Contains("Arrow"))
                 i = 4;
-            else if (((Button)sender).Name.Contains("EnAr"))
-                i = 5;
             else if (((Button)sender).Name.Contains("Numb"))
             {
                 if (Root.ToolSelected == 6) // if already selected, we open the index dialog
@@ -2055,12 +2045,10 @@ namespace gInk
                 }
                 i = 6;
             }
+            else if (((Button)sender).Name.Contains("Text"))
+                i = 8;
             else if (((Button)sender).Name.Contains("Edit"))
                 i = 7;
-            else if (((Button)sender).Name.Contains("TxtL"))
-                i = 8;
-            else if (((Button)sender).Name.Contains("TxtR"))
-                i = 9;
             if(i>=0)
                 SelectPen(LastPenSelected);
             SelectTool(i);
