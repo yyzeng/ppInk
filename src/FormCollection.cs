@@ -943,8 +943,11 @@ namespace gInk
             Root.CursorY0 = e.Y;
             if (MagnEffect)
                 MagneticEffect(Root.CursorX0-1, Root.CursorY0, ref Root.CursorX0, ref Root.CursorY0);
-            Root.CursorX = Root.CursorX0;
-            Root.CursorY = Root.CursorY0;
+            if (Root.InkVisible)
+            {
+                Root.CursorX = Root.CursorX0;
+                Root.CursorY = Root.CursorY0;
+            }
 
             if (Root.ToolSelected == 10) // Move
             {
