@@ -102,6 +102,17 @@ namespace gInk
 		public Hotkey Hotkey_Snap = new Hotkey();
 		public Hotkey Hotkey_Clear = new Hotkey();
 
+        public Hotkey Hotkey_Hand = new Hotkey();
+        public Hotkey Hotkey_Line = new Hotkey();
+        public Hotkey Hotkey_Rect = new Hotkey();
+        public Hotkey Hotkey_Oval = new Hotkey();
+        public Hotkey Hotkey_Arrow = new Hotkey();
+        public Hotkey Hotkey_Numb = new Hotkey();
+        public Hotkey Hotkey_Text = new Hotkey();
+        public Hotkey Hotkey_Edit = new Hotkey();
+        public Hotkey Hotkey_Move = new Hotkey();
+        public Hotkey Hotkey_Magnet = new Hotkey();
+
         public int ToolSelected = 0;        // indicates which tool (Hand,Line,...) is currently selected
         public int FilledSelected = 0;      // indicates which filling (None, Selected color, ...) is currently select
         public bool EraserMode = false;
@@ -641,6 +652,36 @@ namespace gInk
 						case "HOTKEY_CLEAR":
 							Hotkey_Clear.Parse(sPara);
 							break;
+                        case "HOTKEY_HAND":
+                            Hotkey_Hand.Parse(sPara);
+                            break;
+                        case "HOTKEY_LINE":
+                            Hotkey_Line.Parse(sPara);
+                            break;
+                        case "HOTKEY_RECT":
+                            Hotkey_Rect.Parse(sPara);
+                            break;
+                        case "HOTKEY_OVAL":
+                            Hotkey_Oval.Parse(sPara);
+                            break;
+                        case "HOTKEY_ARROW":
+                            Hotkey_Arrow.Parse(sPara);
+                            break;
+                        case "HOTKEY_TEXT":
+                            Hotkey_Text.Parse(sPara);
+                            break;
+                        case "HOTKEY_NUMBCHIP":
+                            Hotkey_Numb.Parse(sPara);
+                            break;
+                        case "HOTKEY_EDIT":
+                            Hotkey_Edit.Parse(sPara);
+                            break;
+                        case "HOTKEY_MOVE":
+                            Hotkey_Move.Parse(sPara);
+                            break;
+                        case "HOTKEY_MAGNET":
+                            Hotkey_Magnet.Parse(sPara);
+                            break;
 
 						case "WHITE_TRAY_ICON":
 							if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
@@ -881,8 +922,38 @@ namespace gInk
 						case "HOTKEY_CLEAR":
 							sPara = Hotkey_Clear.ToString();
 							break;
+                        case "HOTKEY_HAND":
+                            sPara = Hotkey_Hand.ToString();
+                            break;
+                        case "HOTKEY_LINE":
+                            sPara = Hotkey_Line.ToString();
+                            break;
+                        case "HOTKEY_RECT":
+                            sPara = Hotkey_Rect.ToString();
+                            break;
+                        case "HOTKEY_OVAL":
+                            sPara = Hotkey_Oval.ToString();
+                            break;
+                        case "HOTKEY_ARROW":
+                            sPara = Hotkey_Arrow.ToString();
+                            break;
+                        case "HOTKEY_TEXT":
+                            sPara = Hotkey_Text.ToString();
+                            break;
+                        case "HOTKEY_NUMBCHIP":
+                            sPara = Hotkey_Numb.ToString();
+                            break;
+                        case "HOTKEY_EDIT":
+                            sPara = Hotkey_Edit.ToString();
+                            break;
+                        case "HOTKEY_MOVE":
+                            sPara = Hotkey_Move.ToString();
+                            break;
+                        case "HOTKEY_MAGNET":
+                            sPara = Hotkey_Magnet.ToString();
+                            break;
 
-						case "WHITE_TRAY_ICON":
+                        case "WHITE_TRAY_ICON":
 							if (WhiteTrayIcon)
 								sPara = "True";
 							else

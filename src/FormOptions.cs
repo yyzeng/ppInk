@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -49,8 +49,10 @@ namespace gInk
 				cbPanEnabled.Checked = true;
 			if (Root.InkVisibleEnabled)
 				cbInkVisibleEnabled.Checked = true;
+            if (Root.ToolsEnabled)
+                cbToolsEnabled.Checked = true;
 
-			if (Root.WhiteTrayIcon)
+            if (Root.WhiteTrayIcon)
 				cbWhiteIcon.Checked = true;
 			if (Root.AllowDraggingToolbar)
 				cbAllowDragging.Checked = true;
@@ -166,7 +168,18 @@ namespace gInk
 			hiRedo.Hotkey = Root.Hotkey_Redo;
 			hiClear.Hotkey = Root.Hotkey_Clear;
 
-			FormOptions_LocalReload();
+            hiToolHand.Hotkey = Root.Hotkey_Hand;
+            hiToolLine.Hotkey = Root.Hotkey_Line;
+            hiToolRect.Hotkey = Root.Hotkey_Rect;
+            hiToolOval.Hotkey = Root.Hotkey_Oval;
+            hiToolArrow.Hotkey = Root.Hotkey_Arrow;
+            hiToolNumb.Hotkey = Root.Hotkey_Numb;
+            HiToolText.Hotkey = Root.Hotkey_Text;
+            hiToolEdit.Hotkey = Root.Hotkey_Edit;
+            hiToolMagnet.Hotkey = Root.Hotkey_Magnet;
+
+
+            FormOptions_LocalReload();
 		}
 
 		private void FormOptions_LocalReload()
@@ -395,7 +408,12 @@ namespace gInk
 			Root.AllowDraggingToolbar = cbAllowDragging.Checked;
 		}
 
-		private void cbAllowHotkeyInPointer_CheckedChanged(object sender, EventArgs e)
+        private void cbToolsEnabled_CheckedChanged(object sender, EventArgs e)
+        {
+            Root.ToolsEnabled = cbToolsEnabled.Checked;
+        }
+            
+        private void cbAllowHotkeyInPointer_CheckedChanged(object sender, EventArgs e)
 		{
 			Root.AllowHotkeyInPointerMode = cbAllowHotkeyInPointer.Checked;
 		}

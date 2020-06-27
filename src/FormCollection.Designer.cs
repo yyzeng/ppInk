@@ -140,10 +140,6 @@ namespace gInk
             this.btMagn.FlatAppearance.MouseOverBackColor = System.Drawing.Color.WhiteSmoke;
             this.btMagn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btMagn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            if(MagnEffect)
-                this.btMagn.BackgroundImage = global::gInk.Properties.Resources.Magnetic_act;
-            else
-                this.btMagn.BackgroundImage = global::gInk.Properties.Resources.Magnetic;
             this.btMagn.Location = new System.Drawing.Point(978, 4);
             this.btMagn.Name = "btMagn";
             this.btMagn.Size = new System.Drawing.Size(69, 69);

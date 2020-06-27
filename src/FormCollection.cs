@@ -55,6 +55,10 @@ namespace gInk
 			Root = root;
             MagnEffect = Root.DefaultMagnetActive;
             InitializeComponent();
+            if (MagnEffect)
+                this.btMagn.BackgroundImage = global::gInk.Properties.Resources.Magnetic_act;
+            else
+                this.btMagn.BackgroundImage = global::gInk.Properties.Resources.Magnetic;
 
             SelectTool(0,0); // Select Hand Drawing by Default
             PrimaryLeft = Screen.PrimaryScreen.Bounds.Left - SystemInformation.VirtualScreen.Left;
@@ -1488,8 +1492,18 @@ namespace gInk
 		bool LastRedoStatus = false;
 		bool LastSnapStatus = false;
 		bool LastClearStatus = false;
+        bool LastHandStatus = false;
+        bool LastLineStatus = false;
+        bool LastRectStatus = false;
+        bool LastOvalStatus = false;
+        bool LastArrowStatus = false;
+        bool LastNumbStatus = false;
+        bool LastTextStatus = false;
+        bool LastEditStatus = false;
+        bool LastMoveStatus = false;
+        bool LastMagnetStatus = false;
 
-		private void gpPenWidth_MouseDown(object sender, MouseEventArgs e)
+        private void gpPenWidth_MouseDown(object sender, MouseEventArgs e)
 		{
 			gpPenWidth_MouseOn = true;
 		}
@@ -1793,8 +1807,8 @@ namespace gInk
 				pressed = (GetKeyState(Root.Hotkey_Pan.Key) & 0x8000) == 0x8000;
 				if (pressed && !LastPanStatus && Root.Hotkey_Pan.ModifierMatch(control, alt, shift, win))
 				{
-					SelectPen(-3);
-				}
+                    btPan_Click(null, null);//SelectPen(-3);
+                }
 				LastPanStatus = pressed;
 
 				pressed = (GetKeyState(Root.Hotkey_Clear.Key) & 0x8000) == 0x8000;
@@ -1807,12 +1821,83 @@ namespace gInk
 				pressed = (GetKeyState(Root.Hotkey_Snap.Key) & 0x8000) == 0x8000;
 				if (pressed && !LastSnapStatus && Root.Hotkey_Snap.ModifierMatch(control, alt, shift, win))
 				{
-					btSnap_Click(null, null);
+                    btSnap_Click(null, null);
 				}
 				LastSnapStatus = pressed;
-			}
 
-			if (Root.Snapping < 0)
+                pressed = (GetKeyState(Root.Hotkey_Hand.Key) & 0x8000) == 0x8000;
+                if (pressed && !LastHandStatus && Root.Hotkey_Hand.ModifierMatch(control, alt, shift, win))
+                {
+                    btTool_Click(btHand,null);
+                }
+                LastHandStatus= pressed;
+
+                pressed = (GetKeyState(Root.Hotkey_Line.Key) & 0x8000) == 0x8000;
+                if (pressed && !LastLineStatus && Root.Hotkey_Line.ModifierMatch(control, alt, shift, win))
+                {
+                    btTool_Click(btLine, null);
+                }
+                LastLineStatus = pressed;
+
+                pressed = (GetKeyState(Root.Hotkey_Rect.Key) & 0x8000) == 0x8000;
+                if (pressed && !LastRectStatus && Root.Hotkey_Rect.ModifierMatch(control, alt, shift, win))
+                {
+                    btTool_Click(btRect, null);
+                }
+                LastRectStatus = pressed;
+
+                pressed = (GetKeyState(Root.Hotkey_Oval.Key) & 0x8000) == 0x8000;
+                if (pressed && !LastOvalStatus && Root.Hotkey_Oval.ModifierMatch(control, alt, shift, win))
+                {
+                    btTool_Click(btOval, null);
+                }
+                LastOvalStatus = pressed;
+
+                pressed = (GetKeyState(Root.Hotkey_Arrow.Key) & 0x8000) == 0x8000;
+                if (pressed && !LastArrowStatus && Root.Hotkey_Arrow.ModifierMatch(control, alt, shift, win))
+                {
+                    btTool_Click(btArrow, null);
+                }
+                LastArrowStatus = pressed;
+
+                pressed = (GetKeyState(Root.Hotkey_Numb.Key) & 0x8000) == 0x8000;
+                if (pressed && !LastNumbStatus && Root.Hotkey_Numb.ModifierMatch(control, alt, shift, win))
+                {
+                    btTool_Click(btNumb, null);
+                }
+                LastNumbStatus = pressed;
+
+                pressed = (GetKeyState(Root.Hotkey_Text.Key) & 0x8000) == 0x8000;
+                if (pressed && !LastTextStatus && Root.Hotkey_Text.ModifierMatch(control, alt, shift, win))
+                {
+                    btTool_Click(btText, null);
+                }
+                LastTextStatus = pressed;
+
+                pressed = (GetKeyState(Root.Hotkey_Edit.Key) & 0x8000) == 0x8000;
+                if (pressed && !LastEditStatus && Root.Hotkey_Edit.ModifierMatch(control, alt, shift, win))
+                {
+                    btTool_Click(btEdit, null);
+                }
+                LastEditStatus = pressed;
+
+                pressed = (GetKeyState(Root.Hotkey_Move.Key) & 0x8000) == 0x8000;
+                if (pressed && !LastMoveStatus && Root.Hotkey_Move.ModifierMatch(control, alt, shift, win))
+                {
+                    btPan_Click(null, null);
+                }
+                LastMoveStatus = pressed;
+
+                pressed = (GetKeyState(Root.Hotkey_Magnet.Key) & 0x8000) == 0x8000;
+                if (pressed && !LastMagnetStatus && Root.Hotkey_Magnet.ModifierMatch(control, alt, shift, win))
+                {
+                    btMagn_Click(null,null);
+                }
+                LastMagnetStatus = pressed;
+                
+            }
+
+            if (Root.Snapping < 0)
 				Root.Snapping++;
 		}
 
