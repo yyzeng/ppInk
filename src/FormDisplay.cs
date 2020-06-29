@@ -42,7 +42,8 @@ namespace gInk
 			{
 				CreateParams cp = base.CreateParams;
 				// turn on WS_EX_TOOLWINDOW style bit
-				cp.ExStyle |= 0x80;
+				if (globalRoot.HideInAltTab)
+                    cp.ExStyle |= 0x80;
 				return cp;
 			}
 		}

@@ -34,6 +34,10 @@ namespace gInk
 		}
 	}
 
+    public static class globalRoot {
+        public static bool HideInAltTab=true;
+    };
+
 	public class Root
 	{
 		public Local Local = new Local();
@@ -689,7 +693,13 @@ namespace gInk
 							else
 								WhiteTrayIcon = false;
 							break;
-						case "SNAPSHOT_PATH":
+                        case "HIDE_IN_ALTTAB":
+                            if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
+                                globalRoot.HideInAltTab = true;
+                            else
+                                globalRoot.HideInAltTab = false;
+                            break;
+                        case "SNAPSHOT_PATH":
 							SnapshotBasePath = sPara;
 							if (!SnapshotBasePath.EndsWith("/") && !SnapshotBasePath.EndsWith("\\"))
 								SnapshotBasePath += "/";
@@ -959,7 +969,13 @@ namespace gInk
 							else
 								sPara = "False";
 							break;
-						case "SNAPSHOT_PATH":
+                        case "HIDE_IN_ALTTAB":
+                            if (WhiteTrayIcon)
+                                sPara = "True";
+                            else
+                                sPara = "False";
+                            break;
+                        case "SNAPSHOT_PATH":
 							sPara = SnapshotBasePath;
 							break;
                         case "DRAWING_ICON":
