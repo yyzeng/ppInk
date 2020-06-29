@@ -183,7 +183,12 @@ namespace gInk
 		}
 
 		private void FormOptions_LocalReload()
-		{
+		{   string shortTxt(string sin)
+            {
+                int i = sin.IndexOf("(");
+                if (i < 0) i = sin.Length;
+                return sin.Substring(0, i);
+            }
 			this.Text = Root.Local.MenuEntryOptions + " - gInk";
 			tabControl1.TabPages[0].Text = Root.Local.OptionsTabGeneral;
 			tabControl1.TabPages[1].Text = Root.Local.OptionsTabPens;
@@ -195,16 +200,26 @@ namespace gInk
 			this.cbAllowDragging.Text = Root.Local.OptionsGeneralAllowdragging;
 			this.lbNote.Text = Root.Local.OptionsGeneralNotePenwidth;
 
-			this.lbHkClear.Text = Root.Local.ButtonNameClear;
-			this.lbHkEraser.Text = Root.Local.ButtonNameErasor;
-			this.lbHkInkVisible.Text = Root.Local.ButtonNameInkVisible;
-			this.lbHkPan.Text = Root.Local.ButtonNamePan;
-			this.lbHkPointer.Text = Root.Local.ButtonNameMousePointer;
-			this.lbHkRedo.Text = Root.Local.ButtonNameRedo;
-			this.lbHkSnapshot.Text = Root.Local.ButtonNameSnapshot;
-			this.lbHkUndo.Text = Root.Local.ButtonNameUndo;
-			this.lbGlobalHotkey.Text = Root.Local.OptionsHotkeysglobal;
-			this.cbAllowHotkeyInPointer.Text = Root.Local.OptionsHotkeysEnableinpointer;
+			this.lbHkClear.Text = shortTxt(Root.Local.ButtonNameClear);
+			this.lbHkEraser.Text = shortTxt(Root.Local.ButtonNameErasor);
+			this.lbHkInkVisible.Text = shortTxt(Root.Local.ButtonNameInkVisible);
+			this.lbHkPan.Text = shortTxt(Root.Local.ButtonNamePan);
+			this.lbHkPointer.Text = shortTxt(Root.Local.ButtonNameMousePointer);
+			this.lbHkRedo.Text = shortTxt(Root.Local.ButtonNameRedo);
+			this.lbHkSnapshot.Text = shortTxt(Root.Local.ButtonNameSnapshot);
+			this.lbHkUndo.Text = shortTxt(Root.Local.ButtonNameUndo);
+            this.lbHkHand.Text = shortTxt(Root.Local.ButtonNameHand);
+            this.lbHkLine.Text = shortTxt(Root.Local.ButtonNameLine);
+            this.lbHkRect.Text = shortTxt(Root.Local.ButtonNameRect);
+            this.lbHkOval.Text = shortTxt(Root.Local.ButtonNameOval);
+            this.lbHkArrow.Text = shortTxt(Root.Local.ButtonNameArrow);
+            this.lbHkNumb.Text = shortTxt(Root.Local.ButtonNameNumb);
+            this.lbHkText.Text = shortTxt(Root.Local.ButtonNameText);
+            this.lbHkEdit.Text = shortTxt(Root.Local.ButtonNameEdit);
+            this.lbHkMagn.Text = shortTxt(Root.Local.ButtonNameMagn);
+
+            this.lbGlobalHotkey.Text = Root.Local.OptionsHotkeysglobal;
+            this.cbAllowHotkeyInPointer.Text = Root.Local.OptionsHotkeysEnableinpointer;
 
 			this.comboCanvasCursor.Items[0] = Root.Local.OptionsGeneralCanvascursorArrow;
 			this.comboCanvasCursor.Items[1] = Root.Local.OptionsGeneralCanvascursorPentip;

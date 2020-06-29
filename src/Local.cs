@@ -16,7 +16,7 @@ namespace gInk
 
 		public string ButtonNamePenwidth = "Pen width";
 		public string ButtonNameErasor = "Eraser";
-		public string ButtonNamePan = "Pan";
+		public string ButtonNamePan = "move one drawing | Pan all drawings";
 		public string ButtonNameMousePointer = "Mouse pointer";
 		public string ButtonNameInkVisible = "Ink visible";
 		public string ButtonNameSnapshot = "Snapshot";
@@ -25,8 +25,25 @@ namespace gInk
 		public string ButtonNameClear = "Clear";
 		public string ButtonNameExit = "Exit drawing";
 		public string ButtonNameDock = "Dock";
+        public string ButtonNameHand = "Handfree drawing (standard | color filled | White filled | Black filled)";
+        public string ButtonNameLine = "Line Shape";
+        public string ButtonNameRect = "Rectangle shape (empty | color filled | White filled | Black filled)";
+        public string ButtonNameOval = "Ellipsis shape (empty | color filled | White filled | Black filled)";
+        public string ButtonNameArrow = "Arrow shape (head at start | at end)";
+        public string ButtonNameNumb = "Numbered chip (put | reset number)";
+        public string ButtonNameText = "Text (Left|Right aligned)";
+        public string ButtonNameEdit = "Edit Text|chip";
+        public string ButtonNameMagn = "Magnetic Effect";
 
-		public string MenuEntryExit = "Exit";
+        public string ButtonOkText = "&OK";
+        public string ButtonCancelText = "&Cancel";
+        public string ButtonFontText = "&Font";
+        public string DlgTextCaption = "Edit Text";
+        public string DlgTextLabel = "Text Input";
+        public string DlgTagCaption = "Tag Numbering";
+        public string DlgTagLabel = "Enter Starting Number";
+
+        public string MenuEntryExit = "Exit";
 		public string MenuEntryOptions = "Options";
 		public string MenuEntryAbout = "About";
 

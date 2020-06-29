@@ -1,4 +1,4 @@
-﻿namespace gInk
+namespace gInk
 {
     partial class FormInput
     {

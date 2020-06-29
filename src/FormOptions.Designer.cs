@@ -74,23 +74,23 @@
             this.cbAllowDragging = new System.Windows.Forms.CheckBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.label9 = new System.Windows.Forms.Label();
+            this.lbHkMagn = new System.Windows.Forms.Label();
             this.hiToolMagnet = new gInk.HotkeyInputBox();
-            this.label8 = new System.Windows.Forms.Label();
+            this.lbHkEdit = new System.Windows.Forms.Label();
             this.hiToolEdit = new gInk.HotkeyInputBox();
-            this.label7 = new System.Windows.Forms.Label();
+            this.lbHkText = new System.Windows.Forms.Label();
             this.HiToolText = new gInk.HotkeyInputBox();
-            this.label6 = new System.Windows.Forms.Label();
+            this.lbHkNumb = new System.Windows.Forms.Label();
             this.hiToolNumb = new gInk.HotkeyInputBox();
-            this.label5 = new System.Windows.Forms.Label();
+            this.lbHkArrow = new System.Windows.Forms.Label();
             this.hiToolArrow = new gInk.HotkeyInputBox();
-            this.label4 = new System.Windows.Forms.Label();
+            this.lbHkOval = new System.Windows.Forms.Label();
             this.hiToolOval = new gInk.HotkeyInputBox();
-            this.label3 = new System.Windows.Forms.Label();
+            this.lbHkRect = new System.Windows.Forms.Label();
             this.hiToolRect = new gInk.HotkeyInputBox();
-            this.label2 = new System.Windows.Forms.Label();
+            this.lbHkLine = new System.Windows.Forms.Label();
             this.hiToolLine = new gInk.HotkeyInputBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.lbHkHand = new System.Windows.Forms.Label();
             this.hiToolHand = new gInk.HotkeyInputBox();
             this.cbAllowHotkeyInPointer = new System.Windows.Forms.CheckBox();
             this.lbHkInkVisible = new System.Windows.Forms.Label();
@@ -378,23 +378,23 @@
             // tabPage3
             // 
             this.tabPage3.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.tabPage3.Controls.Add(this.label9);
+            this.tabPage3.Controls.Add(this.lbHkMagn);
             this.tabPage3.Controls.Add(this.hiToolMagnet);
-            this.tabPage3.Controls.Add(this.label8);
+            this.tabPage3.Controls.Add(this.lbHkEdit);
             this.tabPage3.Controls.Add(this.hiToolEdit);
-            this.tabPage3.Controls.Add(this.label7);
+            this.tabPage3.Controls.Add(this.lbHkText);
             this.tabPage3.Controls.Add(this.HiToolText);
-            this.tabPage3.Controls.Add(this.label6);
+            this.tabPage3.Controls.Add(this.lbHkNumb);
             this.tabPage3.Controls.Add(this.hiToolNumb);
-            this.tabPage3.Controls.Add(this.label5);
+            this.tabPage3.Controls.Add(this.lbHkArrow);
             this.tabPage3.Controls.Add(this.hiToolArrow);
-            this.tabPage3.Controls.Add(this.label4);
+            this.tabPage3.Controls.Add(this.lbHkOval);
             this.tabPage3.Controls.Add(this.hiToolOval);
-            this.tabPage3.Controls.Add(this.label3);
+            this.tabPage3.Controls.Add(this.lbHkRect);
             this.tabPage3.Controls.Add(this.hiToolRect);
-            this.tabPage3.Controls.Add(this.label2);
+            this.tabPage3.Controls.Add(this.lbHkLine);
             this.tabPage3.Controls.Add(this.hiToolLine);
-            this.tabPage3.Controls.Add(this.label1);
+            this.tabPage3.Controls.Add(this.lbHkHand);
             this.tabPage3.Controls.Add(this.hiToolHand);
             this.tabPage3.Controls.Add(this.cbAllowHotkeyInPointer);
             this.tabPage3.Controls.Add(this.lbHkInkVisible);
@@ -421,14 +421,14 @@
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Hotkeys";
             // 
-            // label9
+            // lbHkMagn
             // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(497, 336);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(78, 13);
-            this.label9.TabIndex = 35;
-            this.label9.Text = "Tool: Magnetic";
+            this.lbHkMagn.AutoSize = true;
+            this.lbHkMagn.Location = new System.Drawing.Point(497, 336);
+            this.lbHkMagn.Name = "lbHkMagn";
+            this.lbHkMagn.Size = new System.Drawing.Size(78, 13);
+            this.lbHkMagn.TabIndex = 35;
+            this.lbHkMagn.Text = "Tool: Magnetic";
             // 
             // hiToolMagnet
             // 
@@ -444,14 +444,14 @@
             this.hiToolMagnet.Text = "None";
             this.hiToolMagnet.OnHotkeyChanged += new System.EventHandler(this.hi_OnHotkeyChanged);
             // 
-            // label8
+            // lbHkEdit
             // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(497, 310);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(52, 13);
-            this.label8.TabIndex = 33;
-            this.label8.Text = "Tool: Edit";
+            this.lbHkEdit.AutoSize = true;
+            this.lbHkEdit.Location = new System.Drawing.Point(497, 310);
+            this.lbHkEdit.Name = "lbHkEdit";
+            this.lbHkEdit.Size = new System.Drawing.Size(52, 13);
+            this.lbHkEdit.TabIndex = 33;
+            this.lbHkEdit.Text = "Tool: Edit";
             // 
             // hiToolEdit
             // 
@@ -467,14 +467,14 @@
             this.hiToolEdit.Text = "None";
             this.hiToolEdit.OnHotkeyChanged += new System.EventHandler(this.hi_OnHotkeyChanged);
             // 
-            // label7
+            // lbHkText
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(497, 283);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(55, 13);
-            this.label7.TabIndex = 31;
-            this.label7.Text = "Tool: Text";
+            this.lbHkText.AutoSize = true;
+            this.lbHkText.Location = new System.Drawing.Point(497, 283);
+            this.lbHkText.Name = "lbHkText";
+            this.lbHkText.Size = new System.Drawing.Size(55, 13);
+            this.lbHkText.TabIndex = 31;
+            this.lbHkText.Text = "Tool: Text";
             // 
             // HiToolText
             // 
@@ -490,14 +490,14 @@
             this.HiToolText.Text = "None";
             this.HiToolText.OnHotkeyChanged += new System.EventHandler(this.hi_OnHotkeyChanged);
             // 
-            // label6
+            // lbHkNumb
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(497, 256);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(88, 13);
-            this.label6.TabIndex = 29;
-            this.label6.Text = "Tool: Numb. chip";
+            this.lbHkNumb.AutoSize = true;
+            this.lbHkNumb.Location = new System.Drawing.Point(497, 256);
+            this.lbHkNumb.Name = "lbHkNumb";
+            this.lbHkNumb.Size = new System.Drawing.Size(88, 13);
+            this.lbHkNumb.TabIndex = 29;
+            this.lbHkNumb.Text = "Tool: Numb. chip";
             // 
             // hiToolNumb
             // 
@@ -513,14 +513,14 @@
             this.hiToolNumb.Text = "None";
             this.hiToolNumb.OnHotkeyChanged += new System.EventHandler(this.hi_OnHotkeyChanged);
             // 
-            // label5
+            // lbHkArrow
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(497, 229);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(61, 13);
-            this.label5.TabIndex = 27;
-            this.label5.Text = "Tool: Arrow";
+            this.lbHkArrow.AutoSize = true;
+            this.lbHkArrow.Location = new System.Drawing.Point(497, 229);
+            this.lbHkArrow.Name = "lbHkArrow";
+            this.lbHkArrow.Size = new System.Drawing.Size(61, 13);
+            this.lbHkArrow.TabIndex = 27;
+            this.lbHkArrow.Text = "Tool: Arrow";
             // 
             // hiToolArrow
             // 
@@ -536,14 +536,14 @@
             this.hiToolArrow.Text = "None";
             this.hiToolArrow.OnHotkeyChanged += new System.EventHandler(this.hi_OnHotkeyChanged);
             // 
-            // label4
+            // lbHkOval
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(497, 202);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(65, 13);
-            this.label4.TabIndex = 25;
-            this.label4.Text = "Tool: Ellipsis";
+            this.lbHkOval.AutoSize = true;
+            this.lbHkOval.Location = new System.Drawing.Point(497, 202);
+            this.lbHkOval.Name = "lbHkOval";
+            this.lbHkOval.Size = new System.Drawing.Size(65, 13);
+            this.lbHkOval.TabIndex = 25;
+            this.lbHkOval.Text = "Tool: Ellipsis";
             // 
             // hiToolOval
             // 
@@ -559,14 +559,14 @@
             this.hiToolOval.Text = "None";
             this.hiToolOval.OnHotkeyChanged += new System.EventHandler(this.hi_OnHotkeyChanged);
             // 
-            // label3
+            // lbHkRect
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(497, 175);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(83, 13);
-            this.label3.TabIndex = 23;
-            this.label3.Text = "Tool: Rectangle";
+            this.lbHkRect.AutoSize = true;
+            this.lbHkRect.Location = new System.Drawing.Point(497, 175);
+            this.lbHkRect.Name = "lbHkRect";
+            this.lbHkRect.Size = new System.Drawing.Size(83, 13);
+            this.lbHkRect.TabIndex = 23;
+            this.lbHkRect.Text = "Tool: Rectangle";
             // 
             // hiToolRect
             // 
@@ -582,14 +582,14 @@
             this.hiToolRect.Text = "None";
             this.hiToolRect.OnHotkeyChanged += new System.EventHandler(this.hi_OnHotkeyChanged);
             // 
-            // label2
+            // lbHkLine
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(497, 147);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(54, 13);
-            this.label2.TabIndex = 21;
-            this.label2.Text = "Tool: Line";
+            this.lbHkLine.AutoSize = true;
+            this.lbHkLine.Location = new System.Drawing.Point(497, 147);
+            this.lbHkLine.Name = "lbHkLine";
+            this.lbHkLine.Size = new System.Drawing.Size(54, 13);
+            this.lbHkLine.TabIndex = 21;
+            this.lbHkLine.Text = "Tool: Line";
             // 
             // hiToolLine
             // 
@@ -605,14 +605,14 @@
             this.hiToolLine.Text = "None";
             this.hiToolLine.OnHotkeyChanged += new System.EventHandler(this.hi_OnHotkeyChanged);
             // 
-            // label1
+            // lbHkHand
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(497, 120);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(81, 13);
-            this.label1.TabIndex = 19;
-            this.label1.Text = "Tool: FreeHand";
+            this.lbHkHand.AutoSize = true;
+            this.lbHkHand.Location = new System.Drawing.Point(497, 120);
+            this.lbHkHand.Name = "lbHkHand";
+            this.lbHkHand.Size = new System.Drawing.Size(81, 13);
+            this.lbHkHand.TabIndex = 19;
+            this.lbHkHand.Text = "Tool: FreeHand";
             // 
             // hiToolHand
             // 
@@ -919,23 +919,23 @@
 		private System.Windows.Forms.ComboBox comboLanguage;
 		private System.Windows.Forms.Label lbLanguage;
         private System.Windows.Forms.CheckBox cbToolsEnabled;
-        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label lbHkMagn;
         private HotkeyInputBox hiToolMagnet;
-        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label lbHkEdit;
         private HotkeyInputBox hiToolEdit;
-        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label lbHkText;
         private HotkeyInputBox HiToolText;
-        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label lbHkNumb;
         private HotkeyInputBox hiToolNumb;
-        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label lbHkArrow;
         private HotkeyInputBox hiToolArrow;
-        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label lbHkOval;
         private HotkeyInputBox hiToolOval;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label lbHkRect;
         private HotkeyInputBox hiToolRect;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label lbHkLine;
         private HotkeyInputBox hiToolLine;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lbHkHand;
         private HotkeyInputBox hiToolHand;
     }
 }

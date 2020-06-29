@@ -50,9 +50,9 @@ namespace gInk
 			}
 		}
 
-		public FormCollection(Root root)
-		{
-			Root = root;
+        public FormCollection(Root root)
+        {
+            Root = root;
             MagnEffect = Root.DefaultMagnetActive;
             InitializeComponent();
             if (MagnEffect)
@@ -61,15 +61,15 @@ namespace gInk
                 this.btMagn.BackgroundImage = global::gInk.Properties.Resources.Magnetic;
 
             PrimaryLeft = Screen.PrimaryScreen.Bounds.Left - SystemInformation.VirtualScreen.Left;
-			PrimaryTop = Screen.PrimaryScreen.Bounds.Top - SystemInformation.VirtualScreen.Top;
+            PrimaryTop = Screen.PrimaryScreen.Bounds.Top - SystemInformation.VirtualScreen.Top;
 
-			gpButtons.Height = (int)(Screen.PrimaryScreen.Bounds.Height * Root.ToolbarHeight);
-			btClear.Height = (int)(gpButtons.Height * 0.85);
-			btClear.Width = btClear.Height;
-			btClear.Top = (int)(gpButtons.Height * 0.08);
-			btDock.Height = (int)(gpButtons.Height * 0.85);
-			btDock.Width = btDock.Height / 2;
-			btDock.Top = (int)(gpButtons.Height * 0.08);
+            gpButtons.Height = (int)(Screen.PrimaryScreen.Bounds.Height * Root.ToolbarHeight);
+            btClear.Height = (int)(gpButtons.Height * 0.85);
+            btClear.Width = btClear.Height;
+            btClear.Top = (int)(gpButtons.Height * 0.08);
+            btDock.Height = (int)(gpButtons.Height * 0.85);
+            btDock.Width = btDock.Height / 2;
+            btDock.Top = (int)(gpButtons.Height * 0.08);
 
             btHand.Height = (int)(gpButtons.Height * 0.48);
             btHand.Width = btHand.Height;
@@ -98,70 +98,70 @@ namespace gInk
 
 
             btEraser.Height = (int)(gpButtons.Height * 0.85);
-			btEraser.Width = btEraser.Height;
-			btEraser.Top = (int)(gpButtons.Height * 0.08);
-			btInkVisible.Height = (int)(gpButtons.Height * 0.85);
-			btInkVisible.Width = btInkVisible.Height;
-			btInkVisible.Top = (int)(gpButtons.Height * 0.08);
-			btPan.Height = (int)(gpButtons.Height * 0.85);
-			btPan.Width = btPan.Height;
-			btPan.Top = (int)(gpButtons.Height * 0.08);
+            btEraser.Width = btEraser.Height;
+            btEraser.Top = (int)(gpButtons.Height * 0.08);
+            btInkVisible.Height = (int)(gpButtons.Height * 0.85);
+            btInkVisible.Width = btInkVisible.Height;
+            btInkVisible.Top = (int)(gpButtons.Height * 0.08);
+            btPan.Height = (int)(gpButtons.Height * 0.85);
+            btPan.Width = btPan.Height;
+            btPan.Top = (int)(gpButtons.Height * 0.08);
             btMagn.Height = (int)(gpButtons.Height * 0.85);
             btMagn.Width = btMagn.Height;
             btMagn.Top = (int)(gpButtons.Height * 0.08);
             btPointer.Height = (int)(gpButtons.Height * 0.85);
-			btPointer.Width = btPointer.Height;
-			btPointer.Top = (int)(gpButtons.Height * 0.08);
-			btSnap.Height = (int)(gpButtons.Height * 0.85);
-			btSnap.Width = btSnap.Height;
-			btSnap.Top = (int)(gpButtons.Height * 0.08);
-			btStop.Height = (int)(gpButtons.Height * 0.85);
-			btStop.Width = btStop.Height;
-			btStop.Top = (int)(gpButtons.Height * 0.08);
-			btUndo.Height = (int)(gpButtons.Height * 0.85);
-			btUndo.Width = btUndo.Height;
-			btUndo.Top = (int)(gpButtons.Height * 0.08);
+            btPointer.Width = btPointer.Height;
+            btPointer.Top = (int)(gpButtons.Height * 0.08);
+            btSnap.Height = (int)(gpButtons.Height * 0.85);
+            btSnap.Width = btSnap.Height;
+            btSnap.Top = (int)(gpButtons.Height * 0.08);
+            btStop.Height = (int)(gpButtons.Height * 0.85);
+            btStop.Width = btStop.Height;
+            btStop.Top = (int)(gpButtons.Height * 0.08);
+            btUndo.Height = (int)(gpButtons.Height * 0.85);
+            btUndo.Width = btUndo.Height;
+            btUndo.Top = (int)(gpButtons.Height * 0.08);
 
-			btPen = new Button[Root.MaxPenCount];
+            btPen = new Button[Root.MaxPenCount];
 
-			int cumulatedleft = (int)(btDock.Width * 2.5);
-			for (int b = 0; b < Root.MaxPenCount; b++)
-			{
-				btPen[b] = new Button();
-				btPen[b].Width = (int)(gpButtons.Height * 0.85);
-				btPen[b].Height = (int)(gpButtons.Height * 0.85);
-				btPen[b].Top = (int)(gpButtons.Height * 0.08);
-				btPen[b].FlatAppearance.BorderColor = System.Drawing.Color.WhiteSmoke;
-				btPen[b].FlatAppearance.BorderSize = 3;
-				btPen[b].FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(250, 50, 50);
-				btPen[b].FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-				btPen[b].ForeColor = System.Drawing.Color.Transparent;
-				//btPen[b].Name = "btPen" + b.ToString();
-				btPen[b].UseVisualStyleBackColor = false;
-				btPen[b].Click += new System.EventHandler(this.btColor_Click);
-				btPen[b].BackColor = Root.PenAttr[b].Color;
-				btPen[b].FlatAppearance.MouseDownBackColor = Root.PenAttr[b].Color;
-				btPen[b].FlatAppearance.MouseOverBackColor = Root.PenAttr[b].Color;
+            int cumulatedleft = (int)(btDock.Width * 2.5);
+            for (int b = 0; b < Root.MaxPenCount; b++)
+            {
+                btPen[b] = new Button();
+                btPen[b].Width = (int)(gpButtons.Height * 0.85);
+                btPen[b].Height = (int)(gpButtons.Height * 0.85);
+                btPen[b].Top = (int)(gpButtons.Height * 0.08);
+                btPen[b].FlatAppearance.BorderColor = System.Drawing.Color.WhiteSmoke;
+                btPen[b].FlatAppearance.BorderSize = 3;
+                btPen[b].FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(250, 50, 50);
+                btPen[b].FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+                btPen[b].ForeColor = System.Drawing.Color.Transparent;
+                //btPen[b].Name = "btPen" + b.ToString();
+                btPen[b].UseVisualStyleBackColor = false;
+                btPen[b].Click += new System.EventHandler(this.btColor_Click);
+                btPen[b].BackColor = Root.PenAttr[b].Color;
+                btPen[b].FlatAppearance.MouseDownBackColor = Root.PenAttr[b].Color;
+                btPen[b].FlatAppearance.MouseOverBackColor = Root.PenAttr[b].Color;
 
-				this.toolTip.SetToolTip(this.btPen[b], Root.Local.ButtonNamePen[b]);
+                this.toolTip.SetToolTip(this.btPen[b], Root.Local.ButtonNamePen[b]);
 
-				btPen[b].MouseDown += gpButtons_MouseDown;
-				btPen[b].MouseMove += gpButtons_MouseMove;
-				btPen[b].MouseUp += gpButtons_MouseUp;
+                btPen[b].MouseDown += gpButtons_MouseDown;
+                btPen[b].MouseMove += gpButtons_MouseMove;
+                btPen[b].MouseUp += gpButtons_MouseUp;
 
-				gpButtons.Controls.Add(btPen[b]);
+                gpButtons.Controls.Add(btPen[b]);
 
-				if (Root.PenEnabled[b])
-				{
-					btPen[b].Visible = true;
-					btPen[b].Left = cumulatedleft;
-					cumulatedleft += (int)(btPen[b].Width * 1.1);
-				}
-				else
-				{
-					btPen[b].Visible = false;
-				}
-			}
+                if (Root.PenEnabled[b])
+                {
+                    btPen[b].Visible = true;
+                    btPen[b].Left = cumulatedleft;
+                    cumulatedleft += (int)(btPen[b].Width * 1.1);
+                }
+                else
+                {
+                    btPen[b].Visible = false;
+                }
+            }
             cumulatedleft += (int)(btDock.Width * 0.2);
             if (Root.ToolsEnabled)
             {
@@ -199,26 +199,26 @@ namespace gInk
             }
 
             cumulatedleft += (int)(btDock.Width * 0.5);
-			if (Root.EraserEnabled)
-			{
-				btEraser.Visible = true;
-				btEraser.Left = cumulatedleft;
-				cumulatedleft += (int)(btEraser.Width * 1.1);
-			}
-			else
-			{
-				btEraser.Visible = false;
-			}
-			if (Root.PanEnabled)
-			{
-				btPan.Visible = true;
-				btPan.Left = cumulatedleft;
-				cumulatedleft += (int)(btPan.Width * 1.1);
-			}
-			else
-			{
-				btPan.Visible = false;
-			}
+            if (Root.EraserEnabled)
+            {
+                btEraser.Visible = true;
+                btEraser.Left = cumulatedleft;
+                cumulatedleft += (int)(btEraser.Width * 1.1);
+            }
+            else
+            {
+                btEraser.Visible = false;
+            }
+            if (Root.PanEnabled)
+            {
+                btPan.Visible = true;
+                btPan.Left = cumulatedleft;
+                cumulatedleft += (int)(btPan.Width * 1.1);
+            }
+            else
+            {
+                btPan.Visible = false;
+            }
             if (Root.ToolsEnabled)
             {
                 btMagn.Visible = true;
@@ -230,261 +230,270 @@ namespace gInk
                 btMagn.Visible = false;
             }
             if (Root.PointerEnabled)
-			{
-				btPointer.Visible = true;
-				btPointer.Left = cumulatedleft;
-				cumulatedleft += (int)(btPointer.Width * 1.1);
-			}
-			else
-			{
-				btPointer.Visible = false;
-			}
-			cumulatedleft += (int)(btDock.Width * 1.5);
-			if (Root.PenWidthEnabled)
-			{
-				btPenWidth.Visible = true;
-				btPenWidth.Left = cumulatedleft;
-				cumulatedleft += (int)(btPenWidth.Width * 1.1);
-			}
-			else
-			{
-				btPenWidth.Visible = false;
-			}
-			if (Root.InkVisibleEnabled)
-			{
-				btInkVisible.Visible = true;
-				btInkVisible.Left = cumulatedleft;
-				cumulatedleft += (int)(btInkVisible.Width * 1.1);
-			}
-			else
-			{
-				btInkVisible.Visible = false;
-			}
-			if (Root.SnapEnabled)
-			{
-				btSnap.Visible = true;
-				btSnap.Left = cumulatedleft;
-				cumulatedleft += (int)(btSnap.Width * 1.1);
-			}
-			else
-			{
-				btSnap.Visible = false;
-			}
-			if (Root.UndoEnabled)
-			{
-				btUndo.Visible = true;
-				btUndo.Left = cumulatedleft;
-				cumulatedleft += (int)(btUndo.Width * 1.1);
-			}
-			else
-			{
-				btUndo.Visible = false;
-			}
-			if (Root.ClearEnabled)
-			{
-				btClear.Visible = true;
-				btClear.Left = cumulatedleft;
-				cumulatedleft += (int)(btClear.Width * 1.1);
-			}
-			else
-			{
-				btClear.Visible = false;
-			}
-			cumulatedleft += (int)(btDock.Width * 1.5);
-			btStop.Left = cumulatedleft;
-			gpButtons.Width = btStop.Right + btDock.Width;
-			
+            {
+                btPointer.Visible = true;
+                btPointer.Left = cumulatedleft;
+                cumulatedleft += (int)(btPointer.Width * 1.1);
+            }
+            else
+            {
+                btPointer.Visible = false;
+            }
+            cumulatedleft += (int)(btDock.Width * 1.5);
+            if (Root.PenWidthEnabled)
+            {
+                btPenWidth.Visible = true;
+                btPenWidth.Left = cumulatedleft;
+                cumulatedleft += (int)(btPenWidth.Width * 1.1);
+            }
+            else
+            {
+                btPenWidth.Visible = false;
+            }
+            if (Root.InkVisibleEnabled)
+            {
+                btInkVisible.Visible = true;
+                btInkVisible.Left = cumulatedleft;
+                cumulatedleft += (int)(btInkVisible.Width * 1.1);
+            }
+            else
+            {
+                btInkVisible.Visible = false;
+            }
+            if (Root.SnapEnabled)
+            {
+                btSnap.Visible = true;
+                btSnap.Left = cumulatedleft;
+                cumulatedleft += (int)(btSnap.Width * 1.1);
+            }
+            else
+            {
+                btSnap.Visible = false;
+            }
+            if (Root.UndoEnabled)
+            {
+                btUndo.Visible = true;
+                btUndo.Left = cumulatedleft;
+                cumulatedleft += (int)(btUndo.Width * 1.1);
+            }
+            else
+            {
+                btUndo.Visible = false;
+            }
+            if (Root.ClearEnabled)
+            {
+                btClear.Visible = true;
+                btClear.Left = cumulatedleft;
+                cumulatedleft += (int)(btClear.Width * 1.1);
+            }
+            else
+            {
+                btClear.Visible = false;
+            }
+            cumulatedleft += (int)(btDock.Width * 1.5);
+            btStop.Left = cumulatedleft;
+            gpButtons.Width = btStop.Right + btDock.Width;
 
-			this.Left = SystemInformation.VirtualScreen.Left;
-			this.Top = SystemInformation.VirtualScreen.Top;
-			//int targetbottom = 0;
-			//foreach (Screen screen in Screen.AllScreens)
-			//{
-			//	if (screen.WorkingArea.Bottom > targetbottom)
-			//		targetbottom = screen.WorkingArea.Bottom;
-			//}
-			//int virwidth = SystemInformation.VirtualScreen.Width;
-			//this.Width = virwidth;
-			//this.Height = targetbottom - this.Top;
-			this.Width = SystemInformation.VirtualScreen.Width;
-			this.Height = SystemInformation.VirtualScreen.Height - 2;
-			this.DoubleBuffered = true;
 
-			gpButtonsWidth = gpButtons.Width;
-			gpButtonsHeight = gpButtons.Height;
-			if (true || Root.AllowDraggingToolbar)
-			{
-				gpButtonsLeft = Root.gpButtonsLeft;
-				gpButtonsTop = Root.gpButtonsTop;
-				if
-				(
-					!(IsInsideVisibleScreen(gpButtonsLeft, gpButtonsTop) &&
-					IsInsideVisibleScreen(gpButtonsLeft + gpButtonsWidth, gpButtonsTop) &&
-					IsInsideVisibleScreen(gpButtonsLeft, gpButtonsTop + gpButtonsHeight) &&
-					IsInsideVisibleScreen(gpButtonsLeft + gpButtonsWidth, gpButtonsTop + gpButtonsHeight))
-					||
-					(gpButtonsLeft == 0 && gpButtonsTop == 0)
-				)
-				{
-					gpButtonsLeft = Screen.PrimaryScreen.WorkingArea.Right - gpButtons.Width + PrimaryLeft;
-					gpButtonsTop = Screen.PrimaryScreen.WorkingArea.Bottom - gpButtons.Height - 15 + PrimaryTop;
-				}
-			}
-			else
-			{
-				gpButtonsLeft = Screen.PrimaryScreen.WorkingArea.Right - gpButtons.Width + PrimaryLeft;
-				gpButtonsTop = Screen.PrimaryScreen.WorkingArea.Bottom - gpButtons.Height - 15 + PrimaryTop;
-			}
+            this.Left = SystemInformation.VirtualScreen.Left;
+            this.Top = SystemInformation.VirtualScreen.Top;
+            //int targetbottom = 0;
+            //foreach (Screen screen in Screen.AllScreens)
+            //{
+            //	if (screen.WorkingArea.Bottom > targetbottom)
+            //		targetbottom = screen.WorkingArea.Bottom;
+            //}
+            //int virwidth = SystemInformation.VirtualScreen.Width;
+            //this.Width = virwidth;
+            //this.Height = targetbottom - this.Top;
+            this.Width = SystemInformation.VirtualScreen.Width;
+            this.Height = SystemInformation.VirtualScreen.Height - 2;
+            this.DoubleBuffered = true;
 
-			gpButtons.Left = gpButtonsLeft + gpButtons.Width;
-			gpButtons.Top = gpButtonsTop;
-			gpPenWidth.Left = gpButtonsLeft + btPenWidth.Left - gpPenWidth.Width / 2 + btPenWidth.Width / 2;
-			gpPenWidth.Top = gpButtonsTop - gpPenWidth.Height - 10;
+            gpButtonsWidth = gpButtons.Width;
+            gpButtonsHeight = gpButtons.Height;
+            if (true || Root.AllowDraggingToolbar)
+            {
+                gpButtonsLeft = Root.gpButtonsLeft;
+                gpButtonsTop = Root.gpButtonsTop;
+                if
+                (
+                    !(IsInsideVisibleScreen(gpButtonsLeft, gpButtonsTop) &&
+                    IsInsideVisibleScreen(gpButtonsLeft + gpButtonsWidth, gpButtonsTop) &&
+                    IsInsideVisibleScreen(gpButtonsLeft, gpButtonsTop + gpButtonsHeight) &&
+                    IsInsideVisibleScreen(gpButtonsLeft + gpButtonsWidth, gpButtonsTop + gpButtonsHeight))
+                    ||
+                    (gpButtonsLeft == 0 && gpButtonsTop == 0)
+                )
+                {
+                    gpButtonsLeft = Screen.PrimaryScreen.WorkingArea.Right - gpButtons.Width + PrimaryLeft;
+                    gpButtonsTop = Screen.PrimaryScreen.WorkingArea.Bottom - gpButtons.Height - 15 + PrimaryTop;
+                }
+            }
+            else
+            {
+                gpButtonsLeft = Screen.PrimaryScreen.WorkingArea.Right - gpButtons.Width + PrimaryLeft;
+                gpButtonsTop = Screen.PrimaryScreen.WorkingArea.Bottom - gpButtons.Height - 15 + PrimaryTop;
+            }
 
-			pboxPenWidthIndicator.Top = 0;
-			pboxPenWidthIndicator.Left = (int)Math.Sqrt(Root.GlobalPenWidth * 30);
-			gpPenWidth.Controls.Add(pboxPenWidthIndicator);
+            gpButtons.Left = gpButtonsLeft + gpButtons.Width;
+            gpButtons.Top = gpButtonsTop;
+            gpPenWidth.Left = gpButtonsLeft + btPenWidth.Left - gpPenWidth.Width / 2 + btPenWidth.Width / 2;
+            gpPenWidth.Top = gpButtonsTop - gpPenWidth.Height - 10;
+
+            pboxPenWidthIndicator.Top = 0;
+            pboxPenWidthIndicator.Left = (int)Math.Sqrt(Root.GlobalPenWidth * 30);
+            gpPenWidth.Controls.Add(pboxPenWidthIndicator);
 
             IC = new InkOverlay(this.Handle);
-			IC.CollectionMode = CollectionMode.InkOnly;
-			IC.AutoRedraw = false;
-			IC.DynamicRendering = false;
-			IC.EraserMode = InkOverlayEraserMode.StrokeErase;
-			IC.CursorInRange += IC_CursorInRange;
-			IC.MouseDown += IC_MouseDown;
-			IC.MouseMove += IC_MouseMove;
-			IC.MouseUp += IC_MouseUp;
-			IC.CursorDown += IC_CursorDown;
-			IC.Stroke += IC_Stroke;
-			IC.DefaultDrawingAttributes.Width = 80;
-			IC.DefaultDrawingAttributes.Transparency = 30;
-			IC.DefaultDrawingAttributes.AntiAliased = true;
+            IC.CollectionMode = CollectionMode.InkOnly;
+            IC.AutoRedraw = false;
+            IC.DynamicRendering = false;
+            IC.EraserMode = InkOverlayEraserMode.StrokeErase;
+            IC.CursorInRange += IC_CursorInRange;
+            IC.MouseDown += IC_MouseDown;
+            IC.MouseMove += IC_MouseMove;
+            IC.MouseUp += IC_MouseUp;
+            IC.CursorDown += IC_CursorDown;
+            IC.Stroke += IC_Stroke;
+            IC.DefaultDrawingAttributes.Width = 80;
+            IC.DefaultDrawingAttributes.Transparency = 30;
+            IC.DefaultDrawingAttributes.AntiAliased = true;
             IC.DefaultDrawingAttributes.FitToCurve = true;
 
             cursorred = new System.Windows.Forms.Cursor(gInk.Properties.Resources.cursorred.Handle);
-			//IC.Cursor = cursorred;
-			IC.Enabled = true;
+            //IC.Cursor = cursorred;
+            IC.Enabled = true;
 
             image_exit = new Bitmap(btStop.Width, btStop.Height);
-			Graphics g = Graphics.FromImage(image_exit);
-			g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-			g.DrawImage(global::gInk.Properties.Resources.exit, 0, 0, btStop.Width, btStop.Height);
-			btStop.Image = image_exit;
-			image_clear = new Bitmap(btClear.Width, btClear.Height);
-			g = Graphics.FromImage(image_clear);
-			g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-			g.DrawImage(global::gInk.Properties.Resources.garbage, 0, 0, btClear.Width, btClear.Height);
-			btClear.Image = image_clear;
-			image_undo = new Bitmap(btUndo.Width, btUndo.Height);
-			g = Graphics.FromImage(image_undo);
-			g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-			g.DrawImage(global::gInk.Properties.Resources.undo, 0, 0, btUndo.Width, btUndo.Height);
-			btUndo.Image = image_undo;
-			image_eraser_act = new Bitmap(btEraser.Width, btEraser.Height);
-			g = Graphics.FromImage(image_eraser_act);
-			g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-			g.DrawImage(global::gInk.Properties.Resources.eraser_act, 0, 0, btEraser.Width, btEraser.Height);
-			image_eraser = new Bitmap(btEraser.Width, btEraser.Height);
-			g = Graphics.FromImage(image_eraser);
-			g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-			g.DrawImage(global::gInk.Properties.Resources.eraser, 0, 0, btEraser.Width, btEraser.Height);
-			btEraser.Image = image_eraser;
+            Graphics g = Graphics.FromImage(image_exit);
+            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+            g.DrawImage(global::gInk.Properties.Resources.exit, 0, 0, btStop.Width, btStop.Height);
+            btStop.Image = image_exit;
+            image_clear = new Bitmap(btClear.Width, btClear.Height);
+            g = Graphics.FromImage(image_clear);
+            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+            g.DrawImage(global::gInk.Properties.Resources.garbage, 0, 0, btClear.Width, btClear.Height);
+            btClear.Image = image_clear;
+            image_undo = new Bitmap(btUndo.Width, btUndo.Height);
+            g = Graphics.FromImage(image_undo);
+            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+            g.DrawImage(global::gInk.Properties.Resources.undo, 0, 0, btUndo.Width, btUndo.Height);
+            btUndo.Image = image_undo;
+            image_eraser_act = new Bitmap(btEraser.Width, btEraser.Height);
+            g = Graphics.FromImage(image_eraser_act);
+            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+            g.DrawImage(global::gInk.Properties.Resources.eraser_act, 0, 0, btEraser.Width, btEraser.Height);
+            image_eraser = new Bitmap(btEraser.Width, btEraser.Height);
+            g = Graphics.FromImage(image_eraser);
+            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+            g.DrawImage(global::gInk.Properties.Resources.eraser, 0, 0, btEraser.Width, btEraser.Height);
+            btEraser.Image = image_eraser;
 
-			image_visible_not = new Bitmap(btInkVisible.Width, btInkVisible.Height);
-			g = Graphics.FromImage(image_visible_not);
-			g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-			g.DrawImage(global::gInk.Properties.Resources.visible_not, 0, 0, btInkVisible.Width, btInkVisible.Height);
-			image_visible = new Bitmap(btInkVisible.Width, btInkVisible.Height);
-			g = Graphics.FromImage(image_visible);
-			g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-			g.DrawImage(global::gInk.Properties.Resources.visible, 0, 0, btInkVisible.Width, btInkVisible.Height);
-			btInkVisible.Image = image_visible;
+            image_visible_not = new Bitmap(btInkVisible.Width, btInkVisible.Height);
+            g = Graphics.FromImage(image_visible_not);
+            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+            g.DrawImage(global::gInk.Properties.Resources.visible_not, 0, 0, btInkVisible.Width, btInkVisible.Height);
+            image_visible = new Bitmap(btInkVisible.Width, btInkVisible.Height);
+            g = Graphics.FromImage(image_visible);
+            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+            g.DrawImage(global::gInk.Properties.Resources.visible, 0, 0, btInkVisible.Width, btInkVisible.Height);
+            btInkVisible.Image = image_visible;
 
-			image_snap = new Bitmap(btSnap.Width, btSnap.Height);
-			g = Graphics.FromImage(image_snap);
-			g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-			g.DrawImage(global::gInk.Properties.Resources.snap, 0, 0, btSnap.Width, btSnap.Height);
-			btSnap.Image = image_snap;
-			image_penwidth = new Bitmap(btPenWidth.Width, btPenWidth.Height);
-			g = Graphics.FromImage(image_penwidth);
-			g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-			g.DrawImage(global::gInk.Properties.Resources.penwidth, 0, 0, btPenWidth.Width, btPenWidth.Height);
-			btPenWidth.Image = image_penwidth;
-			image_dock = new Bitmap(btDock.Width, btDock.Height);
-			g = Graphics.FromImage(image_dock);
-			g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-			g.DrawImage(global::gInk.Properties.Resources.dock, 0, 0, btDock.Width, btDock.Height);
-			image_dockback = new Bitmap(btDock.Width, btDock.Height);
-			g = Graphics.FromImage(image_dockback);
-			g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-			g.DrawImage(global::gInk.Properties.Resources.dockback, 0, 0, btDock.Width, btDock.Height);
-			if (Root.Docked)
-				btDock.Image = image_dockback;
-			else
-				btDock.Image = image_dock;
+            image_snap = new Bitmap(btSnap.Width, btSnap.Height);
+            g = Graphics.FromImage(image_snap);
+            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+            g.DrawImage(global::gInk.Properties.Resources.snap, 0, 0, btSnap.Width, btSnap.Height);
+            btSnap.Image = image_snap;
+            image_penwidth = new Bitmap(btPenWidth.Width, btPenWidth.Height);
+            g = Graphics.FromImage(image_penwidth);
+            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+            g.DrawImage(global::gInk.Properties.Resources.penwidth, 0, 0, btPenWidth.Width, btPenWidth.Height);
+            btPenWidth.Image = image_penwidth;
+            image_dock = new Bitmap(btDock.Width, btDock.Height);
+            g = Graphics.FromImage(image_dock);
+            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+            g.DrawImage(global::gInk.Properties.Resources.dock, 0, 0, btDock.Width, btDock.Height);
+            image_dockback = new Bitmap(btDock.Width, btDock.Height);
+            g = Graphics.FromImage(image_dockback);
+            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+            g.DrawImage(global::gInk.Properties.Resources.dockback, 0, 0, btDock.Width, btDock.Height);
+            if (Root.Docked)
+                btDock.Image = image_dockback;
+            else
+                btDock.Image = image_dock;
 
-			image_pencil = new Bitmap(btPen[2].Width, btPen[2].Height);
-			g = Graphics.FromImage(image_pencil);
-			g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-			g.DrawImage(global::gInk.Properties.Resources.pencil, 0, 0, btPen[2].Width, btPen[2].Height);
-			image_highlighter = new Bitmap(btPen[2].Width, btPen[2].Height);
-			g = Graphics.FromImage(image_highlighter);
-			g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-			g.DrawImage(global::gInk.Properties.Resources.highlighter, 0, 0, btPen[2].Width, btPen[2].Height);
-			image_pencil_act = new Bitmap(btPen[2].Width, btPen[2].Height);
-			g = Graphics.FromImage(image_pencil_act);
-			g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-			g.DrawImage(global::gInk.Properties.Resources.pencil_act, 0, 0, btPen[2].Width, btPen[2].Height);
-			image_highlighter_act = new Bitmap(btPen[2].Width, btPen[2].Height);
-			g = Graphics.FromImage(image_highlighter_act);
-			g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-			g.DrawImage(global::gInk.Properties.Resources.highlighter_act, 0, 0, btPen[2].Width, btPen[2].Height);
+            image_pencil = new Bitmap(btPen[2].Width, btPen[2].Height);
+            g = Graphics.FromImage(image_pencil);
+            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+            g.DrawImage(global::gInk.Properties.Resources.pencil, 0, 0, btPen[2].Width, btPen[2].Height);
+            image_highlighter = new Bitmap(btPen[2].Width, btPen[2].Height);
+            g = Graphics.FromImage(image_highlighter);
+            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+            g.DrawImage(global::gInk.Properties.Resources.highlighter, 0, 0, btPen[2].Width, btPen[2].Height);
+            image_pencil_act = new Bitmap(btPen[2].Width, btPen[2].Height);
+            g = Graphics.FromImage(image_pencil_act);
+            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+            g.DrawImage(global::gInk.Properties.Resources.pencil_act, 0, 0, btPen[2].Width, btPen[2].Height);
+            image_highlighter_act = new Bitmap(btPen[2].Width, btPen[2].Height);
+            g = Graphics.FromImage(image_highlighter_act);
+            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+            g.DrawImage(global::gInk.Properties.Resources.highlighter_act, 0, 0, btPen[2].Width, btPen[2].Height);
 
-			image_pointer = new Bitmap(btPointer.Width, btPointer.Height);
-			g = Graphics.FromImage(image_pointer);
-			g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-			g.DrawImage(global::gInk.Properties.Resources.pointer, 0, 0, btPointer.Width, btPointer.Height);
-			image_pointer_act = new Bitmap(btPointer.Width, btPointer.Height);
-			g = Graphics.FromImage(image_pointer_act);
-			g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-			g.DrawImage(global::gInk.Properties.Resources.pointer_act, 0, 0, btPointer.Width, btPointer.Height);
+            image_pointer = new Bitmap(btPointer.Width, btPointer.Height);
+            g = Graphics.FromImage(image_pointer);
+            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+            g.DrawImage(global::gInk.Properties.Resources.pointer, 0, 0, btPointer.Width, btPointer.Height);
+            image_pointer_act = new Bitmap(btPointer.Width, btPointer.Height);
+            g = Graphics.FromImage(image_pointer_act);
+            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+            g.DrawImage(global::gInk.Properties.Resources.pointer_act, 0, 0, btPointer.Width, btPointer.Height);
 
-			image_pen = new Bitmap[Root.MaxPenCount];
-			image_pen_act = new Bitmap[Root.MaxPenCount];
-			for (int b = 0; b < Root.MaxPenCount; b++)
-			{
-				if (Root.PenAttr[b].Transparency >= 100)
-				{
-					image_pen[b] = new Bitmap(btPen[b].Width, btPen[b].Height);
-					image_pen[b] = image_highlighter;
-					image_pen_act[b] = new Bitmap(btPen[b].Width, btPen[b].Height);
-					image_pen_act[b] = image_highlighter_act;
-				}
-				else
-				{
-					image_pen[b] = new Bitmap(btPen[b].Width, btPen[b].Height);
-					image_pen[b] = image_pencil;
-					image_pen_act[b] = new Bitmap(btPen[b].Width, btPen[b].Height);
-					image_pen_act[b] = image_pencil_act;
-				}
-			}
+            image_pen = new Bitmap[Root.MaxPenCount];
+            image_pen_act = new Bitmap[Root.MaxPenCount];
+            for (int b = 0; b < Root.MaxPenCount; b++)
+            {
+                if (Root.PenAttr[b].Transparency >= 100)
+                {
+                    image_pen[b] = new Bitmap(btPen[b].Width, btPen[b].Height);
+                    image_pen[b] = image_highlighter;
+                    image_pen_act[b] = new Bitmap(btPen[b].Width, btPen[b].Height);
+                    image_pen_act[b] = image_highlighter_act;
+                }
+                else
+                {
+                    image_pen[b] = new Bitmap(btPen[b].Width, btPen[b].Height);
+                    image_pen[b] = image_pencil;
+                    image_pen_act[b] = new Bitmap(btPen[b].Width, btPen[b].Height);
+                    image_pen_act[b] = image_pencil_act;
+                }
+            }
 
             LastTickTime = DateTime.Parse("1987-01-01");
-			tiSlide.Enabled = true;
+            tiSlide.Enabled = true;
 
             ToTransparent();
-			ToTopMost();
+            ToTopMost();
 
-			this.toolTip.SetToolTip(this.btDock, Root.Local.ButtonNameDock);
-			this.toolTip.SetToolTip(this.btPenWidth, Root.Local.ButtonNamePenwidth);
-			this.toolTip.SetToolTip(this.btEraser, Root.Local.ButtonNameErasor);
-			this.toolTip.SetToolTip(this.btPan, Root.Local.ButtonNamePan);
-			this.toolTip.SetToolTip(this.btPointer, Root.Local.ButtonNameMousePointer);
-			this.toolTip.SetToolTip(this.btInkVisible, Root.Local.ButtonNameInkVisible);
-			this.toolTip.SetToolTip(this.btSnap, Root.Local.ButtonNameSnapshot);
-			this.toolTip.SetToolTip(this.btUndo, Root.Local.ButtonNameUndo);
-			this.toolTip.SetToolTip(this.btClear, Root.Local.ButtonNameClear);
-			this.toolTip.SetToolTip(this.btStop, Root.Local.ButtonNameExit);
+            this.toolTip.SetToolTip(this.btDock, Root.Local.ButtonNameDock);
+            this.toolTip.SetToolTip(this.btPenWidth, Root.Local.ButtonNamePenwidth);
+            this.toolTip.SetToolTip(this.btEraser, Root.Local.ButtonNameErasor);
+            this.toolTip.SetToolTip(this.btPan, Root.Local.ButtonNamePan);
+            this.toolTip.SetToolTip(this.btPointer, Root.Local.ButtonNameMousePointer);
+            this.toolTip.SetToolTip(this.btInkVisible, Root.Local.ButtonNameInkVisible);
+            this.toolTip.SetToolTip(this.btSnap, Root.Local.ButtonNameSnapshot);
+            this.toolTip.SetToolTip(this.btUndo, Root.Local.ButtonNameUndo);
+            this.toolTip.SetToolTip(this.btClear, Root.Local.ButtonNameClear);
+            this.toolTip.SetToolTip(this.btStop, Root.Local.ButtonNameExit);
+            this.toolTip.SetToolTip(this.btHand, Root.Local.ButtonNameHand);
+            this.toolTip.SetToolTip(this.btLine, Root.Local.ButtonNameLine);
+            this.toolTip.SetToolTip(this.btRect, Root.Local.ButtonNameRect);
+            this.toolTip.SetToolTip(this.btOval, Root.Local.ButtonNameOval);
+            this.toolTip.SetToolTip(this.btArrow, Root.Local.ButtonNameArrow);
+            this.toolTip.SetToolTip(this.btNumb, Root.Local.ButtonNameNumb);
+            this.toolTip.SetToolTip(this.btText, Root.Local.ButtonNameText);
+            this.toolTip.SetToolTip(this.btEdit, Root.Local.ButtonNameEdit);
+            this.toolTip.SetToolTip(this.btMagn, Root.Local.ButtonNameMagn);
 
             SelectTool(0, 0); // Select Hand Drawing by Default
         }
@@ -634,13 +643,14 @@ namespace gInk
             IC.Enabled = false;
             //ToThrough();
 
-            FormInput inp = new FormInput("Edit Text", "Text Input", txt,true,Root, stk);
+            FormInput inp = new FormInput(Root.Local.DlgTextCaption, Root.Local.DlgTextLabel, txt,true,Root, stk);
 
             Point pt = stk.GetPoint(0);
             IC.Renderer.InkSpaceToPixel(IC.Handle, ref pt);
             pt = PointToScreen(pt);
             inp.Top = pt.Y - inp.Height - 10;// +this.Top ;
             inp.Left = pt.X;// +this.Left;
+            //Console.WriteLine("Edit {0},{1}", inp.Left, inp.Top);
             Screen scr = Screen.FromPoint(pt);
             if((inp.Right>= scr.Bounds.Right)|| (inp.Top <= scr.Bounds.Top))
             {   // if the dialog can not be displayed above the text we will display it in the middle of the primary screen
@@ -2155,7 +2165,7 @@ namespace gInk
                     IC.Enabled = false;
                     ToThrough();
                     int k = -1;
-                    FormInput inp = new FormInput("Tag Numbering", "Enter Starting Number", "", false, null, null);
+                    FormInput inp = new FormInput(Root.Local.DlgTagCaption, Root.Local.DlgTagLabel, "", false, Root, null);
 
                     while (!Int32.TryParse(inp.TextOut(), out k))
                     {

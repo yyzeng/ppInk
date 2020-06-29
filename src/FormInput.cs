@@ -16,6 +16,12 @@ namespace gInk
         public FormInput(string caption,string label, string txt, bool ML, gInk.Root rt = null, Microsoft.Ink.Stroke stk = null)
         {
             InitializeComponent();
+
+            // local
+            this.btOK.Text = rt.Local.ButtonOkText;
+            this.btCancel.Text = rt.Local.ButtonCancelText;
+            this.FontBtn.Text = rt.Local.ButtonFontText;
+
             Text = caption;
             captionLbl.Text = label;
             if (ML)
