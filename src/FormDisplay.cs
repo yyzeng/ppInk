@@ -291,7 +291,7 @@ namespace gInk
                     if (st.ExtendedProperties.Contains(Root.TEXT_GUID))
                     {
                         Point pt = new Point((int)(st.ExtendedProperties[Root.TEXTX_GUID].Data), (int)(st.ExtendedProperties[Root.TEXTY_GUID].Data));
-                        Root.FormCollection.IC.Renderer.InkSpaceToPixel(g, ref pt);
+                        Root.FormCollection.IC.Renderer.InkSpaceToPixel(Root.FormCollection.IC.Handle, ref pt);
                         System.Drawing.StringFormat stf = new System.Drawing.StringFormat(System.Drawing.StringFormatFlags.NoClip);
                         stf.Alignment = (System.Drawing.StringAlignment)(st.ExtendedProperties[Root.TEXTHALIGN_GUID].Data);
                         stf.LineAlignment = (System.Drawing.StringAlignment)(st.ExtendedProperties[Root.TEXTVALIGN_GUID].Data);
@@ -634,7 +634,7 @@ namespace gInk
 				}
 			}
 
-			else if (Root.FormCollection.IC.CollectingInk && Root.EraserMode == false && Root.InkVisible)
+			else if (!(Root.FormCollection.IC is null) && Root.FormCollection.IC.CollectingInk && Root.EraserMode == false && Root.InkVisible)
 			{ // Drawing in progress : we get the last stroke in the list, if we have to draw because not deleted and not a shape in progress
               //we replace the rectangle containing the stroke by the saved one and 
 

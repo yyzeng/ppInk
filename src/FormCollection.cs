@@ -60,7 +60,6 @@ namespace gInk
             else
                 this.btMagn.BackgroundImage = global::gInk.Properties.Resources.Magnetic;
 
-            SelectTool(0,0); // Select Hand Drawing by Default
             PrimaryLeft = Screen.PrimaryScreen.Bounds.Left - SystemInformation.VirtualScreen.Left;
 			PrimaryTop = Screen.PrimaryScreen.Bounds.Top - SystemInformation.VirtualScreen.Top;
 
@@ -486,7 +485,9 @@ namespace gInk
 			this.toolTip.SetToolTip(this.btUndo, Root.Local.ButtonNameUndo);
 			this.toolTip.SetToolTip(this.btClear, Root.Local.ButtonNameClear);
 			this.toolTip.SetToolTip(this.btStop, Root.Local.ButtonNameExit);
-		}
+
+            SelectTool(0, 0); // Select Hand Drawing by Default
+        }
 
         private void setStrokeProperties(ref Stroke st, int FilledSelected)
         {
@@ -606,12 +607,13 @@ namespace gInk
         // arrow at starting point
         {
             Point pt = new Point(CursorX0, CursorY0);
-            IC.Renderer.PixelToInkSpace(Root.FormDisplay.gOneStrokeCanvus, ref pt);
+            //IC.Renderer.PixelToInkSpace(Root.FormDisplay.gOneStrokeCanvus, ref pt);
+            IC.Renderer.PixelToInkSpace(IC.Handle, ref pt);
             Point[] pts = new Point[1];
             pts[0]=pt;
             Stroke st = Root.FormCollection.IC.Ink.CreateStroke(pts);
             st.DrawingAttributes = Root.FormCollection.IC.DefaultDrawingAttributes.Clone();
-            st.DrawingAttributes.Width = 0; // no width to hide the point;
+            //st.DrawingAttributes.Width = 0; // no width to hide the point;
             st.ExtendedProperties.Add(Root.TEXT_GUID, txt);
             st.ExtendedProperties.Add(Root.TEXTX_GUID, pt.X);
             st.ExtendedProperties.Add(Root.TEXTY_GUID, pt.Y);
@@ -709,23 +711,23 @@ namespace gInk
                 if (stk.ExtendedProperties.Contains(Root.TEXTWIDTH_GUID))
                 {
                     int x0 = Root.HiMetricToPixel((int)stk.ExtendedProperties[Root.TEXTX_GUID].Data);
-                    int y0 = Root.HiMetricToPixel((int)stk.ExtendedProperties[Root.TEXTY_GUID].Data);
-                    int x1 = (int)(x0 + (float)stk.ExtendedProperties[Root.TEXTWIDTH_GUID].Data);
-                    int y1 = (int)(y0 + (float)stk.ExtendedProperties[Root.TEXTHEIGHT_GUID].Data);
-                    if(x0<=cursorX && cursorX<x1 && y0<=cursorY && cursorY <= y1)
-                    {
-                        int dist(int x,int y)
+                        int y0 = Root.HiMetricToPixel((int)stk.ExtendedProperties[Root.TEXTY_GUID].Data);
+                        int x1 = (int)(x0 + (float)stk.ExtendedProperties[Root.TEXTWIDTH_GUID].Data);
+                        int y1 = (int)(y0 + (float)stk.ExtendedProperties[Root.TEXTHEIGHT_GUID].Data);
+                        if (x0 <= cursorX && cursorX < x1 && y0 <= cursorY && cursorY <= y1)
                         {
-                            return x*x+y*y;
-                        };
-                        int d = dist(cursorX - x0, cursorY - y0);
-                        int x2 = x0;
-                        int y2 = y0;
-                        int d1 = dist(cursorX - (x1 + x0) / 2, cursorY - y0);
-                        if (d1<d)
-                        {
-                            x2 = (x1 + x0) / 2;
-                            y2 = y0;
+                            int dist(int x, int y)
+                            {
+                                return x * x + y * y;
+                            };
+                            int d = dist(cursorX - x0, cursorY - y0);
+                            int x2 = x0;
+                            int y2 = y0;
+                            int d1 = dist(cursorX - (x1 + x0) / 2, cursorY - y0);
+                            if (d1 < d)
+                            {
+                                x2 = (x1 + x0) / 2;
+                                y2 = y0;
                             d = d1;
                         };
                         d1 = dist(cursorX - x1, cursorY - y0);
@@ -736,26 +738,26 @@ namespace gInk
                             d = d1;
                         };
                         d1 = dist(cursorX - x1, cursorY - (y0 + y1) / 2);
-                        if (d1 < d)
-                        {
-                            x2 = x1;
-                            y2 = (y0+y1)/2;
-                            d = d1;
-                        };
-                        d1 = dist(cursorX - x1,cursorY - y1);
-                        if (d1 < d)
-                        {
-                            x2 = x1;
+                            if (d1 < d)
+                            {
+                                x2 = x1;
+                                y2 = (y0 + y1) / 2;
+                                d = d1;
+                            };
+                            d1 = dist(cursorX - x1, cursorY - y1);
+                            if (d1 < d)
+                            {
+                                x2 = x1;
                             y2 = y1;
                             d = d1;
                         };
-                        d1 = dist(cursorX - (x0 + x1) / 2, cursorY - y1);
-                        if (d1 < d)
-                        {
-                            x2 = (x0+x1)/2;
-                            y2 = y1;
-                            d = d1;
-                        };
+                            d1 = dist(cursorX - (x0 + x1) / 2, cursorY - y1);
+                            if (d1 < d)
+                            {
+                                x2 = (x0 + x1) / 2;
+                                y2 = y1;
+                                d = d1;
+                            };
                         d1 = dist(cursorX - x0, cursorY - y1);
                         if (d1 < d)
                         {
@@ -764,13 +766,13 @@ namespace gInk
                             d = d1;
                         };
                         d1 = dist(cursorX - x0, cursorY - (y0 + y1) / 2);
-                        if (d1 < d)
-                        {
-                            x2 = x0;
-                            y2 = (y0+y1)/2;
-                            d = d1;
-                        };
-                        cursorX = x2;
+                            if (d1 < d)
+                            {
+                                x2 = x0;
+                                y2 = (y0 + y1) / 2;
+                                d = d1;
+                            };
+                            cursorX = x2;
                         cursorY = y2;
                         return;
                     };
@@ -795,7 +797,7 @@ namespace gInk
         private void IC_Stroke(object sender, InkCollectorStrokeEventArgs e)
 		{
             movedStroke = null; // reset the moving object
-            try { e.Stroke.ExtendedProperties.Remove(Root.ISSTROKE_GUID); } catch { } // the ISSTROKE set for drawin
+            try { if(e.Stroke.ExtendedProperties.Contains(Root.ISSTROKE_GUID)) e.Stroke.ExtendedProperties.Remove(Root.ISSTROKE_GUID); } catch { } // the ISSTROKE set for drawin
             if (Root.ToolSelected==0)
             {
                 Stroke st = e.Stroke;// IC.Ink.Strokes[IC.Ink.Strokes.Count-1];

@@ -1,4 +1,4 @@
-namespace gInk
+﻿namespace gInk
 {
 	partial class FormOptions
 	{
@@ -28,13 +28,13 @@ namespace gInk
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
-			gInk.Hotkey hotkey1 = new gInk.Hotkey();
-			gInk.Hotkey hotkey2 = new gInk.Hotkey();
-			gInk.Hotkey hotkey3 = new gInk.Hotkey();
-			gInk.Hotkey hotkey4 = new gInk.Hotkey();
-			gInk.Hotkey hotkey5 = new gInk.Hotkey();
-			gInk.Hotkey hotkey6 = new gInk.Hotkey();
+            this.components = new System.ComponentModel.Container();
+            gInk.Hotkey hotkey1 = new gInk.Hotkey();
+            gInk.Hotkey hotkey2 = new gInk.Hotkey();
+            gInk.Hotkey hotkey3 = new gInk.Hotkey();
+            gInk.Hotkey hotkey4 = new gInk.Hotkey();
+            gInk.Hotkey hotkey5 = new gInk.Hotkey();
+            gInk.Hotkey hotkey6 = new gInk.Hotkey();
             gInk.Hotkey hotkey7 = new gInk.Hotkey();
             gInk.Hotkey hotkey8 = new gInk.Hotkey();
             gInk.Hotkey hotkey9 = new gInk.Hotkey();
@@ -50,18 +50,18 @@ namespace gInk
             this.cbEraserEnabled = new System.Windows.Forms.CheckBox();
             this.cbPointerEnabled = new System.Windows.Forms.CheckBox();
             this.cbSnapEnabled = new System.Windows.Forms.CheckBox();
-			this.cbUndoEnabled = new System.Windows.Forms.CheckBox();
-			this.cbClearEnabled = new System.Windows.Forms.CheckBox();
-			this.cbWidthEnabled = new System.Windows.Forms.CheckBox();
-			this.cbWhiteIcon = new System.Windows.Forms.CheckBox();
-			this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
-			this.tbSnapPath = new System.Windows.Forms.TextBox();
-			this.lbSnapshotsavepath = new System.Windows.Forms.Label();
-			this.btSnapPath = new System.Windows.Forms.Button();
-			this.lbNote = new System.Windows.Forms.Label();
-			this.colorDialog1 = new System.Windows.Forms.ColorDialog();
-			this.timer1 = new System.Windows.Forms.Timer(this.components);
-			this.lbCanvascursor = new System.Windows.Forms.Label();
+            this.cbUndoEnabled = new System.Windows.Forms.CheckBox();
+            this.cbClearEnabled = new System.Windows.Forms.CheckBox();
+            this.cbWidthEnabled = new System.Windows.Forms.CheckBox();
+            this.cbWhiteIcon = new System.Windows.Forms.CheckBox();
+            this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+            this.tbSnapPath = new System.Windows.Forms.TextBox();
+            this.lbSnapshotsavepath = new System.Windows.Forms.Label();
+            this.btSnapPath = new System.Windows.Forms.Button();
+            this.lbNote = new System.Windows.Forms.Label();
+            this.colorDialog1 = new System.Windows.Forms.ColorDialog();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.lbCanvascursor = new System.Windows.Forms.Label();
             this.comboCanvasCursor = new System.Windows.Forms.ComboBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
@@ -69,8 +69,8 @@ namespace gInk
             this.lbLanguage = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.comboLanguage = new System.Windows.Forms.ComboBox();
-			this.cbInkVisibleEnabled = new System.Windows.Forms.CheckBox();
-			this.cbPanEnabled = new System.Windows.Forms.CheckBox();
+            this.cbInkVisibleEnabled = new System.Windows.Forms.CheckBox();
+            this.cbPanEnabled = new System.Windows.Forms.CheckBox();
             this.cbAllowDragging = new System.Windows.Forms.CheckBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tabPage3 = new System.Windows.Forms.TabPage();
@@ -95,28 +95,28 @@ namespace gInk
             this.cbAllowHotkeyInPointer = new System.Windows.Forms.CheckBox();
             this.lbHkInkVisible = new System.Windows.Forms.Label();
             this.lbHkSnapshot = new System.Windows.Forms.Label();
-			this.lbHkClear = new System.Windows.Forms.Label();
-			this.lbHkPan = new System.Windows.Forms.Label();
-			this.lbHkPointer = new System.Windows.Forms.Label();
-			this.lbHkRedo = new System.Windows.Forms.Label();
-			this.lbHkUndo = new System.Windows.Forms.Label();
-			this.lbHkEraser = new System.Windows.Forms.Label();
-			this.lbGlobalHotkey = new System.Windows.Forms.Label();
-			this.hiInkVisible = new gInk.HotkeyInputBox();
-			this.hiSnapshot = new gInk.HotkeyInputBox();
-			this.hiClear = new gInk.HotkeyInputBox();
-			this.hiPan = new gInk.HotkeyInputBox();
-			this.hiPointer = new gInk.HotkeyInputBox();
-			this.hiRedo = new gInk.HotkeyInputBox();
-			this.hiUndo = new gInk.HotkeyInputBox();
-			this.hiEraser = new gInk.HotkeyInputBox();
-			this.hiGlobal = new gInk.HotkeyInputBox();
-			this.tabControl1.SuspendLayout();
-			this.tabPage1.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-			this.tabPage3.SuspendLayout();
-			this.SuspendLayout();
-			// 
+            this.lbHkClear = new System.Windows.Forms.Label();
+            this.lbHkPan = new System.Windows.Forms.Label();
+            this.lbHkPointer = new System.Windows.Forms.Label();
+            this.lbHkRedo = new System.Windows.Forms.Label();
+            this.lbHkUndo = new System.Windows.Forms.Label();
+            this.lbHkEraser = new System.Windows.Forms.Label();
+            this.lbGlobalHotkey = new System.Windows.Forms.Label();
+            this.hiInkVisible = new gInk.HotkeyInputBox();
+            this.hiSnapshot = new gInk.HotkeyInputBox();
+            this.hiClear = new gInk.HotkeyInputBox();
+            this.hiPan = new gInk.HotkeyInputBox();
+            this.hiPointer = new gInk.HotkeyInputBox();
+            this.hiRedo = new gInk.HotkeyInputBox();
+            this.hiUndo = new gInk.HotkeyInputBox();
+            this.hiEraser = new gInk.HotkeyInputBox();
+            this.hiGlobal = new gInk.HotkeyInputBox();
+            this.tabControl1.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.tabPage3.SuspendLayout();
+            this.SuspendLayout();
+            // 
             // cbEraserEnabled
             // 
             this.cbEraserEnabled.AutoSize = true;
@@ -126,7 +126,7 @@ namespace gInk
             this.cbEraserEnabled.TabIndex = 0;
             this.cbEraserEnabled.UseVisualStyleBackColor = true;
             this.cbEraserEnabled.CheckedChanged += new System.EventHandler(this.cbEraserEnabled_CheckedChanged);
-			// 
+            // 
             // cbPointerEnabled
             // 
             this.cbPointerEnabled.AutoSize = true;
@@ -136,7 +136,7 @@ namespace gInk
             this.cbPointerEnabled.TabIndex = 0;
             this.cbPointerEnabled.UseVisualStyleBackColor = true;
             this.cbPointerEnabled.CheckedChanged += new System.EventHandler(this.cbPointerEnabled_CheckedChanged);
-			// 
+            // 
             // cbSnapEnabled
             // 
             this.cbSnapEnabled.AutoSize = true;
@@ -146,7 +146,7 @@ namespace gInk
             this.cbSnapEnabled.TabIndex = 0;
             this.cbSnapEnabled.UseVisualStyleBackColor = true;
             this.cbSnapEnabled.CheckedChanged += new System.EventHandler(this.cbSnapEnabled_CheckedChanged);
-			// 
+            // 
             // cbUndoEnabled
             // 
             this.cbUndoEnabled.AutoSize = true;
@@ -156,7 +156,7 @@ namespace gInk
             this.cbUndoEnabled.TabIndex = 0;
             this.cbUndoEnabled.UseVisualStyleBackColor = true;
             this.cbUndoEnabled.CheckedChanged += new System.EventHandler(this.cbUndoEnabled_CheckedChanged);
-			// 
+            // 
             // cbClearEnabled
             // 
             this.cbClearEnabled.AutoSize = true;
@@ -166,7 +166,7 @@ namespace gInk
             this.cbClearEnabled.TabIndex = 0;
             this.cbClearEnabled.UseVisualStyleBackColor = true;
             this.cbClearEnabled.CheckedChanged += new System.EventHandler(this.cbClearEnabled_CheckedChanged);
-			// 
+            // 
             // cbWidthEnabled
             // 
             this.cbWidthEnabled.AutoSize = true;
@@ -176,7 +176,7 @@ namespace gInk
             this.cbWidthEnabled.TabIndex = 0;
             this.cbWidthEnabled.UseVisualStyleBackColor = true;
             this.cbWidthEnabled.CheckedChanged += new System.EventHandler(this.cbWidthEnabled_CheckedChanged);
-			// 
+            // 
             // cbWhiteIcon
             // 
             this.cbWhiteIcon.AutoSize = true;
@@ -186,7 +186,7 @@ namespace gInk
             this.cbWhiteIcon.TabIndex = 0;
             this.cbWhiteIcon.Text = "Use white tray icon";
             this.cbWhiteIcon.UseVisualStyleBackColor = true;
-			this.cbWhiteIcon.CheckedChanged += new System.EventHandler(this.cbWhiteIcon_CheckedChanged);
+            this.cbWhiteIcon.CheckedChanged += new System.EventHandler(this.cbWhiteIcon_CheckedChanged);
             // 
             // tbSnapPath
             // 
@@ -213,8 +213,8 @@ namespace gInk
             this.btSnapPath.TabIndex = 3;
             this.btSnapPath.Text = "...";
             this.btSnapPath.UseVisualStyleBackColor = true;
-			this.btSnapPath.Click += new System.EventHandler(this.btSnapPath_Click);
-			// 
+            this.btSnapPath.Click += new System.EventHandler(this.btSnapPath_Click);
+            // 
             // lbNote
             // 
             this.lbNote.AutoSize = true;
@@ -224,12 +224,12 @@ namespace gInk
             this.lbNote.TabIndex = 4;
             this.lbNote.Text = "Note: pen width panel overides each individual pen width settings";
             // 
-			// timer1
-			// 
-			this.timer1.Enabled = true;
-			this.timer1.Interval = 50;
-			this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-			// 
+            // timer1
+            // 
+            this.timer1.Enabled = true;
+            this.timer1.Interval = 50;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
             // lbCanvascursor
             // 
             this.lbCanvascursor.AutoSize = true;
@@ -239,10 +239,10 @@ namespace gInk
             this.lbCanvascursor.TabIndex = 5;
             this.lbCanvascursor.Text = "Canvas cursor";
             // 
-			// comboCanvasCursor
-			// 
-			this.comboCanvasCursor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.comboCanvasCursor.FormattingEnabled = true;
+            // comboCanvasCursor
+            // 
+            this.comboCanvasCursor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboCanvasCursor.FormattingEnabled = true;
             this.comboCanvasCursor.Items.AddRange(new object[] {
             "Arrow",
             "Pen tip"});
@@ -252,13 +252,13 @@ namespace gInk
             this.comboCanvasCursor.TabIndex = 6;
             this.comboCanvasCursor.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
-			// tabControl1
-			// 
-			this.tabControl1.Controls.Add(this.tabPage1);
-			this.tabControl1.Controls.Add(this.tabPage2);
-			this.tabControl1.Controls.Add(this.tabPage3);
-			this.tabControl1.Location = new System.Drawing.Point(0, 0);
-			this.tabControl1.Margin = new System.Windows.Forms.Padding(0);
+            // tabControl1
+            // 
+            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tabPage3);
+            this.tabControl1.Location = new System.Drawing.Point(0, 0);
+            this.tabControl1.Margin = new System.Windows.Forms.Padding(0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.Padding = new System.Drawing.Point(0, 0);
             this.tabControl1.SelectedIndex = 0;
@@ -272,19 +272,19 @@ namespace gInk
             this.tabPage1.Controls.Add(this.lbLanguage);
             this.tabPage1.Controls.Add(this.pictureBox1);
             this.tabPage1.Controls.Add(this.comboLanguage);
-			this.tabPage1.Controls.Add(this.comboCanvasCursor);
-			this.tabPage1.Controls.Add(this.cbInkVisibleEnabled);
-			this.tabPage1.Controls.Add(this.cbPanEnabled);
-			this.tabPage1.Controls.Add(this.cbEraserEnabled);
-			this.tabPage1.Controls.Add(this.lbCanvascursor);
-			this.tabPage1.Controls.Add(this.cbWidthEnabled);
-			this.tabPage1.Controls.Add(this.lbNote);
-			this.tabPage1.Controls.Add(this.cbPointerEnabled);
-			this.tabPage1.Controls.Add(this.btSnapPath);
-			this.tabPage1.Controls.Add(this.cbSnapEnabled);
-			this.tabPage1.Controls.Add(this.cbUndoEnabled);
-			this.tabPage1.Controls.Add(this.cbClearEnabled);
-			this.tabPage1.Controls.Add(this.lbSnapshotsavepath);
+            this.tabPage1.Controls.Add(this.comboCanvasCursor);
+            this.tabPage1.Controls.Add(this.cbInkVisibleEnabled);
+            this.tabPage1.Controls.Add(this.cbPanEnabled);
+            this.tabPage1.Controls.Add(this.cbEraserEnabled);
+            this.tabPage1.Controls.Add(this.lbCanvascursor);
+            this.tabPage1.Controls.Add(this.cbWidthEnabled);
+            this.tabPage1.Controls.Add(this.lbNote);
+            this.tabPage1.Controls.Add(this.cbPointerEnabled);
+            this.tabPage1.Controls.Add(this.btSnapPath);
+            this.tabPage1.Controls.Add(this.cbSnapEnabled);
+            this.tabPage1.Controls.Add(this.cbUndoEnabled);
+            this.tabPage1.Controls.Add(this.cbClearEnabled);
+            this.tabPage1.Controls.Add(this.lbSnapshotsavepath);
             this.tabPage1.Controls.Add(this.cbAllowDragging);
             this.tabPage1.Controls.Add(this.cbWhiteIcon);
             this.tabPage1.Controls.Add(this.tbSnapPath);
@@ -314,7 +314,7 @@ namespace gInk
             this.lbLanguage.TabIndex = 8;
             this.lbLanguage.Text = "Language";
             // 
-			// pictureBox1
+            // pictureBox1
             // 
             this.pictureBox1.BackgroundImage = global::gInk.Properties.Resources.paneloption;
             this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
@@ -324,7 +324,7 @@ namespace gInk
             this.pictureBox1.TabIndex = 7;
             this.pictureBox1.TabStop = false;
             // 
-			// comboLanguage
+            // comboLanguage
             // 
             this.comboLanguage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboLanguage.FormattingEnabled = true;
@@ -343,7 +343,7 @@ namespace gInk
             this.cbInkVisibleEnabled.TabIndex = 0;
             this.cbInkVisibleEnabled.UseVisualStyleBackColor = true;
             this.cbInkVisibleEnabled.CheckedChanged += new System.EventHandler(this.cbInkVisibleEnabled_CheckedChanged);
-			// 
+            // 
             // cbPanEnabled
             // 
             this.cbPanEnabled.AutoSize = true;
@@ -353,7 +353,7 @@ namespace gInk
             this.cbPanEnabled.TabIndex = 0;
             this.cbPanEnabled.UseVisualStyleBackColor = true;
             this.cbPanEnabled.CheckedChanged += new System.EventHandler(this.cbPanEnabled_CheckedChanged);
-			// 
+            // 
             // cbAllowDragging
             // 
             this.cbAllowDragging.AutoSize = true;
@@ -363,8 +363,8 @@ namespace gInk
             this.cbAllowDragging.TabIndex = 0;
             this.cbAllowDragging.Text = "Allow dragging toolbar (experimental)";
             this.cbAllowDragging.UseVisualStyleBackColor = true;
-			this.cbAllowDragging.CheckedChanged += new System.EventHandler(this.cbAllowDragging_CheckedChanged);
-			// 
+            this.cbAllowDragging.CheckedChanged += new System.EventHandler(this.cbAllowDragging_CheckedChanged);
+            // 
             // tabPage2
             // 
             this.tabPage2.BackColor = System.Drawing.SystemColors.ControlLightLight;
@@ -399,19 +399,19 @@ namespace gInk
             this.tabPage3.Controls.Add(this.cbAllowHotkeyInPointer);
             this.tabPage3.Controls.Add(this.lbHkInkVisible);
             this.tabPage3.Controls.Add(this.lbHkSnapshot);
-			this.tabPage3.Controls.Add(this.lbHkClear);
-			this.tabPage3.Controls.Add(this.lbHkPan);
-			this.tabPage3.Controls.Add(this.lbHkPointer);
-			this.tabPage3.Controls.Add(this.lbHkRedo);
-			this.tabPage3.Controls.Add(this.lbHkUndo);
-			this.tabPage3.Controls.Add(this.lbHkEraser);
-			this.tabPage3.Controls.Add(this.lbGlobalHotkey);
-			this.tabPage3.Controls.Add(this.hiInkVisible);
-			this.tabPage3.Controls.Add(this.hiSnapshot);
-			this.tabPage3.Controls.Add(this.hiClear);
-			this.tabPage3.Controls.Add(this.hiPan);
-			this.tabPage3.Controls.Add(this.hiPointer);
-			this.tabPage3.Controls.Add(this.hiRedo);
+            this.tabPage3.Controls.Add(this.lbHkClear);
+            this.tabPage3.Controls.Add(this.lbHkPan);
+            this.tabPage3.Controls.Add(this.lbHkPointer);
+            this.tabPage3.Controls.Add(this.lbHkRedo);
+            this.tabPage3.Controls.Add(this.lbHkUndo);
+            this.tabPage3.Controls.Add(this.lbHkEraser);
+            this.tabPage3.Controls.Add(this.lbGlobalHotkey);
+            this.tabPage3.Controls.Add(this.hiInkVisible);
+            this.tabPage3.Controls.Add(this.hiSnapshot);
+            this.tabPage3.Controls.Add(this.hiClear);
+            this.tabPage3.Controls.Add(this.hiPan);
+            this.tabPage3.Controls.Add(this.hiPointer);
+            this.tabPage3.Controls.Add(this.hiRedo);
             this.tabPage3.Controls.Add(this.hiUndo);
             this.tabPage3.Controls.Add(this.hiEraser);
             this.tabPage3.Controls.Add(this.hiGlobal);
@@ -637,8 +637,8 @@ namespace gInk
             this.cbAllowHotkeyInPointer.TabIndex = 18;
             this.cbAllowHotkeyInPointer.Text = "Allow all following hotkeys in mouse pointer mode (may cause a mess):";
             this.cbAllowHotkeyInPointer.UseVisualStyleBackColor = true;
-			this.cbAllowHotkeyInPointer.CheckedChanged += new System.EventHandler(this.cbAllowHotkeyInPointer_CheckedChanged);
-			// 
+            this.cbAllowHotkeyInPointer.CheckedChanged += new System.EventHandler(this.cbAllowHotkeyInPointer_CheckedChanged);
+            // 
             // lbHkInkVisible
             // 
             this.lbHkInkVisible.AutoSize = true;
@@ -684,7 +684,7 @@ namespace gInk
             this.lbHkPointer.TabIndex = 6;
             this.lbHkPointer.Text = "Mouse pointer";
             this.lbHkPointer.Visible = false;
-			// 
+            // 
             // lbHkRedo
             // 
             this.lbHkRedo.AutoSize = true;
@@ -721,7 +721,7 @@ namespace gInk
             this.lbGlobalHotkey.TabIndex = 4;
             this.lbGlobalHotkey.Text = "Global hotkey (start drawing, switch between mouse pointer and drawing)";
             // 
-			// hiInkVisible
+            // hiInkVisible
             // 
             this.hiInkVisible.BackColor = System.Drawing.Color.White;
             this.hiInkVisible.ExternalConflictFlag = false;
@@ -734,8 +734,8 @@ namespace gInk
             this.hiInkVisible.TabIndex = 17;
             this.hiInkVisible.Text = "None";
             this.hiInkVisible.OnHotkeyChanged += new System.EventHandler(this.hi_OnHotkeyChanged);
-			// 
-			// hiSnapshot
+            // 
+            // hiSnapshot
             // 
             this.hiSnapshot.BackColor = System.Drawing.Color.White;
             this.hiSnapshot.ExternalConflictFlag = false;
@@ -748,8 +748,8 @@ namespace gInk
             this.hiSnapshot.TabIndex = 14;
             this.hiSnapshot.Text = "None";
             this.hiSnapshot.OnHotkeyChanged += new System.EventHandler(this.hi_OnHotkeyChanged);
-			// 
-			// hiClear
+            // 
+            // hiClear
             // 
             this.hiClear.BackColor = System.Drawing.Color.White;
             this.hiClear.ExternalConflictFlag = false;
@@ -762,8 +762,8 @@ namespace gInk
             this.hiClear.TabIndex = 15;
             this.hiClear.Text = "None";
             this.hiClear.OnHotkeyChanged += new System.EventHandler(this.hi_OnHotkeyChanged);
-			// 
-			// hiPan
+            // 
+            // hiPan
             // 
             this.hiPan.BackColor = System.Drawing.Color.White;
             this.hiPan.ExternalConflictFlag = false;
@@ -776,8 +776,8 @@ namespace gInk
             this.hiPan.TabIndex = 11;
             this.hiPan.Text = "None";
             this.hiPan.OnHotkeyChanged += new System.EventHandler(this.hi_OnHotkeyChanged);
-			// 
-			// hiPointer
+            // 
+            // hiPointer
             // 
             this.hiPointer.BackColor = System.Drawing.Color.White;
             this.hiPointer.ExternalConflictFlag = false;
@@ -790,9 +790,9 @@ namespace gInk
             this.hiPointer.TabIndex = 8;
             this.hiPointer.Text = "None";
             this.hiPointer.Visible = false;
-			this.hiPointer.OnHotkeyChanged += new System.EventHandler(this.hi_OnHotkeyChanged);
-			// 
-			// hiRedo
+            this.hiPointer.OnHotkeyChanged += new System.EventHandler(this.hi_OnHotkeyChanged);
+            // 
+            // hiRedo
             // 
             this.hiRedo.BackColor = System.Drawing.Color.White;
             this.hiRedo.ExternalConflictFlag = false;
@@ -805,8 +805,8 @@ namespace gInk
             this.hiRedo.TabIndex = 9;
             this.hiRedo.Text = "None";
             this.hiRedo.OnHotkeyChanged += new System.EventHandler(this.hi_OnHotkeyChanged);
-			// 
-			// hiUndo
+            // 
+            // hiUndo
             // 
             this.hiUndo.BackColor = System.Drawing.Color.White;
             this.hiUndo.ExternalConflictFlag = false;
@@ -819,8 +819,8 @@ namespace gInk
             this.hiUndo.TabIndex = 5;
             this.hiUndo.Text = "None";
             this.hiUndo.OnHotkeyChanged += new System.EventHandler(this.hi_OnHotkeyChanged);
-			// 
-			// hiEraser
+            // 
+            // hiEraser
             // 
             this.hiEraser.BackColor = System.Drawing.Color.White;
             this.hiEraser.ExternalConflictFlag = false;
@@ -833,8 +833,8 @@ namespace gInk
             this.hiEraser.TabIndex = 5;
             this.hiEraser.Text = "None";
             this.hiEraser.OnHotkeyChanged += new System.EventHandler(this.hi_OnHotkeyChanged);
-			// 
-			// hiGlobal
+            // 
+            // hiGlobal
             // 
             this.hiGlobal.BackColor = System.Drawing.Color.White;
             this.hiGlobal.ExternalConflictFlag = false;
@@ -858,16 +858,16 @@ namespace gInk
             this.MaximizeBox = false;
             this.Name = "FormOptions";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-			this.Text = "Options - gInk";
-			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormOptions_FormClosing);
-			this.Load += new System.EventHandler(this.FormOptions_Load);
-			this.tabControl1.ResumeLayout(false);
-			this.tabPage1.ResumeLayout(false);
-			this.tabPage1.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-			this.tabPage3.ResumeLayout(false);
-			this.tabPage3.PerformLayout();
-			this.ResumeLayout(false);
+            this.Text = "Options - gInk";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormOptions_FormClosing);
+            this.Load += new System.EventHandler(this.FormOptions_Load);
+            this.tabControl1.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.tabPage3.ResumeLayout(false);
+            this.tabPage3.PerformLayout();
+            this.ResumeLayout(false);
 
 		}
 
