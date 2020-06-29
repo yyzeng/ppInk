@@ -30,14 +30,16 @@ selected my multiple click on those:
 -   Move:  
     Move 1 drawing -\> Move all drawings.
 
-The magnet activates some magnetic effect:
+The magnet activates some magnetic effect :
 
 -   Find a point on the drawing next to the cursor. For rectangles, magnetic
-    effect is available to vertices, and also to the middle of sides.
+    effect is available to vertices, and also to the middle of sides.(also activated pressing Ctrl)
 
--   The 8 points of the bounding rectangle
+-   The 8 points of the bounding rectangle of a text.(also activated pressing Ctrl)
 
--   On the line from the origin. The lines are horizontal,vertical and every 15°
+-   On the line from the origin. The lines are horizontal,vertical and every 15°.(also activated pressing Shift)
+
+Hotkeys are availables for all tools,pens (configurable throught right click on icon next to clock)
 
 #### Screen Shots
 
@@ -57,7 +59,7 @@ Click the exit button or press ESC to exit drawing.
 
 #### Features
 
--   Compact and intuitive interface.
+-   Compact and intuitive interface with customizable hotkeys.
 
 -   Inks rendered on dynamic desktops.
 
