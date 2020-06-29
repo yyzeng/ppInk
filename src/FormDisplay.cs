@@ -542,7 +542,7 @@ namespace gInk
 			return maxdj;
 		}
 
-		public void UpdateFormDisplay(bool draw)
+		public void UpdateFormDisplay(bool draw,bool prepared=false)
 		{
 			IntPtr screenDc = GetDC(IntPtr.Zero);
 
@@ -559,8 +559,11 @@ namespace gInk
 			blend.AlphaFormat = AC_SRC_ALPHA;
 
             //#define SRCCOPY             (DWORD)0x00CC0020 /* dest = source                   */
+            if (!prepared)
+            {
             BitBlt(OutcanvusDc, 0, 0, this.Width, this.Height, canvusDc, 0, 0, 0x00CC0020);
             DrawCustomOnGraphic(gOutCanvus, Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY);
+            }
 
             if (draw)
                 UpdateLayeredWindow(this.Handle, screenDc, ref topPos, ref size, OutcanvusDc, ref pointSource, 0, ref blend, ULW_ALPHA);
@@ -591,7 +594,7 @@ namespace gInk
 
 			if (Root.UponAllDrawingUpdate)
 			{
-				ClearCanvus();
+                ClearCanvus();
 				DrawStrokes();
 				DrawButtons(true);
 				if (Root.Snapping > 0)
@@ -643,17 +646,12 @@ namespace gInk
 					Stroke stroke = Root.FormCollection.IC.Ink.Strokes[Root.FormCollection.IC.Ink.Strokes.Count - 1];
 					if ((!stroke.Deleted) && (Root.ToolSelected == 0))
                     {
-						Rectangle box = stroke.GetBoundingBox();
-						Point lt = new Point(box.Left, box.Top);
-						Point rb = new Point(box.Right + 1, box.Bottom + 1);
-						Root.FormCollection.IC.Renderer.InkSpaceToPixel(gCanvus, ref lt);
-						Root.FormCollection.IC.Renderer.InkSpaceToPixel(gCanvus, ref rb);
-						BitBlt(canvusDc, lt.X, lt.Y, rb.X - lt.X, rb.Y - lt.Y, onestrokeDc, lt.X, lt.Y, (uint)CopyPixelOperation.SourceCopy);
-                        Root.FormCollection.IC.Renderer.Draw(gCanvus, stroke, Root.FormCollection.IC.DefaultDrawingAttributes);
-					}
-					UpdateFormDisplay(true);
-				}
-			}
+                        BitBlt(OutcanvusDc, 0, 0, this.Width, this.Height, canvusDc, 0, 0, 0x00CC0020);
+                        Root.FormCollection.IC.Renderer.Draw(gOutCanvus, stroke, Root.FormCollection.IC.DefaultDrawingAttributes);
+                    }
+                    UpdateFormDisplay(true, Root.ToolSelected == 0);
+                }
+            }
 
 			else if (Root.FormCollection.IC.CollectingInk && Root.EraserMode == true)
 			{
