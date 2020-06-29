@@ -638,12 +638,14 @@ namespace gInk
 
             Point pt = stk.GetPoint(0);
             IC.Renderer.InkSpaceToPixel(IC.Handle, ref pt);
-            inp.Top = pt.Y - inp.Height-10;
-            inp.Left = pt.X;
-            if((inp.Right>= System.Windows.SystemParameters.PrimaryScreenWidth)|| (inp.Top <= 0))
+            pt = PointToScreen(pt);
+            inp.Top = pt.Y - inp.Height - 10;// +this.Top ;
+            inp.Left = pt.X;// +this.Left;
+            Screen scr = Screen.FromPoint(pt);
+            if((inp.Right>= scr.Bounds.Right)|| (inp.Top <= scr.Bounds.Top))
             {   // if the dialog can not be displayed above the text we will display it in the middle of the primary screen
-                inp.Top = ((int)(System.Windows.SystemParameters.PrimaryScreenHeight)-inp.Height) / 2;
-                inp.Left = ((int)(System.Windows.SystemParameters.PrimaryScreenWidth) - inp.Width) / 2;
+                inp.Top = ((int)(scr.Bounds.Top+ scr.Bounds.Bottom-inp.Height)/2);//System.Windows.SystemParameters.PrimaryScreenHeight)-inp.Height) / 2;
+                inp.Left = ((int)(scr.Bounds.Left+scr.Bounds.Right-inp.Width)/2);// System.Windows.SystemParameters.PrimaryScreenWidth) - inp.Width) / 2;
             }
             DialogResult ret = inp.ShowDialog();
             if (ret == DialogResult.Cancel)
@@ -686,7 +688,7 @@ namespace gInk
             return dst;
         }
 
-        private void MagneticEffect(int cursorX0, int cursorY0, ref int cursorX, ref int cursorY)
+        private void MagneticEffect(int cursorX0, int cursorY0, ref int cursorX, ref int cursorY,bool Magnetic = false)
         {
             /*
                 First : looking for a point on a stroke next to the pointer
@@ -694,7 +696,8 @@ namespace gInk
             Stroke st;
             float pos;
             //Console.WriteLine("{0:F},{1:F}", NearestStroke(new Point(cursorX, cursorY), true, out st, out pos, true), Root.PixelToHiMetric(Root.TextSize * 1.5));
-            if (NearestStroke(new Point(cursorX, cursorY), true, out st, out pos, false, true) < Root.PixelToHiMetric(Root.TextSize * 1.5))
+            if ((Magnetic || (Control.ModifierKeys & Keys.Control)!=Keys.None  ) &&
+                (NearestStroke(new Point(cursorX, cursorY), true, out st, out pos, false, true) < Root.PixelToHiMetric(Root.TextSize * 1.5)))
             {
                 Point pt = st.GetPoint((int)Math.Round(pos));
                 IC.Renderer.InkSpaceToPixel(IC.Handle, ref pt);
@@ -706,11 +709,12 @@ namespace gInk
             /*
                 Second : looking for remarquable points around text
             */
-            foreach(Stroke stk in IC.Ink.Strokes)
-            {
-                if (stk.ExtendedProperties.Contains(Root.TEXTWIDTH_GUID))
+            if ((Magnetic || (ModifierKeys & Keys.Control) != Keys.None))
+                foreach (Stroke stk in IC.Ink.Strokes)
                 {
-                    int x0 = Root.HiMetricToPixel((int)stk.ExtendedProperties[Root.TEXTX_GUID].Data);
+                    if (stk.ExtendedProperties.Contains(Root.TEXTWIDTH_GUID))
+                    {
+                        int x0 = Root.HiMetricToPixel((int)stk.ExtendedProperties[Root.TEXTX_GUID].Data);
                         int y0 = Root.HiMetricToPixel((int)stk.ExtendedProperties[Root.TEXTY_GUID].Data);
                         int x1 = (int)(x0 + (float)stk.ExtendedProperties[Root.TEXTWIDTH_GUID].Data);
                         int y1 = (int)(y0 + (float)stk.ExtendedProperties[Root.TEXTHEIGHT_GUID].Data);
@@ -728,16 +732,16 @@ namespace gInk
                             {
                                 x2 = (x1 + x0) / 2;
                                 y2 = y0;
-                            d = d1;
-                        };
-                        d1 = dist(cursorX - x1, cursorY - y0);
-                        if (d1 < d)
-                        {
-                            x2 = x1;
-                            y2 = y0;
-                            d = d1;
-                        };
-                        d1 = dist(cursorX - x1, cursorY - (y0 + y1) / 2);
+                                d = d1;
+                            };
+                            d1 = dist(cursorX - x1, cursorY - y0);
+                            if (d1 < d)
+                            {
+                                x2 = x1;
+                                y2 = y0;
+                                d = d1;
+                            };
+                            d1 = dist(cursorX - x1, cursorY - (y0 + y1) / 2);
                             if (d1 < d)
                             {
                                 x2 = x1;
@@ -748,9 +752,9 @@ namespace gInk
                             if (d1 < d)
                             {
                                 x2 = x1;
-                            y2 = y1;
-                            d = d1;
-                        };
+                                y2 = y1;
+                                d = d1;
+                            };
                             d1 = dist(cursorX - (x0 + x1) / 2, cursorY - y1);
                             if (d1 < d)
                             {
@@ -758,14 +762,14 @@ namespace gInk
                                 y2 = y1;
                                 d = d1;
                             };
-                        d1 = dist(cursorX - x0, cursorY - y1);
-                        if (d1 < d)
-                        {
-                            x2 = x0;
-                            y2 = y1;
-                            d = d1;
-                        };
-                        d1 = dist(cursorX - x0, cursorY - (y0 + y1) / 2);
+                            d1 = dist(cursorX - x0, cursorY - y1);
+                            if (d1 < d)
+                            {
+                                x2 = x0;
+                                y2 = y1;
+                                d = d1;
+                            };
+                            d1 = dist(cursorX - x0, cursorY - (y0 + y1) / 2);
                             if (d1 < d)
                             {
                                 x2 = x0;
@@ -773,17 +777,18 @@ namespace gInk
                                 d = d1;
                             };
                             cursorX = x2;
-                        cursorY = y2;
-                        return;
+                            cursorY = y2;
+                            return;
+                        };
                     };
                 };
-            };
             /*
                 Next : on axis @+/-2 every 15�
             */
             double theta = Math.Atan2(cursorY - cursorY0, cursorX - cursorX0) * 180.0 / Math.PI;
             double theta2 = ((theta + 2.0 + 360.0) % 15.0) - 2.0;
-            if (Math.Abs(theta2) < 3.0)
+            if ((Magnetic || (ModifierKeys & Keys.Shift) != Keys.None)&&
+                (Math.Abs(theta2) < 3.0))
             {
                 theta -= theta2;
                 if ((Math.Abs(theta) < 45.0) || (Math.Abs(theta - 180.0) < 45.0) || (Math.Abs(theta + 180.0) < 45.0))
@@ -808,6 +813,7 @@ namespace gInk
                 if (Root.CursorX0 == Int32.MinValue) // process when clicking touchscreen with just a short press;
                 {
                     Point p = System.Windows.Forms.Cursor.Position;
+                    p=Root.FormDisplay.PointToClient(p);
                     Root.CursorX = p.X;
                     Root.CursorY = p.Y;
                 }
@@ -904,8 +910,22 @@ namespace gInk
 			Root.FormDisplay.ClearCanvus(Root.FormDisplay.gOneStrokeCanvus);
             Root.FormDisplay.DrawStrokes(Root.FormDisplay.gOneStrokeCanvus);
 			Root.FormDisplay.DrawButtons(Root.FormDisplay.gOneStrokeCanvus, false);
-            Point p = System.Windows.Forms.Cursor.Position;
-            //IC.Renderer.InkSpaceToPixel(Root.FormDisplay.gOneStrokeCanvus, ref p);
+            Point p;
+            try
+            {
+                if (e.Stroke.BezierPoints.Length > 0)
+                {
+                    p = e.Stroke.BezierPoints[0];
+                    IC.Renderer.InkSpaceToPixel(Root.FormDisplay.gOneStrokeCanvus, ref p);
+                }
+                else
+                    throw new System.ApplicationException("Empty Stroke");
+            }
+            catch
+            {
+                p = System.Windows.Forms.Cursor.Position;
+                p = Root.FormDisplay.PointToClient(p);
+            }
             Root.CursorX = p.X;
             Root.CursorY = p.Y;
             if (Root.EraserMode) // we are deleting the nearest object for clicking...
@@ -947,8 +967,7 @@ namespace gInk
 			IC.Renderer.PixelToInkSpace(Root.FormDisplay.gOneStrokeCanvus, ref LasteXY);
             Root.CursorX0 = e.X;
             Root.CursorY0 = e.Y;
-            if (MagnEffect)
-                MagneticEffect(Root.CursorX0-1, Root.CursorY0, ref Root.CursorX0, ref Root.CursorY0);
+            MagneticEffect(Root.CursorX0 - 1, Root.CursorY0, ref Root.CursorX0, ref Root.CursorY0, MagnEffect); // analysis of magnetic will be done within the module
             if (Root.InkVisible)
             {
                 Root.CursorX = Root.CursorX0;
@@ -967,10 +986,11 @@ namespace gInk
         public Point LasteXY;
 		private void IC_MouseMove(object sender, CancelMouseEventArgs e)
 		{
+            if (e.Button== MouseButtons.None) return;
+            //Console.WriteLine("Cursor {0},{1} - {2}", e.X, e.Y, e.Button);
             Root.CursorX = e.X;
             Root.CursorY = e.Y;
-            if (MagnEffect)
-                MagneticEffect(Root.CursorX0, Root.CursorY0, ref Root.CursorX, ref Root.CursorY);
+            MagneticEffect(Root.CursorX0, Root.CursorY0, ref Root.CursorX, ref Root.CursorY, Root.ToolSelected >0 && MagnEffect);
 
             if (LasteXY.X == 0 && LasteXY.Y == 0)
 			{
