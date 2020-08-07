@@ -186,7 +186,7 @@ namespace gInk
 
 			Size size = SystemInformation.SmallIconSize;
 			trayIcon = new NotifyIcon();
-			trayIcon.Text = "gInk";
+			trayIcon.Text = "ppInk";
 			trayIcon.ContextMenu = trayMenu;
 			trayIcon.Visible = true;
 			trayIcon.MouseClick += TrayIcon_Click;
