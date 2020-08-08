@@ -561,8 +561,9 @@ namespace gInk
             //#define SRCCOPY             (DWORD)0x00CC0020 /* dest = source                   */
             if (!prepared)
             {
-            BitBlt(OutcanvusDc, 0, 0, this.Width, this.Height, canvusDc, 0, 0, 0x00CC0020);
-            DrawCustomOnGraphic(gOutCanvus, Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY);
+                BitBlt(OutcanvusDc, 0, 0, this.Width, this.Height, canvusDc, 0, 0, 0x00CC0020);
+                if(Root.Snapping<=0)
+                    DrawCustomOnGraphic(gOutCanvus, Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY);
             }
 
             if (draw)
