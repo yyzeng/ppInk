@@ -67,7 +67,8 @@ namespace gInk
             ShowFloatingWinCb.Checked = Root.FormTop > 0;
             ArrHdAperture.Text = (Root.ArrowAngle * 180.0 / Math.PI).ToString("#0",CultureInfo.InvariantCulture);
             ArrHdLength.Text = (Root.ArrowLen / System.Windows.SystemParameters.PrimaryScreenWidth *100.0).ToString("#0.0000",CultureInfo.InvariantCulture);
-			lbNote.ForeColor = Color.Black;
+            Magnet_TB.Text = (Root.MagneticRadius / System.Windows.SystemParameters.PrimaryScreenWidth * 100.0).ToString("#0.0000", CultureInfo.InvariantCulture);
+            lbNote.ForeColor = Color.Black;
 
 			lbcbPens = new Label();
 			lbcbPens.Left = (int)(this.Width / 500.0 * 25);
@@ -209,6 +210,7 @@ namespace gInk
             this.ArrHdLenLbl.Text = Root.Local.OptionsGeneralArrowHeadLen;
             this.DefTxtLbl.Text = Root.Local.OptionsGeneralDefaultTextLbl;
             this.DefaultFontBtn.Text = Root.Local.OptionsGeneralDefaultTextBtn;
+            this.MagnetLbl.Text = Root.Local.OptionsGeneralMagnetLbl;
             this.SaveConfigBtn.Text = Root.Local.OptionsGeneralSaveConfigToFile;
 			this.lbNote.Text = Root.Local.OptionsGeneralNotePenwidth;
 
@@ -509,6 +511,11 @@ namespace gInk
             {
                 Root.callForm.Hide();
             }
+        }
+
+        private void Magnet_TB_Validated(object sender, EventArgs e)
+        {
+            Root.MagneticRadius = (int)(float.Parse(Magnet_TB.Text, CultureInfo.InvariantCulture) / 100.0 * System.Windows.SystemParameters.PrimaryScreenWidth);
         }
 
         private void cbAllowHotkeyInPointer_CheckedChanged(object sender, EventArgs e)

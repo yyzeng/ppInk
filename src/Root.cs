@@ -136,7 +136,7 @@ namespace gInk
 
 		public bool PanMode = false;
 		public bool InkVisible = true;
-        public bool DefaultMagnetActive= true;        // weither Magnet is active at start.
+        public int MagneticRadius= 25;        // Magnet Radius; <=0 means off;
 
         public Ink[] UndoStrokes;
 		//public Ink UponUndoStrokes;
@@ -742,9 +742,11 @@ namespace gInk
                             break;
                         case "MAGNET":
                             if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
-                                DefaultMagnetActive = false;
+                                MagneticRadius = -25;
                             else if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
-                                DefaultMagnetActive = true;
+                                MagneticRadius = 25;
+                            else if (float.TryParse(sPara, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out tempf))
+                                TextSize = (int)(tempf / 100.0 * System.Windows.SystemParameters.PrimaryScreenWidth);
                             break;
                         case "ERASER_ICON":
 							if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
@@ -998,7 +1000,7 @@ namespace gInk
                             sPara = TextFont+","+(TextItalic?"True":"False")+","+ (TextBold ? "True" : "False")+","+(TextSize / System.Windows.SystemParameters.PrimaryScreenWidth *100.0).ToString(CultureInfo.InvariantCulture);
                             break;
                         case "MAGNET":
-                            sPara = DefaultMagnetActive ? "On" : "Off";
+                            sPara = (MagneticRadius / System.Windows.SystemParameters.PrimaryScreenWidth * 100.0).ToString(CultureInfo.InvariantCulture);
                             break;
                         case "ERASER_ICON":
 							if (EraserEnabled)

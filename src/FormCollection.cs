@@ -36,7 +36,6 @@ namespace gInk
 		public int PrimaryLeft, PrimaryTop;
 
         private int LastPenSelected=0;
-        private bool MagnEffect = false;
 
         // http://www.csharp411.com/hide-form-from-alttab/
         protected override CreateParams CreateParams
@@ -53,9 +52,8 @@ namespace gInk
         public FormCollection(Root root)
         {
             Root = root;
-            MagnEffect = Root.DefaultMagnetActive;
             InitializeComponent();
-            if (MagnEffect)
+            if (Root.MagneticRadius>0)
                 this.btMagn.BackgroundImage = global::gInk.Properties.Resources.Magnetic_act;
             else
                 this.btMagn.BackgroundImage = global::gInk.Properties.Resources.Magnetic;
@@ -701,20 +699,28 @@ namespace gInk
 
         private void MagneticEffect(int cursorX0, int cursorY0, ref int cursorX, ref int cursorY,bool Magnetic = false)
         {
+            int dist(int x, int y)
+            {
+                if (x == int.MaxValue || y == int.MinValue)
+                    return int.MaxValue;
+                else
+                    return x * x + y * y;
+            };
             /*
                 First : looking for a point on a stroke next to the pointer
             */
             Stroke st;
             float pos;
-            //Console.WriteLine("{0:F},{1:F}", NearestStroke(new Point(cursorX, cursorY), true, out st, out pos, true), Root.PixelToHiMetric(Root.TextSize * 1.5));
+            Point pt = new Point(int.MaxValue, int.MaxValue);
+            int x2 = int.MaxValue, y2 = int.MaxValue, x_a = int.MaxValue, y_a = int.MaxValue;
             if ((Magnetic || (Control.ModifierKeys & Keys.Control)!=Keys.None  ) &&
-                (NearestStroke(new Point(cursorX, cursorY), true, out st, out pos, false, true) < Root.PixelToHiMetric(Root.TextSize * 1.5)))
+                (NearestStroke(new Point(cursorX, cursorY), true, out st, out pos, false, true) < Root.PixelToHiMetric(Root.MagneticRadius)))
             {
-                Point pt = st.GetPoint((int)Math.Round(pos));
+                pt = st.GetPoint((int)Math.Round(pos));
                 IC.Renderer.InkSpaceToPixel(IC.Handle, ref pt);
-                cursorX = pt.X;
-                cursorY = pt.Y;
-                return;
+                //cursorX = pt.X;
+                //cursorY = pt.Y;
+                //return;
             }
 
             /*
@@ -729,15 +735,12 @@ namespace gInk
                         int y0 = Root.HiMetricToPixel((int)stk.ExtendedProperties[Root.TEXTY_GUID].Data);
                         int x1 = (int)(x0 + (float)stk.ExtendedProperties[Root.TEXTWIDTH_GUID].Data);
                         int y1 = (int)(y0 + (float)stk.ExtendedProperties[Root.TEXTHEIGHT_GUID].Data);
-                        if (x0 <= cursorX && cursorX < x1 && y0 <= cursorY && cursorY <= y1)
+                        if (   (x0 - Root.MagneticRadius) <= cursorX && cursorX <= (x1 + Root.MagneticRadius) 
+                            && (y0 - Root.MagneticRadius) <= cursorY && cursorY <= (x1 + Root.MagneticRadius) )
                         {
-                            int dist(int x, int y)
-                            {
-                                return x * x + y * y;
-                            };
                             int d = dist(cursorX - x0, cursorY - y0);
-                            int x2 = x0;
-                            int y2 = y0;
+                            x2 = x0;
+                            y2 = y0;
                             int d1 = dist(cursorX - (x1 + x0) / 2, cursorY - y0);
                             if (d1 < d)
                             {
@@ -787,12 +790,26 @@ namespace gInk
                                 y2 = (y0 + y1) / 2;
                                 d = d1;
                             };
-                            cursorX = x2;
-                            cursorY = y2;
-                            return;
+                            // the assumption is that text are not overlaying, therefore we don't need to carry on searching...
+                            break;
+                            //cursorX = x2;
+                            //cursorY = y2;
+                            //return;
                         };
                     };
                 };
+            //Console.WriteLine("***** {0},{1} {2},{3}=>{4} {5},{6}=>{7}", cursorX,cursorY, pt.X, pt.Y, dist(pt.X - cursorX, pt.Y - cursorY),x2, y2, dist(x2 - cursorX, y2 - cursorY));
+            if (dist(pt.X - cursorX, pt.Y - cursorY) < dist(x2 - cursorX, y2 - cursorY))
+            {
+                x2 = pt.X;
+                y2 = pt.Y;
+            }
+            if (x2 !=int.MaxValue && y2!=int.MaxValue)
+            {
+                cursorX = x2;
+                cursorY = y2;
+                return;
+            }
             /*
                 Next : on axis @+/-2 every 15�
             */
@@ -848,7 +865,7 @@ namespace gInk
                 {
                     float pos;
                     Stroke minStroke;
-                    if (NearestStroke(new Point(Root.CursorX, Root.CursorY), true, out minStroke, out pos, true, false) < Root.PixelToHiMetric(Root.TextSize * 1.5))
+                    if (NearestStroke(new Point(Root.CursorX, Root.CursorY), true, out minStroke, out pos, true, false) < Root.PixelToHiMetric(Root.MagneticRadius))
                     {
                         ModifyTextInStroke(minStroke, (string)(minStroke.ExtendedProperties[Root.TEXT_GUID].Data));
                         SelectTool(0, 0);
@@ -944,7 +961,7 @@ namespace gInk
                 e.Stroke.ExtendedProperties.Add(Root.ISDELETION_GUID,true);
                 float pos;
                 Stroke minStroke;
-                if (NearestStroke(new Point(Root.CursorX, Root.CursorY), true, out minStroke, out pos,false,false) < Root.PixelToHiMetric(Root.TextSize * 1.5))
+                if (NearestStroke(new Point(Root.CursorX, Root.CursorY), true, out minStroke, out pos,false,false) < Root.PixelToHiMetric(Root.MagneticRadius))
                 {
                     IC.Ink.DeleteStroke(minStroke);
                 }
@@ -978,7 +995,7 @@ namespace gInk
 			IC.Renderer.PixelToInkSpace(Root.FormDisplay.gOneStrokeCanvus, ref LasteXY);
             Root.CursorX0 = e.X;
             Root.CursorY0 = e.Y;
-            MagneticEffect(Root.CursorX0 - 1, Root.CursorY0, ref Root.CursorX0, ref Root.CursorY0, MagnEffect); // analysis of magnetic will be done within the module
+            MagneticEffect(Root.CursorX0 - 1, Root.CursorY0, ref Root.CursorX0, ref Root.CursorY0, Root.MagneticRadius>0); // analysis of magnetic will be done within the module
             if (Root.InkVisible)
             {
                 Root.CursorX = Root.CursorX0;
@@ -988,7 +1005,7 @@ namespace gInk
             if (Root.ToolSelected == 10) // Move
             {
                 float pos;
-                if (NearestStroke(new Point(Root.CursorX, Root.CursorY), true, out movedStroke, out pos, false, true) > Root.PixelToHiMetric(Root.TextSize * 1.5))
+                if (NearestStroke(new Point(Root.CursorX, Root.CursorY), true, out movedStroke, out pos, false, true) > Root.PixelToHiMetric(Root.MagneticRadius))
                     movedStroke = null;
             }
         }
@@ -1001,7 +1018,7 @@ namespace gInk
             //Console.WriteLine("Cursor {0},{1} - {2}", e.X, e.Y, e.Button);
             Root.CursorX = e.X;
             Root.CursorY = e.Y;
-            MagneticEffect(Root.CursorX0, Root.CursorY0, ref Root.CursorX, ref Root.CursorY, Root.ToolSelected >0 && MagnEffect);
+            MagneticEffect(Root.CursorX0, Root.CursorY0, ref Root.CursorX, ref Root.CursorY, Root.ToolSelected >0 && Root.MagneticRadius>0);
 
             if (LasteXY.X == 0 && LasteXY.Y == 0)
 			{
@@ -2230,16 +2247,11 @@ namespace gInk
                 ToolbarMoved = false;
                 return;
             }
-            if ( MagnEffect)
-            {
-                MagnEffect = false;
-                btMagn.BackgroundImage = global::gInk.Properties.Resources.Magnetic;
-            }
-            else
-            {
-                MagnEffect = true;
+            Root.MagneticRadius *= -1; //invert
+            if (Root.MagneticRadius > 0)
                 btMagn.BackgroundImage = global::gInk.Properties.Resources.Magnetic_act;
-            }
+            else
+                btMagn.BackgroundImage = global::gInk.Properties.Resources.Magnetic;
             Root.UponButtonsUpdate |= 0x2;
         }
 

@@ -65,6 +65,8 @@ namespace gInk
             this.comboCanvasCursor = new System.Windows.Forms.ComboBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.Magnet_TB = new System.Windows.Forms.TextBox();
+            this.MagnetLbl = new System.Windows.Forms.Label();
             this.ShowFloatingWinCb = new System.Windows.Forms.CheckBox();
             this.DefTxtLbl = new System.Windows.Forms.Label();
             this.SaveConfigBtn = new System.Windows.Forms.Button();
@@ -229,7 +231,7 @@ namespace gInk
             // lbNote
             // 
             this.lbNote.AutoSize = true;
-            this.lbNote.Location = new System.Drawing.Point(128, 373);
+            this.lbNote.Location = new System.Drawing.Point(128, 390);
             this.lbNote.Name = "lbNote";
             this.lbNote.Size = new System.Drawing.Size(316, 13);
             this.lbNote.TabIndex = 4;
@@ -273,12 +275,14 @@ namespace gInk
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.Padding = new System.Drawing.Point(0, 0);
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(952, 476);
+            this.tabControl1.Size = new System.Drawing.Size(952, 509);
             this.tabControl1.TabIndex = 7;
             // 
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.tabPage1.Controls.Add(this.Magnet_TB);
+            this.tabPage1.Controls.Add(this.MagnetLbl);
             this.tabPage1.Controls.Add(this.ShowFloatingWinCb);
             this.tabPage1.Controls.Add(this.DefTxtLbl);
             this.tabPage1.Controls.Add(this.SaveConfigBtn);
@@ -312,9 +316,28 @@ namespace gInk
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Margin = new System.Windows.Forms.Padding(0);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Size = new System.Drawing.Size(944, 450);
+            this.tabPage1.Size = new System.Drawing.Size(944, 483);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "General";
+            // 
+            // Magnet_TB
+            // 
+            this.Magnet_TB.Location = new System.Drawing.Point(335, 356);
+            this.Magnet_TB.Name = "Magnet_TB";
+            this.Magnet_TB.Size = new System.Drawing.Size(58, 20);
+            this.Magnet_TB.TabIndex = 21;
+            this.Magnet_TB.Text = "0.123456";
+            this.Magnet_TB.Validating += new System.ComponentModel.CancelEventHandler(this.ArrHdFloat_Validating);
+            this.Magnet_TB.Validated += new System.EventHandler(this.Magnet_TB_Validated);
+            // 
+            // MagnetLbl
+            // 
+            this.MagnetLbl.AutoSize = true;
+            this.MagnetLbl.Location = new System.Drawing.Point(127, 359);
+            this.MagnetLbl.Name = "MagnetLbl";
+            this.MagnetLbl.Size = new System.Drawing.Size(190, 13);
+            this.MagnetLbl.TabIndex = 20;
+            this.MagnetLbl.Text = "Magnetic radius(%Scr) (<=0 = disabled)";
             // 
             // ShowFloatingWinCb
             // 
@@ -330,7 +353,7 @@ namespace gInk
             // DefTxtLbl
             // 
             this.DefTxtLbl.AutoSize = true;
-            this.DefTxtLbl.Location = new System.Drawing.Point(129, 329);
+            this.DefTxtLbl.Location = new System.Drawing.Point(128, 329);
             this.DefTxtLbl.Name = "DefTxtLbl";
             this.DefTxtLbl.Size = new System.Drawing.Size(65, 13);
             this.DefTxtLbl.TabIndex = 18;
@@ -338,7 +361,7 @@ namespace gInk
             // 
             // SaveConfigBtn
             // 
-            this.SaveConfigBtn.Location = new System.Drawing.Point(487, 401);
+            this.SaveConfigBtn.Location = new System.Drawing.Point(487, 418);
             this.SaveConfigBtn.Name = "SaveConfigBtn";
             this.SaveConfigBtn.Size = new System.Drawing.Size(98, 46);
             this.SaveConfigBtn.TabIndex = 17;
@@ -489,7 +512,7 @@ namespace gInk
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(944, 450);
+            this.tabPage2.Size = new System.Drawing.Size(944, 483);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Pens";
             // 
@@ -535,7 +558,7 @@ namespace gInk
             this.tabPage3.Controls.Add(this.hiGlobal);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(944, 450);
+            this.tabPage3.Size = new System.Drawing.Size(944, 483);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Hotkeys";
             // 
@@ -975,7 +998,7 @@ namespace gInk
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.ClientSize = new System.Drawing.Size(773, 474);
+            this.ClientSize = new System.Drawing.Size(773, 508);
             this.Controls.Add(this.tabControl1);
             this.MaximizeBox = false;
             this.Name = "FormOptions";
@@ -1070,5 +1093,7 @@ namespace gInk
         private System.Windows.Forms.Label DefTxtLbl;
         public System.Windows.Forms.FontDialog FontDlg;
         private System.Windows.Forms.CheckBox ShowFloatingWinCb;
+        private System.Windows.Forms.TextBox Magnet_TB;
+        private System.Windows.Forms.Label MagnetLbl;
     }
 }
