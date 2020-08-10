@@ -91,5 +91,14 @@ namespace gInk
             Root.FormDisplay.UpdateFormDisplay(true);
         }
 
+        private void TB_CtrlAPressed(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == Convert.ToChar(1))
+            {
+                (sender as TextBox).SelectAll();
+                e.Handled = true;
+            }
+
+        }
     }
 }

@@ -70,6 +70,7 @@ namespace gInk
             this.InputML.TabIndex = 2;
             this.InputML.Text = "inputML\r\nline2";
             this.InputML.Visible = false;
+            this.InputML.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TB_CtrlAPressed);
             // 
             // InputSL
             // 
@@ -80,6 +81,7 @@ namespace gInk
             this.InputSL.TabIndex = 3;
             this.InputSL.Text = "inputSL";
             this.InputSL.Visible = false;
+            this.InputSL.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TB_CtrlAPressed);
             // 
             // captionLbl
             // 
