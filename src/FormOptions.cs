@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Globalization;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -62,7 +63,10 @@ namespace gInk
 			comboCanvasCursor.SelectedIndex = Root.CanvasCursor;
 
 			tbSnapPath.Text = Root.SnapshotBasePath;
-			
+
+            ShowFloatingWinCb.Checked = Root.FormTop > 0;
+            ArrHdAperture.Text = (Root.ArrowAngle * 180.0 / Math.PI).ToString("#0",CultureInfo.InvariantCulture);
+            ArrHdLength.Text = (Root.ArrowLen / System.Windows.SystemParameters.PrimaryScreenWidth *100.0).ToString("#0.0000",CultureInfo.InvariantCulture);
 			lbNote.ForeColor = Color.Black;
 
 			lbcbPens = new Label();
@@ -198,6 +202,14 @@ namespace gInk
 			this.lbSnapshotsavepath.Text = Root.Local.OptionsGeneralSnapshotsavepath;
 			this.cbWhiteIcon.Text = Root.Local.OptionsGeneralWhitetrayicon;
 			this.cbAllowDragging.Text = Root.Local.OptionsGeneralAllowdragging;
+            this.ShowFloatingWinCb.Text = Root.Local.OptionsGeneralShowFloatingWindow;
+            this.SaveWindowPosBtn.Text = Root.Local.OptionsGeneralSaveFloatingWindowPos;
+            this.ArrwLbl.Text = Root.Local.OptionsGeneralArrowHead;
+            this.ArrHdAptLbl.Text = Root.Local.OptionsGeneralArrowHeadApt;
+            this.ArrHdLenLbl.Text = Root.Local.OptionsGeneralArrowHeadLen;
+            this.DefTxtLbl.Text = Root.Local.OptionsGeneralDefaultTextLbl;
+            this.DefaultFontBtn.Text = Root.Local.OptionsGeneralDefaultTextBtn;
+            this.SaveConfigBtn.Text = Root.Local.OptionsGeneralSaveConfigToFile;
 			this.lbNote.Text = Root.Local.OptionsGeneralNotePenwidth;
 
 			this.lbHkClear.Text = shortTxt(Root.Local.ButtonNameClear);
@@ -314,9 +326,10 @@ namespace gInk
 		{
 			Root.SetHotkey();
 
-			Root.SaveOptions("pens.ini");
-			Root.SaveOptions("config.ini");
-			Root.SaveOptions("hotkeys.ini");
+            // Save button added
+			//Root.SaveOptions("pens.ini");
+			//Root.SaveOptions("config.ini");
+			//Root.SaveOptions("hotkeys.ini");
 		}
 
 		private void cbWidthEnabled_CheckedChanged(object sender, EventArgs e)
@@ -427,7 +440,77 @@ namespace gInk
         {
             Root.ToolsEnabled = cbToolsEnabled.Checked;
         }
-            
+
+        private void SaveWindowPosBtn_Click(object sender, EventArgs e)
+        {
+            Root.FormTop = Root.callForm.Top;
+            Root.FormLeft = Root.callForm.Left;
+        }
+
+        private void SaveConfigBtn_Click(object sender, EventArgs e)
+        {
+            Root.SaveOptions("pens.ini");
+            Root.SaveOptions("config.ini");
+            Root.SaveOptions("hotkeys.ini");
+        }
+
+        private void ArrHdFloat_Validating(object sender, CancelEventArgs e)
+        {
+            float tempf;
+            if (!float.TryParse(((TextBox)sender).Text, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out tempf))
+            {
+                e.Cancel = true;
+                ((TextBox)sender).Select();
+            }
+        }
+
+        private void DefaultFontBtn_Click(object sender, EventArgs e)
+        {
+            FontDlg.Font = new Font(Root.TextFont, (float)Root.TextSize,
+                                        (Root.TextItalic ? FontStyle.Italic : FontStyle.Regular) | (Root.TextBold ? FontStyle.Bold : FontStyle.Regular));
+            if (FontDlg.ShowDialog() == DialogResult.OK)
+            {
+                Root.TextFont = FontDlg.Font.Name;
+                Root.TextItalic = (FontDlg.Font.Style & FontStyle.Italic) != 0;
+                Root.TextBold = (FontDlg.Font.Style & FontStyle.Bold) != 0;
+                Root.TextSize = (int)FontDlg.Font.Size;
+            }
+        }
+
+        private void ArrHdAperture_Validated(object sender, EventArgs e)
+        {
+            Root.ArrowAngle = float.Parse(ArrHdAperture.Text, CultureInfo.InvariantCulture) /180.0*Math.PI;
+        }
+
+        private void ArrHdLength_Validated(object sender, EventArgs e)
+        {
+            Root.ArrowLen = float.Parse(ArrHdLength.Text, CultureInfo.InvariantCulture) / 100.0 * System.Windows.SystemParameters.PrimaryScreenWidth;
+        }
+
+        private void ShowFloatingWinCb_Click(object sender, EventArgs e)
+        {
+            Root.FormOpacity = ((((CheckBox)sender).Checked)?1:-1) * Math.Abs(Root.FormOpacity);
+            if (((CheckBox)sender).Checked && (Root.FormTop <= Screen.PrimaryScreen.WorkingArea.Top || Root.FormTop >= Screen.PrimaryScreen.WorkingArea.Bottom || 
+                                               Root.FormLeft <= Screen.PrimaryScreen.WorkingArea.Left || Root.FormLeft >= Screen.PrimaryScreen.WorkingArea.Right))
+            {
+                Root.FormTop = Screen.PrimaryScreen.WorkingArea.Top + 100;
+                Root.FormLeft = Screen.PrimaryScreen.WorkingArea.Left + 100;
+            }
+            if (Root.FormOpacity > 0)
+            {
+                Root.callForm.Show();
+                Root.callForm.Top = Root.FormTop;
+                Root.callForm.Left = Root.FormLeft;
+                Root.callForm.Width = Root.FormWidth;
+                Root.callForm.Height = Root.FormWidth;
+                Root.callForm.Opacity = Root.FormOpacity / 100.0;
+            }
+            else
+            {
+                Root.callForm.Hide();
+            }
+        }
+
         private void cbAllowHotkeyInPointer_CheckedChanged(object sender, EventArgs e)
 		{
 			Root.AllowHotkeyInPointerMode = cbAllowHotkeyInPointer.Checked;

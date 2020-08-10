@@ -155,7 +155,7 @@ namespace gInk
 		public bool gpPenWidthVisible = false;
 		public string SnapshotFileFullPath = ""; // used to record the last snapshot file name, to select it when the balloon is clicked
 
-        public int FormTop = -1, FormLeft = -1, FormWidth = 48, FormOpacity = 50;
+        public int FormTop = 100, FormLeft = 100, FormWidth = 48, FormOpacity = -50; // negative opacity means that the window is not displayed
         public CallForm callForm = null;
 
         public double ArrowAngle = 15 * Math.PI /180;   // 15°
@@ -201,14 +201,20 @@ namespace gInk
 
 			FormCollection = null;
 			FormDisplay = null;
-		}
+
+            // to be done once only
+            ReadOptions("pens.ini");
+            ReadOptions("config.ini");
+            ReadOptions("hotkeys.ini");
+
+        }
 
         public void callshortcut()
         {
             TagNumbering = 1; //reset tag counter 
             if (FormCollection == null && FormDisplay == null)
             {
-                if (callForm != null) callForm.Hide();
+                if (FormOpacity > 0) callForm.Hide();
                 StartInk();
             }
             else if (PointerMode)
@@ -239,9 +245,9 @@ namespace gInk
 			{
 				if (FormDisplay == null && FormCollection == null)
 				{
-					ReadOptions("pens.ini");
-					ReadOptions("config.ini");
-					ReadOptions("hotkeys.ini");
+					//ReadOptions("pens.ini");
+					//ReadOptions("config.ini");
+					//ReadOptions("hotkeys.ini");
 					StartInk();
 				}
 				else if (Docked)
@@ -301,7 +307,7 @@ namespace gInk
 				ShowBalloonSnapshot();
 				UponBalloonSnap = false;
 			}
-            if (callForm != null) callForm.Show();
+            if (FormOpacity > 0) callForm.Show();
         }
 
         public void ClearInk()

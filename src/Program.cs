@@ -25,16 +25,14 @@ namespace gInk
 
             frm = new CallForm();
             frm.Root = new Root();
-            if (frm.Root.FormTop >= 0)
-            {
-                frm.Root.callForm = frm;
+            frm.Root.callForm = frm;
+            if (frm.Root.FormOpacity > 0)
                 frm.Show();
-                frm.Top = frm.Root.FormTop;
-                frm.Left = frm.Root.FormLeft;
-                frm.Width = frm.Root.FormWidth;
-                frm.Height = frm.Root.FormWidth;
-                frm.Opacity = frm.Root.FormOpacity / 100.0;
-            }
+            frm.Top = frm.Root.FormTop;
+            frm.Left = frm.Root.FormLeft;
+            frm.Width = frm.Root.FormWidth;
+            frm.Height = frm.Root.FormWidth;
+            frm.Opacity = frm.Root.FormOpacity / 100.0;
             Application.Run();
 		}
 

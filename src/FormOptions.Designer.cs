@@ -1,4 +1,4 @@
-﻿namespace gInk
+namespace gInk
 {
 	partial class FormOptions
 	{
@@ -65,6 +65,16 @@
             this.comboCanvasCursor = new System.Windows.Forms.ComboBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.ShowFloatingWinCb = new System.Windows.Forms.CheckBox();
+            this.DefTxtLbl = new System.Windows.Forms.Label();
+            this.SaveConfigBtn = new System.Windows.Forms.Button();
+            this.DefaultFontBtn = new System.Windows.Forms.Button();
+            this.ArrHdLength = new System.Windows.Forms.TextBox();
+            this.ArrHdLenLbl = new System.Windows.Forms.Label();
+            this.ArrHdAperture = new System.Windows.Forms.TextBox();
+            this.ArrHdAptLbl = new System.Windows.Forms.Label();
+            this.ArrwLbl = new System.Windows.Forms.Label();
+            this.SaveWindowPosBtn = new System.Windows.Forms.Button();
             this.cbToolsEnabled = new System.Windows.Forms.CheckBox();
             this.lbLanguage = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -111,6 +121,7 @@
             this.hiUndo = new gInk.HotkeyInputBox();
             this.hiEraser = new gInk.HotkeyInputBox();
             this.hiGlobal = new gInk.HotkeyInputBox();
+            this.FontDlg = new System.Windows.Forms.FontDialog();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -218,7 +229,7 @@
             // lbNote
             // 
             this.lbNote.AutoSize = true;
-            this.lbNote.Location = new System.Drawing.Point(128, 319);
+            this.lbNote.Location = new System.Drawing.Point(128, 373);
             this.lbNote.Name = "lbNote";
             this.lbNote.Size = new System.Drawing.Size(316, 13);
             this.lbNote.TabIndex = 4;
@@ -262,12 +273,22 @@
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.Padding = new System.Drawing.Point(0, 0);
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(952, 458);
+            this.tabControl1.Size = new System.Drawing.Size(952, 476);
             this.tabControl1.TabIndex = 7;
             // 
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.tabPage1.Controls.Add(this.ShowFloatingWinCb);
+            this.tabPage1.Controls.Add(this.DefTxtLbl);
+            this.tabPage1.Controls.Add(this.SaveConfigBtn);
+            this.tabPage1.Controls.Add(this.DefaultFontBtn);
+            this.tabPage1.Controls.Add(this.ArrHdLength);
+            this.tabPage1.Controls.Add(this.ArrHdLenLbl);
+            this.tabPage1.Controls.Add(this.ArrHdAperture);
+            this.tabPage1.Controls.Add(this.ArrHdAptLbl);
+            this.tabPage1.Controls.Add(this.ArrwLbl);
+            this.tabPage1.Controls.Add(this.SaveWindowPosBtn);
             this.tabPage1.Controls.Add(this.cbToolsEnabled);
             this.tabPage1.Controls.Add(this.lbLanguage);
             this.tabPage1.Controls.Add(this.pictureBox1);
@@ -291,9 +312,106 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Margin = new System.Windows.Forms.Padding(0);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Size = new System.Drawing.Size(944, 432);
+            this.tabPage1.Size = new System.Drawing.Size(944, 450);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "General";
+            // 
+            // ShowFloatingWinCb
+            // 
+            this.ShowFloatingWinCb.AutoSize = true;
+            this.ShowFloatingWinCb.Location = new System.Drawing.Point(364, 238);
+            this.ShowFloatingWinCb.Name = "ShowFloatingWinCb";
+            this.ShowFloatingWinCb.Size = new System.Drawing.Size(208, 17);
+            this.ShowFloatingWinCb.TabIndex = 19;
+            this.ShowFloatingWinCb.Text = "Show Floating Window (at next restart)";
+            this.ShowFloatingWinCb.UseVisualStyleBackColor = true;
+            this.ShowFloatingWinCb.Click += new System.EventHandler(this.ShowFloatingWinCb_Click);
+            // 
+            // DefTxtLbl
+            // 
+            this.DefTxtLbl.AutoSize = true;
+            this.DefTxtLbl.Location = new System.Drawing.Point(129, 329);
+            this.DefTxtLbl.Name = "DefTxtLbl";
+            this.DefTxtLbl.Size = new System.Drawing.Size(65, 13);
+            this.DefTxtLbl.TabIndex = 18;
+            this.DefTxtLbl.Text = "Default Text";
+            // 
+            // SaveConfigBtn
+            // 
+            this.SaveConfigBtn.Location = new System.Drawing.Point(487, 401);
+            this.SaveConfigBtn.Name = "SaveConfigBtn";
+            this.SaveConfigBtn.Size = new System.Drawing.Size(98, 46);
+            this.SaveConfigBtn.TabIndex = 17;
+            this.SaveConfigBtn.Text = "Save Config To Files";
+            this.SaveConfigBtn.UseVisualStyleBackColor = true;
+            this.SaveConfigBtn.Click += new System.EventHandler(this.SaveConfigBtn_Click);
+            // 
+            // DefaultFontBtn
+            // 
+            this.DefaultFontBtn.Location = new System.Drawing.Point(296, 324);
+            this.DefaultFontBtn.Name = "DefaultFontBtn";
+            this.DefaultFontBtn.Size = new System.Drawing.Size(111, 23);
+            this.DefaultFontBtn.TabIndex = 16;
+            this.DefaultFontBtn.Text = "Select &Font && Size";
+            this.DefaultFontBtn.UseVisualStyleBackColor = true;
+            this.DefaultFontBtn.Click += new System.EventHandler(this.DefaultFontBtn_Click);
+            // 
+            // ArrHdLength
+            // 
+            this.ArrHdLength.Location = new System.Drawing.Point(496, 298);
+            this.ArrHdLength.Name = "ArrHdLength";
+            this.ArrHdLength.Size = new System.Drawing.Size(52, 20);
+            this.ArrHdLength.TabIndex = 15;
+            this.ArrHdLength.Text = "0.123456";
+            this.ArrHdLength.Validating += new System.ComponentModel.CancelEventHandler(this.ArrHdFloat_Validating);
+            this.ArrHdLength.Validated += new System.EventHandler(this.ArrHdLength_Validated);
+            // 
+            // ArrHdLenLbl
+            // 
+            this.ArrHdLenLbl.AutoSize = true;
+            this.ArrHdLenLbl.Location = new System.Drawing.Point(410, 301);
+            this.ArrHdLenLbl.Name = "ArrHdLenLbl";
+            this.ArrHdLenLbl.Size = new System.Drawing.Size(70, 13);
+            this.ArrHdLenLbl.TabIndex = 14;
+            this.ArrHdLenLbl.Text = "Length(%Scr)";
+            // 
+            // ArrHdAperture
+            // 
+            this.ArrHdAperture.Location = new System.Drawing.Point(356, 298);
+            this.ArrHdAperture.Name = "ArrHdAperture";
+            this.ArrHdAperture.Size = new System.Drawing.Size(37, 20);
+            this.ArrHdAperture.TabIndex = 13;
+            this.ArrHdAperture.Text = "12.1";
+            this.ArrHdAperture.Validating += new System.ComponentModel.CancelEventHandler(this.ArrHdFloat_Validating);
+            this.ArrHdAperture.Validated += new System.EventHandler(this.ArrHdAperture_Validated);
+            // 
+            // ArrHdAptLbl
+            // 
+            this.ArrHdAptLbl.AutoSize = true;
+            this.ArrHdAptLbl.Location = new System.Drawing.Point(293, 301);
+            this.ArrHdAptLbl.Name = "ArrHdAptLbl";
+            this.ArrHdAptLbl.Size = new System.Drawing.Size(57, 13);
+            this.ArrHdAptLbl.TabIndex = 12;
+            this.ArrHdAptLbl.Text = "Aperture(°)";
+            // 
+            // ArrwLbl
+            // 
+            this.ArrwLbl.AutoSize = true;
+            this.ArrwLbl.Location = new System.Drawing.Point(127, 301);
+            this.ArrwLbl.Name = "ArrwLbl";
+            this.ArrwLbl.Size = new System.Drawing.Size(63, 13);
+            this.ArrwLbl.TabIndex = 11;
+            this.ArrwLbl.Text = "Arrow Head";
+            // 
+            // SaveWindowPosBtn
+            // 
+            this.SaveWindowPosBtn.Location = new System.Drawing.Point(364, 261);
+            this.SaveWindowPosBtn.Name = "SaveWindowPosBtn";
+            this.SaveWindowPosBtn.Size = new System.Drawing.Size(184, 24);
+            this.SaveWindowPosBtn.TabIndex = 10;
+            this.SaveWindowPosBtn.Text = "Save Floating &window Pos";
+            this.SaveWindowPosBtn.UseVisualStyleBackColor = true;
+            this.SaveWindowPosBtn.Click += new System.EventHandler(this.SaveWindowPosBtn_Click);
             // 
             // cbToolsEnabled
             // 
@@ -371,7 +489,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(944, 432);
+            this.tabPage2.Size = new System.Drawing.Size(944, 450);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Pens";
             // 
@@ -417,7 +535,7 @@
             this.tabPage3.Controls.Add(this.hiGlobal);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(944, 432);
+            this.tabPage3.Size = new System.Drawing.Size(944, 450);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Hotkeys";
             // 
@@ -848,12 +966,16 @@
             this.hiGlobal.Text = "None";
             this.hiGlobal.OnHotkeyChanged += new System.EventHandler(this.hi_OnHotkeyChanged);
             // 
+            // FontDlg
+            // 
+            this.FontDlg.FontMustExist = true;
+            // 
             // FormOptions
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.ClientSize = new System.Drawing.Size(773, 453);
+            this.ClientSize = new System.Drawing.Size(773, 474);
             this.Controls.Add(this.tabControl1);
             this.MaximizeBox = false;
             this.Name = "FormOptions";
@@ -937,5 +1059,16 @@
         private HotkeyInputBox hiToolLine;
         private System.Windows.Forms.Label lbHkHand;
         private HotkeyInputBox hiToolHand;
+        private System.Windows.Forms.TextBox ArrHdLength;
+        private System.Windows.Forms.Label ArrHdLenLbl;
+        private System.Windows.Forms.TextBox ArrHdAperture;
+        private System.Windows.Forms.Label ArrHdAptLbl;
+        private System.Windows.Forms.Label ArrwLbl;
+        private System.Windows.Forms.Button SaveWindowPosBtn;
+        private System.Windows.Forms.Button DefaultFontBtn;
+        private System.Windows.Forms.Button SaveConfigBtn;
+        private System.Windows.Forms.Label DefTxtLbl;
+        public System.Windows.Forms.FontDialog FontDlg;
+        private System.Windows.Forms.CheckBox ShowFloatingWinCb;
     }
 }

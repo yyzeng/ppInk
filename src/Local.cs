@@ -58,7 +58,15 @@ namespace gInk
 		public string OptionsGeneralSnapshotsavepath = "Snapshot save path";
 		public string OptionsGeneralWhitetrayicon = "Use white tray icon";
 		public string OptionsGeneralAllowdragging = "Allow dragging toolbar";
-		public string OptionsGeneralNotePenwidth = "Note: pen width panel overides each individual pen width settings";
+        public string OptionsGeneralShowFloatingWindow = "Show Floating Window (at next restart)";
+        public string OptionsGeneralSaveFloatingWindowPos = "Save Floating &window Pos";
+        public string OptionsGeneralArrowHead = "ArrowHead";
+        public string OptionsGeneralArrowHeadApt = "Aperture(°)";
+        public string OptionsGeneralArrowHeadLen = "Length(%Scr)";
+        public string OptionsGeneralDefaultTextLbl = "Default Text";
+        public string OptionsGeneralDefaultTextBtn = "Select &Font && Size";
+        public string OptionsGeneralSaveConfigToFile = "Save to Files";
+        public string OptionsGeneralNotePenwidth = "Notes: (1)pen width panel overides each individual pen width settings\n  (2) Transparency and size of floating window to be modified directly in config.ini";
 
 		public string OptionsPensShow = "Show";
 		public string OptionsPensColor = "Color";
@@ -183,7 +191,7 @@ namespace gInk
 				{
 					sName = sLine.Substring(0, sLine.IndexOf("="));
 					sName = sName.Trim();
-					sPara = sLine.Substring(sLine.IndexOf("=") + 1);
+					sPara = sLine.Substring(sLine.IndexOf("=") + 1).Replace("\\n","\n");
 					sPara = sPara.Trim();
 					sPara = sPara.Trim('\"');
 
