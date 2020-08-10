@@ -636,6 +636,7 @@ namespace gInk
             return st;
         }
 
+        bool TextEdited = false;
         private DialogResult ModifyTextInStroke(Stroke stk, string txt)
         {
             // required to access the dialog box
@@ -660,7 +661,7 @@ namespace gInk
             DialogResult ret = inp.ShowDialog();
             if (ret == DialogResult.Cancel)
                 stk.ExtendedProperties.Add(Root.TEXT_GUID, txt);
-
+            TextEdited = true;
             tiSlide.Start();
             IC.Enabled = true;
             //ToUnThrough();
@@ -1762,7 +1763,7 @@ namespace gInk
 				retVal = GetKeyState(27);
 				if ((retVal & 0x8000) == 0x8000)
 				{
-					if ((LastESCStatus & 0x8000) == 0x0000)
+					if ((LastESCStatus & 0x8000) == 0x0000 && ! TextEdited)
 					{
 						if (Root.Snapping > 0)
 						{
@@ -1778,6 +1779,7 @@ namespace gInk
 					}
 				}
 				LastESCStatus = retVal;
+                TextEdited = false;
 			}
 
 
