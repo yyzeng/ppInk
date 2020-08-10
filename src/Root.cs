@@ -328,7 +328,7 @@ namespace gInk
 		{
 			if (UndoDepth <= 0)
 				return;
-            if(FormCollection.IC.Ink.Strokes[FormCollection.IC.Ink.Strokes.Count - 1].ExtendedProperties.Contains(ISTAG_GUID))
+            if(FormCollection.IC.Ink.Strokes.Count>0 && FormCollection.IC.Ink.Strokes[FormCollection.IC.Ink.Strokes.Count - 1].ExtendedProperties.Contains(ISTAG_GUID))
             {
                 TagNumbering--;
             }
