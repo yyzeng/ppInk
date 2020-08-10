@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
@@ -182,9 +183,9 @@ namespace gInk
 			SetDefaultConfig();
 			ReadOptions("pens.ini");
 			ReadOptions("config.ini");
-			ReadOptions("hotkeys.ini");			
-
-			Size size = SystemInformation.SmallIconSize;
+			ReadOptions("hotkeys.ini");
+            
+            Size size = SystemInformation.SmallIconSize;
 			trayIcon = new NotifyIcon();
 			trayIcon.Text = "ppInk";
 			trayIcon.ContextMenu = trayMenu;
@@ -717,9 +718,9 @@ namespace gInk
                         case "ARROW":           // angle in degrees, len in % of the screen width
                             tab = sPara.Split(',');
                             if (tab.Length != 2) break;
-                            if (float.TryParse(tab[0], out tempf))
+                            if (float.TryParse(tab[0],NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out tempf))
                                 ArrowAngle = tempf * Math.PI / 180;
-                            if (float.TryParse(tab[1], out tempf))
+                            if (float.TryParse(tab[1], NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out tempf))
                                 ArrowLen = tempf / 100.0 * System.Windows.SystemParameters.PrimaryScreenWidth;
                             break;
                         case "TEXT":           // Font(string),italique(boolean),Bold(boolean),size(float) of the text in % of the screen, also defines the size of the
@@ -736,7 +737,7 @@ namespace gInk
                                 TextBold = false;
                             else if (s.ToUpper() == "TRUE" || s == "1" || s.ToUpper() == "ON")
                                 TextBold = true;
-                            if (float.TryParse(tab[3], out tempf))
+                            if (float.TryParse(tab[3], NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out tempf))
                                 TextSize = (int)(tempf / 100.0 * System.Windows.SystemParameters.PrimaryScreenWidth);
                             break;
                         case "MAGNET":
@@ -808,7 +809,7 @@ namespace gInk
 								gpButtonsTop = tempi;
 							break;
 						case "TOOLBAR_HEIGHT":
-							if (float.TryParse(sPara, out tempf))
+							if (float.TryParse(sPara, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out tempf))
 								ToolbarHeight = tempf;
 							break;
 						case "CANVAS_CURSOR":
@@ -991,10 +992,10 @@ namespace gInk
                                 sPara = "False";
                             break;
                         case "ARROW":           // angle in degrees, len in % of the screen width
-                            sPara = (ArrowAngle / Math.PI * 180.0).ToString()+","+ (ArrowLen / System.Windows.SystemParameters.PrimaryScreenWidth * 100.0).ToString();
+                            sPara = (ArrowAngle / Math.PI * 180.0).ToString(CultureInfo.InvariantCulture) +","+ (ArrowLen / System.Windows.SystemParameters.PrimaryScreenWidth * 100.0).ToString(CultureInfo.InvariantCulture);
                             break;
                         case "TEXT":           // size of the tag in % of the screen
-                            sPara = TextFont+","+(TextItalic?"True":"False")+","+ (TextBold ? "True" : "False")+","+(TextSize / System.Windows.SystemParameters.PrimaryScreenWidth *100.0).ToString();
+                            sPara = TextFont+","+(TextItalic?"True":"False")+","+ (TextBold ? "True" : "False")+","+(TextSize / System.Windows.SystemParameters.PrimaryScreenWidth *100.0).ToString(CultureInfo.InvariantCulture);
                             break;
                         case "MAGNET":
                             sPara = DefaultMagnetActive ? "On" : "Off";
