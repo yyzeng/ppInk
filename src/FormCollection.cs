@@ -714,7 +714,7 @@ namespace gInk
             Point pt = new Point(int.MaxValue, int.MaxValue);
             int x2 = int.MaxValue, y2 = int.MaxValue, x_a = int.MaxValue, y_a = int.MaxValue;
             if ((Magnetic || (Control.ModifierKeys & Keys.Control)!=Keys.None  ) &&
-                (NearestStroke(new Point(cursorX, cursorY), true, out st, out pos, false, true) < Root.PixelToHiMetric(Root.MagneticRadius)))
+                (NearestStroke(new Point(cursorX, cursorY), true, out st, out pos, false, true) < Root.PixelToHiMetric(Root.MinMagneticRadius())))
             {
                 pt = st.GetPoint((int)Math.Round(pos));
                 IC.Renderer.InkSpaceToPixel(IC.Handle, ref pt);
@@ -733,10 +733,28 @@ namespace gInk
                     {
                         int x0 = Root.HiMetricToPixel((int)stk.ExtendedProperties[Root.TEXTX_GUID].Data);
                         int y0 = Root.HiMetricToPixel((int)stk.ExtendedProperties[Root.TEXTY_GUID].Data);
-                        int x1 = (int)(x0 + (float)stk.ExtendedProperties[Root.TEXTWIDTH_GUID].Data);
-                        int y1 = (int)(y0 + (float)stk.ExtendedProperties[Root.TEXTHEIGHT_GUID].Data);
-                        if (   (x0 - Root.MagneticRadius) <= cursorX && cursorX <= (x1 + Root.MagneticRadius) 
-                            && (y0 - Root.MagneticRadius) <= cursorY && cursorY <= (x1 + Root.MagneticRadius) )
+                        int x1, y1;
+                        if ((System.Drawing.StringAlignment)stk.ExtendedProperties[Root.TEXTHALIGN_GUID].Data == StringAlignment.Near)
+                        {
+                            x1 = (int)(x0 + (float)stk.ExtendedProperties[Root.TEXTWIDTH_GUID].Data);
+                        }
+                        else
+                        {
+                            x1 = x0;
+                            x0 = (int)(x1 - (float)stk.ExtendedProperties[Root.TEXTWIDTH_GUID].Data);
+                        }
+                        if ((System.Drawing.StringAlignment)stk.ExtendedProperties[Root.TEXTVALIGN_GUID].Data == StringAlignment.Near)
+                        {
+                            y1 = (int)(y0 + (float)stk.ExtendedProperties[Root.TEXTHEIGHT_GUID].Data);
+                        }
+                        else
+                        {
+                            y1 = y0;
+                            y0 = (int)(y1 - (float)stk.ExtendedProperties[Root.TEXTHEIGHT_GUID].Data);
+                        }
+                        //Console.WriteLine("{0},{1}   {2},{3}    {4},{5}       <= {6},{7}", x0, y0, cursorX, cursorY, x1, y1, (float)stk.ExtendedProperties[Root.TEXTWIDTH_GUID].Data, (float)stk.ExtendedProperties[Root.TEXTHEIGHT_GUID].Data);
+                        if (   (x0 - Root.MinMagneticRadius()) <= cursorX && cursorX <= (x1 + Root.MinMagneticRadius()) 
+                            && (y0 - Root.MinMagneticRadius()) <= cursorY && cursorY <= (y1 + Root.MinMagneticRadius()) )
                         {
                             int d = dist(cursorX - x0, cursorY - y0);
                             x2 = x0;
@@ -865,10 +883,11 @@ namespace gInk
                 {
                     float pos;
                     Stroke minStroke;
-                    if (NearestStroke(new Point(Root.CursorX, Root.CursorY), true, out minStroke, out pos, true, false) < Root.PixelToHiMetric(Root.MagneticRadius))
+                    if (NearestStroke(new Point(Root.CursorX, Root.CursorY), true, out minStroke, out pos, true, false) < Root.PixelToHiMetric(Root.MinMagneticRadius()))
                     {
                         ModifyTextInStroke(minStroke, (string)(minStroke.ExtendedProperties[Root.TEXT_GUID].Data));
                         SelectTool(0, 0);
+                        ComputeTextBoxSize(ref minStroke);
                     }
                 }
                 else if ((Root.ToolSelected == 8) || (Root.ToolSelected == 9))  // new text
@@ -880,15 +899,7 @@ namespace gInk
                         IC.Ink.DeleteStroke(st);
                     else
                     {
-                        System.Drawing.StringFormat stf = new System.Drawing.StringFormat(System.Drawing.StringFormatFlags.NoClip);
-                        stf.Alignment = (System.Drawing.StringAlignment)(st.ExtendedProperties[Root.TEXTHALIGN_GUID].Data);
-                        stf.LineAlignment = (System.Drawing.StringAlignment)(st.ExtendedProperties[Root.TEXTVALIGN_GUID].Data);
-                        SizeF layoutSize = new SizeF(2000.0F, 2000.0F);
-                        layoutSize = Root.FormDisplay.gOneStrokeCanvus.MeasureString((string)(st.ExtendedProperties[Root.TEXT_GUID].Data),
-                                        new Font((string)st.ExtendedProperties[Root.TEXTFONT_GUID].Data, (float)st.ExtendedProperties[Root.TEXTFONTSIZE_GUID].Data,
-                                        (System.Drawing.FontStyle)(int)st.ExtendedProperties[Root.TEXTFONTSTYLE_GUID].Data), layoutSize, stf);
-                        st.ExtendedProperties.Add(Root.TEXTWIDTH_GUID,layoutSize.Width);
-                        st.ExtendedProperties.Add(Root.TEXTHEIGHT_GUID, layoutSize.Height);
+                        ComputeTextBoxSize(ref st);
                     }
                 }
                 else if (Root.ToolSelected == 10)// Move : do Nothing
@@ -905,7 +916,20 @@ namespace gInk
             Root.CursorY0 = Int32.MinValue;
         }
 
-		private void SaveUndoStrokes()
+        private void ComputeTextBoxSize(ref Stroke st)
+        {
+            System.Drawing.StringFormat stf = new System.Drawing.StringFormat(System.Drawing.StringFormatFlags.NoClip);
+            stf.Alignment = (System.Drawing.StringAlignment)(st.ExtendedProperties[Root.TEXTHALIGN_GUID].Data);
+            stf.LineAlignment = (System.Drawing.StringAlignment)(st.ExtendedProperties[Root.TEXTVALIGN_GUID].Data);
+            SizeF layoutSize = new SizeF(2000.0F, 2000.0F);
+            layoutSize = Root.FormDisplay.gOneStrokeCanvus.MeasureString((string)(st.ExtendedProperties[Root.TEXT_GUID].Data),
+                            new Font((string)st.ExtendedProperties[Root.TEXTFONT_GUID].Data, (float)st.ExtendedProperties[Root.TEXTFONTSIZE_GUID].Data,
+                            (System.Drawing.FontStyle)(int)st.ExtendedProperties[Root.TEXTFONTSTYLE_GUID].Data), layoutSize, stf);
+            st.ExtendedProperties.Add(Root.TEXTWIDTH_GUID, layoutSize.Width);
+            st.ExtendedProperties.Add(Root.TEXTHEIGHT_GUID, layoutSize.Height);
+        }
+
+        private void SaveUndoStrokes()
 		{
 			Root.RedoDepth = 0;
 			if (Root.UndoDepth < Root.UndoStrokes.GetLength(0) - 1)
@@ -961,7 +985,7 @@ namespace gInk
                 e.Stroke.ExtendedProperties.Add(Root.ISDELETION_GUID,true);
                 float pos;
                 Stroke minStroke;
-                if (NearestStroke(new Point(Root.CursorX, Root.CursorY), true, out minStroke, out pos,false,false) < Root.PixelToHiMetric(Root.MagneticRadius))
+                if (NearestStroke(new Point(Root.CursorX, Root.CursorY), true, out minStroke, out pos,false,false) < Root.PixelToHiMetric(Root.MinMagneticRadius()))
                 {
                     IC.Ink.DeleteStroke(minStroke);
                 }
@@ -1005,7 +1029,7 @@ namespace gInk
             if (Root.ToolSelected == 10) // Move
             {
                 float pos;
-                if (NearestStroke(new Point(Root.CursorX, Root.CursorY), true, out movedStroke, out pos, false, true) > Root.PixelToHiMetric(Root.MagneticRadius))
+                if (NearestStroke(new Point(Root.CursorX, Root.CursorY), true, out movedStroke, out pos, false, true) > Root.PixelToHiMetric(Root.MinMagneticRadius()))
                     movedStroke = null;
             }
         }
