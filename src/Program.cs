@@ -113,17 +113,19 @@ namespace gInk
 		{
 			try
 			{
-				FileStream fs = new FileStream("crash.txt", FileMode.Create);
+				FileStream fs = new FileStream("crash.txt", FileMode.Append);
 				StreamWriter sw = new StreamWriter(fs);
+                sw.Write(System.DateTime.Now.ToString("MM / dd / yyyy HH:mm"));
 				sw.Write(errormsg);
 				sw.Close();
 				fs.Close();
 			}
 			catch
 			{
-				FileStream fs = new FileStream(AppDomain.CurrentDomain.BaseDirectory + "crash.txt", FileMode.Create);
+				FileStream fs = new FileStream(AppDomain.CurrentDomain.BaseDirectory + "crash.txt", FileMode.Append);
 				StreamWriter sw = new StreamWriter(fs);
-				sw.Write(errormsg);
+                sw.Write(System.DateTime.Now.ToString("MM / dd / yyyy HH:mm"));
+                sw.Write(errormsg);
 				sw.Close();
 				fs.Close();
 			}
