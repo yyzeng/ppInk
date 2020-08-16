@@ -4,11 +4,25 @@ using System.Windows.Forms;
 using System.Threading;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace gInk
 {
 	static class Program
 	{
+
+        #region Dll Imports
+        private const int HWND_BROADCAST = 0xFFFF;
+
+        [DllImport("user32")]
+        private static extern bool PostMessage(IntPtr hwnd, int msg, IntPtr wparam, IntPtr lparam);
+
+        [DllImport("user32")]
+        private static extern int RegisterWindowMessage(string message);
+        #endregion Dll Imports
+        public static int StartInkingMsg = RegisterWindowMessage("START_INKING");
+
 		/// <summary>
 		/// The main entry point for the application.
 		/// </summary>
@@ -16,7 +30,10 @@ namespace gInk
 		static void Main()
 		{
             CallForm frm;
-                Application.ThreadException += new ThreadExceptionEventHandler(UIThreadException);
+
+            if (!EnsureSingleInstance()) return;
+
+            Application.ThreadException += new ThreadExceptionEventHandler(UIThreadException);
 			Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
 			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledException);
 
@@ -104,7 +121,29 @@ namespace gInk
 			}
 		}
 
-		private static DialogResult ShowErrorDialog(string title, string errormsg)
+        private static bool EnsureSingleInstance()
+        {
+            Process currentProcess = Process.GetCurrentProcess();
+
+            var runningProcess = (from process in Process.GetProcesses()
+                                  where
+                                    process.Id != currentProcess.Id &&
+                                    process.ProcessName.Equals(
+                                      currentProcess.ProcessName,
+                                      StringComparison.Ordinal)
+                                  select process).FirstOrDefault();
+
+            if (runningProcess != null)
+            {
+                PostMessage((IntPtr)HWND_BROADCAST, StartInkingMsg, (IntPtr)null, (IntPtr)null);
+                return false;
+            }
+
+            return true;
+        }
+
+
+        private static DialogResult ShowErrorDialog(string title, string errormsg)
 		{
 			return MessageBox.Show(errormsg, title, MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Stop);
 		}
