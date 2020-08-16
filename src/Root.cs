@@ -139,7 +139,9 @@ namespace gInk
 		public bool PanMode = false;
 		public bool InkVisible = true;
         public int MagneticRadius= MIN_MAGNETIC;        // Magnet Radius; <=0 means off;
-        public int MinMagneticRadius() { return Math.Max(Math.Abs(MagneticRadius), MIN_MAGNETIC); } 
+        public int MinMagneticRadius() { return Math.Max(Math.Abs(MagneticRadius), MIN_MAGNETIC); }
+
+        public bool DefaultArrow_start = true;
 
         public Ink[] UndoStrokes;
 		//public Ink UponUndoStrokes;
@@ -726,6 +728,12 @@ namespace gInk
                             if (float.TryParse(tab[1], NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out tempf))
                                 ArrowLen = tempf / 100.0 * System.Windows.SystemParameters.PrimaryScreenWidth;
                             break;
+                        case "DEFAULT_ARROW":
+                            if (sPara.ToUpper() == "START" )
+                                DefaultArrow_start = true;
+                            if (sPara.ToUpper() == "END")
+                                DefaultArrow_start = false;
+                            break;
                         case "TEXT":           // Font(string),italique(boolean),Bold(boolean),size(float) of the text in % of the screen, also defines the size of the
                             tab = sPara.Split(',');
                             if (tab.Length != 4) break;
@@ -998,6 +1006,9 @@ namespace gInk
                             break;
                         case "ARROW":           // angle in degrees, len in % of the screen width
                             sPara = (ArrowAngle / Math.PI * 180.0).ToString(CultureInfo.InvariantCulture) +","+ (ArrowLen / System.Windows.SystemParameters.PrimaryScreenWidth * 100.0).ToString(CultureInfo.InvariantCulture);
+                            break;
+                        case "DEFAULT_ARROW":
+                            sPara = DefaultArrow_start ? "START" : "END";
                             break;
                         case "TEXT":           // size of the tag in % of the screen
                             sPara = TextFont+","+(TextItalic?"True":"False")+","+ (TextBold ? "True" : "False")+","+(TextSize / System.Windows.SystemParameters.PrimaryScreenWidth *100.0).ToString(CultureInfo.InvariantCulture);

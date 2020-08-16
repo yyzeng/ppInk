@@ -65,6 +65,7 @@ namespace gInk
         public string OptionsGeneralArrowHeadLen = "Length(%Scr)";
         public string OptionsGeneralDefaultTextLbl = "Default Text";
         public string OptionsGeneralDefaultTextBtn = "Select &Font && Size";
+        public string OptionsGeneralDefaultArrHdBtn = "Default Arrow Head At Start";
         public string OptionsGeneralMagnetLbl = "Magnetic radius(%Scr) (<=0 = disabled)";
         public string OptionsGeneralSaveConfigToFile = "Save to Files";
         public string OptionsGeneralNotePenwidth = "Notes: (1)pen width panel overides each individual pen width settings\n  (2) Transparency and size of floating window to be modified directly in config.ini";

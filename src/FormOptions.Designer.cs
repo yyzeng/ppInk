@@ -114,6 +114,7 @@ namespace gInk
             this.lbHkUndo = new System.Windows.Forms.Label();
             this.lbHkEraser = new System.Windows.Forms.Label();
             this.lbGlobalHotkey = new System.Windows.Forms.Label();
+            this.DefArrStartCb = new System.Windows.Forms.CheckBox();
             this.hiInkVisible = new gInk.HotkeyInputBox();
             this.hiSnapshot = new gInk.HotkeyInputBox();
             this.hiClear = new gInk.HotkeyInputBox();
@@ -281,6 +282,7 @@ namespace gInk
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.tabPage1.Controls.Add(this.DefArrStartCb);
             this.tabPage1.Controls.Add(this.Magnet_TB);
             this.tabPage1.Controls.Add(this.MagnetLbl);
             this.tabPage1.Controls.Add(this.ShowFloatingWinCb);
@@ -862,6 +864,17 @@ namespace gInk
             this.lbGlobalHotkey.TabIndex = 4;
             this.lbGlobalHotkey.Text = "Global hotkey (start drawing, switch between mouse pointer and drawing)";
             // 
+            // 
+            // DefArrStartCb
+            // 
+            this.DefArrStartCb.AutoSize = true;
+            this.DefArrStartCb.Location = new System.Drawing.Point(426, 325);
+            this.DefArrStartCb.Name = "DefArrStartCb";
+            this.DefArrStartCb.Size = new System.Drawing.Size(156, 17);
+            this.DefArrStartCb.TabIndex = 22;
+            this.DefArrStartCb.Text = "Default Arrow Head at Start";
+            this.DefArrStartCb.UseVisualStyleBackColor = true;
+            this.DefArrStartCb.CheckedChanged += new System.EventHandler(this.DefArrStartCb_CheckedChanged);
             // hiInkVisible
             // 
             this.hiInkVisible.BackColor = System.Drawing.Color.White;
@@ -1095,5 +1108,6 @@ namespace gInk
         private System.Windows.Forms.CheckBox ShowFloatingWinCb;
         private System.Windows.Forms.TextBox Magnet_TB;
         private System.Windows.Forms.Label MagnetLbl;
+        private System.Windows.Forms.CheckBox DefArrStartCb;
     }
 }

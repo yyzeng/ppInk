@@ -1222,7 +1222,10 @@ namespace gInk
             btLine.BackgroundImage = global::gInk.Properties.Resources.tool_line;
             btRect.BackgroundImage = global::gInk.Properties.Resources.tool_rect;
             btOval.BackgroundImage = global::gInk.Properties.Resources.tool_oval;
-            btArrow.BackgroundImage = global::gInk.Properties.Resources.tool_stAr;
+            if(Root.DefaultArrow_start)
+                btArrow.BackgroundImage = global::gInk.Properties.Resources.tool_stAr;
+            else
+                btArrow.BackgroundImage = global::gInk.Properties.Resources.tool_enAr;
             btNumb.BackgroundImage = global::gInk.Properties.Resources.tool_numb;
             btText.BackgroundImage = global::gInk.Properties.Resources.tool_txtL;
             btEdit.BackgroundImage = global::gInk.Properties.Resources.tool_edit;
@@ -2199,7 +2202,15 @@ namespace gInk
             else if (((Button)sender).Name.Contains("Oval"))
                 i = 3;
             else if (((Button)sender).Name.Contains("Arrow"))
-                i = 4;
+                if (Root.ToolSelected == 5)
+                    i = 4;
+                else if (Root.ToolSelected == 4)
+                    i = 5;
+                else if (Root.DefaultArrow_start)
+                    i = 4;
+                else
+                    i = 5;
+                //               i = (Root.DefaultArrow_start ||Root.ToolSelected==5) ?4:5 ;
             else if (((Button)sender).Name.Contains("Numb"))
             {
                 if (Root.ToolSelected == 6) // if already selected, we open the index dialog
