@@ -235,6 +235,9 @@
     <Content Include="tool_line_act.png" />
     <Content Include="tool_numb.png" />
     <Content Include="tool_numb_act.png" />
+    <Content Include="tool_numb_fillB.png" />
+    <Content Include="tool_numb_fillC.png" />
+    <Content Include="tool_numb_fillW.png" />
     <Content Include="tool_oval_act.png" />
     <Content Include="tool_oval_filledB.png" />
     <Content Include="tool_oval_filledC.png" />

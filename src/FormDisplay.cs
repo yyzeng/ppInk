@@ -254,10 +254,9 @@ namespace gInk
                 foreach (Stroke st in Root.FormCollection.IC.Ink.Strokes)
                 {
                     if (st.ExtendedProperties.Contains(Root.ISHIDDEN_GUID))
-                        ;
-                    else if (st.ExtendedProperties.Contains(Root.ISSTROKE_GUID))
-                        Root.FormCollection.IC.Renderer.Draw(g, st);
-                    else //Should not be drawn as a stroke : for the moment only filled values.
+                        continue;
+                    //else //Should not be drawn as a stroke : for the moment only filled values.
+                    if(st.ExtendedProperties.Contains(Root.ISFILLEDCOLOR_GUID) || st.ExtendedProperties.Contains(Root.ISFILLEDWHITE_GUID) || st.ExtendedProperties.Contains(Root.ISFILLEDBLACK_GUID) )
                     {
                         SolidBrush bru;
                         if (st.ExtendedProperties.Contains(Root.ISFILLEDCOLOR_GUID))
@@ -288,6 +287,10 @@ namespace gInk
                         }
 
                     }
+                    /*else */
+                    if (st.ExtendedProperties.Contains(Root.ISSTROKE_GUID))
+                        Root.FormCollection.IC.Renderer.Draw(g, st);
+
                     if (st.ExtendedProperties.Contains(Root.TEXT_GUID))
                     {
                         Point pt = new Point((int)(st.ExtendedProperties[Root.TEXTX_GUID].Data), (int)(st.ExtendedProperties[Root.TEXTY_GUID].Data));

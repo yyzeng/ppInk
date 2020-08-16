@@ -21,8 +21,12 @@ selected my multiple click on those:
     unfilled drawing -\> filled with pen color -\> filled with white -\> filled
     with black
 
--   Arrow :  
+-   Numbering :  
+    transparent background -\> edit tag Number -\> white background -\> black background
+
+-   Arrow :
     Arrow draw at the beginning -\> Arrow draw at the end
+    (*) : head position when tool is first selected can be modified by option
 
 -   Text:  
     Text left aligned -\> Text Right aligned

@@ -298,4 +298,13 @@
   <data name="pan1_act" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\pan1_act.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="tool_numb_fillB" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\tool_numb_fillB.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="tool_numb_fillC" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\tool_numb_fillC.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="tool_numb_fillW" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\tool_numb_fillW.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

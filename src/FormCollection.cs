@@ -594,7 +594,9 @@ namespace gInk
         private Stroke AddNumberTagStroke(int CursorX0, int CursorY0, int CursorX, int CursorY,string txt)
         // arrow at starting point
         {
-            Stroke st = AddEllipseStroke(CursorX0, CursorY0, (int)(CursorX0 + Root.TextSize * 1.2), (int)(CursorY0 + Root.TextSize * 1.2),0);
+            // for the filling, filled color is not used but this state is used to note that we edit the tag number
+            Stroke st = AddEllipseStroke(CursorX0, CursorY0, (int)(CursorX0 + Root.TextSize * 1.2), (int)(CursorY0 + Root.TextSize * 1.2), Root.FilledSelected==1?0:Root.FilledSelected);
+            st.ExtendedProperties.Add(Root.ISSTROKE_GUID, true);
             Point pt = new Point(CursorX0, CursorY0);
             IC.Renderer.PixelToInkSpace(Root.FormDisplay.gOneStrokeCanvus, ref pt);
             st.ExtendedProperties.Add(Root.ISTAG_GUID, true);
@@ -1229,7 +1231,7 @@ namespace gInk
             btNumb.BackgroundImage = global::gInk.Properties.Resources.tool_numb;
             btText.BackgroundImage = global::gInk.Properties.Resources.tool_txtL;
             btEdit.BackgroundImage = global::gInk.Properties.Resources.tool_edit;
-            int[] applicableTool = { 0, 2, 3 };
+            int[] applicableTool = { 0, 2, 3, 6 };
             if (filled >= 0)
                 Root.FilledSelected = filled;
             else if ((Array.IndexOf(applicableTool,tool )>= 0) && (tool == Root.ToolSelected))
@@ -1285,7 +1287,19 @@ namespace gInk
                     tool = 4;
                 }
             else if (tool == 6)
-                btNumb.BackgroundImage = global::gInk.Properties.Resources.tool_numb_act;
+            {
+                if (Root.FilledSelected == 0)
+                    btNumb.BackgroundImage = global::gInk.Properties.Resources.tool_numb_act;
+                else if (Root.FilledSelected == 1)
+                { // we use the state FilledColor to do the modification of the tag number
+                    SetTagNumber();
+                    btNumb.BackgroundImage = global::gInk.Properties.Resources.tool_numb_act;
+                }
+                else if (Root.FilledSelected == 2)
+                    btNumb.BackgroundImage = global::gInk.Properties.Resources.tool_numb_fillW;
+                else if (Root.FilledSelected == 3)
+                    btNumb.BackgroundImage = global::gInk.Properties.Resources.tool_numb_fillB;
+            }
             else if (tool == 7)
                 btEdit.BackgroundImage = global::gInk.Properties.Resources.tool_edit_act;
             else if ((tool == 8)|| (tool == 9))
@@ -2185,6 +2199,30 @@ namespace gInk
 				}
 		}
         
+        public void SetTagNumber()
+        {
+            tiSlide.Stop();
+            IC.Enabled = false;
+            ToThrough();
+            int k = -1;
+            FormInput inp = new FormInput(Root.Local.DlgTagCaption, Root.Local.DlgTagLabel, "", false, Root, null);
+
+            while (!Int32.TryParse(inp.TextOut(), out k))
+            {
+                inp.TextIn(Root.TagNumbering.ToString());
+                if (inp.ShowDialog() == DialogResult.Cancel)
+                {
+                    inp.TextIn("");
+                    break;
+                }
+            }
+            tiSlide.Start();
+            IC.Enabled = true;
+            ToUnThrough();
+            if (inp.TextOut().Length == 0) return;
+            Root.TagNumbering = k;
+        }
+
         public void btTool_Click(object sender, EventArgs e)
         {
             if (ToolbarMoved)
@@ -2213,29 +2251,10 @@ namespace gInk
                 //               i = (Root.DefaultArrow_start ||Root.ToolSelected==5) ?4:5 ;
             else if (((Button)sender).Name.Contains("Numb"))
             {
-                if (Root.ToolSelected == 6) // if already selected, we open the index dialog
+                /*if (Root.ToolSelected == 6) // if already selected, we open the index dialog
                 {
-                    tiSlide.Stop();
-                    IC.Enabled = false;
-                    ToThrough();
-                    int k = -1;
-                    FormInput inp = new FormInput(Root.Local.DlgTagCaption, Root.Local.DlgTagLabel, "", false, Root, null);
-
-                    while (!Int32.TryParse(inp.TextOut(), out k))
-                    {
-                        inp.TextIn(Root.TagNumbering.ToString());
-                        if (inp.ShowDialog() == DialogResult.Cancel)
-                        {
-                            inp.TextIn("");
-                            break;
-                        }
-                    }
-                    tiSlide.Start();
-                    IC.Enabled = true;
-                    ToUnThrough();
-                    if (inp.TextOut().Length == 0) return;
-                    Root.TagNumbering = k;
-                }
+                    SetTagNumber();
+                }*/
                 i = 6;
             }
             else if (((Button)sender).Name.Contains("Text"))
