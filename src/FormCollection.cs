@@ -598,7 +598,7 @@ namespace gInk
             Stroke st = AddEllipseStroke(CursorX0, CursorY0, (int)(CursorX0 + Root.TextSize * 1.2), (int)(CursorY0 + Root.TextSize * 1.2), Root.FilledSelected==1?0:Root.FilledSelected);
             st.ExtendedProperties.Add(Root.ISSTROKE_GUID, true);
             Point pt = new Point(CursorX0, CursorY0);
-            IC.Renderer.PixelToInkSpace(Root.FormDisplay.gOneStrokeCanvus, ref pt);
+            IC.Renderer.PixelToInkSpace(IC.Handle, ref pt);
             st.ExtendedProperties.Add(Root.ISTAG_GUID, true);
             st.ExtendedProperties.Add(Root.TEXT_GUID, txt);
             st.ExtendedProperties.Add(Root.TEXTX_GUID, pt.X);
