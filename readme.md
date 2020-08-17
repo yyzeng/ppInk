@@ -26,6 +26,7 @@ selected my multiple click on those:
 
 -   Arrow :
     Arrow draw at the beginning -\> Arrow draw at the end
+    
     (*) : head position when tool is first selected can be modified by option
 
 -   Text:  
@@ -57,8 +58,12 @@ screenshot
 
 #### How to use
 
-Start gInk and an icon will appear in the system tray. Or a floating window
+Start ppInk.exe and an icon will appear in the system tray and possible a floating window
 (which can be moved using RightClick) to start drawing on screen.  
+once started, extra call to ppInk.exe will not start a new instance, but will start inking opening the toolbar.
+
+(*) activation and position saving are available in options.
+
 Click the exit button or press ESC to exit drawing.
 
 #### Features
