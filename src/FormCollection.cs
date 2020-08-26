@@ -1819,22 +1819,19 @@ namespace gInk
 				// ESC key : Exit
 				short retVal;
 				retVal = GetKeyState(27);
-				if ((retVal & 0x8000) == 0x8000)
+				if ((retVal & 0x8000) == 0x8000 && (LastESCStatus & 0x8000) == 0x0000  && ! TextEdited)
 				{
-					if ((LastESCStatus & 0x8000) == 0x0000 && ! TextEdited)
+					if (Root.Snapping > 0)
 					{
-						if (Root.Snapping > 0)
-						{
-							ExitSnapping();
-						}
-						else if (Root.gpPenWidthVisible)
-						{
-							Root.gpPenWidthVisible = false;
-							Root.UponSubPanelUpdate = true;
-						}
-						else if (Root.Snapping == 0)
-							RetreatAndExit();
+						ExitSnapping();
 					}
+					else if (Root.gpPenWidthVisible)
+					{
+						Root.gpPenWidthVisible = false;
+						Root.UponSubPanelUpdate = true;
+					}
+					else if (Root.Snapping == 0)
+						RetreatAndExit();
 				}
 				LastESCStatus = retVal;
                 TextEdited = false;
@@ -2309,14 +2306,33 @@ namespace gInk
             Root.UponButtonsUpdate |= 0x2;
         }
 
+		short LastF4Status = 0;
 		private void FormCollection_FormClosing(object sender, FormClosingEventArgs e)
 		{
+			// check if F4 key is pressed and we assume it's Alt+F4
 			short retVal = GetKeyState(0x73);
-			if ((retVal & 0x8000) == 0x8000)
+			if ((retVal & 0x8000) == 0x8000 && (LastF4Status & 0x8000) == 0x0000)
+			{
 				e.Cancel = true;
+
+				// the following block is copyed from tiSlide_Tick() where we check whether ESC is pressed
+				if (Root.Snapping > 0)
+				{
+					ExitSnapping();
+				}
+				else if (Root.gpPenWidthVisible)
+				{
+					Root.gpPenWidthVisible = false;
+					Root.UponSubPanelUpdate = true;
+				}
+				else if (Root.Snapping == 0)
+					RetreatAndExit();
+			}
+
+			LastF4Status = retVal;
 		}
 
-        [DllImport("user32.dll")]
+		[DllImport("user32.dll")]
 		static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
 		[DllImport("user32.dll", SetLastError = true)]
 		static extern UInt32 GetWindowLong(IntPtr hWnd, int nIndex);
