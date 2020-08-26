@@ -1449,7 +1449,7 @@ namespace gInk
 			ToThrough();
 			Root.ClearInk();
 			SaveUndoStrokes();
-			Root.SaveOptions("config.ini");
+			//Root.SaveOptions("config.ini");
 			Root.gpPenWidthVisible = false;
 
 			LastTickTime = DateTime.Now;

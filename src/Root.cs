@@ -209,9 +209,9 @@ namespace gInk
 			FormDisplay = null;
 
             // to be done once only
-            ReadOptions("pens.ini");
-            ReadOptions("config.ini");
-            ReadOptions("hotkeys.ini");
+            //ReadOptions("pens.ini");
+            //ReadOptions("config.ini");
+            //ReadOptions("hotkeys.ini");
 
         }
 
@@ -1135,9 +1135,9 @@ namespace gInk
 		*/
 		private void OnOptions(object sender, EventArgs e)
 		{
-			ReadOptions("pens.ini");
-			ReadOptions("config.ini");
-			ReadOptions("hotkeys.ini");
+            //ReadOptions("pens.ini");
+            //ReadOptions("config.ini");
+            //ReadOptions("hotkeys.ini");
             if (FormOptions != null)
                 return;
             if (FormDisplay != null || FormCollection != null)
