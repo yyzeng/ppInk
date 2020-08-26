@@ -141,7 +141,7 @@ namespace gInk
                 btPen[b].FlatAppearance.MouseDownBackColor = Root.PenAttr[b].Color;
                 btPen[b].FlatAppearance.MouseOverBackColor = Root.PenAttr[b].Color;
 
-                this.toolTip.SetToolTip(this.btPen[b], Root.Local.ButtonNamePen[b]);
+                this.toolTip.SetToolTip(this.btPen[b], Root.Local.ButtonNamePen[b] + " (" + Root.Hotkey_Pens[b].ToString() + ")");
 
                 btPen[b].MouseDown += gpButtons_MouseDown;
                 btPen[b].MouseMove += gpButtons_MouseMove;
@@ -475,23 +475,23 @@ namespace gInk
 
             this.toolTip.SetToolTip(this.btDock, Root.Local.ButtonNameDock);
             this.toolTip.SetToolTip(this.btPenWidth, Root.Local.ButtonNamePenwidth);
-            this.toolTip.SetToolTip(this.btEraser, Root.Local.ButtonNameErasor);
-            this.toolTip.SetToolTip(this.btPan, Root.Local.ButtonNamePan);
-            this.toolTip.SetToolTip(this.btPointer, Root.Local.ButtonNameMousePointer);
-            this.toolTip.SetToolTip(this.btInkVisible, Root.Local.ButtonNameInkVisible);
-            this.toolTip.SetToolTip(this.btSnap, Root.Local.ButtonNameSnapshot);
-            this.toolTip.SetToolTip(this.btUndo, Root.Local.ButtonNameUndo);
-            this.toolTip.SetToolTip(this.btClear, Root.Local.ButtonNameClear);
-            this.toolTip.SetToolTip(this.btStop, Root.Local.ButtonNameExit);
-            this.toolTip.SetToolTip(this.btHand, Root.Local.ButtonNameHand);
-            this.toolTip.SetToolTip(this.btLine, Root.Local.ButtonNameLine);
-            this.toolTip.SetToolTip(this.btRect, Root.Local.ButtonNameRect);
-            this.toolTip.SetToolTip(this.btOval, Root.Local.ButtonNameOval);
-            this.toolTip.SetToolTip(this.btArrow, Root.Local.ButtonNameArrow);
-            this.toolTip.SetToolTip(this.btNumb, Root.Local.ButtonNameNumb);
-            this.toolTip.SetToolTip(this.btText, Root.Local.ButtonNameText);
-            this.toolTip.SetToolTip(this.btEdit, Root.Local.ButtonNameEdit);
-            this.toolTip.SetToolTip(this.btMagn, Root.Local.ButtonNameMagn);
+            this.toolTip.SetToolTip(this.btEraser, Root.Local.ButtonNameErasor + " (" + Root.Hotkey_Eraser.ToString() + ")");
+            this.toolTip.SetToolTip(this.btPan, Root.Local.ButtonNamePan + " (" + Root.Hotkey_Pan.ToString() + ")");
+            this.toolTip.SetToolTip(this.btPointer, Root.Local.ButtonNameMousePointer + " (" + Root.Hotkey_Pointer.ToString() + ")");
+            this.toolTip.SetToolTip(this.btInkVisible, Root.Local.ButtonNameInkVisible + " (" + Root.Hotkey_InkVisible.ToString() + ")");
+            this.toolTip.SetToolTip(this.btSnap, Root.Local.ButtonNameSnapshot + " (" + Root.Hotkey_Snap.ToString() + ")");
+            this.toolTip.SetToolTip(this.btUndo, Root.Local.ButtonNameUndo + " (" + Root.Hotkey_Undo.ToString() + ")");
+            this.toolTip.SetToolTip(this.btClear, Root.Local.ButtonNameClear + " (" + Root.Hotkey_Clear.ToString() + ")");
+            this.toolTip.SetToolTip(this.btStop, Root.Local.ButtonNameExit + " ( Esc/ Alt+F4)");
+            this.toolTip.SetToolTip(this.btHand, Root.Local.ButtonNameHand + " (" + Root.Hotkey_Hand.ToString() + ")");
+            this.toolTip.SetToolTip(this.btLine, Root.Local.ButtonNameLine + " (" + Root.Hotkey_Line.ToString() + ")");
+            this.toolTip.SetToolTip(this.btRect, Root.Local.ButtonNameRect + " (" + Root.Hotkey_Rect.ToString() + ")");
+            this.toolTip.SetToolTip(this.btOval, Root.Local.ButtonNameOval + " (" + Root.Hotkey_Oval.ToString() + ")");
+            this.toolTip.SetToolTip(this.btArrow, Root.Local.ButtonNameArrow + " (" + Root.Hotkey_Arrow.ToString() + ")");
+            this.toolTip.SetToolTip(this.btNumb, Root.Local.ButtonNameNumb + " (" + Root.Hotkey_Numb .ToString() + ")");
+            this.toolTip.SetToolTip(this.btText, Root.Local.ButtonNameText + " (" + Root.Hotkey_Text.ToString() + ")");
+            this.toolTip.SetToolTip(this.btEdit, Root.Local.ButtonNameEdit + " (" + Root.Hotkey_Edit.ToString() + ")");
+            this.toolTip.SetToolTip(this.btMagn, Root.Local.ButtonNameMagn + " (" + Root.Hotkey_Magnet.ToString() + ")");
 
             SelectTool(0, 0); // Select Hand Drawing by Default
         }

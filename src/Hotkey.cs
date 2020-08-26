@@ -30,7 +30,7 @@ namespace gInk
 			if (Key > 0)
 			{
 				string str = "";
-				if (Control) str += "Control + ";
+				if (Control) str += "Ctrl + ";
 				if (Alt) str += "Alt + ";
 				if (Shift) str += "Shift + ";
 				if (Win) str += "Win + ";
@@ -64,7 +64,8 @@ namespace gInk
 				if (IsValidKey(key))
 				{
 					if (para.Contains("Control")) Control = true;
-					if (para.Contains("Alt")) Alt = true;
+                    if (para.Contains("Ctrl")) Control = true;
+                    if (para.Contains("Alt")) Alt = true;
 					if (para.Contains("Shift")) Shift = true;
 					if (para.Contains("Win")) Win = true;
 					Key = (char)key;
