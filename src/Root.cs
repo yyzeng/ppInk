@@ -1138,7 +1138,11 @@ namespace gInk
 			ReadOptions("pens.ini");
 			ReadOptions("config.ini");
 			ReadOptions("hotkeys.ini");
-			FormOptions = new FormOptions(this);
+            if (FormOptions != null)
+                return;
+            if (FormDisplay != null || FormCollection != null)
+                return;
+            FormOptions = new FormOptions(this);
 			FormOptions.Show();
 		}
 

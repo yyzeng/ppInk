@@ -331,12 +331,15 @@ namespace gInk
 			Root.SetHotkey();
 
             // Save button added
-			//Root.SaveOptions("pens.ini");
-			//Root.SaveOptions("config.ini");
-			//Root.SaveOptions("hotkeys.ini");
-		}
+            //Root.SaveOptions("pens.ini");
+            //Root.SaveOptions("config.ini");
+            //Root.SaveOptions("hotkeys.ini");
 
-		private void cbWidthEnabled_CheckedChanged(object sender, EventArgs e)
+            Root.FormOptions = null;
+
+        }
+
+        private void cbWidthEnabled_CheckedChanged(object sender, EventArgs e)
 		{
 			Root.PenWidthEnabled = cbWidthEnabled.Checked;
 			lbNote.ForeColor = Color.Red;
