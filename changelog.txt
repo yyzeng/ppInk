@@ -1,3 +1,16 @@
+p1.1 (In Progress)
+=================
+--->RC4(1.1.2)
+* report changes from gInk 1.1
+* add --startInking argument to start inking immediately
+--->RC3 and before (see readme.md)
+* renamed to ppInk
+* add rect/oval/arrow/line/text/numbers tools
+* add filling options
+* add magnet effect
+* prevent multiple instances and allow starting argument
+* add floating icon
+
 
 v1.0.9 (Apr. 3, 2020)
 =================
