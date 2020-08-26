@@ -50,6 +50,8 @@ namespace gInk
             frm.Width = frm.Root.FormWidth;
             frm.Height = frm.Root.FormWidth;
             frm.Opacity = frm.Root.FormOpacity / 100.0;
+            if (Environment.CommandLine.IndexOf("--StartInking", StringComparison.OrdinalIgnoreCase) >= 0 )
+                PostMessage((IntPtr)HWND_BROADCAST, StartInkingMsg, (IntPtr)null, (IntPtr)null); // to Myself
             Application.Run();
 		}
 

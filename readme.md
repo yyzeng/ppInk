@@ -61,6 +61,7 @@ screenshot
 Start ppInk.exe and an icon will appear in the system tray and possible a floating window
 (which can be moved using RightClick) to start drawing on screen.  
 once started, extra call to ppInk.exe will not start a new instance, but will start inking opening the toolbar.
+also adding "--startInking" (case insensitive) to command line starts inking immediately at first run.
 
 (*) activation and position saving are available in options.
 
