@@ -64,7 +64,7 @@ namespace gInk
 
 			tbSnapPath.Text = Root.SnapshotBasePath;
 
-            ShowFloatingWinCb.Checked = Root.FormTop > 0;
+            ShowFloatingWinCb.Checked = Root.FormOpacity > 0;
             ArrHdAperture.Text = (Root.ArrowAngle * 180.0 / Math.PI).ToString("#0",CultureInfo.InvariantCulture);
             ArrHdLength.Text = (Root.ArrowLen / System.Windows.SystemParameters.PrimaryScreenWidth *100.0).ToString("#0.0000",CultureInfo.InvariantCulture);
             Magnet_TB.Text = (Root.MagneticRadius / System.Windows.SystemParameters.PrimaryScreenWidth * 100.0).ToString("#0.0000", CultureInfo.InvariantCulture);
