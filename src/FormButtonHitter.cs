@@ -46,7 +46,7 @@ namespace gInk
 			{
 				if (control.GetType() == typeof(Button))
 				{
-					if (m.X >= control.Left && m.X <= control.Right)
+					if (m.X >= control.Left && m.X <= control.Right && m.Y >= control.Top && m.Y <= control.Bottom)
 						((Button)control).PerformClick();
 				}
 			}
