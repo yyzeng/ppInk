@@ -36,6 +36,8 @@ namespace gInk
 		public int PrimaryLeft, PrimaryTop;
 
         private int LastPenSelected=0;
+        private int SavedTool = -1;
+        private int SavedFilled = -1;
 
         // http://www.csharp411.com/hide-form-from-alttab/
         protected override CreateParams CreateParams
@@ -1329,8 +1331,8 @@ namespace gInk
             // -3=pan, -2=pointer, -1=erasor, 0+=pens
             if (pen == -3)
 			{
-                SelectTool(0,0);
-				for (int b = 0; b < Root.MaxPenCount; b++)
+                SelectTool(-1,0);
+                for (int b = 0; b < Root.MaxPenCount; b++)
 					btPen[b].Image = image_pen[b];
 				btEraser.Image = image_eraser;
 				btPointer.Image = image_pointer;
@@ -1351,7 +1353,7 @@ namespace gInk
 			}
 			else if (pen == -2)
 			{
-                SelectTool(0,0);
+                SelectTool(-1,0);
                 for (int b = 0; b < Root.MaxPenCount; b++)
 					btPen[b].Image = image_pen[b];
 				btEraser.Image = image_eraser;
@@ -1362,7 +1364,7 @@ namespace gInk
 			}
 			else if (pen == -1)
 			{
-                SelectTool(0,0);
+                SelectTool(-1,0);
                 if (this.Cursor != System.Windows.Forms.Cursors.Default)
 					this.Cursor = System.Windows.Forms.Cursors.Default;
 
@@ -1486,8 +1488,17 @@ namespace gInk
 				ToolbarMoved = false;
 				return;
 			}
-
-			SelectPen(-2);
+            if(!Root.PointerMode)
+            {
+                SavedTool = Root.ToolSelected;
+                SavedFilled = Root.FilledSelected;
+			    SelectPen(-2);
+            }
+            else
+            {
+                SelectPen(LastPenSelected);
+                SelectTool(SavedTool, SavedFilled);
+            }
 		}
 
 
@@ -1889,7 +1900,8 @@ namespace gInk
 				pressed = (GetKeyState(Root.Hotkey_Pointer.Key) & 0x8000) == 0x8000;
 				if (pressed && !LastPointerStatus && Root.Hotkey_Pointer.ModifierMatch(control, alt, shift, win))
 				{
-					SelectPen(-2);
+                    //SelectPen(-2);
+                    btPointer_Click(null, null);
 				}
 				LastPointerStatus = pressed;
 
