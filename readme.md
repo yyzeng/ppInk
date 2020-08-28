@@ -58,12 +58,16 @@ screenshot
 
 #### How to use
 
-Start ppInk.exe and an icon will appear in the system tray and possible a floating window
+Start ppInk.exe and an icon will appear in the system tray and possible a floating window(\*)
 (which can be moved using RightClick) to start drawing on screen.  
-once started, extra call to ppInk.exe will not start a new instance, but will start inking opening the toolbar.
-also adding "--startInking" (case insensitive) to command line starts inking immediately at first run.
+Inking is started :
+ - clicking on floating icon
+ - clicking on the icon in the system tray
+ - using the global shortcut (ctr+alt+G by default)
+ - immediately after start Pping if "--startInking" (case insensitive) has been added tocommand line
+ - ppInk is run once more (no extra instance is started)
 
-(*) activation and position saving are available in options.
+(\*) activation and position saving are available in options.
 
 Click the exit button or press ESC to exit drawing.
 
@@ -78,7 +82,7 @@ Click the exit button or press ESC to exit drawing.
 
 -   Stylus with eraser, touch screen and mouse compatible.
 
--   Click-through mode.
+-   Click-through mode. (note : once inking is engaged, global shortcut enters and exits this mode)
 
 -   Multiple displays support.
 
