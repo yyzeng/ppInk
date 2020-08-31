@@ -28,8 +28,9 @@ namespace gInk
                 //Keys key = (Keys)(((int)m.LParam >> 16) & 0xFFFF);                  // The key of the hotkey that was pressed.
                 //int modifier = (int)m.LParam & 0xFFFF;       // The modifier of the hotkey that was pressed.
                 //int id = m.WParam.ToInt32();                                        // The id of the hotkey that was pressed.
+                bool activePointer = (m.Msg == 0x0312 && Root.FormCollection != null);
                 Root.callshortcut();
-                if (m.Msg == 0x0312 && Root.FormCollection != null)           // StartInkingMsg is received twice, therefore we have to froce pointerMode at that time...
+                if (activePointer)           // StartInkingMsg is received twice, therefore we have to froce pointerMode at that time...
                     Root.FormCollection.btPointer_Click(null,null);
                 return true;
 			}
