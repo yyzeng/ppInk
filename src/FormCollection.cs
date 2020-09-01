@@ -13,7 +13,17 @@ namespace gInk
 {
 	public partial class FormCollection : Form
 	{
-		public Root Root;
+        // hotkeys
+        const int VK_LCONTROL = 0xA2;
+        const int VK_RCONTROL = 0xA3;
+        const int VK_LSHIFT = 0xA0;
+        const int VK_RSHIFT = 0xA1;
+        const int VK_LMENU = 0xA4;
+        const int VK_RMENU = 0xA5;
+        const int VK_LWIN = 0x5B;
+        const int VK_RWIN = 0x5C;
+
+        public Root Root;
 		public InkOverlay IC;
 
 		public Button[] btPen;
@@ -38,6 +48,7 @@ namespace gInk
         private int LastPenSelected=0;
         private int SavedTool = -1;
         private int SavedFilled = -1;
+        private int SavedPen = -1;
 
         // http://www.csharp411.com/hide-form-from-alttab/
         protected override CreateParams CreateParams
@@ -496,6 +507,11 @@ namespace gInk
             this.toolTip.SetToolTip(this.btMagn, Root.Local.ButtonNameMagn + " (" + Root.Hotkey_Magnet.ToString() + ")");
 
             SelectTool(0, 0); // Select Hand Drawing by Default
+        }
+
+        private bool AltKeyPressed()
+        {
+            return ((short)(GetKeyState(VK_LMENU) | GetKeyState(VK_RMENU)) & 0x8000) == 0x8000;
         }
 
         private void setStrokeProperties(ref Stroke st, int FilledSelected)
@@ -1226,21 +1242,41 @@ namespace gInk
             btLine.BackgroundImage = global::gInk.Properties.Resources.tool_line;
             btRect.BackgroundImage = global::gInk.Properties.Resources.tool_rect;
             btOval.BackgroundImage = global::gInk.Properties.Resources.tool_oval;
-            if(Root.DefaultArrow_start)
+            if (Root.DefaultArrow_start)
                 btArrow.BackgroundImage = global::gInk.Properties.Resources.tool_stAr;
             else
                 btArrow.BackgroundImage = global::gInk.Properties.Resources.tool_enAr;
             btNumb.BackgroundImage = global::gInk.Properties.Resources.tool_numb;
             btText.BackgroundImage = global::gInk.Properties.Resources.tool_txtL;
             btEdit.BackgroundImage = global::gInk.Properties.Resources.tool_edit;
+
+            if (AltKeyPressed())
+            {
+                if (SavedTool < 0 || tool != Root.ToolSelected)
+                {
+                    SavedTool = Root.ToolSelected;
+                    SavedFilled = Root.FilledSelected;
+                    if (tool == 10 && SavedPen <0)
+                        SavedPen = LastPenSelected;
+                }
+            }
+
             int[] applicableTool = { 0, 2, 3, 6 };
             if (filled >= 0)
                 Root.FilledSelected = filled;
-            else if ((Array.IndexOf(applicableTool,tool )>= 0) && (tool == Root.ToolSelected))
+            else if ((Array.IndexOf(applicableTool, tool) >= 0) && (tool == Root.ToolSelected))
                 Root.FilledSelected = (Root.FilledSelected + 1) % 4;
             else
                 Root.FilledSelected = 0;
-            if (tool == 0)
+
+            Root.UponButtonsUpdate |= 0x2;
+
+            if (tool == -1)
+            {
+                Root.ToolSelected = 0; // to prevent drawing
+                return;
+            }
+            else if (tool == 0)
             {
                 if (Root.FilledSelected == 0)
                     btHand.BackgroundImage = global::gInk.Properties.Resources.tool_hand_act;
@@ -1277,8 +1313,8 @@ namespace gInk
                 else if (Root.FilledSelected == 3)
                     btOval.BackgroundImage = global::gInk.Properties.Resources.tool_oval_filledB;
             }
-            else if ((tool == 4) || (tool==5)) // also include tool=5
-                if((tool==5)||(Root.ToolSelected == 4))
+            else if ((tool == 4) || (tool == 5)) // also include tool=5
+                if ((tool == 5) || (Root.ToolSelected == 4))
                 {
                     btArrow.BackgroundImage = global::gInk.Properties.Resources.tool_enAr_act;
                     tool = 5;
@@ -1304,8 +1340,8 @@ namespace gInk
             }
             else if (tool == 7)
                 btEdit.BackgroundImage = global::gInk.Properties.Resources.tool_edit_act;
-            else if ((tool == 8)|| (tool == 9))
-                if ((tool==9)||(Root.ToolSelected == 8))
+            else if ((tool == 8) || (tool == 9))
+                if ((tool == 9) || (Root.ToolSelected == 8))
                 {
                     btText.BackgroundImage = global::gInk.Properties.Resources.tool_txtR_act;
                     tool = 9;
@@ -1317,12 +1353,10 @@ namespace gInk
                 }
             else if (tool == 10)
             {
-                SelectPen(LastPenSelected);
+                //SelectPen(LastPenSelected);
                 btPan.BackgroundImage = global::gInk.Properties.Resources.pan1_act;
             }
-
-                Root.ToolSelected = tool;
-            Root.UponButtonsUpdate |= 0x2;
+            Root.ToolSelected = tool;
         }
 
         public void SelectPen(int pen)
@@ -1331,7 +1365,11 @@ namespace gInk
             // -3=pan, -2=pointer, -1=erasor, 0+=pens
             if (pen == -3)
 			{
-                SelectTool(-1,0);
+                if (AltKeyPressed() && SavedPen < 0)
+                {
+                    SavedPen = LastPenSelected;
+                }
+                SelectTool(-1, 0);       // Alt will be processed inhere
                 for (int b = 0; b < Root.MaxPenCount; b++)
 					btPen[b].Image = image_pen[b];
 				btEraser.Image = image_eraser;
@@ -1353,7 +1391,11 @@ namespace gInk
 			}
 			else if (pen == -2)
 			{
-                SelectTool(-1,0);
+                if (AltKeyPressed() && SavedPen < 0)
+                {
+                    SavedPen = LastPenSelected;
+                }
+                SelectTool(-1, 0);       // Alt will be processed inhere
                 for (int b = 0; b < Root.MaxPenCount; b++)
 					btPen[b].Image = image_pen[b];
 				btEraser.Image = image_eraser;
@@ -1364,7 +1406,11 @@ namespace gInk
 			}
 			else if (pen == -1)
 			{
-                SelectTool(-1,0);
+                if (AltKeyPressed() && SavedPen < 0)
+                {
+                    SavedPen = LastPenSelected;
+                }
+                SelectTool(-1,0);       // Alt will be processed inhere
                 if (this.Cursor != System.Windows.Forms.Cursors.Default)
 					this.Cursor = System.Windows.Forms.Cursors.Default;
 
@@ -1396,6 +1442,10 @@ namespace gInk
 			}
 			else if (pen >= 0)
 			{
+                if (AltKeyPressed() && pen != LastPenSelected && SavedPen < 0)
+                {
+                    SavedPen = LastPenSelected;
+                }
                 LastPenSelected = pen;
                 if (this.Cursor != System.Windows.Forms.Cursors.Default)
 					this.Cursor = System.Windows.Forms.Cursors.Default;
@@ -1498,6 +1548,8 @@ namespace gInk
             {
                 SelectPen(LastPenSelected);
                 SelectTool(SavedTool, SavedFilled);
+                SavedTool = -1;
+                SavedFilled = -1;
             }
 		}
 
@@ -1813,16 +1865,6 @@ namespace gInk
 			if (Root.gpPenWidthVisible != gpPenWidth.Visible)
 				gpPenWidth.Visible = Root.gpPenWidthVisible;
 
-			// hotkeys
-
-			const int VK_LCONTROL = 0xA2;
-			const int VK_RCONTROL = 0xA3;
-			const int VK_LSHIFT = 0xA0;
-			const int VK_RSHIFT = 0xA1;
-			const int VK_LMENU = 0xA4;
-			const int VK_RMENU = 0xA5;
-			const int VK_LWIN = 0x5B;
-			const int VK_RWIN = 0x5C;
 			bool pressed;
 
 			if (!Root.PointerMode)
@@ -1848,12 +1890,27 @@ namespace gInk
                 TextEdited = false;
 			}
 
+            if (!AltKeyPressed() && !Root.PointerMode )//&& (SavedPen>=0 || SavedTool>=0))
+            {
+                if (SavedPen >= 0)
+                {
+                    SelectPen(SavedPen);
+                    SavedPen = -1;
+                }
+                if (SavedTool >= 0)
+                {
+                    SelectTool(SavedTool,SavedFilled);
+                    SavedTool = -1;
+                    SavedFilled = -1;
+                }
+            }
 
-			if (!Root.FingerInAction && (!Root.PointerMode || Root.AllowHotkeyInPointerMode) && Root.Snapping <= 0)
+                if (!Root.FingerInAction && (!Root.PointerMode || Root.AllowHotkeyInPointerMode) && Root.Snapping <= 0)
 			{
 				bool control = ((short)(GetKeyState(VK_LCONTROL) | GetKeyState(VK_RCONTROL)) & 0x8000) == 0x8000;
-				bool alt = ((short)(GetKeyState(VK_LMENU) | GetKeyState(VK_RMENU)) & 0x8000) == 0x8000;
-				bool shift = ((short)(GetKeyState(VK_LSHIFT) | GetKeyState(VK_RSHIFT)) & 0x8000) == 0x8000;
+                //bool alt = (((short)(GetKeyState(VK_LMENU) | GetKeyState(VK_RMENU)) & 0x8000) == 0x8000);
+                int alt = Root.AltAsOneCommand?-1:(AltKeyPressed() ? 1 : 0);
+                bool shift = ((short)(GetKeyState(VK_LSHIFT) | GetKeyState(VK_RSHIFT)) & 0x8000) == 0x8000;
 				bool win = ((short)(GetKeyState(VK_LWIN) | GetKeyState(VK_RWIN)) & 0x8000) == 0x8000;
 
 				for (int p = 0; p < Root.MaxPenCount; p++)

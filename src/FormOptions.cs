@@ -164,6 +164,8 @@ namespace gInk
 				tabPage3.Controls.Add(hiPens[p]);
 			}
 
+            AltAsOneCommandCb.Checked = Root.AltAsOneCommand;
+
 			hiGlobal.Hotkey = Root.Hotkey_Global;
 			hiEraser.Hotkey = Root.Hotkey_Eraser;
 			hiPan.Hotkey = Root.Hotkey_Pan;
@@ -216,6 +218,7 @@ namespace gInk
             this.SaveConfigBtn.Text = Root.Local.OptionsGeneralSaveConfigToFile;
 			this.lbNote.Text = Root.Local.OptionsGeneralNotePenwidth;
 
+            this.AltAsOneCommandCb.Text = Root.Local.OptionsHotKeyAltAsOneCommand;
 			this.lbHkClear.Text = shortTxt(Root.Local.ButtonNameClear);
 			this.lbHkEraser.Text = shortTxt(Root.Local.ButtonNameErasor);
 			this.lbHkInkVisible.Text = shortTxt(Root.Local.ButtonNameInkVisible);
@@ -526,6 +529,11 @@ namespace gInk
         private void DefArrStartCb_CheckedChanged(object sender, EventArgs e)
         {
             Root.DefaultArrow_start = DefArrStartCb.Checked;
+        }
+
+        private void AltAsOneCommandCb_CheckedChanged(object sender, EventArgs e)
+        {
+            Root.AltAsOneCommand = AltAsOneCommandCb.Checked;
         }
 
         private void cbAllowHotkeyInPointer_CheckedChanged(object sender, EventArgs e)

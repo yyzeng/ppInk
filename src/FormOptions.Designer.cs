@@ -86,6 +86,7 @@ namespace gInk
             this.cbAllowDragging = new System.Windows.Forms.CheckBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.AltAsOneCommandCb = new System.Windows.Forms.CheckBox();
             this.lbHkMagn = new System.Windows.Forms.Label();
             this.hiToolMagnet = new gInk.HotkeyInputBox();
             this.lbHkEdit = new System.Windows.Forms.Label();
@@ -521,6 +522,7 @@ namespace gInk
             // tabPage3
             // 
             this.tabPage3.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.tabPage3.Controls.Add(this.AltAsOneCommandCb);
             this.tabPage3.Controls.Add(this.lbHkMagn);
             this.tabPage3.Controls.Add(this.hiToolMagnet);
             this.tabPage3.Controls.Add(this.lbHkEdit);
@@ -563,6 +565,17 @@ namespace gInk
             this.tabPage3.Size = new System.Drawing.Size(944, 483);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Hotkeys";
+            // 
+            // AltAsOneCommandCb
+            // 
+            this.AltAsOneCommandCb.AutoSize = true;
+            this.AltAsOneCommandCb.Location = new System.Drawing.Point(19, 65);
+            this.AltAsOneCommandCb.Name = "AltAsOneCommandCb";
+            this.AltAsOneCommandCb.Size = new System.Drawing.Size(338, 17);
+            this.AltAsOneCommandCb.TabIndex = 37;
+            this.AltAsOneCommandCb.Text = "Process Alt as Temporary Command (Alt will be ignored in hotkeys)";
+            this.AltAsOneCommandCb.UseVisualStyleBackColor = true;
+            this.AltAsOneCommandCb.CheckedChanged += new System.EventHandler(this.AltAsOneCommandCb_CheckedChanged);
             // 
             // lbHkMagn
             // 
@@ -1109,5 +1122,6 @@ namespace gInk
         private System.Windows.Forms.TextBox Magnet_TB;
         private System.Windows.Forms.Label MagnetLbl;
         private System.Windows.Forms.CheckBox DefArrStartCb;
+        private System.Windows.Forms.CheckBox AltAsOneCommandCb;
     }
 }

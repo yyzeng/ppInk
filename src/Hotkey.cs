@@ -87,7 +87,15 @@ namespace gInk
 			return Control == control && Alt == alt && Shift == shift && Win == win;
 		}
 
-		public bool ConflictWith(Hotkey hotkey)
+        public bool ModifierMatch(bool control, int alt, bool shift, bool win)
+        {
+            if(alt==-1)
+                return Control == control /*&& Alt == alt */ && Shift == shift && Win == win;
+            else
+                return Control == control && Alt == (alt==1) && Shift == shift && Win == win;
+        }
+
+        public bool ConflictWith(Hotkey hotkey)
 		{
 			if (Key == 0 || hotkey.Key == 0)
 				return false;
