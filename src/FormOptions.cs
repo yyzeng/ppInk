@@ -63,7 +63,7 @@ namespace gInk
 			comboCanvasCursor.SelectedIndex = Root.CanvasCursor;
 
 			tbSnapPath.Text = Root.SnapshotBasePath;
-
+            this.OpenIntoSnapCb.Checked = Root.OpenIntoSnapMode;
             ShowFloatingWinCb.Checked = Root.FormOpacity > 0;
             ArrHdAperture.Text = (Root.ArrowAngle * 180.0 / Math.PI).ToString("#0",CultureInfo.InvariantCulture);
             ArrHdLength.Text = (Root.ArrowLen / System.Windows.SystemParameters.PrimaryScreenWidth *100.0).ToString("#0.0000",CultureInfo.InvariantCulture);
@@ -204,7 +204,8 @@ namespace gInk
 			this.lbLanguage.Text = Root.Local.OptionsGeneralLanguage;
 			this.lbCanvascursor.Text = Root.Local.OptionsGeneralCanvascursor;
 			this.lbSnapshotsavepath.Text = Root.Local.OptionsGeneralSnapshotsavepath;
-			this.cbWhiteIcon.Text = Root.Local.OptionsGeneralWhitetrayicon;
+            this.OpenIntoSnapCb.Text = Root.Local.OptionsGeneralOpenIntoSnapMode;
+            this.cbWhiteIcon.Text = Root.Local.OptionsGeneralWhitetrayicon;
 			this.cbAllowDragging.Text = Root.Local.OptionsGeneralAllowdragging;
             this.ShowFloatingWinCb.Text = Root.Local.OptionsGeneralShowFloatingWindow;
             this.SaveWindowPosBtn.Text = Root.Local.OptionsGeneralSaveFloatingWindowPos;
@@ -534,6 +535,11 @@ namespace gInk
         private void AltAsOneCommandCb_CheckedChanged(object sender, EventArgs e)
         {
             Root.AltAsOneCommand = AltAsOneCommandCb.Checked;
+        }
+
+        private void OpenIntoSnapCb_CheckedChanged(object sender, EventArgs e)
+        {
+            Root.OpenIntoSnapMode = OpenIntoSnapCb.Checked;
         }
 
         private void cbAllowHotkeyInPointer_CheckedChanged(object sender, EventArgs e)

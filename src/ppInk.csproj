@@ -223,6 +223,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\changelog.txt" />
+    <Content Include="..\ppInk\lang\fr.txt" />
+    <Content Include="..\ppInk\lang\en-us.txt" />
+    <Content Include="..\ppInk\config.ini" />
+    <Content Include="..\ppInk\hotkeys.ini" />
+    <Content Include="..\ppInk\pen.ini" />
+    <Content Include="..\readme.md" />
     <Content Include="Magnetic.png" />
     <Content Include="Magnetic_act.png" />
     <None Include="pan1_act.png" />

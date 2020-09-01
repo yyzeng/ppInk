@@ -167,6 +167,7 @@ namespace gInk
 
         public int FormTop = 100, FormLeft = 100, FormWidth = 48, FormOpacity = -50; // negative opacity means that the window is not displayed
         public CallForm callForm = null;
+        public bool OpenIntoSnapMode = false;
 
         public double ArrowAngle = 15 * Math.PI /180;   // 15°
         public double ArrowLen = 0.0185 * System.Windows.SystemParameters.PrimaryScreenWidth; // == 1.85% of screen width
@@ -226,6 +227,8 @@ namespace gInk
             {
                 if (FormOpacity > 0) callForm.Hide();
                 StartInk();
+                if (OpenIntoSnapMode)
+                    FormCollection.btSnap_Click(null,null);
             }
             /*
             else if (PointerMode)
@@ -254,12 +257,14 @@ namespace gInk
 		{
 			if (e.Button == MouseButtons.Left)
 			{
-				if (FormDisplay == null && FormCollection == null)
+
+                if (FormDisplay == null && FormCollection == null)
 				{
-					//ReadOptions("pens.ini");
-					//ReadOptions("config.ini");
-					//ReadOptions("hotkeys.ini");
-					StartInk();
+                    callshortcut();
+                    //ReadOptions("pens.ini");
+                    //ReadOptions("config.ini");
+                    //ReadOptions("hotkeys.ini");
+                    //StartInk();
 				}
 				else if (Docked)
 					UnDock();
@@ -727,6 +732,12 @@ namespace gInk
 							if (!SnapshotBasePath.EndsWith("/") && !SnapshotBasePath.EndsWith("\\"))
 								SnapshotBasePath += "/";
 							break;
+                        case "OPEN_INTO_SNAP":
+                            if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "OFF")
+                                OpenIntoSnapMode = true;
+                            else
+                                OpenIntoSnapMode = false;
+                            break;
                         case "DRAWING_ICON":
                             if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
                                 ToolsEnabled = false;
@@ -1015,6 +1026,9 @@ namespace gInk
                         case "SNAPSHOT_PATH":
 							sPara = SnapshotBasePath;
 							break;
+                        case "OPEN_INTO_SNAP":
+                            sPara = OpenIntoSnapMode?"True":"False";
+                            break;
                         case "DRAWING_ICON":
                             if (ToolsEnabled)
                                 sPara = "True";

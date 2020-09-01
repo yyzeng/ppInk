@@ -56,7 +56,8 @@ namespace gInk
 		public string OptionsGeneralCanvascursorArrow = "Arrow";
 		public string OptionsGeneralCanvascursorPentip = "Pen tip";
 		public string OptionsGeneralSnapshotsavepath = "Snapshot save path";
-		public string OptionsGeneralWhitetrayicon = "Use white tray icon";
+        public string OptionsGeneralOpenIntoSnapMode = "Start Snapshot Capture immediately after Opening Toolbar";
+        public string OptionsGeneralWhitetrayicon = "Use white tray icon";
 		public string OptionsGeneralAllowdragging = "Allow dragging toolbar";
         public string OptionsGeneralShowFloatingWindow = "Show Floating Window (at next restart)";
         public string OptionsGeneralSaveFloatingWindowPos = "Save Floating &window Pos";
