@@ -733,6 +733,8 @@ namespace gInk
             float pos;
             Point pt = new Point(int.MaxValue, int.MaxValue);
             int x2 = int.MaxValue, y2 = int.MaxValue, x_a = int.MaxValue, y_a = int.MaxValue;
+            if ((Control.ModifierKeys & Keys.Control) != Keys.None || (Control.ModifierKeys & Keys.Shift) != Keys.None)  // force temporarily Magnetic off if ctrl or shift is depressed
+                Magnetic = false;   
             if ((Magnetic || (Control.ModifierKeys & Keys.Control)!=Keys.None  ) &&
                 (NearestStroke(new Point(cursorX, cursorY), true, out st, out pos, false, true) < Root.PixelToHiMetric(Root.MinMagneticRadius())))
             {
