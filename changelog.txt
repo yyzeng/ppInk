@@ -1,8 +1,14 @@
-p1.1 (In Progress)
+p1.2 (In Progress)
 =================
---->RC4(1.1.2)
-* report changes from gInk 1.1
+--->RC1
+* New option:to engage capture when opening the toolbar
+* Alt+ capability added for temporary command
+* report changes from gInk 1.1 (see commits)
+* various fixes (see commits)
 * add --startInking argument to start inking immediately
+
+p1.1 (RC3 @Aug. 16,2020)
+=================
 --->RC3 and before (see readme.md)
 * renamed to ppInk
 * add rect/oval/arrow/line/text/numbers tools

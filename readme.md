@@ -35,16 +35,24 @@ selected my multiple click on those:
 -   Move:  
     Move 1 drawing -\> Move all drawings.
 
+*Magnetic*
 The magnet activates some magnetic effect :
-
 -   Find a point on the drawing next to the cursor. For rectangles, magnetic
     effect is available to vertices, and also to the middle of sides.(also activated pressing Ctrl)
-
 -   The 8 points of the bounding rectangle of a text.(also activated pressing Ctrl)
-
 -   On the line from the origin. The lines are horizontal,vertical and every 15°.(also activated pressing Shift)
-
+The Magnetic distance can be adjusted in the options.
+If only Ctrl or Shift is depressed, the global magnetic effect is switched off to only take into account the magnetic of the pressed key.
 Hotkeys are availables for all tools,pens (configurable throught right click on icon next to clock)
+
+*Alt+ shortcut for temporary commands:*
+When this option is activated (yes by default), when Alt is pressed and hold, the tool/pen/mode is temporary selected, left when alt is released
+eg : with Hand drawing selected, press Alt and keep it  down. Press and release R : rectangle is active, as long as Alt is depressed, and Hand will be reengaged when Alt is released
+This can be reset any combinaisons of Pens and Tools : eg : press Alt, you can engage Filled Blue rectangle, depressing R twice, and 3 (in any order), and return to previous tools/color releasing Alt
+This can be also used with Erasor
+
+*Option Capture at toolbar opening*
+Capture can be engaged as toolbar is opened. This option is set to false by default.
 
 #### Screen Shots
 
@@ -126,5 +134,5 @@ https://github.com/geovens/gInk
 Weizhi Nai \@ 2019
 
 ppInk
-
-<https://github.com/pubpub-zz/ppInk>
+https://github.com/pubpub-zz/ppInk
+Pubpub-ZZ \@ 2020
