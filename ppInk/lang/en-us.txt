@@ -77,6 +77,7 @@ OptionsPensHighlighter = "Highlighter"
 OptionsPensThin = "Thin"
 OptionsPensNormal = "Normal"
 OptionsPensThick = "Thick"
+OptionsPensWidthAtSelection = "Apply Width on Pen Selection\n(even with width selector)"
 
 OptionsHotKeyAltAsOneCommand = "Process Alt as Temporary Command (Alt will be ignored in hotkeys)"
 OptionsHotkeysglobal = "Global hotkey (starts drawing, switches between mouse pointer and drawing)"

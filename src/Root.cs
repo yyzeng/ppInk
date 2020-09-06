@@ -78,7 +78,8 @@ namespace gInk
         public bool EraserEnabled = true;
 		public bool PointerEnabled = true;
 		public bool PenWidthEnabled = false;
-		public bool SnapEnabled = true;
+        public bool WidthAtPenSel = true;
+        public bool SnapEnabled = true;
 		public bool UndoEnabled = true;
 		public bool ClearEnabled = true;
 		public bool PanEnabled = true;
@@ -789,7 +790,13 @@ namespace gInk
 							if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
 								PointerEnabled = false;
 							break;
-						case "PEN_WIDTH_ICON":
+                        case "PEN_WIDTH_AT_SELECTION":
+                            if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
+                                WidthAtPenSel = false;
+                            else if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
+                                WidthAtPenSel = true;
+                            break;
+                        case "PEN_WIDTH_ICON":
 							if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
 								PenWidthEnabled = false;
 							else if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
@@ -1059,7 +1066,10 @@ namespace gInk
 							else
 								sPara = "False";
 							break;
-						case "PEN_WIDTH_ICON":
+                        case "PEN_WIDTH_AT_SELECTION":
+                            sPara = WidthAtPenSel ? "True" : "False";
+                            break;
+                        case "PEN_WIDTH_ICON":
 							if (PenWidthEnabled)
 								sPara = "True";
 							else

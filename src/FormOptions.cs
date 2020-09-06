@@ -44,9 +44,9 @@ namespace gInk
 				cbUndoEnabled.Checked = true;
 			if (Root.ClearEnabled)
 				cbClearEnabled.Checked = true;
-			if (Root.PenWidthEnabled)
-				cbWidthEnabled.Checked = true;
-			if (Root.PanEnabled)
+            WidthAtPenSelCb.Checked = Root.WidthAtPenSel;
+            cbWidthEnabled.Checked = Root.PenWidthEnabled;
+            if (Root.PanEnabled)
 				cbPanEnabled.Checked = true;
 			if (Root.InkVisibleEnabled)
 				cbInkVisibleEnabled.Checked = true;
@@ -260,6 +260,7 @@ namespace gInk
 				lbcomboPensAlpha.Text = Root.Local.OptionsPensAlpha;
 				lbcomboPensWidth.Text = Root.Local.OptionsPensWidth;
 			}
+            WidthAtPenSelCb.Text = Root.Local.OptionsPensWidthAtSelection;
 
 				comboLanguage.Items.Clear();
 			List<string> langs = Root.Local.GetLanguagenames();
@@ -540,6 +541,11 @@ namespace gInk
         private void OpenIntoSnapCb_CheckedChanged(object sender, EventArgs e)
         {
             Root.OpenIntoSnapMode = OpenIntoSnapCb.Checked;
+        }
+
+        private void WidthAtPenSelCb_CheckedChanged(object sender, EventArgs e)
+        {
+            Root.WidthAtPenSel = WidthAtPenSelCb.Checked;
         }
 
         private void cbAllowHotkeyInPointer_CheckedChanged(object sender, EventArgs e)
