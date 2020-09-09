@@ -1,5 +1,9 @@
 p1.2 (In Progress)
 =================
+* New : add toolbarheight adjustments in option dialog (was already in config files)
+* New : add new dialog for pen definition with colorpicker
+* New : add pen adjustment dialog access on pen buttons through long click
+* New : add option to apply defined pen width at selection even if pen width cab be modified
 --->RC1
 * New option:to engage capture when opening the toolbar
 * Alt+ capability added for temporary command

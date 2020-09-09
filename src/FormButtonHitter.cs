@@ -14,7 +14,7 @@ namespace gInk
 	{
 		Root Root;
 		FormCollection FC;
-
+        DateTime MouseTimeDown;
 		// http://www.csharp411.com/hide-form-from-alttab/
 		protected override CreateParams CreateParams
 		{
@@ -42,6 +42,8 @@ namespace gInk
 		private void FormButtonHitter_Click(object sender, EventArgs e)
 		{
 			MouseEventArgs m = (MouseEventArgs)e;
+            TimeSpan tsp= DateTime.Now - MouseTimeDown;
+            MessageBox.Show(string.Format("t = {0:N3}",tsp.TotalSeconds));
 			foreach (Control control in FC.gpButtons.Controls)
 			{
 				if (control.GetType() == typeof(Button))
@@ -80,5 +82,11 @@ namespace gInk
 		static extern int SetWindowLong(IntPtr hWnd, int nIndex, UInt32 dwNewLong);
 		[DllImport("user32.dll")]
 		public extern static bool SetLayeredWindowAttributes(IntPtr hwnd, uint crKey, byte bAlpha, uint dwFlags);
-	}
+
+        private void FormButtonHitter_MouseDown(object sender, MouseEventArgs e)
+        {
+            Console.WriteLine("BH", (sender as Control).Name);
+            Root.FormCollection.MouseTimeDown = DateTime.Now;
+        }
+    }
 }

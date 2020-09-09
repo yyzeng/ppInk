@@ -54,6 +54,9 @@ This can be also used with Erasor
 *Option Capture at toolbar opening*
 Capture can be engaged as toolbar is opened. This option is set to false by default.
 
+*Long left click/Right click on Pens*
+Open the Modify pen dialog box for that pen
+
 #### Screen Shots
 
 ![](screenshot1.png)

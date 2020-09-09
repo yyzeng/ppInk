@@ -102,8 +102,10 @@ namespace gInk
         public int CursorX,CursorY;
         public int CursorX0=int.MinValue,CursorY0=int.MinValue;
 
-		// hotkey options
-		public Hotkey Hotkey_Global = new Hotkey();
+        public double LongClickTime=1.0;
+
+        // hotkey options
+        public Hotkey Hotkey_Global = new Hotkey();
 		public Hotkey[] Hotkey_Pens = new Hotkey[10];
 		public Hotkey Hotkey_Eraser = new Hotkey();
 		public Hotkey Hotkey_InkVisible = new Hotkey();

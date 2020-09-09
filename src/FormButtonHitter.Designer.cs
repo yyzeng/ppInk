@@ -1,4 +1,4 @@
-﻿namespace gInk
+namespace gInk
 {
 	partial class FormButtonHitter
 	{
@@ -28,14 +28,14 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
-			this.timer1 = new System.Windows.Forms.Timer(this.components);
-			this.SuspendLayout();
-			// 
-			// timer1
-			// 
-			this.timer1.Enabled = true;
-			this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            this.components = new System.ComponentModel.Container();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.SuspendLayout();
+            // 
+            // timer1
+            // 
+            this.timer1.Enabled = true;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
 			// 
 			// FormButtonHitter
 			// 
@@ -47,14 +47,15 @@
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "FormButtonHitter";
-			this.Opacity = 0.01D;
-			this.ShowIcon = false;
-			this.ShowInTaskbar = false;
-			this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-			this.Text = "FormButtonHitter";
-			this.TopMost = true;
-			this.Click += new System.EventHandler(this.FormButtonHitter_Click);
-			this.ResumeLayout(false);
+            this.Opacity = 0.01D;
+            this.ShowIcon = false;
+            this.ShowInTaskbar = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
+            this.Text = "FormButtonHitter";
+            this.TopMost = true;
+            this.Click += new System.EventHandler(this.FormButtonHitter_Click);
+            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.FormButtonHitter_MouseDown);
+            this.ResumeLayout(false);
 
 		}
 

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -48,6 +48,10 @@
     <ApplicationManifest>ppInk.exe.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Cyotek.Windows.Forms.ColorPicker, Version=1.0.0.0, Culture=neutral, PublicKeyToken=58daa28b0b2de221, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\ppInk\Cyotek.Windows.Forms.ColorPicker.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Ink, Version=6.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\Microsoft.Ink.dll</HintPath>
@@ -71,6 +75,12 @@
     </Compile>
     <Compile Include="CallForm.Designer.cs">
       <DependentUpon>CallForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PenModifyDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PenModifyDlg.Designer.cs">
+      <DependentUpon>PenModifyDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="FormInput.cs">
       <SubType>Form</SubType>
@@ -121,6 +131,9 @@
     <Compile Include="Root.cs" />
     <EmbeddedResource Include="CallForm.resx">
       <DependentUpon>CallForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PenModifyDlg.resx">
+      <DependentUpon>PenModifyDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormInput.resx">
       <DependentUpon>FormInput.cs</DependentUpon>
@@ -231,6 +244,7 @@
     <Content Include="..\readme.md" />
     <None Include="eyedropper.png" />
     <None Include="DblHeadArrowVert.png" />
+    <None Include="cellbackground.png" />
     <Content Include="Magnetic.png" />
     <Content Include="Magnetic_act.png" />
     <None Include="pan1_act.png" />

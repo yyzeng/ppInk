@@ -38,7 +38,9 @@ namespace gInk
 		public System.Windows.Forms.Cursor cursorred, cursorsnap;
 		public System.Windows.Forms.Cursor cursortip;
 
-		public int ButtonsEntering = 0;  // -1 = exiting
+        public DateTime MouseTimeDown;
+        public object MouseDownButtonObject;
+        public int ButtonsEntering = 0;  // -1 = exiting
 		public int gpButtonsLeft, gpButtonsTop, gpButtonsWidth, gpButtonsHeight; // the default location, fixed
 
 		public bool gpPenWidth_MouseOn = false;
@@ -61,11 +63,25 @@ namespace gInk
 				return cp;
 			}
 		}
+        void PreparePenImages(int Transparency, ref Bitmap img_pen, ref Bitmap img_pen_act)
+        {
+            if (Transparency >= 100)
+            {
+                img_pen = image_highlighter;
+                img_pen_act = image_highlighter_act;
+            }
+            else
+            {
+                img_pen = image_pencil;
+                img_pen_act = image_pencil_act;
+            }
+        }
 
         public FormCollection(Root root)
         {
             Root = root;
             InitializeComponent();
+            longClickTimer.Interval = (int)(Root.LongClickTime * 1000 +100);
             if (Root.MagneticRadius>0)
                 this.btMagn.BackgroundImage = global::gInk.Properties.Resources.Magnetic_act;
             else
@@ -139,6 +155,7 @@ namespace gInk
             for (int b = 0; b < Root.MaxPenCount; b++)
             {
                 btPen[b] = new Button();
+                btPen[b].Name = string.Format("pen{0}", b);
                 btPen[b].Width = (int)(gpButtons.Height * 0.85);
                 btPen[b].Height = (int)(gpButtons.Height * 0.85);
                 btPen[b].Top = (int)(gpButtons.Height * 0.08);
@@ -149,11 +166,14 @@ namespace gInk
                 btPen[b].ForeColor = System.Drawing.Color.Transparent;
                 //btPen[b].Name = "btPen" + b.ToString();
                 btPen[b].UseVisualStyleBackColor = false;
+                
+                btPen[b].ContextMenu = new ContextMenu();
+                btPen[b].ContextMenu.Popup += new System.EventHandler(this.btColor_Click);
                 btPen[b].Click += new System.EventHandler(this.btColor_Click);
+
                 btPen[b].BackColor = Root.PenAttr[b].Color;
                 btPen[b].FlatAppearance.MouseDownBackColor = Root.PenAttr[b].Color;
                 btPen[b].FlatAppearance.MouseOverBackColor = Root.PenAttr[b].Color;
-
                 this.toolTip.SetToolTip(this.btPen[b], Root.Local.ButtonNamePen[b] + " (" + Root.Hotkey_Pens[b].ToString() + ")");
 
                 btPen[b].MouseDown += gpButtons_MouseDown;
@@ -161,7 +181,6 @@ namespace gInk
                 btPen[b].MouseUp += gpButtons_MouseUp;
 
                 gpButtons.Controls.Add(btPen[b]);
-
                 if (Root.PenEnabled[b])
                 {
                     btPen[b].Visible = true;
@@ -464,20 +483,10 @@ namespace gInk
             image_pen_act = new Bitmap[Root.MaxPenCount];
             for (int b = 0; b < Root.MaxPenCount; b++)
             {
-                if (Root.PenAttr[b].Transparency >= 100)
-                {
-                    image_pen[b] = new Bitmap(btPen[b].Width, btPen[b].Height);
-                    image_pen[b] = image_highlighter;
-                    image_pen_act[b] = new Bitmap(btPen[b].Width, btPen[b].Height);
-                    image_pen_act[b] = image_highlighter_act;
-                }
-                else
-                {
-                    image_pen[b] = new Bitmap(btPen[b].Width, btPen[b].Height);
-                    image_pen[b] = image_pencil;
-                    image_pen_act[b] = new Bitmap(btPen[b].Width, btPen[b].Height);
-                    image_pen_act[b] = image_pencil_act;
-                }
+                image_pen[b] = new Bitmap(btPen[b].Width, btPen[b].Height);
+                image_pen_act[b] = new Bitmap(btPen[b].Width, btPen[b].Height);
+
+                PreparePenImages(Root.PenAttr[b].Transparency, ref image_pen[b], ref image_pen_act[b]);
             }
 
             LastTickTime = DateTime.Parse("1987-01-01");
@@ -506,12 +515,57 @@ namespace gInk
             this.toolTip.SetToolTip(this.btEdit, Root.Local.ButtonNameEdit + " (" + Root.Hotkey_Edit.ToString() + ")");
             this.toolTip.SetToolTip(this.btMagn, Root.Local.ButtonNameMagn + " (" + Root.Hotkey_Magnet.ToString() + ")");
 
+            foreach (Control ct in gpButtons.Controls)
+            {
+                if (ct.GetType() == typeof(Button))
+                {
+                    ct.MouseDown += new MouseEventHandler(this.btAllButtons_MouseDown);
+                    ct.MouseUp += new MouseEventHandler(this.btAllButtons_MouseUp);
+                    ct.ContextMenu = new ContextMenu();
+                    ct.ContextMenu.Popup += new EventHandler(this.btAllButtons_RightClick);
+                }
+            }
             SelectTool(0, 0); // Select Hand Drawing by Default
         }
 
         private bool AltKeyPressed()
         {
             return ((short)(GetKeyState(VK_LMENU) | GetKeyState(VK_RMENU)) & 0x8000) == 0x8000;
+        }
+
+        private void btAllButtons_MouseDown(object sender, MouseEventArgs e)
+        {
+            MouseTimeDown = DateTime.Now;
+            MouseDownButtonObject = sender;            
+            longClickTimer.Start();
+            Console.WriteLine(string.Format("MD {0}", (sender as Control).Name));
+        }
+
+        private void btAllButtons_MouseUp(object sender, MouseEventArgs e)
+        {
+            MouseDownButtonObject = null;
+            longClickTimer.Stop();
+            IsMovingToolbar = 0;
+        }
+
+        private void btAllButtons_RightClick(object sender, EventArgs e)
+        {
+            MouseTimeDown = DateTime.FromBinary(0);
+            MouseDownButtonObject = null;
+            longClickTimer.Stop();
+            sender = (sender as ContextMenu).SourceControl;
+            Console.WriteLine(string.Format("RC {0}", (sender as Control).Name));
+            (sender as Button).PerformClick();
+        }
+
+        private void longClickTimer_Tick(object sender, EventArgs e)
+        {
+            Button bt = MouseDownButtonObject as Button;
+            MouseDownButtonObject = null;
+            longClickTimer.Stop();
+            Console.WriteLine(string.Format("!LC {0}", bt.Name));
+            bt.PerformClick();
+            IsMovingToolbar = 0;
         }
 
         private void setStrokeProperties(ref Stroke st, int FilledSelected)
@@ -1569,9 +1623,12 @@ namespace gInk
 
 			Root.gpPenWidthVisible = !Root.gpPenWidthVisible;
 			if (Root.gpPenWidthVisible)
+            {
+                pboxPenWidthIndicator.Left = (int)Math.Sqrt(IC.DefaultDrawingAttributes.Width * 30);
 				Root.UponButtonsUpdate |= 0x2;
-			else
-				Root.UponSubPanelUpdate = true;
+            }
+            else
+                Root.UponSubPanelUpdate = true;
 		}
 
 		public void btSnap_Click(object sender, EventArgs e)
@@ -2250,9 +2307,51 @@ namespace gInk
 			Root.UndoInk();
 		}
 
-		public void btColor_Click(object sender, EventArgs e)
+        public void btColor_LongClick(object sender)
+        {
+            for (int b = 0; b < Root.MaxPenCount; b++)
+                if ((Button)sender == btPen[b])
+                {
+                    tiSlide.Stop();
+                    IC.Enabled = false;
+                    ToThrough();
+
+                    SelectPen(b);
+                    Root.UponButtonsUpdate |= 0x2;
+                    PenModifyDlg dlg = new PenModifyDlg(Root);
+                    if (dlg.ModifyPen(ref Root.PenAttr[b]))
+                    {
+                        if ((Root.ToolSelected == 10) || (Root.ToolSelected == 5)) // if move
+                            SelectTool(0);
+                        PreparePenImages(Root.PenAttr[b].Transparency, ref image_pen[b], ref image_pen_act[b]);
+                        btPen[b].Image = image_pen_act[b];
+                        btPen[b].BackColor = Root.PenAttr[b].Color;
+                        btPen[b].FlatAppearance.MouseDownBackColor = Root.PenAttr[b].Color;
+                        btPen[b].FlatAppearance.MouseOverBackColor = Root.PenAttr[b].Color;
+                        SelectPen(b);
+                        Root.UponButtonsUpdate |= 0x2;
+                    };
+                    tiSlide.Start();
+                    IC.Enabled = true;
+                    ToUnThrough();
+                }
+        }
+
+        public void btColor_Click(object sender, EventArgs e)
 		{
-			if (ToolbarMoved)
+            longClickTimer.Stop();
+            if (sender is ContextMenu)
+            {
+                sender = (sender as ContextMenu).SourceControl;
+                MouseTimeDown = DateTime.FromBinary(0);
+            }
+            TimeSpan tsp = DateTime.Now - MouseTimeDown;
+            Console.WriteLine(string.Format("{1},t = {0:N3}", tsp.TotalSeconds,e.ToString()));
+            if (tsp.TotalSeconds > Root.LongClickTime)
+            {
+                btColor_LongClick(sender);
+            }
+            if (ToolbarMoved)
 			{
 				ToolbarMoved = false;
 				return;
@@ -2266,7 +2365,7 @@ namespace gInk
                     SelectPen(b);
 				}
 		}
-        
+
         public void SetTagNumber()
         {
             tiSlide.Stop();

@@ -318,12 +318,13 @@ namespace gInk
 			for (int p = 0; p < Root.MaxPenCount; p++)
 				if ((PictureBox)sender == pboxPens[p])
 				{
-					colorDialog1.Color = Root.PenAttr[p].Color;
-					if (colorDialog1.ShowDialog() == DialogResult.OK)
-					{
-						Root.PenAttr[p].Color = colorDialog1.Color;
-						pboxPens[p].BackColor = colorDialog1.Color;
-					}
+                    PenModifyDlg dlg = new PenModifyDlg(Root);
+                    if (dlg.ModifyPen(ref Root.PenAttr[p]))
+                    {
+                        (sender as PictureBox).BackColor = Color.FromArgb(255, Root.PenAttr[p].Color);
+                        comboPensAlpha[p].Text = string.Format("{0}", Root.PenAttr[p].Transparency);
+                        comboPensWidth[p].Text = string.Format("{0}", Root.PenAttr[p].Width);
+                    }
 				}
 		}
 
