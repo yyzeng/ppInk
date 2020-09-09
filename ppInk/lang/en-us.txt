@@ -49,6 +49,7 @@ OptionsTabPens = "Pens"
 OptionsTabHotkeys = "Hotkeys"
 
 OptionsGeneralLanguage = "Language"
+OptionsGeneralToolbarHeight = "height(%scr)\n\n\nchanges after closing toolbar"
 OptionsGeneralCanvascursor = "Canvus cursor"
 OptionsGeneralCanvascursorArrow = "Arrow"
 OptionsGeneralCanvascursorPentip = "Pen tip"

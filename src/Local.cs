@@ -52,7 +52,9 @@ namespace gInk
 		public string OptionsTabHotkeys = "Hotkeys";
 
 		public string OptionsGeneralLanguage = "Language";
-		public string OptionsGeneralCanvascursor = "Canvus cursor";
+        public string OptionsGeneralToolbarHeight = "height(%scr)\n\n\nchanges after closing toolbar";
+
+        public string OptionsGeneralCanvascursor = "Canvus cursor";
 		public string OptionsGeneralCanvascursorArrow = "Arrow";
 		public string OptionsGeneralCanvascursorPentip = "Pen tip";
 		public string OptionsGeneralSnapshotsavepath = "Snapshot save path";

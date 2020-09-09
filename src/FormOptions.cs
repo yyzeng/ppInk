@@ -60,6 +60,8 @@ namespace gInk
 			if (Root.AllowHotkeyInPointerMode)
 				cbAllowHotkeyInPointer.Checked = true;
 
+            ToolBarHeight.Text = string.Format("{0:F1}", Root.ToolbarHeight * 100);
+
 			comboCanvasCursor.SelectedIndex = Root.CanvasCursor;
 
 			tbSnapPath.Text = Root.SnapshotBasePath;
@@ -201,6 +203,7 @@ namespace gInk
 			tabControl1.TabPages[0].Text = Root.Local.OptionsTabGeneral;
 			tabControl1.TabPages[1].Text = Root.Local.OptionsTabPens;
 			tabControl1.TabPages[2].Text = Root.Local.OptionsTabHotkeys;
+            this.lblToolbarHeight.Text = Root.Local.OptionsGeneralToolbarHeight;
 			this.lbLanguage.Text = Root.Local.OptionsGeneralLanguage;
 			this.lbCanvascursor.Text = Root.Local.OptionsGeneralCanvascursor;
 			this.lbSnapshotsavepath.Text = Root.Local.OptionsGeneralSnapshotsavepath;
@@ -546,6 +549,25 @@ namespace gInk
         private void WidthAtPenSelCb_CheckedChanged(object sender, EventArgs e)
         {
             Root.WidthAtPenSel = WidthAtPenSelCb.Checked;
+        }
+
+        private void ToolBarHeight_TextChanged(object sender, EventArgs e)
+        {
+        }
+
+        private void ToolBarHeight_Validated(object sender, EventArgs e)
+        {
+            Root.ToolbarHeight = float.Parse(ToolBarHeight.Text, CultureInfo.InvariantCulture) / 100;
+        }
+
+        private void ValidateOnEnter(object sender, KeyPressEventArgs e)
+        {
+            if(e.KeyChar=='\r')
+            {
+                this.SelectNextControl(this.ActiveControl, true, true, true, true);
+                (sender as TextBox).Select();
+                e.Handled = true;
+            }
         }
 
         private void cbAllowHotkeyInPointer_CheckedChanged(object sender, EventArgs e)

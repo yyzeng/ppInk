@@ -229,6 +229,8 @@
     <Content Include="..\ppInk\hotkeys.ini" />
     <Content Include="..\ppInk\pen.ini" />
     <Content Include="..\readme.md" />
+    <None Include="eyedropper.png" />
+    <None Include="DblHeadArrowVert.png" />
     <Content Include="Magnetic.png" />
     <Content Include="Magnetic_act.png" />
     <None Include="pan1_act.png" />

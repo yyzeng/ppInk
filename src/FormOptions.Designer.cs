@@ -65,6 +65,8 @@ namespace gInk
             this.comboCanvasCursor = new System.Windows.Forms.ComboBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.ToolBarHeight = new System.Windows.Forms.TextBox();
+            this.panel1 = new System.Windows.Forms.Panel();
             this.OpenIntoSnapCb = new System.Windows.Forms.CheckBox();
             this.DefArrStartCb = new System.Windows.Forms.CheckBox();
             this.Magnet_TB = new System.Windows.Forms.TextBox();
@@ -109,6 +111,7 @@ namespace gInk
             this.lbHkUndo = new System.Windows.Forms.Label();
             this.lbHkEraser = new System.Windows.Forms.Label();
             this.lbGlobalHotkey = new System.Windows.Forms.Label();
+            this.FontDlg = new System.Windows.Forms.FontDialog();
             this.hiToolMagnet = new gInk.HotkeyInputBox();
             this.hiToolEdit = new gInk.HotkeyInputBox();
             this.HiToolText = new gInk.HotkeyInputBox();
@@ -127,7 +130,7 @@ namespace gInk
             this.hiUndo = new gInk.HotkeyInputBox();
             this.hiEraser = new gInk.HotkeyInputBox();
             this.hiGlobal = new gInk.HotkeyInputBox();
-            this.FontDlg = new System.Windows.Forms.FontDialog();
+            this.lblToolbarHeight = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -286,6 +289,8 @@ namespace gInk
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.tabPage1.Controls.Add(this.ToolBarHeight);
+            this.tabPage1.Controls.Add(this.panel1);
             this.tabPage1.Controls.Add(this.OpenIntoSnapCb);
             this.tabPage1.Controls.Add(this.DefArrStartCb);
             this.tabPage1.Controls.Add(this.Magnet_TB);
@@ -320,12 +325,34 @@ namespace gInk
             this.tabPage1.Controls.Add(this.cbAllowDragging);
             this.tabPage1.Controls.Add(this.cbWhiteIcon);
             this.tabPage1.Controls.Add(this.tbSnapPath);
+            this.tabPage1.Controls.Add(this.lblToolbarHeight);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Margin = new System.Windows.Forms.Padding(0);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Size = new System.Drawing.Size(944, 483);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "General";
+            // 
+            // ToolBarHeight
+            // 
+            this.ToolBarHeight.AcceptsReturn = true;
+            this.ToolBarHeight.Location = new System.Drawing.Point(601, 37);
+            this.ToolBarHeight.Name = "ToolBarHeight";
+            this.ToolBarHeight.Size = new System.Drawing.Size(52, 20);
+            this.ToolBarHeight.TabIndex = 27;
+            this.ToolBarHeight.Text = "0.123456";
+            this.ToolBarHeight.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ValidateOnEnter);
+            this.ToolBarHeight.Validating += new System.ComponentModel.CancelEventHandler(this.ArrHdFloat_Validating);
+            this.ToolBarHeight.Validated += new System.EventHandler(this.ToolBarHeight_Validated);
+            // 
+            // panel1
+            // 
+            this.panel1.BackgroundImage = global::gInk.Properties.Resources.DblHeadArrowVert;
+            this.panel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.panel1.Location = new System.Drawing.Point(576, 23);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(19, 53);
+            this.panel1.TabIndex = 26;
             // 
             // OpenIntoSnapCb
             // 
@@ -356,6 +383,7 @@ namespace gInk
             this.Magnet_TB.Size = new System.Drawing.Size(58, 20);
             this.Magnet_TB.TabIndex = 21;
             this.Magnet_TB.Text = "0.123456";
+            this.Magnet_TB.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ValidateOnEnter);
             this.Magnet_TB.Validating += new System.ComponentModel.CancelEventHandler(this.ArrHdFloat_Validating);
             this.Magnet_TB.Validated += new System.EventHandler(this.Magnet_TB_Validated);
             // 
@@ -415,6 +443,7 @@ namespace gInk
             this.ArrHdLength.Size = new System.Drawing.Size(52, 20);
             this.ArrHdLength.TabIndex = 15;
             this.ArrHdLength.Text = "0.123456";
+            this.ArrHdLength.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ValidateOnEnter);
             this.ArrHdLength.Validating += new System.ComponentModel.CancelEventHandler(this.ArrHdFloat_Validating);
             this.ArrHdLength.Validated += new System.EventHandler(this.ArrHdLength_Validated);
             // 
@@ -434,6 +463,7 @@ namespace gInk
             this.ArrHdAperture.Size = new System.Drawing.Size(37, 20);
             this.ArrHdAperture.TabIndex = 13;
             this.ArrHdAperture.Text = "12.1";
+            this.ArrHdAperture.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ValidateOnEnter);
             this.ArrHdAperture.Validating += new System.ComponentModel.CancelEventHandler(this.ArrHdFloat_Validating);
             this.ArrHdAperture.Validated += new System.EventHandler(this.ArrHdAperture_Validated);
             // 
@@ -789,6 +819,10 @@ namespace gInk
             this.lbGlobalHotkey.TabIndex = 4;
             this.lbGlobalHotkey.Text = "Global hotkey (start drawing, switch between mouse pointer and drawing)";
             // 
+            // FontDlg
+            // 
+            this.FontDlg.FontMustExist = true;
+            // 
             // hiToolMagnet
             // 
             this.hiToolMagnet.BackColor = System.Drawing.Color.White;
@@ -1042,9 +1076,14 @@ namespace gInk
             this.hiGlobal.Text = "None";
             this.hiGlobal.OnHotkeyChanged += new System.EventHandler(this.hi_OnHotkeyChanged);
             // 
-            // FontDlg
+            // lblToolbarHeight
             // 
-            this.FontDlg.FontMustExist = true;
+            this.lblToolbarHeight.AutoSize = true;
+            this.lblToolbarHeight.Location = new System.Drawing.Point(598, 23);
+            this.lblToolbarHeight.Name = "lblToolbarHeight";
+            this.lblToolbarHeight.Size = new System.Drawing.Size(143, 52);
+            this.lblToolbarHeight.TabIndex = 28;
+            this.lblToolbarHeight.Text = "height(%scr)\r\n\r\n\r\nchanges after closing toolbar";
             // 
             // FormOptions
             // 
@@ -1154,5 +1193,8 @@ namespace gInk
         private System.Windows.Forms.CheckBox AltAsOneCommandCb;
         private System.Windows.Forms.CheckBox OpenIntoSnapCb;
         private System.Windows.Forms.CheckBox WidthAtPenSelCb;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.TextBox ToolBarHeight;
+        private System.Windows.Forms.Label lblToolbarHeight;
     }
 }
