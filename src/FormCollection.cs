@@ -273,6 +273,8 @@ namespace gInk
             if (Root.PenWidthEnabled)
             {
                 btPenWidth.Visible = true;
+                btPenWidth.Height = (int)(gpButtons.Height * 0.85);
+                btDock.Width = btDock.Height;
                 btPenWidth.Left = cumulatedleft;
                 cumulatedleft += (int)(btPenWidth.Width * 1.1);
             }

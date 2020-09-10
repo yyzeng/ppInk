@@ -61,6 +61,7 @@ namespace gInk
 				cbAllowHotkeyInPointer.Checked = true;
 
             ToolBarHeight.Text = string.Format("{0:F1}", Root.ToolbarHeight * 100);
+            MoveToolBarCb.Checked = Root.AllowDraggingToolbar;
 
 			comboCanvasCursor.SelectedIndex = Root.CanvasCursor;
 
@@ -569,6 +570,11 @@ namespace gInk
                 (sender as TextBox).Select();
                 e.Handled = true;
             }
+        }
+
+        private void MoveToolBarCb_CheckedChanged(object sender, EventArgs e)
+        {
+            Root.AllowDraggingToolbar = MoveToolBarCb.Checked;
         }
 
         private void cbAllowHotkeyInPointer_CheckedChanged(object sender, EventArgs e)

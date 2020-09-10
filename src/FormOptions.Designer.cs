@@ -88,6 +88,7 @@ namespace gInk
             this.cbInkVisibleEnabled = new System.Windows.Forms.CheckBox();
             this.cbPanEnabled = new System.Windows.Forms.CheckBox();
             this.cbAllowDragging = new System.Windows.Forms.CheckBox();
+            this.lblToolbarHeight = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.WidthAtPenSelCb = new System.Windows.Forms.CheckBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
@@ -112,6 +113,7 @@ namespace gInk
             this.lbHkEraser = new System.Windows.Forms.Label();
             this.lbGlobalHotkey = new System.Windows.Forms.Label();
             this.FontDlg = new System.Windows.Forms.FontDialog();
+            this.MoveToolBarCb = new System.Windows.Forms.CheckBox();
             this.hiToolMagnet = new gInk.HotkeyInputBox();
             this.hiToolEdit = new gInk.HotkeyInputBox();
             this.HiToolText = new gInk.HotkeyInputBox();
@@ -130,7 +132,6 @@ namespace gInk
             this.hiUndo = new gInk.HotkeyInputBox();
             this.hiEraser = new gInk.HotkeyInputBox();
             this.hiGlobal = new gInk.HotkeyInputBox();
-            this.lblToolbarHeight = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -141,7 +142,7 @@ namespace gInk
             // cbEraserEnabled
             // 
             this.cbEraserEnabled.AutoSize = true;
-            this.cbEraserEnabled.Location = new System.Drawing.Point(256, 82);
+            this.cbEraserEnabled.Location = new System.Drawing.Point(174, 74);
             this.cbEraserEnabled.Name = "cbEraserEnabled";
             this.cbEraserEnabled.Size = new System.Drawing.Size(15, 14);
             this.cbEraserEnabled.TabIndex = 0;
@@ -151,7 +152,7 @@ namespace gInk
             // cbPointerEnabled
             // 
             this.cbPointerEnabled.AutoSize = true;
-            this.cbPointerEnabled.Location = new System.Drawing.Point(335, 82);
+            this.cbPointerEnabled.Location = new System.Drawing.Point(253, 74);
             this.cbPointerEnabled.Name = "cbPointerEnabled";
             this.cbPointerEnabled.Size = new System.Drawing.Size(15, 14);
             this.cbPointerEnabled.TabIndex = 0;
@@ -161,7 +162,7 @@ namespace gInk
             // cbSnapEnabled
             // 
             this.cbSnapEnabled.AutoSize = true;
-            this.cbSnapEnabled.Location = new System.Drawing.Point(462, 82);
+            this.cbSnapEnabled.Location = new System.Drawing.Point(380, 74);
             this.cbSnapEnabled.Name = "cbSnapEnabled";
             this.cbSnapEnabled.Size = new System.Drawing.Size(15, 14);
             this.cbSnapEnabled.TabIndex = 0;
@@ -171,7 +172,7 @@ namespace gInk
             // cbUndoEnabled
             // 
             this.cbUndoEnabled.AutoSize = true;
-            this.cbUndoEnabled.Location = new System.Drawing.Point(496, 82);
+            this.cbUndoEnabled.Location = new System.Drawing.Point(414, 74);
             this.cbUndoEnabled.Name = "cbUndoEnabled";
             this.cbUndoEnabled.Size = new System.Drawing.Size(15, 14);
             this.cbUndoEnabled.TabIndex = 0;
@@ -181,7 +182,7 @@ namespace gInk
             // cbClearEnabled
             // 
             this.cbClearEnabled.AutoSize = true;
-            this.cbClearEnabled.Location = new System.Drawing.Point(533, 82);
+            this.cbClearEnabled.Location = new System.Drawing.Point(451, 74);
             this.cbClearEnabled.Name = "cbClearEnabled";
             this.cbClearEnabled.Size = new System.Drawing.Size(15, 14);
             this.cbClearEnabled.TabIndex = 0;
@@ -191,7 +192,7 @@ namespace gInk
             // cbWidthEnabled
             // 
             this.cbWidthEnabled.AutoSize = true;
-            this.cbWidthEnabled.Location = new System.Drawing.Point(392, 82);
+            this.cbWidthEnabled.Location = new System.Drawing.Point(310, 74);
             this.cbWidthEnabled.Name = "cbWidthEnabled";
             this.cbWidthEnabled.Size = new System.Drawing.Size(15, 14);
             this.cbWidthEnabled.TabIndex = 0;
@@ -201,7 +202,7 @@ namespace gInk
             // cbWhiteIcon
             // 
             this.cbWhiteIcon.AutoSize = true;
-            this.cbWhiteIcon.Location = new System.Drawing.Point(130, 249);
+            this.cbWhiteIcon.Location = new System.Drawing.Point(48, 241);
             this.cbWhiteIcon.Name = "cbWhiteIcon";
             this.cbWhiteIcon.Size = new System.Drawing.Size(116, 17);
             this.cbWhiteIcon.TabIndex = 0;
@@ -211,7 +212,7 @@ namespace gInk
             // 
             // tbSnapPath
             // 
-            this.tbSnapPath.Location = new System.Drawing.Point(296, 197);
+            this.tbSnapPath.Location = new System.Drawing.Point(214, 189);
             this.tbSnapPath.Name = "tbSnapPath";
             this.tbSnapPath.Size = new System.Drawing.Size(252, 20);
             this.tbSnapPath.TabIndex = 1;
@@ -220,7 +221,7 @@ namespace gInk
             // lbSnapshotsavepath
             // 
             this.lbSnapshotsavepath.AutoSize = true;
-            this.lbSnapshotsavepath.Location = new System.Drawing.Point(127, 202);
+            this.lbSnapshotsavepath.Location = new System.Drawing.Point(45, 194);
             this.lbSnapshotsavepath.Name = "lbSnapshotsavepath";
             this.lbSnapshotsavepath.Size = new System.Drawing.Size(102, 13);
             this.lbSnapshotsavepath.TabIndex = 2;
@@ -228,7 +229,7 @@ namespace gInk
             // 
             // btSnapPath
             // 
-            this.btSnapPath.Location = new System.Drawing.Point(554, 196);
+            this.btSnapPath.Location = new System.Drawing.Point(472, 188);
             this.btSnapPath.Name = "btSnapPath";
             this.btSnapPath.Size = new System.Drawing.Size(31, 23);
             this.btSnapPath.TabIndex = 3;
@@ -239,7 +240,7 @@ namespace gInk
             // lbNote
             // 
             this.lbNote.AutoSize = true;
-            this.lbNote.Location = new System.Drawing.Point(128, 390);
+            this.lbNote.Location = new System.Drawing.Point(46, 382);
             this.lbNote.Name = "lbNote";
             this.lbNote.Size = new System.Drawing.Size(316, 13);
             this.lbNote.TabIndex = 4;
@@ -254,7 +255,7 @@ namespace gInk
             // lbCanvascursor
             // 
             this.lbCanvascursor.AutoSize = true;
-            this.lbCanvascursor.Location = new System.Drawing.Point(128, 167);
+            this.lbCanvascursor.Location = new System.Drawing.Point(46, 159);
             this.lbCanvascursor.Name = "lbCanvascursor";
             this.lbCanvascursor.Size = new System.Drawing.Size(75, 13);
             this.lbCanvascursor.TabIndex = 5;
@@ -267,7 +268,7 @@ namespace gInk
             this.comboCanvasCursor.Items.AddRange(new object[] {
             "Arrow",
             "Pen tip"});
-            this.comboCanvasCursor.Location = new System.Drawing.Point(296, 162);
+            this.comboCanvasCursor.Location = new System.Drawing.Point(214, 154);
             this.comboCanvasCursor.Name = "comboCanvasCursor";
             this.comboCanvasCursor.Size = new System.Drawing.Size(252, 21);
             this.comboCanvasCursor.TabIndex = 6;
@@ -289,6 +290,7 @@ namespace gInk
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.tabPage1.Controls.Add(this.MoveToolBarCb);
             this.tabPage1.Controls.Add(this.ToolBarHeight);
             this.tabPage1.Controls.Add(this.panel1);
             this.tabPage1.Controls.Add(this.OpenIntoSnapCb);
@@ -336,7 +338,7 @@ namespace gInk
             // ToolBarHeight
             // 
             this.ToolBarHeight.AcceptsReturn = true;
-            this.ToolBarHeight.Location = new System.Drawing.Point(601, 37);
+            this.ToolBarHeight.Location = new System.Drawing.Point(519, 29);
             this.ToolBarHeight.Name = "ToolBarHeight";
             this.ToolBarHeight.Size = new System.Drawing.Size(52, 20);
             this.ToolBarHeight.TabIndex = 27;
@@ -349,7 +351,7 @@ namespace gInk
             // 
             this.panel1.BackgroundImage = global::gInk.Properties.Resources.DblHeadArrowVert;
             this.panel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.panel1.Location = new System.Drawing.Point(576, 23);
+            this.panel1.Location = new System.Drawing.Point(494, 15);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(19, 53);
             this.panel1.TabIndex = 26;
@@ -357,7 +359,7 @@ namespace gInk
             // OpenIntoSnapCb
             // 
             this.OpenIntoSnapCb.AutoSize = true;
-            this.OpenIntoSnapCb.Location = new System.Drawing.Point(130, 226);
+            this.OpenIntoSnapCb.Location = new System.Drawing.Point(48, 218);
             this.OpenIntoSnapCb.Name = "OpenIntoSnapCb";
             this.OpenIntoSnapCb.Size = new System.Drawing.Size(299, 17);
             this.OpenIntoSnapCb.TabIndex = 25;
@@ -368,7 +370,7 @@ namespace gInk
             // DefArrStartCb
             // 
             this.DefArrStartCb.AutoSize = true;
-            this.DefArrStartCb.Location = new System.Drawing.Point(426, 336);
+            this.DefArrStartCb.Location = new System.Drawing.Point(344, 328);
             this.DefArrStartCb.Name = "DefArrStartCb";
             this.DefArrStartCb.Size = new System.Drawing.Size(156, 17);
             this.DefArrStartCb.TabIndex = 22;
@@ -378,7 +380,7 @@ namespace gInk
             // 
             // Magnet_TB
             // 
-            this.Magnet_TB.Location = new System.Drawing.Point(335, 367);
+            this.Magnet_TB.Location = new System.Drawing.Point(253, 359);
             this.Magnet_TB.Name = "Magnet_TB";
             this.Magnet_TB.Size = new System.Drawing.Size(58, 20);
             this.Magnet_TB.TabIndex = 21;
@@ -390,7 +392,7 @@ namespace gInk
             // MagnetLbl
             // 
             this.MagnetLbl.AutoSize = true;
-            this.MagnetLbl.Location = new System.Drawing.Point(127, 370);
+            this.MagnetLbl.Location = new System.Drawing.Point(45, 362);
             this.MagnetLbl.Name = "MagnetLbl";
             this.MagnetLbl.Size = new System.Drawing.Size(190, 13);
             this.MagnetLbl.TabIndex = 20;
@@ -399,7 +401,7 @@ namespace gInk
             // ShowFloatingWinCb
             // 
             this.ShowFloatingWinCb.AutoSize = true;
-            this.ShowFloatingWinCb.Location = new System.Drawing.Point(364, 249);
+            this.ShowFloatingWinCb.Location = new System.Drawing.Point(282, 241);
             this.ShowFloatingWinCb.Name = "ShowFloatingWinCb";
             this.ShowFloatingWinCb.Size = new System.Drawing.Size(208, 17);
             this.ShowFloatingWinCb.TabIndex = 19;
@@ -410,7 +412,7 @@ namespace gInk
             // DefTxtLbl
             // 
             this.DefTxtLbl.AutoSize = true;
-            this.DefTxtLbl.Location = new System.Drawing.Point(128, 340);
+            this.DefTxtLbl.Location = new System.Drawing.Point(46, 332);
             this.DefTxtLbl.Name = "DefTxtLbl";
             this.DefTxtLbl.Size = new System.Drawing.Size(65, 13);
             this.DefTxtLbl.TabIndex = 18;
@@ -418,7 +420,7 @@ namespace gInk
             // 
             // SaveConfigBtn
             // 
-            this.SaveConfigBtn.Location = new System.Drawing.Point(487, 418);
+            this.SaveConfigBtn.Location = new System.Drawing.Point(405, 410);
             this.SaveConfigBtn.Name = "SaveConfigBtn";
             this.SaveConfigBtn.Size = new System.Drawing.Size(98, 46);
             this.SaveConfigBtn.TabIndex = 17;
@@ -428,7 +430,7 @@ namespace gInk
             // 
             // DefaultFontBtn
             // 
-            this.DefaultFontBtn.Location = new System.Drawing.Point(296, 335);
+            this.DefaultFontBtn.Location = new System.Drawing.Point(214, 327);
             this.DefaultFontBtn.Name = "DefaultFontBtn";
             this.DefaultFontBtn.Size = new System.Drawing.Size(111, 23);
             this.DefaultFontBtn.TabIndex = 16;
@@ -438,7 +440,7 @@ namespace gInk
             // 
             // ArrHdLength
             // 
-            this.ArrHdLength.Location = new System.Drawing.Point(496, 309);
+            this.ArrHdLength.Location = new System.Drawing.Point(414, 301);
             this.ArrHdLength.Name = "ArrHdLength";
             this.ArrHdLength.Size = new System.Drawing.Size(52, 20);
             this.ArrHdLength.TabIndex = 15;
@@ -450,7 +452,7 @@ namespace gInk
             // ArrHdLenLbl
             // 
             this.ArrHdLenLbl.AutoSize = true;
-            this.ArrHdLenLbl.Location = new System.Drawing.Point(410, 312);
+            this.ArrHdLenLbl.Location = new System.Drawing.Point(328, 304);
             this.ArrHdLenLbl.Name = "ArrHdLenLbl";
             this.ArrHdLenLbl.Size = new System.Drawing.Size(70, 13);
             this.ArrHdLenLbl.TabIndex = 14;
@@ -458,7 +460,7 @@ namespace gInk
             // 
             // ArrHdAperture
             // 
-            this.ArrHdAperture.Location = new System.Drawing.Point(356, 309);
+            this.ArrHdAperture.Location = new System.Drawing.Point(274, 301);
             this.ArrHdAperture.Name = "ArrHdAperture";
             this.ArrHdAperture.Size = new System.Drawing.Size(37, 20);
             this.ArrHdAperture.TabIndex = 13;
@@ -470,7 +472,7 @@ namespace gInk
             // ArrHdAptLbl
             // 
             this.ArrHdAptLbl.AutoSize = true;
-            this.ArrHdAptLbl.Location = new System.Drawing.Point(293, 312);
+            this.ArrHdAptLbl.Location = new System.Drawing.Point(211, 304);
             this.ArrHdAptLbl.Name = "ArrHdAptLbl";
             this.ArrHdAptLbl.Size = new System.Drawing.Size(57, 13);
             this.ArrHdAptLbl.TabIndex = 12;
@@ -479,7 +481,7 @@ namespace gInk
             // ArrwLbl
             // 
             this.ArrwLbl.AutoSize = true;
-            this.ArrwLbl.Location = new System.Drawing.Point(127, 312);
+            this.ArrwLbl.Location = new System.Drawing.Point(45, 304);
             this.ArrwLbl.Name = "ArrwLbl";
             this.ArrwLbl.Size = new System.Drawing.Size(63, 13);
             this.ArrwLbl.TabIndex = 11;
@@ -487,7 +489,7 @@ namespace gInk
             // 
             // SaveWindowPosBtn
             // 
-            this.SaveWindowPosBtn.Location = new System.Drawing.Point(364, 272);
+            this.SaveWindowPosBtn.Location = new System.Drawing.Point(282, 264);
             this.SaveWindowPosBtn.Name = "SaveWindowPosBtn";
             this.SaveWindowPosBtn.Size = new System.Drawing.Size(184, 24);
             this.SaveWindowPosBtn.TabIndex = 10;
@@ -498,7 +500,7 @@ namespace gInk
             // cbToolsEnabled
             // 
             this.cbToolsEnabled.AutoSize = true;
-            this.cbToolsEnabled.Location = new System.Drawing.Point(153, 82);
+            this.cbToolsEnabled.Location = new System.Drawing.Point(71, 74);
             this.cbToolsEnabled.Name = "cbToolsEnabled";
             this.cbToolsEnabled.Size = new System.Drawing.Size(15, 14);
             this.cbToolsEnabled.TabIndex = 9;
@@ -508,7 +510,7 @@ namespace gInk
             // lbLanguage
             // 
             this.lbLanguage.AutoSize = true;
-            this.lbLanguage.Location = new System.Drawing.Point(128, 130);
+            this.lbLanguage.Location = new System.Drawing.Point(46, 122);
             this.lbLanguage.Name = "lbLanguage";
             this.lbLanguage.Size = new System.Drawing.Size(55, 13);
             this.lbLanguage.TabIndex = 8;
@@ -518,7 +520,7 @@ namespace gInk
             // 
             this.pictureBox1.BackgroundImage = global::gInk.Properties.Resources.paneloption;
             this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pictureBox1.Location = new System.Drawing.Point(90, 23);
+            this.pictureBox1.Location = new System.Drawing.Point(8, 15);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(467, 53);
             this.pictureBox1.TabIndex = 7;
@@ -528,7 +530,7 @@ namespace gInk
             // 
             this.comboLanguage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboLanguage.FormattingEnabled = true;
-            this.comboLanguage.Location = new System.Drawing.Point(296, 127);
+            this.comboLanguage.Location = new System.Drawing.Point(214, 119);
             this.comboLanguage.Name = "comboLanguage";
             this.comboLanguage.Size = new System.Drawing.Size(252, 21);
             this.comboLanguage.TabIndex = 6;
@@ -537,7 +539,7 @@ namespace gInk
             // cbInkVisibleEnabled
             // 
             this.cbInkVisibleEnabled.AutoSize = true;
-            this.cbInkVisibleEnabled.Location = new System.Drawing.Point(426, 82);
+            this.cbInkVisibleEnabled.Location = new System.Drawing.Point(344, 74);
             this.cbInkVisibleEnabled.Name = "cbInkVisibleEnabled";
             this.cbInkVisibleEnabled.Size = new System.Drawing.Size(15, 14);
             this.cbInkVisibleEnabled.TabIndex = 0;
@@ -547,7 +549,7 @@ namespace gInk
             // cbPanEnabled
             // 
             this.cbPanEnabled.AutoSize = true;
-            this.cbPanEnabled.Location = new System.Drawing.Point(297, 82);
+            this.cbPanEnabled.Location = new System.Drawing.Point(215, 74);
             this.cbPanEnabled.Name = "cbPanEnabled";
             this.cbPanEnabled.Size = new System.Drawing.Size(15, 14);
             this.cbPanEnabled.TabIndex = 0;
@@ -557,13 +559,22 @@ namespace gInk
             // cbAllowDragging
             // 
             this.cbAllowDragging.AutoSize = true;
-            this.cbAllowDragging.Location = new System.Drawing.Point(130, 279);
+            this.cbAllowDragging.Location = new System.Drawing.Point(48, 271);
             this.cbAllowDragging.Name = "cbAllowDragging";
             this.cbAllowDragging.Size = new System.Drawing.Size(198, 17);
             this.cbAllowDragging.TabIndex = 0;
             this.cbAllowDragging.Text = "Allow dragging toolbar (experimental)";
             this.cbAllowDragging.UseVisualStyleBackColor = true;
             this.cbAllowDragging.CheckedChanged += new System.EventHandler(this.cbAllowDragging_CheckedChanged);
+            // 
+            // lblToolbarHeight
+            // 
+            this.lblToolbarHeight.AutoSize = true;
+            this.lblToolbarHeight.Location = new System.Drawing.Point(516, 15);
+            this.lblToolbarHeight.Name = "lblToolbarHeight";
+            this.lblToolbarHeight.Size = new System.Drawing.Size(159, 52);
+            this.lblToolbarHeight.TabIndex = 28;
+            this.lblToolbarHeight.Text = "height(%scr)                  Movable\r\n\r\n\r\nchanges after closing toolbar";
             // 
             // tabPage2
             // 
@@ -823,6 +834,17 @@ namespace gInk
             // 
             this.FontDlg.FontMustExist = true;
             // 
+            // MoveToolBarCb
+            // 
+            this.MoveToolBarCb.AutoSize = true;
+            this.MoveToolBarCb.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.MoveToolBarCb.Location = new System.Drawing.Point(704, 15);
+            this.MoveToolBarCb.Name = "MoveToolBarCb";
+            this.MoveToolBarCb.Size = new System.Drawing.Size(15, 14);
+            this.MoveToolBarCb.TabIndex = 29;
+            this.MoveToolBarCb.UseVisualStyleBackColor = true;
+            this.MoveToolBarCb.CheckedChanged += new System.EventHandler(this.MoveToolBarCb_CheckedChanged);
+            // 
             // hiToolMagnet
             // 
             this.hiToolMagnet.BackColor = System.Drawing.Color.White;
@@ -1076,15 +1098,6 @@ namespace gInk
             this.hiGlobal.Text = "None";
             this.hiGlobal.OnHotkeyChanged += new System.EventHandler(this.hi_OnHotkeyChanged);
             // 
-            // lblToolbarHeight
-            // 
-            this.lblToolbarHeight.AutoSize = true;
-            this.lblToolbarHeight.Location = new System.Drawing.Point(598, 23);
-            this.lblToolbarHeight.Name = "lblToolbarHeight";
-            this.lblToolbarHeight.Size = new System.Drawing.Size(143, 52);
-            this.lblToolbarHeight.TabIndex = 28;
-            this.lblToolbarHeight.Text = "height(%scr)\r\n\r\n\r\nchanges after closing toolbar";
-            // 
             // FormOptions
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1196,5 +1209,6 @@ namespace gInk
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.TextBox ToolBarHeight;
         private System.Windows.Forms.Label lblToolbarHeight;
+        private System.Windows.Forms.CheckBox MoveToolBarCb;
     }
 }

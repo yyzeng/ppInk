@@ -50,7 +50,7 @@ OptionsTabPens = "Stylos"
 OptionsTabHotkeys = "Raccourcis"
 
 OptionsGeneralLanguage = "Langue"
-OptionsGeneralToolbarHeight = "Hauteur(%Ecr)\n\n\nchange après fermeture de la barre d'outils"
+OptionsGeneralToolbarHeight = "Hauteur(%Ecr)               Déplaçable\n\n\nchange après fermeture de la barre d'outils"
 OptionsGeneralCanvascursor = "Type de curseur"
 OptionsGeneralCanvascursorArrow = "Flèche"
 OptionsGeneralCanvascursorPentip = "Pointe de stylo"
