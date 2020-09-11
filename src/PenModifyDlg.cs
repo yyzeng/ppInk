@@ -35,13 +35,13 @@ namespace gInk
 
         public void setWidth(float w)
         {
-            pboxPenWidthIndicator.Left = (int)(Math.Sqrt(w / 500)* 200);
+            pboxPenWidthIndicator.Left = (int)(Math.Sqrt(w / 1250)* 200);
         }
 
         public float getWidth()
         {
             double f = (pboxPenWidthIndicator.Left/ 200.0);
-            return (float)(f * f * 500);
+            return (float)(f * f * 1250);
         }
 
         public bool ModifyPen(ref Microsoft.Ink.DrawingAttributes pen)

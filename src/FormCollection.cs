@@ -22,7 +22,7 @@ namespace gInk
         const int VK_RMENU = 0xA5;
         const int VK_LWIN = 0x5B;
         const int VK_RWIN = 0x5C;
-
+        private PenModifyDlg PenModifyDlg;
         public Root Root;
 		public InkOverlay IC;
 
@@ -527,6 +527,7 @@ namespace gInk
                     ct.ContextMenu.Popup += new EventHandler(this.btAllButtons_RightClick);
                 }
             }
+            PenModifyDlg = new PenModifyDlg(Root); // It seems to be a little long to build so we prepare it.
             SelectTool(0, 0); // Select Hand Drawing by Default
         }
 
@@ -540,7 +541,7 @@ namespace gInk
             MouseTimeDown = DateTime.Now;
             MouseDownButtonObject = sender;            
             longClickTimer.Start();
-            Console.WriteLine(string.Format("MD {0}", (sender as Control).Name));
+            Console.WriteLine(string.Format("MD {0} {1}", DateTime.Now.Second, DateTime.Now.Millisecond));
         }
 
         private void btAllButtons_MouseUp(object sender, MouseEventArgs e)
@@ -1824,7 +1825,7 @@ namespace gInk
 			
 		}
 
-		short LastESCStatus = 0;
+        short LastESCStatus = 0;
 		private void tiSlide_Tick(object sender, EventArgs e)
 		{
 			// ignore the first tick
@@ -2317,11 +2318,12 @@ namespace gInk
                     tiSlide.Stop();
                     IC.Enabled = false;
                     ToThrough();
+                    TextEdited = true;
 
                     SelectPen(b);
                     Root.UponButtonsUpdate |= 0x2;
-                    PenModifyDlg dlg = new PenModifyDlg(Root);
-                    if (dlg.ModifyPen(ref Root.PenAttr[b]))
+                    
+                    if (PenModifyDlg.ModifyPen(ref Root.PenAttr[b]))
                     {
                         if ((Root.ToolSelected == 10) || (Root.ToolSelected == 5)) // if move
                             SelectTool(0);
@@ -2503,6 +2505,17 @@ namespace gInk
 
 			LastF4Status = retVal;
 		}
+
+        private void SetDynCursor()
+        {
+            Bitmap bmp = new Bitmap(128, 128, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            using (Graphics gr = Graphics.FromImage(bmp))
+            {
+                gr.DrawEllipse(new Pen(Root.PenAttr[LastPenSelected].Color), 64 - Root.PenAttr[LastPenSelected].Width, 64 - Root.PenAttr[LastPenSelected].Width / 2,
+                                                                            Root.PenAttr[LastPenSelected].Width / 2, Root.PenAttr[LastPenSelected].Width / 2);
+            }
+            IC.Cursor = new System.Windows.Forms.Cursor(bmp.GetHicon());
+        }
 
 		[DllImport("user32.dll")]
 		static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
