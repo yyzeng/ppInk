@@ -43,7 +43,7 @@ namespace gInk
 		{
 			MouseEventArgs m = (MouseEventArgs)e;
             TimeSpan tsp= DateTime.Now - MouseTimeDown;
-            MessageBox.Show(string.Format("t = {0:N3}",tsp.TotalSeconds));
+            //MessageBox.Show(string.Format("t = {0:N3}",tsp.TotalSeconds));
 			foreach (Control control in FC.gpButtons.Controls)
 			{
 				if (control.GetType() == typeof(Button))
