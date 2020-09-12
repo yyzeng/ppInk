@@ -57,6 +57,13 @@ Capture can be engaged as toolbar is opened. This option is set to false by defa
 *Long left click/Right click on Pens*
 Open the Modify pen dialog box for that pen
 
+*Clear Board (Bin icon):*
+
+short click : Delete all drawings and apply last selected background
+Long click : Delete all drawings and select background surface color (white/black/customed color(modifiable through Options))
+In options you will be able to select a default mode at opening , and customed color
+advice : the created rectangle can be deleted using the erasor next to the border of the screen.
+
 #### Screen Shots
 
 ![](screenshot1.png)

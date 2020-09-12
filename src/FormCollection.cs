@@ -521,6 +521,7 @@ namespace gInk
             {
                 if (ct.GetType() == typeof(Button))
                 {
+                    //Console.WriteLine("evt : " + ct.Name);
                     ct.MouseDown += new MouseEventHandler(this.btAllButtons_MouseDown);
                     ct.MouseUp += new MouseEventHandler(this.btAllButtons_MouseUp);
                     ct.ContextMenu = new ContextMenu();
@@ -529,6 +530,7 @@ namespace gInk
             }
             PenModifyDlg = new PenModifyDlg(Root); // It seems to be a little long to build so we prepare it.
             SelectTool(0, 0); // Select Hand Drawing by Default
+
         }
 
         private bool AltKeyPressed()
@@ -546,6 +548,7 @@ namespace gInk
 
         private void btAllButtons_MouseUp(object sender, MouseEventArgs e)
         {
+            Console.WriteLine("MU " + (sender as Control).Name);
             MouseDownButtonObject = null;
             longClickTimer.Stop();
             IsMovingToolbar = 0;
@@ -1857,9 +1860,9 @@ namespace gInk
 			else if (ButtonsEntering == 0)
 			{
 				aimedleft = gpButtons.Left; // stay at current location
-			}
+            }
 
-			if (gpButtons.Left > aimedleft)
+            if (gpButtons.Left > aimedleft)
 			{
 				float dleft = gpButtons.Left - aimedleft;
 				dleft /= 70;
@@ -1914,12 +1917,28 @@ namespace gInk
 			}
 			if (gpButtons.Left == aimedleft)
 			{
+                // add a background if required at opening
+                if (ButtonsEntering != 0)
+                {
+                if ((Root.BoardAtOpening == 1) || (Root.BoardAtOpening == 4 && Root.BoardSelected == 1)) // White
+                    AddBackGround(255, 255, 255, 255);
+                else if ((Root.BoardAtOpening == 2) || (Root.BoardAtOpening == 4 && Root.BoardSelected == 2)) // Customed
+                    AddBackGround(Root.Gray1[0], Root.Gray1[1], Root.Gray1[2], Root.Gray1[3]);
+                else if ((Root.BoardAtOpening == 3) || (Root.BoardAtOpening == 4 && Root.BoardSelected == 3)) // Black
+                    AddBackGround(255, 0, 0, 0);
+                if(Root.BoardAtOpening != 4)    // reset the board selected at opening
+                    {
+                        Root.BoardSelected = Root.BoardAtOpening;
+                    }
+                }
 				ButtonsEntering = 0;
-			}
+
+
+            }
 
 
 
-			if (!Root.PointerMode && !this.TopMost)
+            if (!Root.PointerMode && !this.TopMost)
 				ToTopMost();
 
 			// gpPenWidth status
@@ -2284,19 +2303,116 @@ namespace gInk
 			Root.SetInkVisible(!Root.InkVisible);
 		}
 
-		public void btClear_Click(object sender, EventArgs e)
+        private Stroke AddBackGround(int A, int B, int C, int D)
+        {
+            Stroke stk = AddRectStroke(SystemInformation.VirtualScreen.Left, SystemInformation.VirtualScreen.Top,
+                                      SystemInformation.VirtualScreen.Right, SystemInformation.VirtualScreen.Bottom, 1);
+            stk.DrawingAttributes.Transparency = (byte)(255-A);
+            stk.DrawingAttributes.Color = Color.FromArgb(A, B, C, D);
+            SaveUndoStrokes();
+            Root.UponAllDrawingUpdate = true;
+            return stk;
+        }
+
+        private int SelectCleanBackground()
+        {
+            void CleanBackGround_click(object sender, EventArgs e)
+            {
+                (sender as Control).Parent.Tag = sender;
+            }
+            Form prompt = new Form();
+            prompt.Width = 525;
+            prompt.Height = 150;
+            prompt.Text = Root.Local.BoardTitle;
+            prompt.StartPosition = FormStartPosition.CenterScreen;
+            prompt.TopMost = true;
+
+            Label textLabel = new Label() { Left = 50, Top = 10, AutoSize = true, Text = Root.Local.BoardText };
+            prompt.Controls.Add(textLabel);
+
+            Button btn1 = new Button() { Text = Root.Local.BoardTransparent, Left = 25, Width = 100, Top = 30, Name = "0", DialogResult = DialogResult.Yes };
+            btn1.Click += CleanBackGround_click;
+            prompt.Controls.Add(btn1);
+
+            Button btn2 = new Button() { Text = Root.Local.BoardWhite, Left = 150, Width = 100, Top = 30, Name = "1", DialogResult = DialogResult.Yes };
+            btn2.Click += CleanBackGround_click;
+            prompt.Controls.Add(btn2);
+
+            Button btn3 = new Button() { Text = Root.Local.BoardGray, Left = 275, Width = 100, Top = 30, Name = "2", DialogResult = DialogResult.Yes };
+            btn3.BackColor = Color.FromArgb(Root.Gray1[0], Root.Gray1[1], Root.Gray1[2], Root.Gray1[3]);
+            prompt.Controls.Add(btn3);
+            btn3.Click += CleanBackGround_click;
+
+            /*Button btn4 = new Button() { Text = Root.Local.BoardGray + " (2)", Left = 400, Width = 100, Top = 30, Name = "Gray2", DialogResult = DialogResult.Yes };
+            prompt.Controls.Add(btn4);
+            btn4.Click += CleanBackGround_click;*/
+
+            //Button btn5 = new Button() { Text = Root.Local.BoardBlack, Left = 25, Width = 100, Top = 60, Name = "Black", DialogResult = DialogResult.Yes };
+            Button btn5 = new Button() { Text = Root.Local.BoardBlack, Left = 400, Width = 100, Top = 30, Name = "3", DialogResult = DialogResult.Yes };
+            prompt.Controls.Add(btn5);
+            btn5.Click += CleanBackGround_click;
+
+            Button btnCancel = new Button() { Text = Root.Local.ButtonCancelText, Left = 350, Width = 100, Top = 80, DialogResult = DialogResult.Cancel };
+            prompt.Controls.Add(btnCancel);
+
+            tiSlide.Stop();
+            IC.Enabled = false;
+            TextEdited = true;
+            DialogResult rst = prompt.ShowDialog();
+            tiSlide.Start();
+            IC.Enabled = true;
+
+            if (rst == DialogResult.Yes)
+                return Int32.Parse((prompt.Tag as Control).Name);
+            else
+                return -1;
+        }
+
+        public void btClear_Click(object sender, EventArgs e)
 		{
-			if (ToolbarMoved)
+            longClickTimer.Stop(); // for an unkown reason the mouse arrives later
+            if (sender is ContextMenu)
+            {
+                sender = (sender as ContextMenu).SourceControl;
+                MouseTimeDown = DateTime.FromBinary(0);
+            }
+            if (ToolbarMoved)
 			{
 				ToolbarMoved = false;
 				return;
 			}
 
-			Root.ClearInk();
-			SaveUndoStrokes();
-		}
+            TimeSpan tsp = DateTime.Now - MouseTimeDown;
 
-		private void btUndo_Click(object sender, EventArgs e)
+            if (tsp.TotalSeconds > Root.LongClickTime)
+            {
+                int rst = SelectCleanBackground();
+                if (rst >= 0)
+                {
+                    Root.BoardSelected = rst;
+                }
+                else
+                    return;
+            }
+			//Root.ClearInk(false); <-- code exploded inhere removing clearcanvus
+            Root.FormCollection.IC.Ink.DeleteStrokes();
+            if (Root.BoardSelected == 1) // White
+                AddBackGround(255, 255, 255, 255);
+            else if (Root.BoardSelected == 2) // Customed
+                AddBackGround(Root.Gray1[0], Root.Gray1[1], Root.Gray1[2], Root.Gray1[3]);
+            else if (Root.BoardSelected == 3) // Black
+                AddBackGround(255,0,0,0);
+            SaveUndoStrokes();
+            // transferred from ClearInk to prevent some blinking
+            if (Root.BoardSelected == 0)
+            {
+                Root.FormDisplay.ClearCanvus();
+            }
+            Root.FormDisplay.DrawButtons(true);
+            Root.FormDisplay.UpdateFormDisplay(true);
+        }
+
+        private void btUndo_Click(object sender, EventArgs e)
 		{
 			if (ToolbarMoved)
 			{
@@ -2317,7 +2433,7 @@ namespace gInk
                 {
                     tiSlide.Stop();
                     IC.Enabled = false;
-                    ToThrough();
+                    //ToThrough();
                     TextEdited = true;
 
                     SelectPen(b);
@@ -2337,7 +2453,7 @@ namespace gInk
                     };
                     tiSlide.Start();
                     IC.Enabled = true;
-                    ToUnThrough();
+                    //ToUnThrough();
                 }
         }
 
@@ -2506,18 +2622,8 @@ namespace gInk
 			LastF4Status = retVal;
 		}
 
-        private void SetDynCursor()
-        {
-            Bitmap bmp = new Bitmap(128, 128, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            using (Graphics gr = Graphics.FromImage(bmp))
-            {
-                gr.DrawEllipse(new Pen(Root.PenAttr[LastPenSelected].Color), 64 - Root.PenAttr[LastPenSelected].Width, 64 - Root.PenAttr[LastPenSelected].Width / 2,
-                                                                            Root.PenAttr[LastPenSelected].Width / 2, Root.PenAttr[LastPenSelected].Width / 2);
-            }
-            IC.Cursor = new System.Windows.Forms.Cursor(bmp.GetHicon());
-        }
 
-		[DllImport("user32.dll")]
+        [DllImport("user32.dll")]
 		static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
 		[DllImport("user32.dll", SetLastError = true)]
 		static extern UInt32 GetWindowLong(IntPtr hWnd, int nIndex);

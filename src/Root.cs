@@ -42,10 +42,10 @@ namespace gInk
         public static bool HideInAltTab=true;
     };
 
-	public class Root
-	{
-		public Local Local = new Local();
-		public const int MaxPenCount = 10;
+    public class Root
+    {
+        public Local Local = new Local();
+        public const int MaxPenCount = 10;
 
         //public Guid TYPE_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 0, 0);
         public static Guid TEXT_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 0, 1);
@@ -76,33 +76,39 @@ namespace gInk
         public bool[] PenEnabled = new bool[MaxPenCount];
         public bool ToolsEnabled = true;
         public bool EraserEnabled = true;
-		public bool PointerEnabled = true;
-		public bool PenWidthEnabled = false;
+        public bool PointerEnabled = true;
+        public bool PenWidthEnabled = false;
         public bool WidthAtPenSel = true;
         public bool SnapEnabled = true;
-		public bool UndoEnabled = true;
-		public bool ClearEnabled = true;
-		public bool PanEnabled = true;
-		public bool InkVisibleEnabled = true;
-		public DrawingAttributes[] PenAttr = new DrawingAttributes[MaxPenCount];
-		public bool AutoScroll;
-		public bool WhiteTrayIcon;
-		public string SnapshotBasePath;
-		public int CanvasCursor = 0;
-		public bool AllowDraggingToolbar = true;
-		public bool AllowHotkeyInPointerMode = true;
-		public int gpButtonsLeft, gpButtonsTop;
+        public bool UndoEnabled = true;
+        public bool ClearEnabled = true;
+        public bool PanEnabled = true;
+        public bool InkVisibleEnabled = true;
+        public DrawingAttributes[] PenAttr = new DrawingAttributes[MaxPenCount];
+        public bool AutoScroll;
+        public bool WhiteTrayIcon;
+        public string SnapshotBasePath;
+        public int CanvasCursor = 0;
+        public bool AllowDraggingToolbar = true;
+        public bool AllowHotkeyInPointerMode = true;
+        public int gpButtonsLeft, gpButtonsTop;
 
-		// advanced options
-		public string CloseOnSnap = "blankonly";
-		public bool AlwaysHideToolbar = false;
-		public float ToolbarHeight = 0.06f;
+        // advanced options
+        public string CloseOnSnap = "blankonly";
+        public bool AlwaysHideToolbar = false;
+        public float ToolbarHeight = 0.06f;
         public bool AltAsOneCommand = true;
 
-        public int CursorX,CursorY;
-        public int CursorX0=int.MinValue,CursorY0=int.MinValue;
+        public int CursorX, CursorY;
+        public int CursorX0 = int.MinValue, CursorY0 = int.MinValue;
 
-        public double LongClickTime=1.0;
+        public double LongClickTime = 1.0;
+
+        // the two grays for "white board" effect
+        public int[] Gray1 = new int[] { 80, 150, 150, 150 };
+        public int[] Gray2 = new int[] {100, 100, 100, 100};
+        public int BoardAtOpening = 0;      // 0:Transparent/1:White/2:Customed/3:Black/4:AtSelection
+        public int BoardSelected = 0;       // by default transparent
 
         // hotkey options
         public Hotkey Hotkey_Global = new Hotkey();
@@ -332,12 +338,12 @@ namespace gInk
         public void ClearInk()
 		{
 			FormCollection.IC.Ink.DeleteStrokes();
-			FormDisplay.ClearCanvus();
-			FormDisplay.DrawButtons(true);
-			FormDisplay.UpdateFormDisplay(true);
-		}
+            FormDisplay.ClearCanvus();
+            FormDisplay.DrawButtons(true);
+            FormDisplay.UpdateFormDisplay(true);
+        }
 
-		public void ShowBalloonSnapshot()
+        public void ShowBalloonSnapshot()
 		{
 			trayIcon.ShowBalloonTip(3000);
 		}
@@ -868,8 +874,31 @@ namespace gInk
 							if (tab.Length >= 3 ) { FormWidth = Int32.Parse(tab[2]); }
 							if (tab.Length >= 4) { FormOpacity = Int32.Parse(tab[3]); }
 							break;
-					}
-				}
+                        case "GRAY_BOARD1": // if not defined, no window else 2 to 4 integers Top,Left,[Width/Height,[Opacity]]
+                            tab = sPara.Split(',');
+                            if (tab.Length == 4)
+                            {
+                                for(int i=0; i<4; i++)
+                                    Gray1[i] = Int32.Parse(tab[i]);
+                            };
+                            break;
+                        case "GRAY_BOARD2": // if not defined, no window else 2 to 4 integers Top,Left,[Width/Height,[Opacity]]
+                            tab = sPara.Split(',');
+                            if (tab.Length == 4)
+                            {
+                                for (int i = 0; i < 4; i++)
+                                    Gray2[i] = Int32.Parse(tab[i]);
+                            };
+                            break;
+                        case "BOARDATOPENING":
+                            if (Int32.TryParse(sPara, out tempi))
+                                BoardAtOpening  = tempi;
+                            if (BoardAtOpening != 4)
+                                BoardSelected = BoardAtOpening;
+                            break;
+
+                    }
+                }
 			}
 			fini.Close();
 		}
@@ -1147,6 +1176,15 @@ namespace gInk
 							break;
                         case "WINDOW_POS": // if not defined, no window else 2 to 4 integers Top,Left,[Width/Height,[Opacity]]
                             sPara = FormTop.ToString() + "," + FormLeft.ToString() + "," + FormWidth.ToString() + "," + FormOpacity.ToString();
+                            break;
+                        case "GRAYBOARD1": 
+                            sPara = Gray1[0].ToString() + "," + Gray1[1].ToString() + "," + Gray1[2].ToString() + "," + Gray1[3].ToString();
+                            break;
+                        case "GRAYBOARD2":
+                            sPara = Gray2[0].ToString() + "," + Gray2[1].ToString() + "," + Gray2[2].ToString() + "," + Gray2[3].ToString();
+                            break;
+                        case "BOARDATOPENING":
+                            sPara = BoardAtOpening.ToString();
                             break;
                     }
                 }

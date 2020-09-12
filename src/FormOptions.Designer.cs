@@ -79,7 +79,6 @@ namespace gInk
             this.ArrHdLenLbl = new System.Windows.Forms.Label();
             this.ArrHdAperture = new System.Windows.Forms.TextBox();
             this.ArrHdAptLbl = new System.Windows.Forms.Label();
-            this.ArrwLbl = new System.Windows.Forms.Label();
             this.SaveWindowPosBtn = new System.Windows.Forms.Button();
             this.cbToolsEnabled = new System.Windows.Forms.CheckBox();
             this.lbLanguage = new System.Windows.Forms.Label();
@@ -114,6 +113,13 @@ namespace gInk
             this.lbGlobalHotkey = new System.Windows.Forms.Label();
             this.FontDlg = new System.Windows.Forms.FontDialog();
             this.MoveToolBarCb = new System.Windows.Forms.CheckBox();
+            this.ArrwGrp = new System.Windows.Forms.GroupBox();
+            this.BoardAtOpenLbl = new System.Windows.Forms.Label();
+            this.BoardBx = new System.Windows.Forms.GroupBox();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.BoardCustColorPnl = new System.Windows.Forms.Panel();
+            this.BoardCustColorLbl = new System.Windows.Forms.Label();
+            this.BoardAtOpenCombo = new System.Windows.Forms.ComboBox();
             this.hiToolMagnet = new gInk.HotkeyInputBox();
             this.hiToolEdit = new gInk.HotkeyInputBox();
             this.HiToolText = new gInk.HotkeyInputBox();
@@ -137,6 +143,9 @@ namespace gInk
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.tabPage2.SuspendLayout();
             this.tabPage3.SuspendLayout();
+            this.ArrwGrp.SuspendLayout();
+            this.BoardBx.SuspendLayout();
+            this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // cbEraserEnabled
@@ -202,7 +211,7 @@ namespace gInk
             // cbWhiteIcon
             // 
             this.cbWhiteIcon.AutoSize = true;
-            this.cbWhiteIcon.Location = new System.Drawing.Point(48, 241);
+            this.cbWhiteIcon.Location = new System.Drawing.Point(458, 207);
             this.cbWhiteIcon.Name = "cbWhiteIcon";
             this.cbWhiteIcon.Size = new System.Drawing.Size(116, 17);
             this.cbWhiteIcon.TabIndex = 0;
@@ -212,16 +221,16 @@ namespace gInk
             // 
             // tbSnapPath
             // 
-            this.tbSnapPath.Location = new System.Drawing.Point(214, 189);
+            this.tbSnapPath.Location = new System.Drawing.Point(178, 163);
             this.tbSnapPath.Name = "tbSnapPath";
-            this.tbSnapPath.Size = new System.Drawing.Size(252, 20);
+            this.tbSnapPath.Size = new System.Drawing.Size(205, 20);
             this.tbSnapPath.TabIndex = 1;
             this.tbSnapPath.ModifiedChanged += new System.EventHandler(this.tbSnapPath_ModifiedChanged);
             // 
             // lbSnapshotsavepath
             // 
             this.lbSnapshotsavepath.AutoSize = true;
-            this.lbSnapshotsavepath.Location = new System.Drawing.Point(45, 194);
+            this.lbSnapshotsavepath.Location = new System.Drawing.Point(46, 167);
             this.lbSnapshotsavepath.Name = "lbSnapshotsavepath";
             this.lbSnapshotsavepath.Size = new System.Drawing.Size(102, 13);
             this.lbSnapshotsavepath.TabIndex = 2;
@@ -229,9 +238,10 @@ namespace gInk
             // 
             // btSnapPath
             // 
-            this.btSnapPath.Location = new System.Drawing.Point(472, 188);
+            this.btSnapPath.Location = new System.Drawing.Point(387, 162);
+            this.btSnapPath.Margin = new System.Windows.Forms.Padding(0, 3, 0, 3);
             this.btSnapPath.Name = "btSnapPath";
-            this.btSnapPath.Size = new System.Drawing.Size(31, 23);
+            this.btSnapPath.Size = new System.Drawing.Size(23, 23);
             this.btSnapPath.TabIndex = 3;
             this.btSnapPath.Text = "...";
             this.btSnapPath.UseVisualStyleBackColor = true;
@@ -240,7 +250,7 @@ namespace gInk
             // lbNote
             // 
             this.lbNote.AutoSize = true;
-            this.lbNote.Location = new System.Drawing.Point(46, 382);
+            this.lbNote.Location = new System.Drawing.Point(46, 394);
             this.lbNote.Name = "lbNote";
             this.lbNote.Size = new System.Drawing.Size(316, 13);
             this.lbNote.TabIndex = 4;
@@ -255,7 +265,7 @@ namespace gInk
             // lbCanvascursor
             // 
             this.lbCanvascursor.AutoSize = true;
-            this.lbCanvascursor.Location = new System.Drawing.Point(46, 159);
+            this.lbCanvascursor.Location = new System.Drawing.Point(455, 122);
             this.lbCanvascursor.Name = "lbCanvascursor";
             this.lbCanvascursor.Size = new System.Drawing.Size(75, 13);
             this.lbCanvascursor.TabIndex = 5;
@@ -268,9 +278,9 @@ namespace gInk
             this.comboCanvasCursor.Items.AddRange(new object[] {
             "Arrow",
             "Pen tip"});
-            this.comboCanvasCursor.Location = new System.Drawing.Point(214, 154);
+            this.comboCanvasCursor.Location = new System.Drawing.Point(559, 119);
             this.comboCanvasCursor.Name = "comboCanvasCursor";
-            this.comboCanvasCursor.Size = new System.Drawing.Size(252, 21);
+            this.comboCanvasCursor.Size = new System.Drawing.Size(198, 21);
             this.comboCanvasCursor.TabIndex = 6;
             this.comboCanvasCursor.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
@@ -290,22 +300,18 @@ namespace gInk
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.tabPage1.Controls.Add(this.BoardBx);
+            this.tabPage1.Controls.Add(this.ArrwGrp);
             this.tabPage1.Controls.Add(this.MoveToolBarCb);
             this.tabPage1.Controls.Add(this.ToolBarHeight);
             this.tabPage1.Controls.Add(this.panel1);
             this.tabPage1.Controls.Add(this.OpenIntoSnapCb);
-            this.tabPage1.Controls.Add(this.DefArrStartCb);
             this.tabPage1.Controls.Add(this.Magnet_TB);
             this.tabPage1.Controls.Add(this.MagnetLbl);
             this.tabPage1.Controls.Add(this.ShowFloatingWinCb);
             this.tabPage1.Controls.Add(this.DefTxtLbl);
             this.tabPage1.Controls.Add(this.SaveConfigBtn);
             this.tabPage1.Controls.Add(this.DefaultFontBtn);
-            this.tabPage1.Controls.Add(this.ArrHdLength);
-            this.tabPage1.Controls.Add(this.ArrHdLenLbl);
-            this.tabPage1.Controls.Add(this.ArrHdAperture);
-            this.tabPage1.Controls.Add(this.ArrHdAptLbl);
-            this.tabPage1.Controls.Add(this.ArrwLbl);
             this.tabPage1.Controls.Add(this.SaveWindowPosBtn);
             this.tabPage1.Controls.Add(this.cbToolsEnabled);
             this.tabPage1.Controls.Add(this.lbLanguage);
@@ -359,7 +365,7 @@ namespace gInk
             // OpenIntoSnapCb
             // 
             this.OpenIntoSnapCb.AutoSize = true;
-            this.OpenIntoSnapCb.Location = new System.Drawing.Point(48, 218);
+            this.OpenIntoSnapCb.Location = new System.Drawing.Point(458, 168);
             this.OpenIntoSnapCb.Name = "OpenIntoSnapCb";
             this.OpenIntoSnapCb.Size = new System.Drawing.Size(299, 17);
             this.OpenIntoSnapCb.TabIndex = 25;
@@ -370,7 +376,7 @@ namespace gInk
             // DefArrStartCb
             // 
             this.DefArrStartCb.AutoSize = true;
-            this.DefArrStartCb.Location = new System.Drawing.Point(344, 328);
+            this.DefArrStartCb.Location = new System.Drawing.Point(6, 46);
             this.DefArrStartCb.Name = "DefArrStartCb";
             this.DefArrStartCb.Size = new System.Drawing.Size(156, 17);
             this.DefArrStartCb.TabIndex = 22;
@@ -380,9 +386,9 @@ namespace gInk
             // 
             // Magnet_TB
             // 
-            this.Magnet_TB.Location = new System.Drawing.Point(253, 359);
+            this.Magnet_TB.Location = new System.Drawing.Point(690, 272);
             this.Magnet_TB.Name = "Magnet_TB";
-            this.Magnet_TB.Size = new System.Drawing.Size(58, 20);
+            this.Magnet_TB.Size = new System.Drawing.Size(67, 20);
             this.Magnet_TB.TabIndex = 21;
             this.Magnet_TB.Text = "0.123456";
             this.Magnet_TB.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ValidateOnEnter);
@@ -392,7 +398,7 @@ namespace gInk
             // MagnetLbl
             // 
             this.MagnetLbl.AutoSize = true;
-            this.MagnetLbl.Location = new System.Drawing.Point(45, 362);
+            this.MagnetLbl.Location = new System.Drawing.Point(455, 274);
             this.MagnetLbl.Name = "MagnetLbl";
             this.MagnetLbl.Size = new System.Drawing.Size(190, 13);
             this.MagnetLbl.TabIndex = 20;
@@ -401,7 +407,7 @@ namespace gInk
             // ShowFloatingWinCb
             // 
             this.ShowFloatingWinCb.AutoSize = true;
-            this.ShowFloatingWinCb.Location = new System.Drawing.Point(282, 241);
+            this.ShowFloatingWinCb.Location = new System.Drawing.Point(49, 205);
             this.ShowFloatingWinCb.Name = "ShowFloatingWinCb";
             this.ShowFloatingWinCb.Size = new System.Drawing.Size(208, 17);
             this.ShowFloatingWinCb.TabIndex = 19;
@@ -412,7 +418,7 @@ namespace gInk
             // DefTxtLbl
             // 
             this.DefTxtLbl.AutoSize = true;
-            this.DefTxtLbl.Location = new System.Drawing.Point(46, 332);
+            this.DefTxtLbl.Location = new System.Drawing.Point(455, 245);
             this.DefTxtLbl.Name = "DefTxtLbl";
             this.DefTxtLbl.Size = new System.Drawing.Size(65, 13);
             this.DefTxtLbl.TabIndex = 18;
@@ -420,7 +426,7 @@ namespace gInk
             // 
             // SaveConfigBtn
             // 
-            this.SaveConfigBtn.Location = new System.Drawing.Point(405, 410);
+            this.SaveConfigBtn.Location = new System.Drawing.Point(659, 350);
             this.SaveConfigBtn.Name = "SaveConfigBtn";
             this.SaveConfigBtn.Size = new System.Drawing.Size(98, 46);
             this.SaveConfigBtn.TabIndex = 17;
@@ -430,7 +436,7 @@ namespace gInk
             // 
             // DefaultFontBtn
             // 
-            this.DefaultFontBtn.Location = new System.Drawing.Point(214, 327);
+            this.DefaultFontBtn.Location = new System.Drawing.Point(646, 235);
             this.DefaultFontBtn.Name = "DefaultFontBtn";
             this.DefaultFontBtn.Size = new System.Drawing.Size(111, 23);
             this.DefaultFontBtn.TabIndex = 16;
@@ -440,7 +446,7 @@ namespace gInk
             // 
             // ArrHdLength
             // 
-            this.ArrHdLength.Location = new System.Drawing.Point(414, 301);
+            this.ArrHdLength.Location = new System.Drawing.Point(289, 19);
             this.ArrHdLength.Name = "ArrHdLength";
             this.ArrHdLength.Size = new System.Drawing.Size(52, 20);
             this.ArrHdLength.TabIndex = 15;
@@ -452,7 +458,7 @@ namespace gInk
             // ArrHdLenLbl
             // 
             this.ArrHdLenLbl.AutoSize = true;
-            this.ArrHdLenLbl.Location = new System.Drawing.Point(328, 304);
+            this.ArrHdLenLbl.Location = new System.Drawing.Point(203, 22);
             this.ArrHdLenLbl.Name = "ArrHdLenLbl";
             this.ArrHdLenLbl.Size = new System.Drawing.Size(70, 13);
             this.ArrHdLenLbl.TabIndex = 14;
@@ -460,7 +466,7 @@ namespace gInk
             // 
             // ArrHdAperture
             // 
-            this.ArrHdAperture.Location = new System.Drawing.Point(274, 301);
+            this.ArrHdAperture.Location = new System.Drawing.Point(72, 19);
             this.ArrHdAperture.Name = "ArrHdAperture";
             this.ArrHdAperture.Size = new System.Drawing.Size(37, 20);
             this.ArrHdAperture.TabIndex = 13;
@@ -472,26 +478,17 @@ namespace gInk
             // ArrHdAptLbl
             // 
             this.ArrHdAptLbl.AutoSize = true;
-            this.ArrHdAptLbl.Location = new System.Drawing.Point(211, 304);
+            this.ArrHdAptLbl.Location = new System.Drawing.Point(9, 22);
             this.ArrHdAptLbl.Name = "ArrHdAptLbl";
             this.ArrHdAptLbl.Size = new System.Drawing.Size(57, 13);
             this.ArrHdAptLbl.TabIndex = 12;
             this.ArrHdAptLbl.Text = "Aperture(°)";
             // 
-            // ArrwLbl
-            // 
-            this.ArrwLbl.AutoSize = true;
-            this.ArrwLbl.Location = new System.Drawing.Point(45, 304);
-            this.ArrwLbl.Name = "ArrwLbl";
-            this.ArrwLbl.Size = new System.Drawing.Size(63, 13);
-            this.ArrwLbl.TabIndex = 11;
-            this.ArrwLbl.Text = "Arrow Head";
-            // 
             // SaveWindowPosBtn
             // 
-            this.SaveWindowPosBtn.Location = new System.Drawing.Point(282, 264);
+            this.SaveWindowPosBtn.Location = new System.Drawing.Point(263, 200);
             this.SaveWindowPosBtn.Name = "SaveWindowPosBtn";
-            this.SaveWindowPosBtn.Size = new System.Drawing.Size(184, 24);
+            this.SaveWindowPosBtn.Size = new System.Drawing.Size(147, 24);
             this.SaveWindowPosBtn.TabIndex = 10;
             this.SaveWindowPosBtn.Text = "Save Floating &window Pos";
             this.SaveWindowPosBtn.UseVisualStyleBackColor = true;
@@ -530,9 +527,9 @@ namespace gInk
             // 
             this.comboLanguage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboLanguage.FormattingEnabled = true;
-            this.comboLanguage.Location = new System.Drawing.Point(214, 119);
+            this.comboLanguage.Location = new System.Drawing.Point(178, 122);
             this.comboLanguage.Name = "comboLanguage";
-            this.comboLanguage.Size = new System.Drawing.Size(252, 21);
+            this.comboLanguage.Size = new System.Drawing.Size(232, 21);
             this.comboLanguage.TabIndex = 6;
             this.comboLanguage.SelectedIndexChanged += new System.EventHandler(this.comboLanguage_SelectedIndexChanged);
             // 
@@ -559,7 +556,7 @@ namespace gInk
             // cbAllowDragging
             // 
             this.cbAllowDragging.AutoSize = true;
-            this.cbAllowDragging.Location = new System.Drawing.Point(48, 271);
+            this.cbAllowDragging.Location = new System.Drawing.Point(521, 71);
             this.cbAllowDragging.Name = "cbAllowDragging";
             this.cbAllowDragging.Size = new System.Drawing.Size(198, 17);
             this.cbAllowDragging.TabIndex = 0;
@@ -843,7 +840,88 @@ namespace gInk
             this.MoveToolBarCb.Size = new System.Drawing.Size(15, 14);
             this.MoveToolBarCb.TabIndex = 29;
             this.MoveToolBarCb.UseVisualStyleBackColor = true;
+            this.MoveToolBarCb.Visible = false;
             this.MoveToolBarCb.CheckedChanged += new System.EventHandler(this.MoveToolBarCb_CheckedChanged);
+            // 
+            // ArrwGrp
+            // 
+            this.ArrwGrp.Controls.Add(this.ArrHdAperture);
+            this.ArrwGrp.Controls.Add(this.ArrHdAptLbl);
+            this.ArrwGrp.Controls.Add(this.ArrHdLength);
+            this.ArrwGrp.Controls.Add(this.ArrHdLenLbl);
+            this.ArrwGrp.Controls.Add(this.DefArrStartCb);
+            this.ArrwGrp.Location = new System.Drawing.Point(47, 228);
+            this.ArrwGrp.Name = "ArrwGrp";
+            this.ArrwGrp.Size = new System.Drawing.Size(363, 71);
+            this.ArrwGrp.TabIndex = 30;
+            this.ArrwGrp.TabStop = false;
+            this.ArrwGrp.Text = "Arrow Head";
+            // 
+            // BoardAtOpenLbl
+            // 
+            this.BoardAtOpenLbl.AutoSize = true;
+            this.BoardAtOpenLbl.Location = new System.Drawing.Point(7, 22);
+            this.BoardAtOpenLbl.Name = "BoardAtOpenLbl";
+            this.BoardAtOpenLbl.Size = new System.Drawing.Size(46, 13);
+            this.BoardAtOpenLbl.TabIndex = 34;
+            this.BoardAtOpenLbl.Text = "At Open";
+            // 
+            // BoardBx
+            // 
+            this.BoardBx.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.BoardBx.Controls.Add(this.BoardAtOpenCombo);
+            this.BoardBx.Controls.Add(this.BoardCustColorLbl);
+            this.BoardBx.Controls.Add(this.panel2);
+            this.BoardBx.Controls.Add(this.BoardAtOpenLbl);
+            this.BoardBx.Location = new System.Drawing.Point(49, 305);
+            this.BoardBx.Name = "BoardBx";
+            this.BoardBx.Size = new System.Drawing.Size(361, 74);
+            this.BoardBx.TabIndex = 35;
+            this.BoardBx.TabStop = false;
+            this.BoardBx.Text = "Board background";
+            // 
+            // panel2
+            // 
+            this.panel2.BackgroundImage = global::gInk.Properties.Resources.cellbackground;
+            this.panel2.Controls.Add(this.BoardCustColorPnl);
+            this.panel2.Location = new System.Drawing.Point(214, 45);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(132, 26);
+            this.panel2.TabIndex = 36;
+            // 
+            // BoardCustColorPnl
+            // 
+            this.BoardCustColorPnl.BackColor = System.Drawing.SystemColors.Highlight;
+            this.BoardCustColorPnl.Location = new System.Drawing.Point(0, 0);
+            this.BoardCustColorPnl.Name = "BoardCustColorPnl";
+            this.BoardCustColorPnl.Size = new System.Drawing.Size(132, 26);
+            this.BoardCustColorPnl.TabIndex = 0;
+            this.BoardCustColorPnl.Click += new System.EventHandler(this.BoardCustColorPnl_Click);
+            // 
+            // BoardCustColorLbl
+            // 
+            this.BoardCustColorLbl.AutoSize = true;
+            this.BoardCustColorLbl.Location = new System.Drawing.Point(7, 50);
+            this.BoardCustColorLbl.Name = "BoardCustColorLbl";
+            this.BoardCustColorLbl.Size = new System.Drawing.Size(35, 13);
+            this.BoardCustColorLbl.TabIndex = 37;
+            this.BoardCustColorLbl.Text = "label1";
+            // 
+            // BoardAtOpenCombo
+            // 
+            this.BoardAtOpenCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.BoardAtOpenCombo.FormattingEnabled = true;
+            this.BoardAtOpenCombo.Items.AddRange(new object[] {
+            "Transparent",
+            "White",
+            "Customed",
+            "Black",
+            "Last Selected"});
+            this.BoardAtOpenCombo.Location = new System.Drawing.Point(214, 14);
+            this.BoardAtOpenCombo.Name = "BoardAtOpenCombo";
+            this.BoardAtOpenCombo.Size = new System.Drawing.Size(132, 21);
+            this.BoardAtOpenCombo.TabIndex = 38;
+            this.BoardAtOpenCombo.SelectedIndexChanged += new System.EventHandler(this.BoardAtOpenCombo_SelectedIndexChanged);
             // 
             // hiToolMagnet
             // 
@@ -1119,6 +1197,11 @@ namespace gInk
             this.tabPage2.PerformLayout();
             this.tabPage3.ResumeLayout(false);
             this.tabPage3.PerformLayout();
+            this.ArrwGrp.ResumeLayout(false);
+            this.ArrwGrp.PerformLayout();
+            this.BoardBx.ResumeLayout(false);
+            this.BoardBx.PerformLayout();
+            this.panel2.ResumeLayout(false);
             this.ResumeLayout(false);
 
 		}
@@ -1193,7 +1276,6 @@ namespace gInk
         private System.Windows.Forms.Label ArrHdLenLbl;
         private System.Windows.Forms.TextBox ArrHdAperture;
         private System.Windows.Forms.Label ArrHdAptLbl;
-        private System.Windows.Forms.Label ArrwLbl;
         private System.Windows.Forms.Button SaveWindowPosBtn;
         private System.Windows.Forms.Button DefaultFontBtn;
         private System.Windows.Forms.Button SaveConfigBtn;
@@ -1210,5 +1292,12 @@ namespace gInk
         private System.Windows.Forms.TextBox ToolBarHeight;
         private System.Windows.Forms.Label lblToolbarHeight;
         private System.Windows.Forms.CheckBox MoveToolBarCb;
+        private System.Windows.Forms.GroupBox ArrwGrp;
+        private System.Windows.Forms.Label BoardAtOpenLbl;
+        private System.Windows.Forms.GroupBox BoardBx;
+        private System.Windows.Forms.Label BoardCustColorLbl;
+        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Panel BoardCustColorPnl;
+        private System.Windows.Forms.ComboBox BoardAtOpenCombo;
     }
 }

@@ -35,6 +35,20 @@ namespace gInk
         public string ButtonNameEdit = "Edit Text|chip";
         public string ButtonNameMagn = "Magnetic Effect";
 
+        public string BoardTitle = "Clean Desktop";
+        public string BoardText = "Erase all drawings and fill it with...";
+        public string BoardTransparent = "Transparent";
+        public string BoardWhite= "White";
+        public string BoardGray= "Customed ";
+        public string BoardBlack = "Black";
+        public string BoardLast = "Last selected";
+
+        public string OptionsGeneralBoardBox = "Background Board";
+        public string BoardCustColorModifyTitle="Board Customed color";
+        public string OptionsGeneralBoardAtOpenLbl="Background at toolbar opening";
+        public string OptionsGeneralBoardCustColorLbl="Customed Background color";
+
+
         public string ButtonOkText = "&OK";
         public string ButtonCancelText = "&Cancel";
         public string ButtonFontText = "&Font";

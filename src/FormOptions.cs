@@ -61,11 +61,15 @@ namespace gInk
 				cbAllowHotkeyInPointer.Checked = true;
 
             ToolBarHeight.Text = string.Format("{0:F1}", Root.ToolbarHeight * 100);
-            MoveToolBarCb.Checked = Root.AllowDraggingToolbar;
+            //MoveToolBarCb.Checked = Root.AllowDraggingToolbar;
 
 			comboCanvasCursor.SelectedIndex = Root.CanvasCursor;
 
-			tbSnapPath.Text = Root.SnapshotBasePath;
+            BoardAtOpenCombo.SelectedIndex = Root.BoardAtOpening;
+            BoardCustColorPnl.BackColor = Color.FromArgb(Root.Gray1[0], Root.Gray1[1], Root.Gray1[2], Root.Gray1[3]);
+
+
+            tbSnapPath.Text = Root.SnapshotBasePath;
             this.OpenIntoSnapCb.Checked = Root.OpenIntoSnapMode;
             ShowFloatingWinCb.Checked = Root.FormOpacity > 0;
             ArrHdAperture.Text = (Root.ArrowAngle * 180.0 / Math.PI).ToString("#0",CultureInfo.InvariantCulture);
@@ -213,7 +217,7 @@ namespace gInk
 			this.cbAllowDragging.Text = Root.Local.OptionsGeneralAllowdragging;
             this.ShowFloatingWinCb.Text = Root.Local.OptionsGeneralShowFloatingWindow;
             this.SaveWindowPosBtn.Text = Root.Local.OptionsGeneralSaveFloatingWindowPos;
-            this.ArrwLbl.Text = Root.Local.OptionsGeneralArrowHead;
+            this.ArrwGrp.Text = Root.Local.OptionsGeneralArrowHead;
             this.ArrHdAptLbl.Text = Root.Local.OptionsGeneralArrowHeadApt;
             this.ArrHdLenLbl.Text = Root.Local.OptionsGeneralArrowHeadLen;
             this.DefTxtLbl.Text = Root.Local.OptionsGeneralDefaultTextLbl;
@@ -248,8 +252,16 @@ namespace gInk
 			this.comboCanvasCursor.Items[0] = Root.Local.OptionsGeneralCanvascursorArrow;
 			this.comboCanvasCursor.Items[1] = Root.Local.OptionsGeneralCanvascursorPentip;
 
-
-			for (int p = 0; p < Root.MaxPenCount; p++)
+            this.BoardBx.Text = Root.Local.OptionsGeneralBoardBox;
+            this.BoardAtOpenLbl.Text = Root.Local.OptionsGeneralBoardAtOpenLbl;
+            this.BoardCustColorLbl.Text = Root.Local.OptionsGeneralBoardCustColorLbl;
+            this.BoardAtOpenCombo.Items[0] = Root.Local.BoardTransparent;
+            this.BoardAtOpenCombo.Items[1] = Root.Local.BoardWhite;
+            this.BoardAtOpenCombo.Items[2] = Root.Local.BoardGray;
+            this.BoardAtOpenCombo.Items[3] = Root.Local.BoardBlack;
+            this.BoardAtOpenCombo.Items[4] = Root.Local.BoardLast;
+            
+            for (int p = 0; p < Root.MaxPenCount; p++)
 			{
 				comboPensAlpha[p].Items.Clear();
 				comboPensWidth[p].Items.Clear();
@@ -575,6 +587,32 @@ namespace gInk
         private void MoveToolBarCb_CheckedChanged(object sender, EventArgs e)
         {
             Root.AllowDraggingToolbar = MoveToolBarCb.Checked;
+        }
+
+        private void BoardAtOpenCombo_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Root.BoardAtOpening = BoardAtOpenCombo.SelectedIndex;
+        }
+
+        private void BoardCustColorPnl_Click(object sender, EventArgs e)
+        {
+            PenModifyDlg dlg = new PenModifyDlg(Root);
+            dlg.Text = Root.Local.BoardCustColorModifyTitle;
+            Microsoft.Ink.DrawingAttributes at = new Microsoft.Ink.DrawingAttributes();
+
+            at.Transparency = (byte)(255 - Root.Gray1[0]);
+            at.Color = Color.FromArgb(Root.Gray1[0], Root.Gray1[1], Root.Gray1[2], Root.Gray1[3]);
+            at.Width = 0;
+
+            if (dlg.ModifyPen(ref at))
+            {
+                Root.Gray1[0] = 255 - at.Transparency;
+                Root.Gray1[1] = at.Color.R;
+                Root.Gray1[2] = at.Color.G;
+                Root.Gray1[3] = at.Color.B;
+                BoardCustColorPnl.BackColor = Color.FromArgb(Root.Gray1[0], at.Color);
+            }
+
         }
 
         private void cbAllowHotkeyInPointer_CheckedChanged(object sender, EventArgs e)
