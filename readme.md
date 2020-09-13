@@ -64,6 +64,9 @@ Long click : Delete all drawings and select background surface color (white/blac
 In options you will be able to select a default mode at opening , and customed color
 advice : the created rectangle can be deleted using the erasor next to the border of the screen.
 
+*mouse wheel :*
+Mouse wheel allows you to modify the pen width
+
 #### Screen Shots
 
 ![](screenshot1.png)

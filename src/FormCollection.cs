@@ -387,6 +387,7 @@ namespace gInk
             IC.MouseMove += IC_MouseMove;
             IC.MouseUp += IC_MouseUp;
             IC.CursorDown += IC_CursorDown;
+            IC.MouseWheel += IC_MouseWheel;
             IC.Stroke += IC_Stroke;
             IC.DefaultDrawingAttributes.Width = 80;
             IC.DefaultDrawingAttributes.Transparency = 30;
@@ -530,6 +531,21 @@ namespace gInk
             }
             PenModifyDlg = new PenModifyDlg(Root); // It seems to be a little long to build so we prepare it.
             SelectTool(0, 0); // Select Hand Drawing by Default
+
+        }
+
+        private void IC_MouseWheel(object sender, CancelMouseEventArgs e)
+        {
+            Root.GlobalPenWidth += Root.PixelToHiMetric(e.Delta > 0 ? 2 : -2);
+            if (Root.GlobalPenWidth < 1)
+                Root.GlobalPenWidth = 1; 
+            /*if (Root.GlobalPenWidth > 120)
+                Root.GlobalPenWidth = 120;
+            */
+            Console.WriteLine(Root.GlobalPenWidth);
+            IC.DefaultDrawingAttributes.Width = Root.GlobalPenWidth;
+            if (Root.CanvasCursor == 1)
+                SetPenTipCursor();
 
         }
 
@@ -2371,7 +2387,7 @@ namespace gInk
         public void btClear_Click(object sender, EventArgs e)
 		{
             longClickTimer.Stop(); // for an unkown reason the mouse arrives later
-            if (sender is ContextMenu)
+            if (sender is ContextMenu) 
             {
                 sender = (sender as ContextMenu).SourceControl;
                 MouseTimeDown = DateTime.FromBinary(0);
@@ -2385,7 +2401,7 @@ namespace gInk
             TimeSpan tsp = DateTime.Now - MouseTimeDown;
 
             if (tsp.TotalSeconds > Root.LongClickTime)
-            {
+            {   
                 int rst = SelectCleanBackground();
                 if (rst >= 0)
                 {

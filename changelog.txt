@@ -1,5 +1,6 @@
 p1.2 (In Progress)
 =================
+* New : MouseWheel to change pen size
 * New : add capability to create a white/gray(customisable)/black board.
 * New : add toolbarheight adjustments in option dialog (was already in config files)
 * New : add new dialog for pen definition with colorpicker
