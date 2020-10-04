@@ -62,7 +62,7 @@ OptionsTabHotkeys = "Hotkeys"
 
 OptionsGeneralLanguage = "Language"
 OptionsGeneralToolbarHeight = "height(%scr)                  Movable\n\n\nchanges after closing toolbar"
-OptionsGeneralCanvascursor = "Canvus cursor"
+OptionsGeneralCanvascursor = "Canvas cursor"
 OptionsGeneralCanvascursorArrow = "Arrow"
 OptionsGeneralCanvascursorPentip = "Pen tip"
 OptionsGeneralSnapshotsavepath = "Snapshot save path"
