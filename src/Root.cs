@@ -1169,7 +1169,7 @@ namespace gInk
 							sPara = gpButtonsTop.ToString();
 							break;
 						case "TOOLBAR_HEIGHT":
-							sPara = ToolbarHeight.ToString();
+							sPara = ToolbarHeight.ToString(CultureInfo.InvariantCulture);
 							break;
 						case "CANVAS_CURSOR":
 							sPara = CanvasCursor.ToString();
