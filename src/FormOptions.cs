@@ -486,7 +486,7 @@ namespace gInk
         private void ArrHdFloat_Validating(object sender, CancelEventArgs e)
         {
             float tempf;
-            if (!float.TryParse(((TextBox)sender).Text, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out tempf))
+            if (!float.TryParse(((TextBox)sender).Text.Replace(",","."), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out tempf))
             {
                 e.Cancel = true;
                 ((TextBox)sender).Select();
@@ -508,12 +508,12 @@ namespace gInk
 
         private void ArrHdAperture_Validated(object sender, EventArgs e)
         {
-            Root.ArrowAngle = float.Parse(ArrHdAperture.Text, CultureInfo.InvariantCulture) /180.0*Math.PI;
+            Root.ArrowAngle = float.Parse(ArrHdAperture.Text.Replace(",","."), CultureInfo.InvariantCulture) /180.0*Math.PI;
         }
 
         private void ArrHdLength_Validated(object sender, EventArgs e)
         {
-            Root.ArrowLen = float.Parse(ArrHdLength.Text, CultureInfo.InvariantCulture) / 100.0 * System.Windows.SystemParameters.PrimaryScreenWidth;
+            Root.ArrowLen = float.Parse(ArrHdLength.Text.Replace(",", "."), CultureInfo.InvariantCulture) / 100.0 * System.Windows.SystemParameters.PrimaryScreenWidth;
         }
 
         private void ShowFloatingWinCb_Click(object sender, EventArgs e)
@@ -542,7 +542,7 @@ namespace gInk
 
         private void Magnet_TB_Validated(object sender, EventArgs e)
         {
-            Root.MagneticRadius = (int)(float.Parse(Magnet_TB.Text, CultureInfo.InvariantCulture) / 100.0 * System.Windows.SystemParameters.PrimaryScreenWidth);
+            Root.MagneticRadius = (int)(float.Parse(Magnet_TB.Text.Replace(",", "."), CultureInfo.InvariantCulture) / 100.0 * System.Windows.SystemParameters.PrimaryScreenWidth);
         }
 
         private void DefArrStartCb_CheckedChanged(object sender, EventArgs e)
@@ -571,7 +571,7 @@ namespace gInk
 
         private void ToolBarHeight_Validated(object sender, EventArgs e)
         {
-            Root.ToolbarHeight = float.Parse(ToolBarHeight.Text, CultureInfo.InvariantCulture) / 100;
+            Root.ToolbarHeight = float.Parse(ToolBarHeight.Text.Replace(",", "."), CultureInfo.InvariantCulture) / 100;
         }
 
         private void ValidateOnEnter(object sender, KeyPressEventArgs e)
