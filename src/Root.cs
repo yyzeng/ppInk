@@ -234,7 +234,8 @@ namespace gInk
             TagNumbering = 1; //reset tag counter 
             if (FormCollection == null && FormDisplay == null)
             {
-                if (FormOpacity > 0) callForm.Hide();
+                //if (FormOpacity > 0) callForm.Hide();
+                if (FormOpacity > 0) callForm.Close();
                 StartInk();
                 if (OpenIntoSnapMode)
                     FormCollection.btSnap_Click(null,null);
@@ -332,10 +333,20 @@ namespace gInk
 				ShowBalloonSnapshot();
 				UponBalloonSnap = false;
 			}
-            if (FormOpacity > 0) callForm.Show();
+            //if (FormOpacity > 0) callForm.Show();
+            if (FormOpacity > 0)
+            {
+                callForm = new CallForm(this);
+                callForm.Show();
+                callForm.Top = FormTop;
+                callForm.Left = FormLeft;
+                callForm.Width = FormWidth;
+                callForm.Height = FormWidth;
+                callForm.Opacity = FormOpacity / 100.0;
+            }
         }
 
-        public void ClearInk()
+            public void ClearInk()
 		{
 			FormCollection.IC.Ink.DeleteStrokes();
             FormDisplay.ClearCanvus();

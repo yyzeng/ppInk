@@ -13,9 +13,10 @@ namespace gInk
     public partial class CallForm : Form
     {
         public Root Root;
-        public CallForm()
+        public CallForm(Root r)
         {
             InitializeComponent();
+            Root = r;
         }
 
         private void _Click(object sender, EventArgs e)

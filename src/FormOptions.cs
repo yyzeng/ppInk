@@ -527,6 +527,7 @@ namespace gInk
             }
             if (Root.FormOpacity > 0)
             {
+                Root.callForm = new CallForm(Root);
                 Root.callForm.Show();
                 Root.callForm.Top = Root.FormTop;
                 Root.callForm.Left = Root.FormLeft;
@@ -536,7 +537,7 @@ namespace gInk
             }
             else
             {
-                Root.callForm.Hide();
+                Root.callForm.Close();
             }
         }
 

@@ -40,8 +40,8 @@ namespace gInk
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 
-            frm = new CallForm();
-            frm.Root = new Root();
+            frm = new CallForm(new Root());
+            //frm.Root = new Root();
             frm.Root.callForm = frm;
             if (frm.Root.FormOpacity > 0)
                 frm.Show();

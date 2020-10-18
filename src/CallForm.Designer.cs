@@ -1,4 +1,4 @@
-﻿namespace gInk
+namespace gInk
 {
     partial class CallForm
     {
@@ -50,7 +50,7 @@
             this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-            this.Text = "Gink";
+            this.Text = "ppInk";
             this.TopMost = true;
             this.TransparencyKey = System.Drawing.Color.White;
             this.Click += new System.EventHandler(this._Click);
