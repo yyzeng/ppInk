@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 //using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
 
 namespace gInk
 {
@@ -17,6 +18,8 @@ namespace gInk
         {
             InitializeComponent();
             Root = r;
+            if (File.Exists(Root.ProgramFolder + "/FloatingCall.png"))
+                BackgroundImage = new Bitmap(Root.ProgramFolder + "/FloatingCall.png");
         }
 
         private void _Click(object sender, EventArgs e)
