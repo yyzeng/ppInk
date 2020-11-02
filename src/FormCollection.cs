@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -394,8 +395,11 @@ namespace gInk
             IC.DefaultDrawingAttributes.AntiAliased = true;
             IC.DefaultDrawingAttributes.FitToCurve = true;
 
-            cursorred = new System.Windows.Forms.Cursor(gInk.Properties.Resources.cursorred.Handle);
-            //IC.Cursor = cursorred;
+            string icon_filename= Root.ProgramFolder + "/cursor.ico";
+            if (File.Exists(icon_filename)) 
+                cursorred = new System.Windows.Forms.Cursor(icon_filename);
+            else
+                cursorred = new System.Windows.Forms.Cursor(gInk.Properties.Resources.cursorred.Handle);
             IC.Enabled = true;
 
             image_exit = new Bitmap(btStop.Width, btStop.Height);

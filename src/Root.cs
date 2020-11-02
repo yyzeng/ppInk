@@ -203,6 +203,7 @@ namespace gInk
 			ReadOptions("pens.ini");
 			ReadOptions("config.ini");
 			ReadOptions("hotkeys.ini");
+            ProgramFolder = Path.GetDirectoryName(Path.GetFullPath(Environment.GetCommandLineArgs()[0]));
             
             Size size = SystemInformation.SmallIconSize;
 			trayIcon = new NotifyIcon();
