@@ -9,10 +9,16 @@ using System.Net;
 using System.Threading;
 using System.Runtime.InteropServices;
 using Microsoft.Ink;
+using System.Diagnostics;
+using System.Threading.Tasks;
+using System.Net.WebSockets;
 
 namespace gInk
 {
-	public class TestMessageFilter : IMessageFilter
+    public enum VideoRecordMode {NoVideo=0 , OBSRec=1 , OBSBcst=2 , FfmpegRec=3 };
+    public enum VideoRecInProgress { Stopped=0, Starting=1, Recording=2, Stopping = 3, Pausing=4, Paused=5, Resuming=6 };
+
+    public class TestMessageFilter : IMessageFilter
 	{
 		public Root Root;
 
@@ -121,6 +127,7 @@ namespace gInk
 		public Hotkey Hotkey_Redo = new Hotkey();
 		public Hotkey Hotkey_Snap = new Hotkey();
 		public Hotkey Hotkey_Clear = new Hotkey();
+        public Hotkey Hotkey_Video = new Hotkey();
 
         public Hotkey Hotkey_Hand = new Hotkey();
         public Hotkey Hotkey_Line = new Hotkey();
@@ -186,6 +193,40 @@ namespace gInk
         public string TextFont = "Arial";
         public bool TextItalic = false;
         public bool TextBold = false;
+
+        public VideoRecordMode VideoRecordMode = VideoRecordMode.NoVideo;
+        public string ObsUrl = "ws://localhost:4444";
+        public string ObsPwd = "obs";
+        public string FFMpegCmd = "ffmpeg.exe -f gdigrab  -framerate 15 -offset_x $xx$ -offset_y $yy$ -video_size $ww$x$hh$ -show_region 1 -i desktop -vcodec libx264 %USERPROFILE%/CAPT_%DD%%MM%%YY%_%H%%M%%S%_$nn$.mkv";
+        public int VideoRecordCounter = 0;
+        public VideoRecInProgress VideoRecInProgress = VideoRecInProgress.Stopped;
+        public Process FFmpegProcess = null;
+        public bool VideoRecordWindowInProgress = false;
+        public ClientWebSocket ObsWs;
+        public Task ObsRecvTask;
+        public CancellationTokenSource ObsCancel = new CancellationTokenSource();
+
+        public string ProgramFolder;
+
+        public string ExpandVarCmd(string cmd, int x, int y, int w, int h)
+        {
+            cmd = Environment.ExpandEnvironmentVariables(cmd);
+            cmd = cmd.Replace("$xx$", x.ToString());
+            cmd = cmd.Replace("$yy$", y.ToString());
+            cmd = cmd.Replace("$ww$", w.ToString());
+            cmd = cmd.Replace("$hh$", h.ToString());
+            cmd = cmd.Replace("$nn$", VideoRecordCounter.ToString());
+            DateTime dt = DateTime.Now;
+            cmd = cmd.Replace("$H$", dt.Hour.ToString("00"));
+            cmd = cmd.Replace("$M$", dt.Minute.ToString("00"));
+            cmd = cmd.Replace("$S$", dt.Second.ToString("00"));
+            cmd = cmd.Replace("$DD$", dt.Day.ToString("00"));
+            cmd = cmd.Replace("$MM$", dt.Month.ToString("00"));
+            cmd = cmd.Replace("$YY$", (dt.Year % 100).ToString("00"));
+            cmd = cmd.Replace("$YYYY$", dt.Year.ToString("00"));
+            return cmd;
+        }
+
 
         public Root()
 		{
@@ -289,7 +330,7 @@ namespace gInk
 
 			//Docked = false;
 			FormDisplay = new FormDisplay(this);
-			FormCollection = new FormCollection(this);
+            FormCollection = new FormCollection(this);
 			FormButtonHitter = new FormButtonHitter(this);
 			if (CurrentPen < 0)
 				CurrentPen = 0;
@@ -326,8 +367,15 @@ namespace gInk
 			//FormCollection.Dispose();
 			//FormDisplay.Dispose();
 			GC.Collect();
-			FormCollection = null;
-			FormDisplay = null;
+
+            FormCollection = null;
+            //  The FormCollection is destroyed, therefore all following calls to the form and its controls will not hit
+            ObsCancel.Cancel();
+            ObsRecvTask = null;
+            ObsWs = null;
+            ObsCancel = new CancellationTokenSource();
+
+            FormDisplay = null;
 
 			if (UponBalloonSnap)
 			{
@@ -705,6 +753,9 @@ namespace gInk
 						case "HOTKEY_CLEAR":
 							Hotkey_Clear.Parse(sPara);
 							break;
+                        case "HOTKEY_VIDEOREC":
+                            Hotkey_Video.Parse(sPara);
+                            break;
                         case "HOTKEY_HAND":
                             Hotkey_Hand.Parse(sPara);
                             break;
@@ -909,8 +960,29 @@ namespace gInk
                                 BoardSelected = BoardAtOpening;
                             break;
 
-                    }
-                }
+                        case "VIDEO_RECORD_MODE":
+                            try
+                            {
+                                this.VideoRecordMode = (VideoRecordMode)Enum.Parse(typeof(VideoRecordMode), sPara, false);
+                            }
+                            catch
+                            {
+                                ;
+                            }
+                            //if (Int32.TryParse(sPara, out tempi))
+                            //    VideoRecordMode = (VideoRecordMode)tempi;
+                            break;
+                        case "OBS_WS_URL":
+                            ObsUrl = sPara;
+                            break;
+                        case "OBS_WS_PWD":
+                            ObsPwd = sPara;
+                            break;
+                        case "FFMPEG_CMD":
+                            FFMpegCmd = sPara;
+                            break;
+    }
+}
 			}
 			fini.Close();
 		}
@@ -1030,6 +1102,9 @@ namespace gInk
 						case "HOTKEY_CLEAR":
 							sPara = Hotkey_Clear.ToString();
 							break;
+                        case "HOTKEY_VIDEOREC":
+                            sPara = Hotkey_Video.ToString();
+                            break;
                         case "HOTKEY_HAND":
                             sPara = Hotkey_Hand.ToString();
                             break;
@@ -1197,6 +1272,18 @@ namespace gInk
                             break;
                         case "BOARDATOPENING":
                             sPara = BoardAtOpening.ToString();
+                            break;
+                        case "VIDEO_RECORD_MODE":
+                            sPara = VideoRecordMode.ToString();
+                            break;
+                        case "OBS_WS_URL":
+                            sPara = ObsUrl;
+                            break;
+                        case "OBS_WS_PWD":
+                            sPara = ObsPwd;
+                            break;
+                        case "FFMPEG_CMD":
+                            sPara = FFMpegCmd;
                             break;
                     }
                 }

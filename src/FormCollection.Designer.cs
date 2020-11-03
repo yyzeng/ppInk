@@ -30,6 +30,7 @@ namespace gInk
 		{
             this.components = new System.ComponentModel.Container();
             this.gpButtons = new System.Windows.Forms.Panel();
+            this.btVideo = new System.Windows.Forms.Button();
             this.btInkVisible = new System.Windows.Forms.Button();
             this.btPan = new System.Windows.Forms.Button();
             this.btMagn = new System.Windows.Forms.Button();
@@ -62,6 +63,7 @@ namespace gInk
             // gpButtons
             // 
             this.gpButtons.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.gpButtons.Controls.Add(this.btVideo);
             this.gpButtons.Controls.Add(this.btInkVisible);
             this.gpButtons.Controls.Add(this.btPan);
             this.gpButtons.Controls.Add(this.btMagn);
@@ -89,6 +91,22 @@ namespace gInk
             this.gpButtons.MouseDown += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseDown);
             this.gpButtons.MouseMove += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseMove);
             this.gpButtons.MouseUp += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseUp);
+            // 
+            // btVideo
+            // 
+            this.btVideo.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btVideo.FlatAppearance.BorderSize = 0;
+            this.btVideo.FlatAppearance.MouseDownBackColor = System.Drawing.Color.WhiteSmoke;
+            this.btVideo.FlatAppearance.MouseOverBackColor = System.Drawing.Color.WhiteSmoke;
+            this.btVideo.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btVideo.Location = new System.Drawing.Point(216, 3);
+            this.btVideo.Margin = new System.Windows.Forms.Padding(2);
+            this.btVideo.Name = "btVideo";
+            this.btVideo.Size = new System.Drawing.Size(46, 46);
+            this.btVideo.TabIndex = 4;
+            this.toolTip.SetToolTip(this.btVideo, "Video Recording");
+            this.btVideo.UseVisualStyleBackColor = true;
+            this.btVideo.Click += new System.EventHandler(this.btVideo_Click);
             // 
             // btInkVisible
             // 
@@ -442,12 +460,12 @@ namespace gInk
             // 
             // btClear
             // 
-            this.btClear.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.btClear.BackgroundImage = global::gInk.Properties.Resources.garbage;
+            this.btClear.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.btClear.FlatAppearance.BorderSize = 0;
             this.btClear.FlatAppearance.MouseDownBackColor = System.Drawing.Color.WhiteSmoke;
             this.btClear.FlatAppearance.MouseOverBackColor = System.Drawing.Color.WhiteSmoke;
             this.btClear.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btClear.Image = global::gInk.Properties.Resources.garbage;
             this.btClear.Location = new System.Drawing.Point(583, 3);
             this.btClear.Margin = new System.Windows.Forms.Padding(2);
             this.btClear.Name = "btClear";
@@ -455,6 +473,7 @@ namespace gInk
             this.btClear.TabIndex = 1;
             this.toolTip.SetToolTip(this.btClear, "Clear");
             this.btClear.UseVisualStyleBackColor = true;
+            this.btClear.RightToLeftChanged += new System.EventHandler(this.btClear_RightToLeftChanged);
             this.btClear.Click += new System.EventHandler(this.btClear_Click);
             this.btClear.MouseDown += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseDown);
             this.btClear.MouseMove += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseMove);
@@ -571,6 +590,7 @@ namespace gInk
 		public System.Windows.Forms.Button btPan;
 		public System.Windows.Forms.Button btInkVisible;
         private System.Windows.Forms.Timer longClickTimer;
+        public System.Windows.Forms.Button btVideo;
     }
 }
 

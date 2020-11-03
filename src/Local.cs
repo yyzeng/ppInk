@@ -34,6 +34,7 @@ namespace gInk
         public string ButtonNameText = "Text (Left|Right aligned)";
         public string ButtonNameEdit = "Edit Text|chip";
         public string ButtonNameMagn = "Magnetic Effect";
+        public string ButtonNameVideo = "Video Record";
 
         public string BoardTitle = "Clean Desktop";
         public string BoardText = "Erase all drawings and fill it with...";
@@ -103,9 +104,27 @@ namespace gInk
         public string OptionsHotkeysglobal = "Global hotkey (start drawing, switch between mouse pointer and drawing)";
 		public string OptionsHotkeysEnableinpointer = "Enable all following hotkeys in mouse pointer mode (may cause a mess)";
 
+        public string VideoTab="Video";
+        public string OptNoVideo="No video recording";
+        public string OptObsRecord="OBS recording";
+        public string OptObsBcast="OBS broadcasting";
+        public string LblWsUrl="WebSocket URL";
+        public string LblWsPwd="Password";
+        public string LblObsNote = "Note : OBS should be started before starting record\nOBS should be installed with Websocket plugin,with port and password configured";
+        public string OptFfmpeg="FFmpeg recording";
+        public string LblFfmpegCmd="Command Line";
+        public string LblFfmpegNote = "Note :substitution in command line\n" +
+                                      "            $xx$ $yy$                                             : upper left corner\n" +
+                                      "            $ww$ $hh$                                             : width and height of capture\n" +
+                                      "            $DD$ $MM$ $YY$ $YYYY$               : date\n"+
+                                      "            $H$ $M$ $S$                                      : time\n"+
+                                      "            %DD% %MM% %YY% %YYYY%     : date at ppInk startup\n"+
+                                      "            %H% %M% %S%                               : time at ppInk startup\n"+
+                                      "            $nn$                                                      : counter(restarted at 1 at ppInk restart)\n"+
+                                      "            %VAR%                                                : use of environment variable VAR";
 		public string NotificationSnapshot = "Snapshot saved. Click here to browse snapshots.";
 
-		public Local()
+        public Local()
 		{
 			ButtonNamePen[0] = "Pen 0";
 			ButtonNamePen[1] = "Pen 1";

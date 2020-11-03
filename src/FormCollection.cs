@@ -9,11 +9,26 @@ using System.Runtime.InteropServices;
 using System.Threading;
 //using System.Windows.Input;
 using Microsoft.Ink;
+using System.Net.WebSockets;
+using System.Threading.Tasks;
+using System.Diagnostics;
+using System.Text;
+using System.Security.Cryptography;
 
 namespace gInk
 {
-	public partial class FormCollection : Form
+    public partial class FormCollection : Form
 	{
+        [Flags, Serializable]
+        public enum RegisterTouchFlags
+        {
+            TWF_NONE = 0x00000000,
+            TWF_FINETOUCH = 0x00000001, //Specifies that hWnd prefers noncoalesced touch input.
+            TWF_WANTPALM = 0x00000002 //Setting this flag disables palm rejection which reduces delays for getting WM_TOUCH messages.
+        }
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern bool RegisterTouchWindow(IntPtr hWnd, RegisterTouchFlags flags);
+
         // hotkeys
         const int VK_LCONTROL = 0xA2;
         const int VK_RCONTROL = 0xA3;
@@ -79,6 +94,22 @@ namespace gInk
             }
         }
 
+        static class NativeMethods
+        {
+            [DllImport("kernel32.dll")]
+            [return: MarshalAs(UnmanagedType.Bool)]
+            public static extern bool CloseHandle(IntPtr hObject);
+
+            //[DllImport("kernel32.dll")]
+            //public static extern IntPtr OpenThread(ThreadAccess dwDesiredAccess, bool bInheritHandle, uint dwThreadId);
+
+            [DllImport("kernel32.dll")]
+            public static extern uint SuspendThread(IntPtr hThread);
+
+            [DllImport("kernel32.dll")]
+            public static extern uint ResumeThread(IntPtr hThread);
+        }
+
         public FormCollection(Root root)
         {
             Root = root;
@@ -96,6 +127,9 @@ namespace gInk
             btClear.Height = (int)(gpButtons.Height * 0.85);
             btClear.Width = btClear.Height;
             btClear.Top = (int)(gpButtons.Height * 0.08);
+            btVideo.Height = (int)(gpButtons.Height * 0.85);
+            btVideo.Width = btVideo.Height;
+            btVideo.Top = (int)(gpButtons.Height * 0.08);
             btDock.Height = (int)(gpButtons.Height * 0.85);
             btDock.Width = btDock.Height / 2;
             btDock.Top = (int)(gpButtons.Height * 0.08);
@@ -324,9 +358,34 @@ namespace gInk
             {
                 btClear.Visible = false;
             }
-            cumulatedleft += (int)(btDock.Width * 1.5);
+            if (Root.VideoRecordMode>0)
+            {
+                btVideo.Visible = true;
+                btVideo.Left = cumulatedleft;
+                SetVidBgImage();
+                if (Root.VideoRecordMode == VideoRecordMode.OBSBcst || Root.VideoRecordMode == VideoRecordMode.OBSRec)
+                {
+
+                    if (Root.ObsRecvTask == null || Root.ObsRecvTask.IsCompleted)
+                    {
+                        Root.VideoRecordWindowInProgress = true;
+                        Root.ObsRecvTask = Task.Run(() => ReceiveObsMesgs(this));
+                    }
+                    while (Root.VideoRecordWindowInProgress)
+                        Task.Delay(50);
+                    Task.Delay(100);
+                    //Task.Run(() => SendInWs(Root.ObsWs, "GetRecordingStatus", new CancellationToken()));
+                    //Task.Run(() => SendInWs(Root.ObsWs, "GetStreamingStatus", new CancellationToken()));
+                }
+                cumulatedleft += (int)(btClear.Width * 1.1);
+            }
+            else
+            {
+                btVideo.Visible = false;
+            }
+            cumulatedleft += (int)(btDock.Width * .4);
             btStop.Left = cumulatedleft;
-            gpButtons.Width = btStop.Right + btDock.Width;
+            gpButtons.Width = (int)(btStop.Right + btDock.Width*.05);
 
 
             this.Left = SystemInformation.VirtualScreen.Left;
@@ -412,7 +471,7 @@ namespace gInk
             g = Graphics.FromImage(image_clear);
             g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
             g.DrawImage(global::gInk.Properties.Resources.garbage, 0, 0, btClear.Width, btClear.Height);
-            btClear.Image = image_clear;
+            //btClear.Image = image_clear;
             image_undo = new Bitmap(btUndo.Width, btUndo.Height);
             g = Graphics.FromImage(image_undo);
             g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
@@ -512,6 +571,7 @@ namespace gInk
             this.toolTip.SetToolTip(this.btSnap, Root.Local.ButtonNameSnapshot + " (" + Root.Hotkey_Snap.ToString() + ")");
             this.toolTip.SetToolTip(this.btUndo, Root.Local.ButtonNameUndo + " (" + Root.Hotkey_Undo.ToString() + ")");
             this.toolTip.SetToolTip(this.btClear, Root.Local.ButtonNameClear + " (" + Root.Hotkey_Clear.ToString() + ")");
+            this.toolTip.SetToolTip(this.btVideo, Root.Local.ButtonNameVideo + " (" + Root.Hotkey_Video.ToString() + ")");
             this.toolTip.SetToolTip(this.btStop, Root.Local.ButtonNameExit + " ( Esc/ Alt+F4)");
             this.toolTip.SetToolTip(this.btHand, Root.Local.ButtonNameHand + " (" + Root.Hotkey_Hand.ToString() + ")");
             this.toolTip.SetToolTip(this.btLine, Root.Local.ButtonNameLine + " (" + Root.Hotkey_Line.ToString() + ")");
@@ -539,6 +599,22 @@ namespace gInk
 
         }
 
+        private void SetVidBgImage()
+        {
+            if (Root.VideoRecInProgress == VideoRecInProgress.Stopped)
+                btVideo.BackgroundImage = global::gInk.Properties.Resources.VidStop;
+            else if (Root.VideoRecInProgress == VideoRecInProgress.Recording)
+                btVideo.BackgroundImage = global::gInk.Properties.Resources.VidRecord;
+            else if (Root.VideoRecInProgress == VideoRecInProgress.Paused)
+                btVideo.BackgroundImage = global::gInk.Properties.Resources.VidPause;
+            else
+            {
+                btVideo.BackgroundImage = global::gInk.Properties.Resources.VidUnk;
+                Console.WriteLine("VideoRecInProgress " + Root.VideoRecInProgress.ToString());
+                }
+            Root.UponButtonsUpdate |= 0x2;
+        }
+
         private void IC_MouseWheel(object sender, CancelMouseEventArgs e)
         {
             Root.GlobalPenWidth += Root.PixelToHiMetric(e.Delta > 0 ? 2 : -2);
@@ -564,6 +640,7 @@ namespace gInk
             MouseTimeDown = DateTime.Now;
             MouseDownButtonObject = sender;            
             longClickTimer.Start();
+            longClickTimer.Tag = sender;
             Console.WriteLine(string.Format("MD {0} {1}", DateTime.Now.Second, DateTime.Now.Millisecond));
         }
 
@@ -571,6 +648,7 @@ namespace gInk
         {
             Console.WriteLine("MU " + (sender as Control).Name);
             MouseDownButtonObject = null;
+            (sender as Button).RightToLeft = RightToLeft.No;
             longClickTimer.Stop();
             IsMovingToolbar = 0;
         }
@@ -581,6 +659,7 @@ namespace gInk
             MouseDownButtonObject = null;
             longClickTimer.Stop();
             sender = (sender as ContextMenu).SourceControl;
+            (sender as Button).RightToLeft = RightToLeft.No;
             Console.WriteLine(string.Format("RC {0}", (sender as Control).Name));
             (sender as Button).PerformClick();
         }
@@ -591,6 +670,7 @@ namespace gInk
             MouseDownButtonObject = null;
             longClickTimer.Stop();
             Console.WriteLine(string.Format("!LC {0}", bt.Name));
+            bt.RightToLeft = RightToLeft.Yes;
             bt.PerformClick();
             IsMovingToolbar = 0;
         }
@@ -1507,7 +1587,7 @@ namespace gInk
 
 				if (Root.CanvasCursor == 0)
 				{
-					cursorred = new System.Windows.Forms.Cursor(gInk.Properties.Resources.cursorred.Handle);
+					//cursorred = new System.Windows.Forms.Cursor(gInk.Properties.Resources.cursorred.Handle);
 					IC.Cursor = cursorred;
 				}
 				else if (Root.CanvasCursor == 1)
@@ -1550,7 +1630,7 @@ namespace gInk
 
 				if (Root.CanvasCursor == 0)
 				{
-					cursorred = new System.Windows.Forms.Cursor(gInk.Properties.Resources.cursorred.Handle);
+					//cursorred = new System.Windows.Forms.Cursor(gInk.Properties.Resources.cursorred.Handle);
 					IC.Cursor = cursorred;
 				}
 				else if (Root.CanvasCursor == 1)
@@ -1732,6 +1812,7 @@ namespace gInk
 		bool LastRedoStatus = false;
 		bool LastSnapStatus = false;
 		bool LastClearStatus = false;
+        bool LastVideoStatus = false;
         bool LastHandStatus = false;
         bool LastLineStatus = false;
         bool LastRectStatus = false;
@@ -2089,7 +2170,14 @@ namespace gInk
 				}
 				LastClearStatus = pressed;
 
-				pressed = (GetKeyState(Root.Hotkey_Snap.Key) & 0x8000) == 0x8000;
+                pressed = (GetKeyState(Root.Hotkey_Video.Key) & 0x8000) == 0x8000;
+                if (pressed && !LastVideoStatus && Root.Hotkey_Video.ModifierMatch(control, alt, shift, win))
+                {
+                    btVideo_Click(null, null);
+                }
+                LastVideoStatus = pressed;
+
+                pressed = (GetKeyState(Root.Hotkey_Snap.Key) & 0x8000) == 0x8000;
 				if (pressed && !LastSnapStatus && Root.Hotkey_Snap.ModifierMatch(control, alt, shift, win))
 				{
                     btSnap_Click(null, null);
@@ -2401,7 +2489,10 @@ namespace gInk
         }
 
         public void btClear_Click(object sender, EventArgs e)
-		{
+        {
+            //if(sender != null)
+            //    (sender as Button).RightToLeft = RightToLeft.No;
+            btClear.RightToLeft = RightToLeft.No;
             longClickTimer.Stop(); // for an unkown reason the mouse arrives later
             if (sender is ContextMenu) 
             {
@@ -2416,7 +2507,7 @@ namespace gInk
 
             TimeSpan tsp = DateTime.Now - MouseTimeDown;
 
-            if (tsp.TotalSeconds > Root.LongClickTime)
+            if (sender != null && tsp.TotalSeconds > Root.LongClickTime)
             {   
                 int rst = SelectCleanBackground();
                 if (rst >= 0)
@@ -2498,8 +2589,8 @@ namespace gInk
                 MouseTimeDown = DateTime.FromBinary(0);
             }
             TimeSpan tsp = DateTime.Now - MouseTimeDown;
-            Console.WriteLine(string.Format("{1},t = {0:N3}", tsp.TotalSeconds,e.ToString()));
-            if (tsp.TotalSeconds > Root.LongClickTime)
+            //Console.WriteLine(string.Format("{1},t = {0:N3}", tsp.TotalSeconds,e.ToString()));
+            if (sender != null && tsp.TotalSeconds > Root.LongClickTime)
             {
                 btColor_LongClick(sender);
             }
@@ -2517,6 +2608,277 @@ namespace gInk
                     SelectPen(b);
 				}
 		}
+
+        private void btVideo_Click(object sender, EventArgs e)
+        {
+            // long click  = start/stop ; short click = pause(start if not started)/resume
+            longClickTimer.Stop(); // for an unkown reason the mouse arrives later
+            if (sender is ContextMenu)
+            {
+                sender = (sender as ContextMenu).SourceControl;
+                MouseTimeDown = DateTime.FromBinary(0);
+            }
+            if (ToolbarMoved)
+            {
+                ToolbarMoved = false;
+                return;
+            }
+
+            TimeSpan tsp = DateTime.Now - MouseTimeDown;
+            if (Root.VideoRecordMode == VideoRecordMode.NoVideo) // button should be hidden but as security we do the check
+                return;
+            
+            if (Root.VideoRecInProgress == VideoRecInProgress.Stopped ) // no recording so we start
+            {
+                VideoRecordStart();
+            }
+            else if ((sender != null && tsp.TotalSeconds > Root.LongClickTime) || Root.VideoRecordMode == VideoRecordMode.OBSBcst ) // there is only start/stop for Broadcast 
+            {
+                VideoRecordStop();
+            }
+            else if (Root.VideoRecInProgress == VideoRecInProgress.Recording )
+            {
+                VideoRecordPause();
+            }
+            else // recording & Shortclick & paused
+            {
+                VideoRecordResume();
+            }
+        }
+
+        public void VideoRecordStart()
+        {
+            Root.VideoRecordCounter += 1;
+            if (Root.VideoRecordMode == VideoRecordMode.FfmpegRec)
+            {
+                Root.VideoRecordWindowInProgress = true;
+                btSnap_Click(null, null);
+            }
+            else
+            {
+                try
+                {
+                    Console.Write("-->" + (Root.ObsRecvTask == null).ToString());
+                    if (Root.ObsRecvTask != null)
+                        Console.Write(" ; " + Root.ObsRecvTask.IsCompleted.ToString());
+                }
+                finally
+                {
+                    Console.WriteLine();
+                }
+                if (Root.ObsRecvTask == null || Root.ObsRecvTask.IsCompleted)
+                {
+                    Root.ObsRecvTask = Task.Run(() => ReceiveObsMesgs(this));
+                }
+                Task.Run(() => ObsStartRecording(this));
+            }
+        }
+        public void VideoRecordStartFFmpeg(Rectangle rect)
+        {
+            const int VERTRES = 10;
+            const int DESKTOPVERTRES = 117;
+
+            IntPtr screenDc = GetDC(IntPtr.Zero);
+            int LogicalScreenHeight = GetDeviceCaps(screenDc, VERTRES);
+            int PhysicalScreenHeight = GetDeviceCaps(screenDc, DESKTOPVERTRES);
+            float ScreenScalingFactor = (float)PhysicalScreenHeight / (float)LogicalScreenHeight;
+            ReleaseDC(IntPtr.Zero, screenDc);
+
+            rect.X = (int)(rect.X * ScreenScalingFactor);
+            rect.Y = (int)(rect.Y * ScreenScalingFactor);
+            rect.Width = (int)(rect.Width * ScreenScalingFactor);
+            rect.Height = (int)(rect.Height * ScreenScalingFactor);
+
+            Root.FFmpegProcess = new Process();
+            string[] cmdArgs = Root.ExpandVarCmd(Root.FFMpegCmd, rect.X, rect.Y, rect.Width, rect.Height).Split(new char[] {' '}, 2);
+            Console.WriteLine(string.Format("%s %s", cmdArgs[0], cmdArgs[1]));
+
+            Root.FFmpegProcess.StartInfo.FileName = cmdArgs[0];
+            Root.FFmpegProcess.StartInfo.Arguments = cmdArgs[1];
+
+            Root.FFmpegProcess.StartInfo.UseShellExecute = false;
+            Root.FFmpegProcess.StartInfo.CreateNoWindow = true;
+            Root.FFmpegProcess.StartInfo.RedirectStandardOutput = true;
+            Root.FFmpegProcess.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
+
+            Root.FFmpegProcess.Start();
+            IntPtr ptr = Root.FFmpegProcess.MainWindowHandle;
+            ShowWindow(ptr.ToInt32(), 2);
+
+            Root.VideoRecInProgress = VideoRecInProgress.Recording;
+            SetVidBgImage();
+            //ExitSnapping();
+        }
+
+        static async Task ReceiveObsMesgs(FormCollection frm)
+        {
+            string HashEncode(string input)
+            {
+                var sha256 = new SHA256Managed();
+
+                byte[] textBytes = Encoding.ASCII.GetBytes(input);
+                byte[] hash = sha256.ComputeHash(textBytes);
+
+                return System.Convert.ToBase64String(hash);
+            }
+
+            CancellationToken ct = frm.Root.ObsCancel.Token;
+            frm.Root.VideoRecordWindowInProgress = true;
+            if (ct.IsCancellationRequested)
+                return; 
+            if (frm.Root.ObsWs == null)
+            {
+                frm.Root.ObsWs = new ClientWebSocket();
+                Console.WriteLine("WS Created");
+            }
+            var rcvBytes = new byte[4096];
+            var rcvBuffer = new ArraySegment<byte>(rcvBytes);
+            WebSocketReceiveResult rcvResult;
+            if (frm.Root.ObsWs.State != WebSocketState.Open)
+            {
+                await frm.Root.ObsWs.ConnectAsync(new Uri(frm.Root.ObsUrl), ct);
+                Console.WriteLine("WS Connected");
+                await SendInWs(frm.Root.ObsWs, "GetAuthRequired", ct);
+                rcvResult = await frm.Root.ObsWs.ReceiveAsync(rcvBuffer, ct);
+                string st = Encoding.UTF8.GetString(rcvBuffer.Array, 0, rcvResult.Count);
+                Console.WriteLine("getAuth => " + st);
+                if (st.Contains("authRequired\": t"))
+                {
+                    int i = st.IndexOf("\"challenge\":");
+                    i = st.IndexOf("\"",i+"\"challenge\":".Length+1)+1;
+                    int j = st.IndexOf("\"", i + 1);
+                    string challenge = st.Substring(i, j - i);
+                    i = st.IndexOf("\"salt\":");
+                    i = st.IndexOf("\"", i + "\"salt\":".Length + 1)+1;                    
+                    j = st.IndexOf("\"", i + 1);
+                    string salt = st.Substring(i, j - i);
+                    Console.WriteLine(challenge + " - " + salt);
+                    string authResponse = HashEncode(HashEncode(frm.Root.ObsPwd + salt) + challenge);
+                    await SendInWs(frm.Root.ObsWs, "Authenticate", ct,",\"auth\": \"" + authResponse + "\"");
+                    rcvResult = await frm.Root.ObsWs.ReceiveAsync(rcvBuffer, ct);
+                    st = Encoding.UTF8.GetString(rcvBuffer.Array, 0, rcvResult.Count);
+                    if(!st.Contains("\"ok\""))
+                    {
+                        await frm.Root.ObsWs.CloseAsync(WebSocketCloseStatus.PolicyViolation, "Authentication failed", ct);
+                        frm.Root.ObsWs = null;
+                        frm.Root.ObsRecvTask  = null;
+                        frm.btVideo.BackgroundImage = global::gInk.Properties.Resources.VidDead;
+                    }
+                }
+
+            }
+            frm.Root.VideoRecordWindowInProgress = false;
+            while (frm.Root.ObsWs != null && frm.Root.ObsWs.State == WebSocketState.Open && !ct.IsCancellationRequested) // && frm.Root.VideoRecInProgress == VideoRecInProgress.Recording )
+            {
+                rcvResult = await frm.Root.ObsWs.ReceiveAsync(rcvBuffer, ct);
+                if (ct.IsCancellationRequested)
+                    return;
+                string st = Encoding.UTF8.GetString(rcvBuffer.Array, 0, rcvResult.Count);
+                Console.WriteLine("ObsReturned " + st);
+                if (st.Contains("\"RecordingStopped\""))
+                    frm.Root.VideoRecInProgress = VideoRecInProgress.Stopped;
+                else if (st.Contains("\"RecordingPaused\""))
+                    frm.Root.VideoRecInProgress = VideoRecInProgress.Paused;
+                else if (st.Contains("\"RecordingStarted\"") || st.Contains("\"RecordingResumed\""))
+                    frm.Root.VideoRecInProgress = VideoRecInProgress.Recording;
+                // cases from getInitialStatus;
+                else if (st.Contains("\"recording - paused\": true"))
+                    frm.Root.VideoRecInProgress = VideoRecInProgress.Paused;
+                else if (st.Contains("\"recording\": true"))
+                    frm.Root.VideoRecInProgress = VideoRecInProgress.Recording;
+                else if (st.Contains("\"recording\": false"))
+                    frm.Root.VideoRecInProgress = VideoRecInProgress.Stopped;
+                Console.WriteLine("vidbg " + frm.Root.VideoRecInProgress.ToString());
+                frm.SetVidBgImage();
+            }
+            frm.btVideo.BackgroundImage = global::gInk.Properties.Resources.VidDead; // the recv task is dead so we put the cross;
+            Console.WriteLine("endoft");
+        }
+
+        static async Task ObsStartRecording(FormCollection frm)
+        {
+            Console.WriteLine("StartRec");
+            while ((frm.Root.ObsWs==null || frm.Root.VideoRecordWindowInProgress) && !frm.Root.ObsCancel.Token.IsCancellationRequested)// frm.Root.ObsWs.State != WebSocketState.Open)
+                await Task.Delay(50);
+            if(frm.Root.VideoRecordMode== VideoRecordMode.OBSRec)
+                await Task.Run(() => SendInWs(frm.Root.ObsWs,"StartRecording", frm.Root.ObsCancel.Token));
+            else if (frm.Root.VideoRecordMode == VideoRecordMode.OBSBcst)
+                await Task.Run(() => SendInWs(frm.Root.ObsWs, "StartStreaming", frm.Root.ObsCancel.Token));
+            Console.WriteLine("ExitStartRec");
+        }
+
+        public void VideoRecordStop()
+        {
+            if(Root.VideoRecordMode == VideoRecordMode.FfmpegRec)
+            {
+                Root.FFmpegProcess.Kill();
+                Root.VideoRecInProgress = VideoRecInProgress.Stopped;
+                btVideo.BackgroundImage = global::gInk.Properties.Resources.VidStop;
+                Root.UponButtonsUpdate |= 0x2;
+            }
+            else
+            {
+                if (Root.ObsRecvTask == null || Root.ObsRecvTask.IsCompleted)
+                {
+                    Root.ObsRecvTask = Task.Run(() => ReceiveObsMesgs(this));
+                }
+                Task.Run(() => ObsStopRecording(this));
+            }
+        }
+
+        static async Task ObsStopRecording(FormCollection frm)
+        {
+            while ((frm.Root.ObsWs == null || frm.Root.VideoRecordWindowInProgress) && !frm.Root.ObsCancel.Token.IsCancellationRequested)// frm.Root.ObsWs.State != WebSocketState.Open)
+                await Task.Delay(50);
+            if (frm.Root.VideoRecordMode == VideoRecordMode.OBSRec)
+                await Task.Run(() => SendInWs(frm.Root.ObsWs, "StopRecording", frm.Root.ObsCancel.Token));
+            else if (frm.Root.VideoRecordMode == VideoRecordMode.OBSBcst)
+                await Task.Run(() => SendInWs(frm.Root.ObsWs, "StopStreaming", frm.Root.ObsCancel.Token));
+        }
+
+        public void VideoRecordPause()
+        {
+            if (Root.VideoRecordMode == VideoRecordMode.FfmpegRec)
+            {
+                Root.FFmpegProcess.Kill();
+                btVideo.BackgroundImage = global::gInk.Properties.Resources.VidStop;
+                Root.UponButtonsUpdate |= 0x2;
+            }
+            else if (Root.VideoRecordMode == VideoRecordMode.OBSRec)
+                Task.Run(() => SendInWs(Root.ObsWs,"PauseRecording", Root.ObsCancel.Token));
+            else if (Root.VideoRecordMode == VideoRecordMode.OBSRec)
+                Task.Run(() => ObsStopRecording(this));
+        }
+
+        public void VideoRecordResume()
+        {
+            Task.Run(() => SendInWs(Root.ObsWs,"ResumeRecording", Root.ObsCancel.Token));
+        }
+
+        static async Task SendInWs(ClientWebSocket ws, string cmd, CancellationToken ct, string parameters="")
+        {
+            Console.WriteLine("enter " + cmd);
+            string msg = string.Format("{{\"message-id\":\"{0}\",\"request-type\":\"{1}\" {2} }}", (int)(DateTime.UtcNow.TimeOfDay.TotalSeconds), cmd, parameters);
+            byte[] sendBytes = Encoding.UTF8.GetBytes(msg);
+            var sendBuffer = new ArraySegment<byte>(sendBytes);
+            while ((ws.State != WebSocketState.Open ) && !ct.IsCancellationRequested)// frm.Root.ObsWs.State != WebSocketState.Open)
+                await Task.Delay(50);
+            await ws.SendAsync(sendBuffer, WebSocketMessageType.Text, true, ct);
+            Console.WriteLine("exit " + cmd);
+        }
+
+        private void btClear_RightToLeftChanged(object sender, EventArgs e)
+        {
+            /* work in progress
+            if((sender as Button).RightToLeft == RightToLeft.No)
+                (sender as Button).BackgroundImage = global::gInk.Properties.Resources.blackboard;
+            else 
+                (sender as Button).BackgroundImage = global::gInk.Properties.Resources.garbage;
+            */
+            btClear.BackgroundImage = global::gInk.Properties.Resources.garbage;
+            Console.WriteLine("R2L " + (sender as Button).Name + " . " + (sender as Button).RightToLeft.ToString());
+            Root.UponButtonsUpdate |= 0x2;
+        }
 
         public void SetTagNumber()
         {
@@ -2641,6 +3003,7 @@ namespace gInk
 				if (Root.Snapping > 0)
 				{
 					ExitSnapping();
+                Root.VideoRecordWindowInProgress = false;
 				}
 				else if (Root.gpPenWidthVisible)
 				{
@@ -2674,5 +3037,7 @@ namespace gInk
 		static extern IntPtr GetDC(IntPtr hWnd);
 		[DllImport("user32.dll")]
 		static extern bool ReleaseDC(IntPtr hWnd, IntPtr hDC);
-	}
+        [DllImport("user32.dll")]
+        static extern bool ShowWindow(int hWnd, int nCmdShow);
+    }
 }

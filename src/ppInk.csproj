@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>gInk</RootNamespace>
     <AssemblyName>ppInk</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
@@ -242,9 +242,16 @@
     <Content Include="..\ppInk\hotkeys.ini" />
     <Content Include="..\ppInk\pen.ini" />
     <Content Include="..\readme.md" />
+    <None Include="VidDead.png" />
+    <None Include="VidUnk.png" />
+    <None Include="VidStop.png" />
+    <None Include="VidRecord.png" />
+    <None Include="VidPause.png" />
+    <None Include="VidBroadcast.png" />
     <None Include="eyedropper.png" />
     <None Include="DblHeadArrowVert.png" />
     <None Include="cellbackground.png" />
+    <None Include="blackboard.png" />
     <Content Include="Magnetic.png" />
     <Content Include="Magnetic_act.png" />
     <None Include="pan1_act.png" />

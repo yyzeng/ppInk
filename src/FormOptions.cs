@@ -182,6 +182,7 @@ namespace gInk
 			hiUndo.Hotkey = Root.Hotkey_Undo;
 			hiRedo.Hotkey = Root.Hotkey_Redo;
 			hiClear.Hotkey = Root.Hotkey_Clear;
+            hiVideo.Hotkey = Root.Hotkey_Video;
 
             hiToolHand.Hotkey = Root.Hotkey_Hand;
             hiToolLine.Hotkey = Root.Hotkey_Line;
@@ -193,6 +194,26 @@ namespace gInk
             hiToolEdit.Hotkey = Root.Hotkey_Edit;
             hiToolMagnet.Hotkey = Root.Hotkey_Magnet;
 
+            WsUrlTxt.Text = Root.ObsUrl;
+            WsPwdTxt.Text = Root.ObsPwd;
+            FfmpegCmdTxt.Text = Root.FFMpegCmd;
+            switch(Root.VideoRecordMode)
+            {
+                case VideoRecordMode.NoVideo :
+                    OptNoVideo.Checked = true;
+                    break;
+                case VideoRecordMode.OBSRec:
+                    OptObsRecord.Checked = true;
+                    break;
+                case VideoRecordMode.OBSBcst:
+                    OptObsBcast.Checked = true;
+                    break;
+                case VideoRecordMode.FfmpegRec:
+                    OptFfmpeg.Checked = true;
+                    break;
+                default:
+                    throw new System.Exception(String.Format("unk video recording mode", Root.VideoRecordMode));
+            }
 
             FormOptions_LocalReload();
 		}
@@ -205,9 +226,9 @@ namespace gInk
                 return sin.Substring(0, i);
             }
 			this.Text = Root.Local.MenuEntryOptions + " - gInk";
-			tabControl1.TabPages[0].Text = Root.Local.OptionsTabGeneral;
-			tabControl1.TabPages[1].Text = Root.Local.OptionsTabPens;
-			tabControl1.TabPages[2].Text = Root.Local.OptionsTabHotkeys;
+			VideoTabCtrl.TabPages[0].Text = Root.Local.OptionsTabGeneral;
+			VideoTabCtrl.TabPages[1].Text = Root.Local.OptionsTabPens;
+			VideoTabCtrl.TabPages[2].Text = Root.Local.OptionsTabHotkeys;
             this.lblToolbarHeight.Text = Root.Local.OptionsGeneralToolbarHeight;
 			this.lbLanguage.Text = Root.Local.OptionsGeneralLanguage;
 			this.lbCanvascursor.Text = Root.Local.OptionsGeneralCanvascursor;
@@ -229,6 +250,7 @@ namespace gInk
 
             this.AltAsOneCommandCb.Text = Root.Local.OptionsHotKeyAltAsOneCommand;
 			this.lbHkClear.Text = shortTxt(Root.Local.ButtonNameClear);
+            this.lbHkVideo.Text = shortTxt(Root.Local.ButtonNameVideo);
 			this.lbHkEraser.Text = shortTxt(Root.Local.ButtonNameErasor);
 			this.lbHkInkVisible.Text = shortTxt(Root.Local.ButtonNameInkVisible);
 			this.lbHkPan.Text = shortTxt(Root.Local.ButtonNamePan);
@@ -260,7 +282,20 @@ namespace gInk
             this.BoardAtOpenCombo.Items[2] = Root.Local.BoardGray;
             this.BoardAtOpenCombo.Items[3] = Root.Local.BoardBlack;
             this.BoardAtOpenCombo.Items[4] = Root.Local.BoardLast;
-            
+
+            // Video Tab
+            this.VideoTab.Text = Root.Local.VideoTab;
+            this.OptNoVideo.Text = Root.Local.OptNoVideo;
+            this.OptObsRecord.Text = Root.Local.OptObsRecord;
+            this.OptObsBcast.Text = Root.Local.OptObsBcast;
+            this.LblWsUrl.Text = Root.Local.LblWsUrl;
+            this.LblWsPwd.Text = Root.Local.LblWsPwd;
+            this.LblObsNote.Text = Root.Local.LblObsNote;
+            this.OptFfmpeg.Text = Root.Local.OptFfmpeg;
+            this.LblFfmpegCmd.Text = Root.Local.LblFfmpegCmd;
+            this.LblFfmpegNote.Text = Root.Local.LblFfmpegNote;
+
+
             for (int p = 0; p < Root.MaxPenCount; p++)
 			{
 				comboPensAlpha[p].Items.Clear();
@@ -614,6 +649,27 @@ namespace gInk
                 BoardCustColorPnl.BackColor = Color.FromArgb(Root.Gray1[0], at.Color);
             }
 
+        }
+
+        private void WsUrlTxt_TextChanged(object sender, EventArgs e)
+        {
+            Root.ObsUrl = WsUrlTxt.Text;
+        }
+
+        private void WsPwdTxt_TextChanged(object sender, EventArgs e)
+        {
+            Root.ObsPwd = WsPwdTxt.Text;
+        }
+
+        private void FfmpegCmdTxt_TextChanged(object sender, EventArgs e)
+        {
+            Root.FFMpegCmd = FfmpegCmdTxt.Text;
+        }
+
+        private void VideoOption_Changed(object sender, EventArgs e)
+        {
+            if ((sender as RadioButton).Checked)
+                Root.VideoRecordMode = (VideoRecordMode)Int32.Parse((string)(sender as Control).Tag);
         }
 
         private void cbAllowHotkeyInPointer_CheckedChanged(object sender, EventArgs e)

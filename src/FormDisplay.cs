@@ -616,7 +616,14 @@ namespace gInk
 				DrawStrokes();
 				//DrawButtons(false);
 				UpdateFormDisplay(true);
-				SnapShot(Root.SnappingRect);
+                if (Root.VideoRecordWindowInProgress)
+                {
+                    Root.FormCollection.VideoRecordStartFFmpeg(Root.SnappingRect);
+                    Root.UponTakingSnap = false;
+                    return;
+                }
+                else
+				    SnapShot(Root.SnappingRect);
 				Root.UponTakingSnap = false;
 				if (Root.CloseOnSnap == "true")
 				{

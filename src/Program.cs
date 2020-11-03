@@ -40,11 +40,21 @@ namespace gInk
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 
+            DateTime n = DateTime.Now;
+            Environment.SetEnvironmentVariable("YYYY", n.Year.ToString("0000"));
+            Environment.SetEnvironmentVariable("YY", (n.Year % 100).ToString("00"));
+            Environment.SetEnvironmentVariable("MM", n.Month.ToString("00"));
+            Environment.SetEnvironmentVariable("DD", n.Day.ToString("00"));
+            Environment.SetEnvironmentVariable("H", n.Hour.ToString("00"));
+            Environment.SetEnvironmentVariable("M", n.Month.ToString("00"));
+            Environment.SetEnvironmentVariable("S", n.Second.ToString("00"));
+
             frm = new CallForm(new Root());
             //frm.Root = new Root();
             frm.Root.callForm = frm;
             if (frm.Root.FormOpacity > 0)
                 frm.Show();
+            // if not applied after shown there seems to be issues with the dimensions
             frm.Top = frm.Root.FormTop;
             frm.Left = frm.Root.FormLeft;
             frm.Width = frm.Root.FormWidth;
