@@ -455,7 +455,7 @@ namespace gInk
             IC.DefaultDrawingAttributes.AntiAliased = true;
             IC.DefaultDrawingAttributes.FitToCurve = true;
 
-            string icon_filename= Root.ProgramFolder + "/cursor.ico";
+            string icon_filename= Root.ProgramFolder + Path.DirectorySeparatorChar + "cursor.ico";
             if (File.Exists(icon_filename)) 
                 cursorred = new System.Windows.Forms.Cursor(icon_filename);
             else
