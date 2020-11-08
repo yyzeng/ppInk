@@ -1,4 +1,13 @@
-p1.2 (In Progress)
+p1.3 (In Progress)
+=================
+---> alpha1
+* New(alpha) : integration with Obs and FFmpeg for video recording.
+* New : show red arrow ( or customed file) temporarily when alt key is down
+* New : loading Cursor.ico and FloatingCall.png next in exe folder is avaible
+* Fix : decimal serarator fixed include fix loading toolbar height
+* Translation : add turkish and Indonesian
+* various fixes (see commits)
+p1.2 (RC2)
 =================
 * New : MouseWheel to change pen size
 * New : add capability to create a white/gray(customisable)/black board.
