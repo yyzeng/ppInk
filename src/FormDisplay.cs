@@ -642,7 +642,7 @@ namespace gInk
 				}
 			}
 
-			else if (!(Root.FormCollection.IC is null) && Root.FormCollection.IC.CollectingInk && Root.EraserMode == false && Root.InkVisible)
+			else if (!(Root.FormCollection is null) && !(Root.FormCollection.IC is null) && Root.FormCollection.IC.CollectingInk && Root.EraserMode == false && Root.InkVisible)
 			{ // Drawing in progress : we get the last stroke in the list, if we have to draw because not deleted and not a shape in progress
               //we replace the rectangle containing the stroke by the saved one and 
 
