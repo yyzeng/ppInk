@@ -64,8 +64,19 @@ Long click : Delete all drawings and select background surface color (white/blac
 In options you will be able to select a default mode at opening , and customed color
 advice : the created rectangle can be deleted using the erasor next to the border of the screen.
 
-*mouse wheel :*
-Mouse wheel allows you to modify the pen width
+*cursor files:*
+You can configure you own cursor file, saving it as cursor.ico in your exe folder (click position and size are loaded from the file). In the same you can save an image as FloatingCall.png to define the calling form image(in this case the width and transparency are in the Window_POS parameter in config.ini
+*mouse wheel:*
+Mouse wheel allows you to modify the pen width. this can be easily observed with the tipped cursor. in this configuration, finding the mouse may be difficult to find in this configuration : you can then depress the alt key to get the arrow(or customized) cursor
+
+*video recording:*
+ppInk has now some capability to do some video recording. tuning is available in options/video tab :
+   - basic recording with FFmpeg:
+   You need to first install ffmpeg. and select the option in the video tab. In this case the button will be proposed. you can start/stop recording. Names and destination folders are defined throught the command line.
+   - advanced recording with OBS-studio:
+   You need to first install and configure OBS-studio(https://obsproject.com/fr/download) with OBS-websocket(https://github.com/Palakis/obs-websocket). select the required option (recording or broadcasting). with this program you will be able to start/stop broadcasting or start/pause/resume/stop video recording. file names and folders are defined in OBS-studio.
+   Note : the current release 4.8 of OBS-websocket does not include yet correct API to recover current OBS recording status. this induce some issue to recover OBS status. this should be fixed in very next release. for the moment,prefer to stop recording when stopping Ink mode
+
 
 #### Screen Shots
 
@@ -76,6 +87,11 @@ screenshot
 #### Download
 
 <https://github.com/PubPub-zz/ppInk/releases/>
+
+#### Change log
+
+<https://github.com/pubpub-zz/ppInk/blob/master/changelog.txt>
+
 
 #### How to use
 
@@ -116,6 +132,8 @@ Click the exit button or press ESC to exit drawing.
 -   Magnetic effect when drawing shapes
 
 -   Filled shapes
+
+-   Video recording
 
 #### Tips
 
