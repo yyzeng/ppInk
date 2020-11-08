@@ -38,6 +38,7 @@ namespace gInk
 		public Bitmap image_visible_not, image_visible;
 		public System.Windows.Forms.Cursor cursorred, cursorsnap;
 		public System.Windows.Forms.Cursor cursortip;
+        public System.Windows.Forms.Cursor tempArrowCursor=null;
 
         public DateTime MouseTimeDown;
         public object MouseDownButtonObject;
@@ -2006,7 +2007,18 @@ namespace gInk
                 }
             }
 
-                if (!Root.FingerInAction && (!Root.PointerMode || Root.AllowHotkeyInPointerMode) && Root.Snapping <= 0)
+            if ((AltKeyPressed() && !Root.FingerInAction) && tempArrowCursor is null)
+            {
+                tempArrowCursor = IC.Cursor;
+                IC.Cursor = cursorred;
+            }
+            else if (!(tempArrowCursor is null) && !AltKeyPressed())
+            {
+                IC.Cursor = tempArrowCursor;
+                tempArrowCursor = null;
+            }
+
+            if (!Root.FingerInAction && (!Root.PointerMode || Root.AllowHotkeyInPointerMode) && Root.Snapping <= 0)
 			{
 				bool control = ((short)(GetKeyState(VK_LCONTROL) | GetKeyState(VK_RCONTROL)) & 0x8000) == 0x8000;
                 //bool alt = (((short)(GetKeyState(VK_LMENU) | GetKeyState(VK_RMENU)) & 0x8000) == 0x8000);
