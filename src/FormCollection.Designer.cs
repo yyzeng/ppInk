@@ -55,6 +55,7 @@ namespace gInk
             this.gpPenWidth = new System.Windows.Forms.Panel();
             this.pboxPenWidthIndicator = new System.Windows.Forms.PictureBox();
             this.longClickTimer = new System.Windows.Forms.Timer(this.components);
+            this.FontDlg = new System.Windows.Forms.FontDialog();
             this.gpButtons.SuspendLayout();
             this.gpPenWidth.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pboxPenWidthIndicator)).BeginInit();
@@ -535,6 +536,10 @@ namespace gInk
             this.longClickTimer.Interval = 1200;
             this.longClickTimer.Tick += new System.EventHandler(this.longClickTimer_Tick);
             // 
+            // FontDlg
+            // 
+            this.FontDlg.FontMustExist = true;
+            // 
             // FormCollection
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -591,6 +596,7 @@ namespace gInk
 		public System.Windows.Forms.Button btInkVisible;
         private System.Windows.Forms.Timer longClickTimer;
         public System.Windows.Forms.Button btVideo;
+        public System.Windows.Forms.FontDialog FontDlg;
     }
 }
 

@@ -69,6 +69,12 @@ namespace gInk
         private int SavedFilled = -1;
         private int SavedPen = -1;
 
+        // we have local variables for font to have an session limited default font characteristics
+        public int TextSize = 25;
+        public string TextFont = "Arial";
+        public bool TextItalic = false;
+        public bool TextBold = false;
+
         // http://www.csharp411.com/hide-form-from-alttab/
         protected override CreateParams CreateParams
 		{
@@ -114,6 +120,13 @@ namespace gInk
         {
             Root = root;
             InitializeComponent();
+
+            //loading default params
+            TextFont = Root.TextFont;
+            TextBold = Root.TextBold;
+            TextItalic = Root.TextItalic;
+            TextSize = Root.TextSize;
+
             longClickTimer.Interval = (int)(Root.LongClickTime * 1000 +100);
             if (Root.MagneticRadius>0)
                 this.btMagn.BackgroundImage = global::gInk.Properties.Resources.Magnetic_act;
@@ -774,7 +787,7 @@ namespace gInk
         // arrow at starting point
         {
             // for the filling, filled color is not used but this state is used to note that we edit the tag number
-            Stroke st = AddEllipseStroke(CursorX0, CursorY0, (int)(CursorX0 + Root.TextSize * 1.2), (int)(CursorY0 + Root.TextSize * 1.2), Root.FilledSelected==1?0:Root.FilledSelected);
+            Stroke st = AddEllipseStroke(CursorX0, CursorY0, (int)(CursorX0 + TextSize * 1.2), (int)(CursorY0 + TextSize * 1.2), Root.FilledSelected==1?0:Root.FilledSelected);
             st.ExtendedProperties.Add(Root.ISSTROKE_GUID, true);
             Point pt = new Point(CursorX0, CursorY0);
             IC.Renderer.PixelToInkSpace(IC.Handle, ref pt);
@@ -785,9 +798,9 @@ namespace gInk
             //st.ExtendedProperties.Add(Root.TEXTFORMAT_GUID, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.WordBreak);
             st.ExtendedProperties.Add(Root.TEXTHALIGN_GUID, StringAlignment.Center);
             st.ExtendedProperties.Add(Root.TEXTVALIGN_GUID, StringAlignment.Center);
-            st.ExtendedProperties.Add(Root.TEXTFONT_GUID, Root.TextFont);
-            st.ExtendedProperties.Add(Root.TEXTFONTSIZE_GUID, (float)Root.TextSize);
-            st.ExtendedProperties.Add(Root.TEXTFONTSTYLE_GUID, (Root.TextItalic ? FontStyle.Italic : FontStyle.Regular) | (Root.TextBold ? FontStyle.Bold : FontStyle.Regular));
+            st.ExtendedProperties.Add(Root.TEXTFONT_GUID, TextFont);
+            st.ExtendedProperties.Add(Root.TEXTFONTSIZE_GUID, (float)TextSize);
+            st.ExtendedProperties.Add(Root.TEXTFONTSTYLE_GUID, (TextItalic ? FontStyle.Italic : FontStyle.Regular) | (TextBold ? FontStyle.Bold : FontStyle.Regular));
             return st;
         }
 
@@ -807,9 +820,9 @@ namespace gInk
             st.ExtendedProperties.Add(Root.TEXTY_GUID, pt.Y);
             st.ExtendedProperties.Add(Root.TEXTHALIGN_GUID, Align);
             st.ExtendedProperties.Add(Root.TEXTVALIGN_GUID, StringAlignment.Near);
-            st.ExtendedProperties.Add(Root.TEXTFONT_GUID, Root.TextFont);
-            st.ExtendedProperties.Add(Root.TEXTFONTSIZE_GUID, (float)Root.TextSize);
-            st.ExtendedProperties.Add(Root.TEXTFONTSTYLE_GUID, (Root.TextItalic ? FontStyle.Italic : FontStyle.Regular) | (Root.TextBold ? FontStyle.Bold : FontStyle.Regular));
+            st.ExtendedProperties.Add(Root.TEXTFONT_GUID, TextFont);
+            st.ExtendedProperties.Add(Root.TEXTFONTSIZE_GUID, (float)TextSize);
+            st.ExtendedProperties.Add(Root.TEXTFONTSTYLE_GUID, (TextItalic ? FontStyle.Italic : FontStyle.Regular) | (TextBold ? FontStyle.Bold : FontStyle.Regular));
             setStrokeProperties(ref st, 0);
             Root.FormCollection.IC.Ink.Strokes.Add(st);
             return st;
@@ -2904,13 +2917,40 @@ namespace gInk
             Root.TagNumbering = k;
         }
 
+        private void FontBtn_Modify()
+        {
+            tiSlide.Stop();
+            IC.Enabled = false;
+            FontDlg.Font = new Font(TextFont, (float)TextSize, (TextItalic ? FontStyle.Italic : FontStyle.Regular) | (TextBold ? FontStyle.Bold : FontStyle.Regular));
+            if (FontDlg.ShowDialog() == DialogResult.OK)
+            {
+                TextFont = FontDlg.Font.Name;
+                TextItalic = (FontDlg.Font.Style & FontStyle.Italic) != 0;
+                TextBold = (FontDlg.Font.Style & FontStyle.Bold) != 0;
+                TextSize = (int)FontDlg.Font.Size;
+            }
+            IC.Enabled = true;
+            tiSlide.Start();
+        }
+
+
         public void btTool_Click(object sender, EventArgs e)
         {
+            btClear.RightToLeft = RightToLeft.No;
+            longClickTimer.Stop(); // for an unkown reason the mouse arrives later
+            if (sender is ContextMenu)
+            {
+                sender = (sender as ContextMenu).SourceControl;
+                MouseTimeDown = DateTime.FromBinary(0);
+            }
             if (ToolbarMoved)
             {
                 ToolbarMoved = false;
                 return;
             }
+
+            TimeSpan tsp = DateTime.Now - MouseTimeDown;
+
             int i = -1;
             if (((Button)sender).Name.Contains("Hand"))
                 i = 0;

@@ -300,7 +300,6 @@ namespace gInk
                         stf.LineAlignment = (System.Drawing.StringAlignment)(st.ExtendedProperties[Root.TEXTVALIGN_GUID].Data);
                         g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
                         g.DrawString((string)(st.ExtendedProperties[Root.TEXT_GUID].Data),
-                                     //new Font((string)Root.TextFont, Root.TextSize, (Root.TextItalic ? FontStyle.Italic : FontStyle.Regular) | (Root.TextBold ? FontStyle.Bold : FontStyle.Regular)),
                                      new Font((string)st.ExtendedProperties[Root.TEXTFONT_GUID].Data,(float)st.ExtendedProperties[Root.TEXTFONTSIZE_GUID].Data,
                                         (System.Drawing.FontStyle)(int)st.ExtendedProperties[Root.TEXTFONTSTYLE_GUID].Data),
                                      new SolidBrush(st.DrawingAttributes.Color), pt.X, pt.Y, stf);
