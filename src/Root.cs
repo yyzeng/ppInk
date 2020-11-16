@@ -329,9 +329,9 @@ namespace gInk
 				return;
 
 			//Docked = false;
-			FormDisplay = new FormDisplay(this);
             FormCollection = new FormCollection(this);
 			FormButtonHitter = new FormButtonHitter(this);
+			FormDisplay = new FormDisplay(this);  // FormDisplay is created at the end to ensure other objects are created.
 			if (CurrentPen < 0)
 				CurrentPen = 0;
 			if (!PenEnabled[CurrentPen])

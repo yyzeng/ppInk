@@ -584,9 +584,11 @@ namespace gInk
 
 		private void timer1_Tick(object sender, EventArgs e)
 		{
+            if (Root.FormCollection is null)
+                return; // the initialisation is not yet completed. we wait for
 			Tick++;
 
-			/*
+            /*
 			if (Tick == 1)
 				TickStartTime = DateTime.Now;
 			else if (Tick % 60 == 0)
