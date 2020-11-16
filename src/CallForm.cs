@@ -33,6 +33,8 @@ namespace gInk
             {
                 Left += e.X - Width / 2;
                 Top += e.Y - Height / 2;
+                Root.FormLeft = Left;
+                Root.FormTop = Top;
             }
         }
     }
