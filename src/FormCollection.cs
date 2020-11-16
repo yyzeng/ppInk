@@ -2981,7 +2981,13 @@ namespace gInk
             else if (((Button)sender).Name.Contains("Text"))
                 i = 8;
             else if (((Button)sender).Name.Contains("Edit"))
-                i = 7;
+                if (sender != null && tsp.TotalSeconds > Root.LongClickTime)
+                {
+                    FontBtn_Modify();
+                    return ;
+                }
+                else
+                    i = 7;
             if(i>=0)
                 SelectPen(LastPenSelected);
             SelectTool(i);
