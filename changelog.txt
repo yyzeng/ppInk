@@ -1,5 +1,9 @@
 p1.3 (In Progress)
 =================
+---> alpha2
+* Fix : prevent exception raised when opening toolbar (tasks asyncronocity)
+* New : long click on edit to modify default font for the session
+* Fix : prevent exception raised when opening toolbar (tasks asyncronocity)
 ---> alpha1
 * New(alpha) : integration with Obs and FFmpeg for video recording.
 * New : show red arrow ( or customed file) temporarily when alt key is down
