@@ -142,7 +142,8 @@ namespace gInk
                                     process.Id != currentProcess.Id &&
                                     process.ProcessName.Equals(
                                       currentProcess.ProcessName,
-                                      StringComparison.Ordinal)
+                                      StringComparison.Ordinal) &&
+                                    process.SessionId == currentProcess.SessionId
                                   select process).FirstOrDefault();
 
             if (runningProcess != null)
