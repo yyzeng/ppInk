@@ -34,6 +34,10 @@ selected my multiple click on those:
 
 -   Move:  
     Move 1 drawing -\> Move all drawings.
+    
+-   Edit:
+    Short click : modify text/number tool (text and font)
+    Long click : edit default font (for the time of the session)
 
 *Magnetic*
 The magnet activates some magnetic effect :
