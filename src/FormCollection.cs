@@ -388,7 +388,7 @@ namespace gInk
                         Task.Delay(50);
                     Task.Delay(100);
                     //Task.Run(() => SendInWs(Root.ObsWs, "GetRecordingStatus", new CancellationToken()));
-                    //Task.Run(() => SendInWs(Root.ObsWs, "GetStreamingStatus", new CancellationToken()));
+                    Task.Run(() => SendInWs(Root.ObsWs, "GetStreamingStatus", new CancellationToken()));
                 }
                 cumulatedleft += (int)(btClear.Width * 1.1);
             }
@@ -618,6 +618,8 @@ namespace gInk
                 btVideo.BackgroundImage = global::gInk.Properties.Resources.VidStop;
             else if (Root.VideoRecInProgress == VideoRecInProgress.Recording)
                 btVideo.BackgroundImage = global::gInk.Properties.Resources.VidRecord;
+            else if (Root.VideoRecInProgress == VideoRecInProgress.Streaming)
+                btVideo.BackgroundImage = global::gInk.Properties.Resources.VidBroadcast;
             else if (Root.VideoRecInProgress == VideoRecInProgress.Paused)
                 btVideo.BackgroundImage = global::gInk.Properties.Resources.VidPause;
             else
@@ -2792,17 +2794,27 @@ namespace gInk
                     frm.Root.VideoRecInProgress = VideoRecInProgress.Stopped;
                 else if (st.Contains("\"RecordingPaused\""))
                     frm.Root.VideoRecInProgress = VideoRecInProgress.Paused;
+                else if (st.Contains("StreamStopping"))
+                    frm.Root.VideoRecInProgress = VideoRecInProgress.Stopped;
+                else if (st.Contains("StreamStarted"))
+                    frm.Root.VideoRecInProgress = VideoRecInProgress.Streaming;
                 else if (st.Contains("\"RecordingStarted\"") || st.Contains("\"RecordingResumed\""))
                     frm.Root.VideoRecInProgress = VideoRecInProgress.Recording;
                 // cases from getInitialStatus;
-                else if (st.Contains("\"recording - paused\": true"))
+                else if (st.Contains("\"recording - paused\": true") || st.Contains("\"recording-paused\": true") || st.Contains("\"isRecordingPaused\": true"))
                     frm.Root.VideoRecInProgress = VideoRecInProgress.Paused;
-                else if (st.Contains("\"recording\": true"))
+                else if (st.Contains("\"recording\": true") || st.Contains("\"isRecording\": true"))
                     frm.Root.VideoRecInProgress = VideoRecInProgress.Recording;
-                else if (st.Contains("\"recording\": false"))
+                else if (st.Contains("\"streaming\": true"))
+                    frm.Root.VideoRecInProgress = VideoRecInProgress.Streaming;
+                else if (st.Contains("\"recording\": false") || st.Contains("\"isRecording\": false") || st.Contains("\"streaming\": false"))
                     frm.Root.VideoRecInProgress = VideoRecInProgress.Stopped;
-                Console.WriteLine("vidbg " + frm.Root.VideoRecInProgress.ToString());
                 frm.SetVidBgImage();
+                Console.WriteLine("vidbg " + frm.Root.VideoRecInProgress.ToString());
+                // for unknown reasons, button update seems unreliable : robustify repeating update after 100ms
+                Thread.Sleep(100);
+                frm.SetVidBgImage();
+                //Console.WriteLine(frm.btVideo.BackgroundImage.ToString()+" vidbg2 " + frm.Root.UponButtonsUpdate);
             }
             frm.btVideo.BackgroundImage = global::gInk.Properties.Resources.VidDead; // the recv task is dead so we put the cross;
             Console.WriteLine("endoft");
