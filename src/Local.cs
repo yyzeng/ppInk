@@ -226,9 +226,10 @@ namespace gInk
 					sLine.Substring(0, 1) != "!" &&
 					sLine.Substring(0, 1) != "[" &&
 					sLine.Substring(0, 1) != "#" &&
-					sLine.Contains("=") &&
-					!sLine.Substring(sLine.IndexOf("=") + 1).Contains("=")
-				)
+                    sLine.Contains("=")
+                    //sLine.Contains("=") &&
+                    //!sLine.Substring(sLine.IndexOf("=") + 1).Contains("=")
+                )
 				{
 					sName = sLine.Substring(0, sLine.IndexOf("="));
 					sName = sName.Trim();
