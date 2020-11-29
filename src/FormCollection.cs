@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Text;
 using System.Security.Cryptography;
+using System.Reflection;
 
 namespace gInk
 {
@@ -28,6 +29,23 @@ namespace gInk
         }
         [DllImport("user32.dll", SetLastError = true)]
         static extern bool RegisterTouchWindow(IntPtr hWnd, RegisterTouchFlags flags);
+
+        // to load correctly customed cursor file
+        static class MyNativeMethods
+        {
+            public static System.Windows.Forms.Cursor LoadCustomCursor(string path)
+            {
+                IntPtr hCurs = LoadCursorFromFile(path);
+                if (hCurs == IntPtr.Zero) throw new Win32Exception();
+                var curs = new System.Windows.Forms.Cursor(hCurs);
+                // Note: force the cursor to own the handle so it gets released properly
+                //var fi = typeof(System.Windows.Forms.Cursor).GetField("ownHandle", BindingFlags.NonPublic | BindingFlags.Instance);
+                //fi.SetValue(curs, true);
+                return curs;
+            }
+            [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+            private static extern IntPtr LoadCursorFromFile(string path);
+        }
 
         // hotkeys
         const int VK_LCONTROL = 0xA2;
@@ -51,7 +69,7 @@ namespace gInk
 		public Bitmap[] image_pen_act;
         public Bitmap image_eraser_act, image_eraser;
 		public Bitmap image_visible_not, image_visible;
-		public System.Windows.Forms.Cursor cursorred, cursorsnap;
+		public System.Windows.Forms.Cursor cursorred, cursorsnap,cursorerase;
 		public System.Windows.Forms.Cursor cursortip;
         public System.Windows.Forms.Cursor tempArrowCursor=null;
 
@@ -468,11 +486,26 @@ namespace gInk
             IC.DefaultDrawingAttributes.AntiAliased = true;
             IC.DefaultDrawingAttributes.FitToCurve = true;
 
-            string icon_filename= Root.ProgramFolder + Path.DirectorySeparatorChar + "cursor.ico";
-            if (File.Exists(icon_filename)) 
-                cursorred = new System.Windows.Forms.Cursor(icon_filename);
+            string icon_filename= Root.ProgramFolder + Path.DirectorySeparatorChar + "cursor";
+            if (File.Exists(icon_filename+".cur")) 
+                cursorred = MyNativeMethods.LoadCustomCursor(icon_filename+".cur");
+            else if (File.Exists(icon_filename + ".ani"))
+                cursorred = MyNativeMethods.LoadCustomCursor(icon_filename + ".ani");
+            else if (File.Exists(icon_filename + ".ico"))
+                cursorred = new System.Windows.Forms.Cursor(icon_filename+".ico");
             else
                 cursorred = new System.Windows.Forms.Cursor(gInk.Properties.Resources.cursorred.Handle);
+
+            icon_filename = Root.ProgramFolder + Path.DirectorySeparatorChar + "eraser";
+            if (File.Exists(icon_filename + ".cur"))
+                cursorerase = MyNativeMethods.LoadCustomCursor(icon_filename + ".cur");
+            else if (File.Exists(icon_filename + ".ani"))
+                cursorerase = MyNativeMethods.LoadCustomCursor(icon_filename + ".ani");
+            else if (File.Exists(icon_filename + ".ico"))
+                cursorerase = new System.Windows.Forms.Cursor(icon_filename + ".ico");
+            else
+                cursorerase = new System.Windows.Forms.Cursor(gInk.Properties.Resources.cursoreraser.Handle);
+
             IC.Enabled = true;
 
             image_exit = new Bitmap(btStop.Width, btStop.Height);
@@ -1589,10 +1622,10 @@ namespace gInk
                     SavedPen = LastPenSelected;
                 }
                 SelectTool(-1,0);       // Alt will be processed inhere
-                if (this.Cursor != System.Windows.Forms.Cursors.Default)
-					this.Cursor = System.Windows.Forms.Cursors.Default;
-
-				for (int b = 0; b < Root.MaxPenCount; b++)
+                //if (this.Cursor != System.Windows.Forms.Cursors.Default)
+				//	this.Cursor = System.Windows.Forms.Cursors.Default;
+                
+                for (int b = 0; b < Root.MaxPenCount; b++)
 					btPen[b].Image = image_pen[b];
 				btEraser.Image = image_eraser_act;
 				btPointer.Image = image_pointer;
@@ -1600,13 +1633,7 @@ namespace gInk
 				Root.UnPointer();
 				Root.PanMode = false;
 
-				if (Root.CanvasCursor == 0)
-				{
-					//cursorred = new System.Windows.Forms.Cursor(gInk.Properties.Resources.cursorred.Handle);
-					IC.Cursor = cursorred;
-				}
-				else if (Root.CanvasCursor == 1)
-					SetPenTipCursor();
+				IC.Cursor = cursorerase;
 
 				try
 				{

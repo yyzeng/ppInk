@@ -252,6 +252,7 @@
     <None Include="DblHeadArrowVert.png" />
     <None Include="cellbackground.png" />
     <None Include="blackboard.png" />
+    <None Include="eraser.ico" />
     <Content Include="Magnetic.png" />
     <Content Include="Magnetic_act.png" />
     <None Include="pan1_act.png" />
