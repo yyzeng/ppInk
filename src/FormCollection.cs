@@ -2956,6 +2956,16 @@ namespace gInk
             Root.TagNumbering = k;
         }
 
+
+        private void FormCollection_Deactivate(object sender, EventArgs e)
+        {
+            if (!Root.AltTabPointer)
+                return;
+            Console.WriteLine("desactivating ");
+            if((!Root.PointerMode)&&(ButtonsEntering==0))
+                SelectPen(-2);
+        }
+
         private void FontBtn_Modify()
         {
             tiSlide.Stop();

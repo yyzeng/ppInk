@@ -557,6 +557,7 @@ namespace gInk
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Form1";
+            this.Deactivate += new System.EventHandler(this.FormCollection_Deactivate);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormCollection_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.gpButtons.ResumeLayout(false);
