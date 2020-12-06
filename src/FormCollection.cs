@@ -645,6 +645,31 @@ namespace gInk
 
         }
 
+        // I want to be able to use the space,escape,... I must not leave leave the application handle those and generate clicks...
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            return true;
+        }
+
+        //public override bool PreProcessMessage(ref Message msg)
+        //[System.Security.Permissions.PermissionSet(System.Security.Permissions.SecurityAction.Demand, Name = "FullTrust")]
+        protected override void WndProc(ref Message msg)
+        {
+            if (msg.Msg == 0x001C) //WM_ACTIVATEAPP : generated through alt+tab
+            {
+                if (!Root.AltTabPointer)
+                    return;
+                if (msg.WParam == IntPtr.Zero)
+                {   //Console.WriteLine("desactivating ");
+                    if (!Root.PointerMode)
+                        SelectPen(-2);
+                }
+                /*else
+                    Console.WriteLine("activating ");*/
+            }
+            base.WndProc(ref msg);
+        }
+
         private void SetVidBgImage()
         {
             if (Root.VideoRecInProgress == VideoRecInProgress.Stopped)
@@ -1711,10 +1736,6 @@ namespace gInk
 
 			LastTickTime = DateTime.Now;
 			ButtonsEntering = -9;
-		}
-
-		private void Form1_Load(object sender, EventArgs e)
-		{
 		}
 
 		public void btDock_Click(object sender, EventArgs e)
@@ -2954,16 +2975,6 @@ namespace gInk
             ToUnThrough();
             if (inp.TextOut().Length == 0) return;
             Root.TagNumbering = k;
-        }
-
-
-        private void FormCollection_Deactivate(object sender, EventArgs e)
-        {
-            if (!Root.AltTabPointer)
-                return;
-            Console.WriteLine("desactivating ");
-            if((!Root.PointerMode)&&(ButtonsEntering==0))
-                SelectPen(-2);
         }
 
         private void FontBtn_Modify()
