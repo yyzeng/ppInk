@@ -2059,13 +2059,13 @@ namespace gInk
 				Root.UponAllDrawingUpdate = true;
 				Root.UponButtonsUpdate = 0;
 			}
-			if (gpButtons.Left == aimedleft)
-			{
-                // add a background if required at opening
-                if (ButtonsEntering != 0)
+			if ((gpButtons.Left == aimedleft) && (ButtonsEntering != 0))
+            {
+                // add a background if required at opening but not when snapping is in progress
+                if (Root.Snapping==0)
                 {
-                if ((Root.BoardAtOpening == 1) || (Root.BoardAtOpening == 4 && Root.BoardSelected == 1)) // White
-                    AddBackGround(255, 255, 255, 255);
+                    if ((Root.BoardAtOpening == 1) || (Root.BoardAtOpening == 4 && Root.BoardSelected == 1)) // White
+                        AddBackGround(255, 255, 255, 255);
                 else if ((Root.BoardAtOpening == 2) || (Root.BoardAtOpening == 4 && Root.BoardSelected == 2)) // Customed
                     AddBackGround(Root.Gray1[0], Root.Gray1[1], Root.Gray1[2], Root.Gray1[3]);
                 else if ((Root.BoardAtOpening == 3) || (Root.BoardAtOpening == 4 && Root.BoardSelected == 3)) // Black
