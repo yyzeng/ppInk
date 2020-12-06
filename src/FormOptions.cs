@@ -183,6 +183,8 @@ namespace gInk
 			hiRedo.Hotkey = Root.Hotkey_Redo;
 			hiClear.Hotkey = Root.Hotkey_Clear;
             hiVideo.Hotkey = Root.Hotkey_Video;
+            hiDockUndock.Hotkey = Root.Hotkey_DockUndock;
+            hiClose.Hotkey = Root.Hotkey_Close;
 
             hiToolHand.Hotkey = Root.Hotkey_Hand;
             hiToolLine.Hotkey = Root.Hotkey_Line;
@@ -257,7 +259,11 @@ namespace gInk
 			this.lbHkPointer.Text = shortTxt(Root.Local.ButtonNameMousePointer);
 			this.lbHkRedo.Text = shortTxt(Root.Local.ButtonNameRedo);
 			this.lbHkSnapshot.Text = shortTxt(Root.Local.ButtonNameSnapshot);
-			this.lbHkUndo.Text = shortTxt(Root.Local.ButtonNameUndo);
+            this.lbHkUndo.Text = shortTxt(Root.Local.ButtonNameUndo);
+            this.lbHkDockUndock.Text = shortTxt(Root.Local.ButtonNameDock);
+            this.lbHkClose.Text = Root.Local.ButtonNameClose;
+            this.lbHkUndo.Text = shortTxt(Root.Local.ButtonNameUndo);
+
             this.lbHkHand.Text = shortTxt(Root.Local.ButtonNameHand);
             this.lbHkLine.Text = shortTxt(Root.Local.ButtonNameLine);
             this.lbHkRect.Text = shortTxt(Root.Local.ButtonNameRect);

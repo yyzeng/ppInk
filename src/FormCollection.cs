@@ -608,7 +608,7 @@ namespace gInk
             ToTransparent();
             ToTopMost();
 
-            this.toolTip.SetToolTip(this.btDock, Root.Local.ButtonNameDock);
+            this.toolTip.SetToolTip(this.btDock, Root.Local.ButtonNameDock + " (" + Root.Hotkey_DockUndock.ToString() + ")");
             this.toolTip.SetToolTip(this.btPenWidth, Root.Local.ButtonNamePenwidth);
             this.toolTip.SetToolTip(this.btEraser, Root.Local.ButtonNameErasor + " (" + Root.Hotkey_Eraser.ToString() + ")");
             this.toolTip.SetToolTip(this.btPan, Root.Local.ButtonNamePan + " (" + Root.Hotkey_Pan.ToString() + ")");
@@ -618,7 +618,7 @@ namespace gInk
             this.toolTip.SetToolTip(this.btUndo, Root.Local.ButtonNameUndo + " (" + Root.Hotkey_Undo.ToString() + ")");
             this.toolTip.SetToolTip(this.btClear, Root.Local.ButtonNameClear + " (" + Root.Hotkey_Clear.ToString() + ")");
             this.toolTip.SetToolTip(this.btVideo, Root.Local.ButtonNameVideo + " (" + Root.Hotkey_Video.ToString() + ")");
-            this.toolTip.SetToolTip(this.btStop, Root.Local.ButtonNameExit + " ( Esc/ Alt+F4)");
+            this.toolTip.SetToolTip(this.btStop, Root.Local.ButtonNameExit + " (" + Root.Hotkey_Close.ToString() +"/Alt+F4)");
             this.toolTip.SetToolTip(this.btHand, Root.Local.ButtonNameHand + " (" + Root.Hotkey_Hand.ToString() + ")");
             this.toolTip.SetToolTip(this.btLine, Root.Local.ButtonNameLine + " (" + Root.Hotkey_Line.ToString() + ")");
             this.toolTip.SetToolTip(this.btRect, Root.Local.ButtonNameRect + " (" + Root.Hotkey_Rect.ToString() + ")");
@@ -1876,6 +1876,7 @@ namespace gInk
 		bool LastSnapStatus = false;
 		bool LastClearStatus = false;
         bool LastVideoStatus = false;
+        bool LastDockStatus = false;
         bool LastHandStatus = false;
         bool LastLineStatus = false;
         bool LastRectStatus = false;
@@ -2088,17 +2089,15 @@ namespace gInk
                     if ((Root.BoardAtOpening == 1) || (Root.BoardAtOpening == 4 && Root.BoardSelected == 1)) // White
                         AddBackGround(255, 255, 255, 255);
                 else if ((Root.BoardAtOpening == 2) || (Root.BoardAtOpening == 4 && Root.BoardSelected == 2)) // Customed
-                    AddBackGround(Root.Gray1[0], Root.Gray1[1], Root.Gray1[2], Root.Gray1[3]);
-                else if ((Root.BoardAtOpening == 3) || (Root.BoardAtOpening == 4 && Root.BoardSelected == 3)) // Black
-                    AddBackGround(255, 0, 0, 0);
-                if(Root.BoardAtOpening != 4)    // reset the board selected at opening
+                        AddBackGround(Root.Gray1[0], Root.Gray1[1], Root.Gray1[2], Root.Gray1[3]);
+                    else if ((Root.BoardAtOpening == 3) || (Root.BoardAtOpening == 4 && Root.BoardSelected == 3)) // Black
+                        AddBackGround(255, 0, 0, 0);
+                    if (Root.BoardAtOpening != 4)    // reset the board selected at opening
                     {
                         Root.BoardSelected = Root.BoardAtOpening;
                     }
                 }
-				ButtonsEntering = 0;
-
-
+                 ButtonsEntering = 0;
             }
 
 
@@ -2117,12 +2116,14 @@ namespace gInk
 			{
 				// ESC key : Exit
 				short retVal;
-				retVal = GetKeyState(27);
-				if ((retVal & 0x8000) == 0x8000 && (LastESCStatus & 0x8000) == 0x0000  && ! TextEdited)
-				{
-					if (Root.Snapping > 0)
-					{
-						ExitSnapping();
+                if (Root.Hotkey_Close.Key != 0)
+                {
+                    retVal = GetKeyState(Root.Hotkey_Close.Key);
+                    if ((retVal & 0x8000) == 0x8000 && (LastESCStatus & 0x8000) == 0x0000 && !TextEdited)
+                    {
+                        if (Root.Snapping > 0)
+                        {
+                            ExitSnapping();
 					}
 					else if (Root.gpPenWidthVisible)
 					{
@@ -2132,9 +2133,10 @@ namespace gInk
 					else if (Root.Snapping == 0)
 						RetreatAndExit();
 				}
-				LastESCStatus = retVal;
-                TextEdited = false;
-			}
+                    LastESCStatus = retVal;
+                    TextEdited = false;
+                }
+            }
 
             if (!AltKeyPressed() && !Root.PointerMode )//&& (SavedPen>=0 || SavedTool>=0))
             {
@@ -2239,6 +2241,14 @@ namespace gInk
                     btVideo_Click(null, null);
                 }
                 LastVideoStatus = pressed;
+
+                pressed = (GetKeyState(Root.Hotkey_DockUndock.Key) & 0x8000) == 0x8000;
+                if (pressed && !LastDockStatus && Root.Hotkey_DockUndock.ModifierMatch(control, alt, shift, win))
+                {
+                    Console.WriteLine("DockKey");
+                    btDock_Click(null, null);
+                }
+                LastDockStatus = pressed;
 
                 pressed = (GetKeyState(Root.Hotkey_Snap.Key) & 0x8000) == 0x8000;
 				if (pressed && !LastSnapStatus && Root.Hotkey_Snap.ModifierMatch(control, alt, shift, win))

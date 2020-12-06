@@ -24,7 +24,8 @@ namespace gInk
 		public string ButtonNameRedo = "Redo";
 		public string ButtonNameClear = "Clear";
 		public string ButtonNameExit = "Exit drawing";
-		public string ButtonNameDock = "Dock";
+		public string ButtonNameDock = "Dock/Undock";
+        public string ButtonNameClose = "Close\n(in addition to Alt+F4)";
         public string ButtonNameHand = "Handfree drawing (standard | color filled | White filled | Black filled)";
         public string ButtonNameLine = "Line Shape";
         public string ButtonNameRect = "Rectangle shape (empty | color filled | White filled | Black filled)";

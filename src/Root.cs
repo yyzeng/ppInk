@@ -129,6 +129,8 @@ namespace gInk
 		public Hotkey Hotkey_Snap = new Hotkey();
 		public Hotkey Hotkey_Clear = new Hotkey();
         public Hotkey Hotkey_Video = new Hotkey();
+        public Hotkey Hotkey_DockUndock = new Hotkey();
+        public Hotkey Hotkey_Close = new Hotkey();
 
         public Hotkey Hotkey_Hand = new Hotkey();
         public Hotkey Hotkey_Line = new Hotkey();
@@ -757,6 +759,12 @@ namespace gInk
                         case "HOTKEY_VIDEOREC":
                             Hotkey_Video.Parse(sPara);
                             break;
+                        case "HOTKEY_DOCKUNDOCK":
+                            Hotkey_DockUndock.Parse(sPara);
+                            break;
+                        case "HOTKEY_CLOSE":
+                            Hotkey_Close.Parse(sPara);
+                            break;
                         case "HOTKEY_HAND":
                             Hotkey_Hand.Parse(sPara);
                             break;
@@ -1111,6 +1119,12 @@ namespace gInk
 							break;
                         case "HOTKEY_VIDEOREC":
                             sPara = Hotkey_Video.ToString();
+                            break;
+                        case "HOTKEY_DOCKUNDOCK":
+                            sPara = Hotkey_DockUndock.ToString();
+                            break;
+                        case "HOTKEY_CLOSE":
+                            sPara = Hotkey_Close.ToString();
                             break;
                         case "HOTKEY_HAND":
                             sPara = Hotkey_Hand.ToString();
