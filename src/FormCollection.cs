@@ -66,12 +66,13 @@ namespace gInk
 		public Bitmap image_pencil, image_highlighter, image_pencil_act, image_highlighter_act;
 		public Bitmap image_pointer, image_pointer_act;
 		public Bitmap[] image_pen;
-		public Bitmap[] image_pen_act;
+        public Bitmap[] image_pen_act;
         public Bitmap image_eraser_act, image_eraser;
-		public Bitmap image_visible_not, image_visible;
-		public System.Windows.Forms.Cursor cursorred, cursorsnap,cursorerase;
-		public System.Windows.Forms.Cursor cursortip;
-        public System.Windows.Forms.Cursor tempArrowCursor=null;
+        public Bitmap image_visible_not, image_visible;
+        public System.Windows.Forms.Cursor cursorred, cursorsnap, cursorerase;
+        public System.Windows.Forms.Cursor cursortip;
+        public System.Windows.Forms.Cursor tempArrowCursor = null;
+        private bool Initializing;
 
         public DateTime MouseTimeDown;
         public object MouseDownButtonObject;
@@ -80,9 +81,9 @@ namespace gInk
 
 		public bool gpPenWidth_MouseOn = false;
 
-		public int PrimaryLeft, PrimaryTop;
+        public int PrimaryLeft, PrimaryTop;
 
-        private int LastPenSelected=0;
+        private int LastPenSelected = 0;
         private int SavedTool = -1;
         private int SavedFilled = -1;
         private int SavedPen = -1;
@@ -134,6 +135,21 @@ namespace gInk
             public static extern uint ResumeThread(IntPtr hThread);
         }
 
+        public System.Windows.Forms.Cursor getCursFromDiskOrRes(string name)
+        {
+            string filename;
+            string[] exts = { ".cur", ".ani", ".ico" };
+            foreach (string ext in exts)
+            {
+                filename = Root.ProgramFolder + Path.DirectorySeparatorChar + name + ext;
+                if (File.Exists(filename))
+                    return new System.Windows.Forms.Cursor(filename);
+            }
+            //cursorred = new System.Windows.Forms.Cursor(gInk.Properties.Resources.cursor.Handle);
+            return new System.Windows.Forms.Cursor(((System.Drawing.Icon)Properties.Resources.ResourceManager.GetObject(name)).Handle);
+        }
+
+
         public FormCollection(Root root)
         {
             Root = root;
@@ -147,9 +163,9 @@ namespace gInk
 
             longClickTimer.Interval = (int)(Root.LongClickTime * 1000 +100);
             if (Root.MagneticRadius>0)
-                this.btMagn.BackgroundImage = global::gInk.Properties.Resources.Magnetic_act;
+                this.btMagn.BackgroundImage = getImgFromDiskOrRes("Magnetic_act", new string[] { ".png" });
             else
-                this.btMagn.BackgroundImage = global::gInk.Properties.Resources.Magnetic;
+                this.btMagn.BackgroundImage = getImgFromDiskOrRes("Magnetic", new string[] { ".png" });
 
             PrimaryLeft = Screen.PrimaryScreen.Bounds.Left - SystemInformation.VirtualScreen.Left;
             PrimaryTop = Screen.PrimaryScreen.Bounds.Top - SystemInformation.VirtualScreen.Top;
@@ -1657,8 +1673,21 @@ namespace gInk
 				EnterEraserMode(true);
 				Root.UnPointer();
 				Root.PanMode = false;
-
-				IC.Cursor = cursorerase;
+                // !!!!!!!!!!!!!!! random exception
+                for(int i=0; i<10; i++)
+                {
+                    try
+                    {
+                        IC.Cursor = new System.Windows.Forms.Cursor(cursorerase.Handle);
+                    }
+                    catch(Exception e)
+                    {
+                        cursorerase = getCursFromDiskOrRes("cursoreraser");
+                        Console.WriteLine(e.Message);
+                        continue;
+                    }
+                    break;
+                }
 
 				try
 				{
