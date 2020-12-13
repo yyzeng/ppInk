@@ -202,8 +202,8 @@ namespace gInk
             TextItalic = Root.TextItalic;
             TextSize = Root.TextSize;
 
-            gpButtons.BackColor = Color.FromArgb(Root.ToolbarBGColor[3],Root.ToolbarBGColor[0], Root.ToolbarBGColor[1], Root.ToolbarBGColor[2]);
-            gpPenWidth.BackColor = Color.FromArgb(Root.ToolbarBGColor[3], Root.ToolbarBGColor[0], Root.ToolbarBGColor[1], Root.ToolbarBGColor[2]);
+            gpButtons.BackColor = Color.FromArgb(Root.ToolbarBGColor[0],Root.ToolbarBGColor[1], Root.ToolbarBGColor[2], Root.ToolbarBGColor[3]);
+            gpPenWidth.BackColor = Color.FromArgb(Root.ToolbarBGColor[0], Root.ToolbarBGColor[1], Root.ToolbarBGColor[2], Root.ToolbarBGColor[3]);
 
             longClickTimer.Interval = (int)(Root.LongClickTime * 1000 +100);
             if (Root.MagneticRadius>0)
