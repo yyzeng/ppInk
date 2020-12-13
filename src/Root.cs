@@ -529,12 +529,11 @@ namespace gInk
 			if (PointerMode == false)
 				return;
 
+			FormButtonHitter.Hide();
 			FormCollection.ToUnThrough();
 			FormCollection.ToTopMost();
 			FormCollection.Activate();
 			PointerMode = false;
-
-			FormButtonHitter.Hide();
 		}
 
 		public void SelectPen(int pen)

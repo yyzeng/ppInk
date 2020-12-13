@@ -95,9 +95,11 @@ namespace gInk
         public bool TextItalic = false;
         public bool TextBold = false;
 
+        private bool SetWindowInputRectFlag = false;
+
         // http://www.csharp411.com/hide-form-from-alttab/
         protected override CreateParams CreateParams
-		{
+        {
 			get
 			{
 				CreateParams cp = base.CreateParams;
@@ -673,6 +675,28 @@ namespace gInk
 
         //public override bool PreProcessMessage(ref Message msg)
         //[System.Security.Permissions.PermissionSet(System.Security.Permissions.SecurityAction.Demand, Name = "FullTrust")]
+
+        public void AltTabActivate()
+        {
+            if (Initializing)
+            {
+                Initializing = false;
+                return;
+            }
+            Console.WriteLine("activating " + (Root.PointerMode ? "pointer" : "not") + (Root.FormButtonHitter.Visible ? "visible" : "not")+ Root.FormButtonHitter.Width.ToString());
+            if (Root.FormButtonHitter.Visible && Root.FormButtonHitter.Width < 100)
+            {
+                Console.WriteLine("process ");
+                SelectPen(LastPenSelected);
+                SelectTool(SavedTool, SavedFilled);
+                SavedTool = -1;
+                SavedFilled = -1;
+                Root.UnDock();
+                Root.UponAllDrawingUpdate = true;
+                Root.UponButtonsUpdate |= 0x7;
+
+            }
+        }
         protected override void WndProc(ref Message msg)
         {
             if (msg.Msg == 0x001C) //WM_ACTIVATEAPP : generated through alt+tab
@@ -680,12 +704,22 @@ namespace gInk
                 if (!Root.AltTabPointer)
                     return;
                 if (msg.WParam == IntPtr.Zero)
-                {   //Console.WriteLine("desactivating ");
+                {   Console.WriteLine("desactivating ");
                     if (!Root.PointerMode)
+                    {
+                        Console.WriteLine("process ");
+                        SavedTool = Root.ToolSelected;
+                        SavedFilled = Root.FilledSelected;
                         SelectPen(-2);
+                        Root.Dock();
+                        return;
+                    }
                 }
-                /*else
-                    Console.WriteLine("activating ");*/
+                else
+                {
+                    AltTabActivate();
+                    return;
+                }
             }
             base.WndProc(ref msg);
         }
@@ -1740,17 +1774,17 @@ namespace gInk
 				}
 				else if (Root.CanvasCursor == 1)
 					SetPenTipCursor();
-
-				try
-				{
-					IC.SetWindowInputRectangle(new Rectangle(0, 0, this.Width, this.Height));
-				}
-				catch
-				{
-					Thread.Sleep(1);
-					IC.SetWindowInputRectangle(new Rectangle(0, 0, this.Width, this.Height));
-				}
-			}
+                // !!!!! TODO problem re-entrant
+                try
+                {
+                    IC.SetWindowInputRectangle(new Rectangle(0, 0, this.Width, this.Height));
+                }
+                catch
+                {
+                    Console.WriteLine("!!excpt IC.SetWindowInputRectangle");
+                    SetWindowInputRectFlag = true;
+                }
+            }
 			Root.CurrentPen = pen;
 			if (Root.gpPenWidthVisible)
 			{
@@ -2010,7 +2044,14 @@ namespace gInk
 				cbrush = new SolidBrush(Color.Black);
 				widt = new Point(60, 0);
 			}
-			IC.Renderer.InkSpaceToPixel(IC.Handle, ref widt);
+            try
+            {
+			    IC.Renderer.InkSpaceToPixel(IC.Handle, ref widt);
+            }
+            catch  // not in good context. considered to be able to stop processing at that time
+            {
+                return;
+            }
 
 			IntPtr screenDc = GetDC(IntPtr.Zero);
 			const int VERTRES = 10;
@@ -2035,8 +2076,13 @@ namespace gInk
         short LastESCStatus = 0;
 		private void tiSlide_Tick(object sender, EventArgs e)
 		{
-			// ignore the first tick
-			if (LastTickTime.Year == 1987)
+            Initializing = false;
+
+            if(SetWindowInputRectFlag) // alternative to prevent some error when trying to call this function from WM_ACTIVATE event handler
+                IC.SetWindowInputRectangle(new Rectangle(0, 0, this.Width, this.Height));
+            SetWindowInputRectFlag = false;
+            // ignore the first tick
+            if (LastTickTime.Year == 1987)
 			{
 				LastTickTime = DateTime.Now;
 				return;
@@ -2135,7 +2181,8 @@ namespace gInk
                         Root.BoardSelected = Root.BoardAtOpening;
                     }
                 }
-                 ButtonsEntering = 0;
+                Root.UponButtonsUpdate |= 2;
+                ButtonsEntering = 0;
             }
 
 

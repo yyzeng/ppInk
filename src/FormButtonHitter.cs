@@ -39,7 +39,27 @@ namespace gInk
 			this.Height = FC.gpButtons.Height;
 		}
 
-		private void FormButtonHitter_Click(object sender, EventArgs e)
+        protected override void WndProc(ref Message msg)
+        {
+            //if ((msg.Msg == 0x001C) || (msg.Msg == 6)) //WM_ACTIVATEAPP : generated through alt+tab
+            if ((msg.Msg == 6)) //WM_ACTIVATE : generated through alt+tab
+            {
+                    Console.WriteLine(DateTime.Now.ToString() + " !msgH " + msg.Msg.ToString()+" - "+ msg.WParam.ToString());
+                //if ((msg.Msg == 6) || ((msg.Msg == 0x001C) && (msg.WParam != IntPtr.Zero))
+                {
+                    Console.WriteLine("activating from hitter " + (Root.PointerMode ? "pointer" : "not") + (Root.Docked ? "docked" : "not"));
+                    Root.FormCollection.AltTabActivate();
+                    return;
+                }
+            }
+            /*else if (msg.Msg != 0x0113)
+            {
+                Console.WriteLine(DateTime.Now.ToString()+" msgH " + msg.Msg.ToString());
+            }*/
+            base.WndProc(ref msg);
+        }
+
+        private void FormButtonHitter_Click(object sender, EventArgs e)
 		{
 			MouseEventArgs m = (MouseEventArgs)e;
             TimeSpan tsp= DateTime.Now - MouseTimeDown;
