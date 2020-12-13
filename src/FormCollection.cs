@@ -15,6 +15,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Security.Cryptography;
 using System.Reflection;
+using System.Drawing.Imaging;
 
 namespace gInk
 {
@@ -150,16 +151,57 @@ namespace gInk
         }
 
 
+        public Bitmap getImgFromDiskOrRes(string name, string[] exts)
+        {
+            string filename;
+            foreach(string ext in exts)
+            {
+                filename= Root.ProgramFolder + Path.DirectorySeparatorChar + name+ ext;
+                if (File.Exists(filename))
+                    return new Bitmap(filename);
+            }
+            return new Bitmap((Bitmap)Properties.Resources.ResourceManager.GetObject(name));
+        }
+
+        public Bitmap buildPenIcon(Color col,int transparency,Boolean Sel)
+        {
+            Bitmap fg,img;
+            ImageAttributes imageAttributes = new ImageAttributes();
+            string filename;
+            bool Large = transparency>=100;
+
+            float[][] colorMatrixElements = {
+                       new float[] {col.R/255.0f,  0,  0,  0, 0},
+                       new float[] {0,  col.G / 255.0f,  0,  0, 0},
+                       new float[] {0,  0,  col.B / 255.0f,  0, 0},
+                       new float[] {0,  0,  0,  (255-transparency) / 255.0f, 0},
+                       new float[] {0,  0,  0,     0,  1}};
+            ColorMatrix colorMatrix = new ColorMatrix(colorMatrixElements);
+            imageAttributes.SetColorMatrix( colorMatrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+
+            img = getImgFromDiskOrRes((Large ? "Lpen" : "pen") + (Sel ? "S" : "") + "_bg", new string[] { ".png" });
+            fg = getImgFromDiskOrRes((Large ? "Lpen" : "pen") + (Sel ? "S" : "") + "_col", new string[] { ".png" });
+
+            Graphics g = Graphics.FromImage(img);
+            g.DrawImage(fg, new Rectangle(0, 0, img.Width, img.Height), 0, 0, img.Width, img.Height,GraphicsUnit.Pixel, imageAttributes);
+            return img;
+        }
+
         public FormCollection(Root root)
         {
             Root = root;
+            //Console.WriteLine("A=" + (DateTime.Now.Ticks/1e7).ToString());
             InitializeComponent();
-
+            //Console.WriteLine("B=" + (DateTime.Now.Ticks/1e7).ToString());
+            Initializing = true;
             //loading default params
             TextFont = Root.TextFont;
             TextBold = Root.TextBold;
             TextItalic = Root.TextItalic;
             TextSize = Root.TextSize;
+
+            gpButtons.BackColor = Color.FromArgb(Root.ToolbarBGColor[3],Root.ToolbarBGColor[0], Root.ToolbarBGColor[1], Root.ToolbarBGColor[2]);
+            gpPenWidth.BackColor = Color.FromArgb(Root.ToolbarBGColor[3], Root.ToolbarBGColor[0], Root.ToolbarBGColor[1], Root.ToolbarBGColor[2]);
 
             longClickTimer.Interval = (int)(Root.LongClickTime * 1000 +100);
             if (Root.MagneticRadius>0)
@@ -234,7 +276,7 @@ namespace gInk
 
             btPen = new Button[Root.MaxPenCount];
 
-            int cumulatedleft = (int)(btDock.Width * 2.5);
+            int cumulatedleft = (int)(btDock.Width * 1.5);
             for (int b = 0; b < Root.MaxPenCount; b++)
             {
                 btPen[b] = new Button();
@@ -242,21 +284,23 @@ namespace gInk
                 btPen[b].Width = (int)(gpButtons.Height * 0.85);
                 btPen[b].Height = (int)(gpButtons.Height * 0.85);
                 btPen[b].Top = (int)(gpButtons.Height * 0.08);
-                btPen[b].FlatAppearance.BorderColor = System.Drawing.Color.WhiteSmoke;
-                btPen[b].FlatAppearance.BorderSize = 3;
-                btPen[b].FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(250, 50, 50);
+                //btPen[b].FlatAppearance.BorderColor = System.Drawing.Color.WhiteSmoke;
+                btPen[b].FlatAppearance.BorderSize = 0;
+                btPen[b].FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent; // System.Drawing.Color.FromArgb(250, 50, 50);
                 btPen[b].FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-                btPen[b].ForeColor = System.Drawing.Color.Transparent;
+                //btPen[b].ForeColor = System.Drawing.Color.Transparent;
                 //btPen[b].Name = "btPen" + b.ToString();
-                btPen[b].UseVisualStyleBackColor = false;
+                //btPen[b].UseVisualStyleBackColor = false;
                 
                 btPen[b].ContextMenu = new ContextMenu();
                 btPen[b].ContextMenu.Popup += new System.EventHandler(this.btColor_Click);
                 btPen[b].Click += new System.EventHandler(this.btColor_Click);
 
-                btPen[b].BackColor = Root.PenAttr[b].Color;
-                btPen[b].FlatAppearance.MouseDownBackColor = Root.PenAttr[b].Color;
-                btPen[b].FlatAppearance.MouseOverBackColor = Root.PenAttr[b].Color;
+                btPen[b].BackColor = System.Drawing.Color.Transparent;
+                btPen[b].BackgroundImageLayout = ImageLayout.Stretch;
+                //btPen[b].BackColor = Root.PenAttr[b].Color;
+                //btPen[b].FlatAppearance.MouseDownBackColor = Root.PenAttr[b].Color;
+                //btPen[b].FlatAppearance.MouseOverBackColor = Root.PenAttr[b].Color;
                 this.toolTip.SetToolTip(this.btPen[b], Root.Local.ButtonNamePen[b] + " (" + Root.Hotkey_Pens[b].ToString() + ")");
 
                 btPen[b].MouseDown += gpButtons_MouseDown;
@@ -357,7 +401,7 @@ namespace gInk
             {
                 btPenWidth.Visible = true;
                 btPenWidth.Height = (int)(gpButtons.Height * 0.85);
-                btDock.Width = btDock.Height;
+                //btDock.Width = btDock.Height;
                 btPenWidth.Left = cumulatedleft;
                 cumulatedleft += (int)(btPenWidth.Width * 1.1);
             }
@@ -502,7 +546,7 @@ namespace gInk
             IC.DefaultDrawingAttributes.AntiAliased = true;
             IC.DefaultDrawingAttributes.FitToCurve = true;
 
-            string icon_filename= Root.ProgramFolder + Path.DirectorySeparatorChar + "cursor";
+            /*string icon_filename= Root.ProgramFolder + Path.DirectorySeparatorChar + "cursor";
             if (File.Exists(icon_filename+".cur")) 
                 cursorred = MyNativeMethods.LoadCustomCursor(icon_filename+".cur");
             else if (File.Exists(icon_filename + ".ani"))
@@ -521,66 +565,31 @@ namespace gInk
                 cursorerase = new System.Windows.Forms.Cursor(icon_filename + ".ico");
             else
                 cursorerase = new System.Windows.Forms.Cursor(gInk.Properties.Resources.cursoreraser.Handle);
+            */
+            cursorred = getCursFromDiskOrRes("cursorarrow");
+            cursorerase = getCursFromDiskOrRes("cursoreraser");
 
             IC.Enabled = true;
 
-            image_exit = new Bitmap(btStop.Width, btStop.Height);
-            Graphics g = Graphics.FromImage(image_exit);
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            g.DrawImage(global::gInk.Properties.Resources.exit, 0, 0, btStop.Width, btStop.Height);
-            btStop.Image = image_exit;
-            image_clear = new Bitmap(btClear.Width, btClear.Height);
-            g = Graphics.FromImage(image_clear);
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            g.DrawImage(global::gInk.Properties.Resources.garbage, 0, 0, btClear.Width, btClear.Height);
+            Graphics g;
+            string[] ImageExts = { ".png" };
+            btStop.BackgroundImage = getImgFromDiskOrRes("exit", ImageExts);
             //btClear.Image = image_clear;
-            image_undo = new Bitmap(btUndo.Width, btUndo.Height);
-            g = Graphics.FromImage(image_undo);
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            g.DrawImage(global::gInk.Properties.Resources.undo, 0, 0, btUndo.Width, btUndo.Height);
-            btUndo.Image = image_undo;
-            image_eraser_act = new Bitmap(btEraser.Width, btEraser.Height);
-            g = Graphics.FromImage(image_eraser_act);
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            g.DrawImage(global::gInk.Properties.Resources.eraser_act, 0, 0, btEraser.Width, btEraser.Height);
-            image_eraser = new Bitmap(btEraser.Width, btEraser.Height);
-            g = Graphics.FromImage(image_eraser);
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            g.DrawImage(global::gInk.Properties.Resources.eraser, 0, 0, btEraser.Width, btEraser.Height);
-            btEraser.Image = image_eraser;
+            btUndo.BackgroundImage = getImgFromDiskOrRes("undo", ImageExts);
+            image_eraser_act = getImgFromDiskOrRes("eraser_act", ImageExts);
+            image_eraser = getImgFromDiskOrRes("eraser", ImageExts);
+            btEraser.BackgroundImage = image_eraser;
 
-            image_visible_not = new Bitmap(btInkVisible.Width, btInkVisible.Height);
-            g = Graphics.FromImage(image_visible_not);
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            g.DrawImage(global::gInk.Properties.Resources.visible_not, 0, 0, btInkVisible.Width, btInkVisible.Height);
-            image_visible = new Bitmap(btInkVisible.Width, btInkVisible.Height);
-            g = Graphics.FromImage(image_visible);
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            g.DrawImage(global::gInk.Properties.Resources.visible, 0, 0, btInkVisible.Width, btInkVisible.Height);
-            btInkVisible.Image = image_visible;
+            image_visible_not = getImgFromDiskOrRes("visible_not", ImageExts);
+            image_visible = getImgFromDiskOrRes("visible", ImageExts);
+            btInkVisible.BackgroundImage = image_visible;
+            btSnap.BackgroundImage = getImgFromDiskOrRes("snap", ImageExts); ;
 
-            image_snap = new Bitmap(btSnap.Width, btSnap.Height);
-            g = Graphics.FromImage(image_snap);
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            g.DrawImage(global::gInk.Properties.Resources.snap, 0, 0, btSnap.Width, btSnap.Height);
-            btSnap.Image = image_snap;
-            image_penwidth = new Bitmap(btPenWidth.Width, btPenWidth.Height);
-            g = Graphics.FromImage(image_penwidth);
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            g.DrawImage(global::gInk.Properties.Resources.penwidth, 0, 0, btPenWidth.Width, btPenWidth.Height);
-            btPenWidth.Image = image_penwidth;
-            image_dock = new Bitmap(btDock.Width, btDock.Height);
-            g = Graphics.FromImage(image_dock);
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            g.DrawImage(global::gInk.Properties.Resources.dock, 0, 0, btDock.Width, btDock.Height);
-            image_dockback = new Bitmap(btDock.Width, btDock.Height);
-            g = Graphics.FromImage(image_dockback);
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            g.DrawImage(global::gInk.Properties.Resources.dockback, 0, 0, btDock.Width, btDock.Height);
+            btPenWidth.BackgroundImage = getImgFromDiskOrRes("penwidth", ImageExts); 
             if (Root.Docked)
-                btDock.Image = image_dockback;
+                btDock.BackgroundImage = getImgFromDiskOrRes("dockback", ImageExts);
             else
-                btDock.Image = image_dock;
+                btDock.BackgroundImage = getImgFromDiskOrRes("dock", ImageExts);
 
             image_pencil = new Bitmap(btPen[2].Width, btPen[2].Height);
             g = Graphics.FromImage(image_pencil);
@@ -599,14 +608,8 @@ namespace gInk
             g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
             g.DrawImage(global::gInk.Properties.Resources.highlighter_act, 0, 0, btPen[2].Width, btPen[2].Height);
 
-            image_pointer = new Bitmap(btPointer.Width, btPointer.Height);
-            g = Graphics.FromImage(image_pointer);
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            g.DrawImage(global::gInk.Properties.Resources.pointer, 0, 0, btPointer.Width, btPointer.Height);
-            image_pointer_act = new Bitmap(btPointer.Width, btPointer.Height);
-            g = Graphics.FromImage(image_pointer_act);
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            g.DrawImage(global::gInk.Properties.Resources.pointer_act, 0, 0, btPointer.Width, btPointer.Height);
+            image_pointer = getImgFromDiskOrRes("pointer", ImageExts);
+            image_pointer_act = getImgFromDiskOrRes("pointer_act", ImageExts);
 
             image_pen = new Bitmap[Root.MaxPenCount];
             image_pen_act = new Bitmap[Root.MaxPenCount];
@@ -659,6 +662,7 @@ namespace gInk
             PenModifyDlg = new PenModifyDlg(Root); // It seems to be a little long to build so we prepare it.
             SelectTool(0, 0); // Select Hand Drawing by Default
 
+        //Console.WriteLine("C=" + (DateTime.Now.Ticks/1e7).ToString());
         }
 
         // I want to be able to use the space,escape,... I must not leave leave the application handle those and generate clicks...
@@ -1623,9 +1627,10 @@ namespace gInk
                 }
                 SelectTool(-1, 0);       // Alt will be processed inhere
                 for (int b = 0; b < Root.MaxPenCount; b++)
-					btPen[b].Image = image_pen[b];
-				btEraser.Image = image_eraser;
-				btPointer.Image = image_pointer;
+                    //btPen[b].Image = image_pen[b];
+                    btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, false);// image_pen[b];
+                btEraser.BackgroundImage = image_eraser;
+				btPointer.BackgroundImage = image_pointer;
                 btPan.BackgroundImage = global::gInk.Properties.Resources.pan_act;
                 EnterEraserMode(false);
 				Root.UnPointer();
@@ -1649,9 +1654,10 @@ namespace gInk
                 }
                 SelectTool(-1, 0);       // Alt will be processed inhere
                 for (int b = 0; b < Root.MaxPenCount; b++)
-					btPen[b].Image = image_pen[b];
-				btEraser.Image = image_eraser;
-				btPointer.Image = image_pointer_act;
+                    //btPen[b].Image = image_pen[b];
+                    btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, false);// image_pen[b];
+                btEraser.BackgroundImage = image_eraser;
+				btPointer.BackgroundImage = image_pointer_act;
 				EnterEraserMode(false);
 				Root.Pointer();
 				Root.PanMode = false;
@@ -1667,9 +1673,11 @@ namespace gInk
 				//	this.Cursor = System.Windows.Forms.Cursors.Default;
                 
                 for (int b = 0; b < Root.MaxPenCount; b++)
-					btPen[b].Image = image_pen[b];
-				btEraser.Image = image_eraser_act;
-				btPointer.Image = image_pointer;
+					//btPen[b].Image = image_pen[b];
+                    btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, false);// image_pen[b];
+
+                btEraser.BackgroundImage = image_eraser_act;
+				btPointer.BackgroundImage = image_pointer;
 				EnterEraserMode(true);
 				Root.UnPointer();
 				Root.PanMode = false;
@@ -1716,10 +1724,11 @@ namespace gInk
 				}
                 IC.DefaultDrawingAttributes.FitToCurve = true;
                 for (int b = 0; b < Root.MaxPenCount; b++)
-					btPen[b].Image = image_pen[b];
-				btPen[pen].Image = image_pen_act[pen];
-				btEraser.Image = image_eraser;
-				btPointer.Image = image_pointer;
+                    //btPen[b].Image = image_pen[b];
+                    btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, b == pen);
+				//btPen[pen].Image = image_pen_act[pen];
+				btEraser.BackgroundImage = image_eraser;
+				btPointer.BackgroundImage = image_pointer;
 				EnterEraserMode(false);
 				Root.UnPointer();
 				Root.PanMode = false;
@@ -2669,8 +2678,9 @@ namespace gInk
                         if ((Root.ToolSelected == 10) || (Root.ToolSelected == 5)) // if move
                             SelectTool(0);
                         PreparePenImages(Root.PenAttr[b].Transparency, ref image_pen[b], ref image_pen_act[b]);
-                        btPen[b].Image = image_pen_act[b];
-                        btPen[b].BackColor = Root.PenAttr[b].Color;
+                        //btPen[b].Image = image_pen_act[b];
+                        btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, false);// image_pen[b];
+                        //btPen[b].BackColor = Root.PenAttr[b].Color;
                         btPen[b].FlatAppearance.MouseDownBackColor = Root.PenAttr[b].Color;
                         btPen[b].FlatAppearance.MouseOverBackColor = Root.PenAttr[b].Color;
                         SelectPen(b);

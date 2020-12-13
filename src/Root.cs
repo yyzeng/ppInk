@@ -114,6 +114,7 @@ namespace gInk
         // the two grays for "white board" effect
         public int[] Gray1 = new int[] { 80, 150, 150, 150 };
         public int[] Gray2 = new int[] {100, 100, 100, 100};
+        public int[] ToolbarBGColor = new int[] { 245, 245, 245, 0 };
         public int BoardAtOpening = 0;      // 0:Transparent/1:White/2:Customed/3:Black/4:AtSelection
         public int BoardSelected = 0;       // by default transparent
 
@@ -460,9 +461,9 @@ namespace gInk
 		{
 			InkVisible = visible;
 			if (visible)
-				FormCollection.btInkVisible.Image = FormCollection.image_visible;
+				FormCollection.btInkVisible.BackgroundImage = FormCollection.image_visible;
 			else
-				FormCollection.btInkVisible.Image = FormCollection.image_visible_not;
+				FormCollection.btInkVisible.BackgroundImage = FormCollection.image_visible_not;
 
 			FormDisplay.ClearCanvus();
 			FormDisplay.DrawStrokes();
@@ -497,7 +498,7 @@ namespace gInk
 
 			Docked = true;
 			gpPenWidthVisible = false;
-			FormCollection.btDock.Image = FormCollection.image_dockback;
+			FormCollection.btDock.BackgroundImage = gInk.Properties.Resources.dockback;
 			FormCollection.ButtonsEntering = -1;
 			UponButtonsUpdate |= 0x2;
 		}
@@ -508,7 +509,7 @@ namespace gInk
 				return;
 
 			Docked = false;
-			FormCollection.btDock.Image = FormCollection.image_dock;
+			FormCollection.btDock.BackgroundImage = gInk.Properties.Resources.dock;
 			FormCollection.ButtonsEntering = 1;
 			UponButtonsUpdate |= 0x2;
 		}
@@ -968,6 +969,14 @@ namespace gInk
                                     Gray2[i] = Int32.Parse(tab[i]);
                             };
                             break;
+                        case "TOOLBAR_COLOR": // if not defined, no window else 2 to 4 integers Top,Left,[Width/Height,[Opacity]]
+                            tab = sPara.Split(',');
+                            if (tab.Length == 4)
+                            {
+                                for (int i = 0; i < 4; i++)
+                                    ToolbarBGColor[i] = Int32.Parse(tab[i]);
+                            };
+                            break;
                         case "BOARDATOPENING":
                             if (Int32.TryParse(sPara, out tempi))
                                 BoardAtOpening  = tempi;
@@ -1293,6 +1302,9 @@ namespace gInk
                             break;
                         case "GRAYBOARD2":
                             sPara = Gray2[0].ToString() + "," + Gray2[1].ToString() + "," + Gray2[2].ToString() + "," + Gray2[3].ToString();
+                            break;
+                        case "TOOLBAR_COLOR":
+                            sPara = ToolbarBGColor[0].ToString() + "," + ToolbarBGColor[1].ToString() + "," + ToolbarBGColor[2].ToString() + "," + ToolbarBGColor[3].ToString();
                             break;
                         case "BOARDATOPENING":
                             sPara = BoardAtOpening.ToString();
