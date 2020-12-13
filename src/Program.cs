@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Reflection;
 
 namespace gInk
 {
@@ -65,15 +66,16 @@ namespace gInk
             Application.Run();
 		}
 
-		private static void UIThreadException(object sender, ThreadExceptionEventArgs t)
+        private static void UIThreadException(object sender, ThreadExceptionEventArgs t)
 		{
 			DialogResult result = DialogResult.Cancel;
 			try
 			{
 				Exception ex = (Exception)t.Exception;
-
-				string errorMsg = "UIThreadException\r\n\r\n";
-				errorMsg += "Oops, gInk crashed! Please include the following information if you plan to contact the developers (a copy of the following information is stored in crash.txt in the application folder):\r\n\r\n";
+                DateTime lastModified = System.IO.File.GetLastWriteTime(Environment.GetCommandLineArgs()[0]);
+                string errorMsg = "UIThreadException\r\n\r\n";
+                errorMsg += "version "Assembly.GetExecutingAssembly().GetName().Version.ToString() + " built on " + lastModified.ToString()+"\r\n";
+                errorMsg += "Oops, ppInk crashed! Please include the following information if you plan to contact the developers (a copy of the following information is stored in crash.txt in the application folder):\r\n\r\n";
 				errorMsg += ex.Message + "\r\n\r\n";
 				errorMsg += "Stack Trace:\r\n" + ex.StackTrace + "\r\n\r\n";
 				WriteErrorLog(errorMsg);
@@ -103,9 +105,10 @@ namespace gInk
 			try
 			{
 				Exception ex = (Exception)e.ExceptionObject;
-
-				string errorMsg = "UnhandledException\r\n\r\n";
-				errorMsg += "Oops, gInk crashed! Please include the following information if you plan to contact the developers:\r\n\r\n";
+                DateTime lastModified = System.IO.File.GetLastWriteTime(Environment.GetCommandLineArgs()[0]);
+                string errorMsg = "UnhandledException\r\n\r\n";
+                errorMsg += "version "Assembly.GetExecutingAssembly().GetName().Version.ToString() + " built on " + lastModified.ToString() + "\r\n";
+                errorMsg += "Oops, ppInk crashed! Please include the following information if you plan to contact the developers:\r\n\r\n";
 				errorMsg += ex.Message + "\r\n\r\n";
 				errorMsg += "Stack Trace:\r\n" + ex.StackTrace + "\r\n\r\n";
 				WriteErrorLog(errorMsg);
