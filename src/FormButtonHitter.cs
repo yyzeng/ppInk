@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -14,7 +14,7 @@ namespace gInk
 	{
 		Root Root;
 		FormCollection FC;
-        DateTime MouseTimeDown;
+        // DateTime MouseTimeDown;
 		// http://www.csharp411.com/hide-form-from-alttab/
 		protected override CreateParams CreateParams
 		{
@@ -44,10 +44,10 @@ namespace gInk
             //if ((msg.Msg == 0x001C) || (msg.Msg == 6)) //WM_ACTIVATEAPP : generated through alt+tab
             if ((msg.Msg == 6)) //WM_ACTIVATE : generated through alt+tab
             {
-                    Console.WriteLine(DateTime.Now.ToString() + " !msgH " + msg.Msg.ToString()+" - "+ msg.WParam.ToString());
+                //Console.WriteLine(DateTime.Now.ToString() + " !msgH " + msg.Msg.ToString()+" - "+ msg.WParam.ToString());
                 //if ((msg.Msg == 6) || ((msg.Msg == 0x001C) && (msg.WParam != IntPtr.Zero))
                 {
-                    Console.WriteLine("activating from hitter " + (Root.PointerMode ? "pointer" : "not") + (Root.Docked ? "docked" : "not"));
+                    //Console.WriteLine("activating from hitter " + (Root.PointerMode ? "pointer" : "not") + (Root.Docked ? "docked" : "not"));
                     Root.FormCollection.AltTabActivate();
                     return;
                 }
@@ -62,7 +62,7 @@ namespace gInk
         private void FormButtonHitter_Click(object sender, EventArgs e)
 		{
 			MouseEventArgs m = (MouseEventArgs)e;
-            TimeSpan tsp= DateTime.Now - MouseTimeDown;
+            TimeSpan tsp= DateTime.Now - Root.FormCollection.MouseTimeDown;
             //MessageBox.Show(string.Format("t = {0:N3}",tsp.TotalSeconds));
 			foreach (Control control in FC.gpButtons.Controls)
 			{
@@ -105,7 +105,7 @@ namespace gInk
 
         private void FormButtonHitter_MouseDown(object sender, MouseEventArgs e)
         {
-            Console.WriteLine("BH", (sender as Control).Name);
+            //Console.WriteLine("BH", (sender as Control).Name);
             Root.FormCollection.MouseTimeDown = DateTime.Now;
         }
     }

@@ -169,7 +169,6 @@ namespace gInk
         {
             Bitmap fg,img;
             ImageAttributes imageAttributes = new ImageAttributes();
-            string filename;
             bool Large = transparency>=100;
 
             float[][] colorMatrixElements = {
@@ -684,9 +683,10 @@ namespace gInk
                 return;
             }
             Console.WriteLine("activating " + (Root.PointerMode ? "pointer" : "not") + (Root.FormButtonHitter.Visible ? "visible" : "not")+ Root.FormButtonHitter.Width.ToString());
+            //Console.WriteLine("activating " + (Root.PointerMode ? "pointer" : "not") + (Root.FormButtonHitter.Visible ? "visible" : "not")+ Root.FormButtonHitter.Width.ToString());
             if (Root.FormButtonHitter.Visible && Root.FormButtonHitter.Width < 100)
             {
-                Console.WriteLine("process ");
+                //Console.WriteLine("process ");
                 SelectPen(LastPenSelected);
                 SelectTool(SavedTool, SavedFilled);
                 SavedTool = -1;
@@ -704,10 +704,10 @@ namespace gInk
                 if (!Root.AltTabPointer)
                     return;
                 if (msg.WParam == IntPtr.Zero)
-                {   Console.WriteLine("desactivating ");
+                {   //Console.WriteLine("desactivating ");
                     if (!Root.PointerMode)
                     {
-                        Console.WriteLine("process ");
+                        //Console.WriteLine("process ");
                         SavedTool = Root.ToolSelected;
                         SavedFilled = Root.FilledSelected;
                         SelectPen(-2);
@@ -737,7 +737,7 @@ namespace gInk
             else
             {
                 btVideo.BackgroundImage = global::gInk.Properties.Resources.VidUnk;
-                Console.WriteLine("VideoRecInProgress " + Root.VideoRecInProgress.ToString());
+                //Console.WriteLine("VideoRecInProgress " + Root.VideoRecInProgress.ToString());
                 }
             Root.UponButtonsUpdate |= 0x2;
         }
@@ -750,7 +750,7 @@ namespace gInk
             /*if (Root.GlobalPenWidth > 120)
                 Root.GlobalPenWidth = 120;
             */
-            Console.WriteLine(Root.GlobalPenWidth);
+            //Console.WriteLine(Root.GlobalPenWidth);
             IC.DefaultDrawingAttributes.Width = Root.GlobalPenWidth;
             if (Root.CanvasCursor == 1)
                 SetPenTipCursor();
@@ -768,12 +768,12 @@ namespace gInk
             MouseDownButtonObject = sender;            
             longClickTimer.Start();
             longClickTimer.Tag = sender;
-            Console.WriteLine(string.Format("MD {0} {1}", DateTime.Now.Second, DateTime.Now.Millisecond));
+            //Console.WriteLine(string.Format("MD {0} {1}", DateTime.Now.Second, DateTime.Now.Millisecond));
         }
 
         private void btAllButtons_MouseUp(object sender, MouseEventArgs e)
         {
-            Console.WriteLine("MU " + (sender as Control).Name);
+            //Console.WriteLine("MU " + (sender as Control).Name);
             MouseDownButtonObject = null;
             (sender as Button).RightToLeft = RightToLeft.No;
             longClickTimer.Stop();
@@ -787,7 +787,7 @@ namespace gInk
             longClickTimer.Stop();
             sender = (sender as ContextMenu).SourceControl;
             (sender as Button).RightToLeft = RightToLeft.No;
-            Console.WriteLine(string.Format("RC {0}", (sender as Control).Name));
+            //Console.WriteLine(string.Format("RC {0}", (sender as Control).Name));
             (sender as Button).PerformClick();
         }
 
@@ -796,7 +796,7 @@ namespace gInk
             Button bt = MouseDownButtonObject as Button;
             MouseDownButtonObject = null;
             longClickTimer.Stop();
-            Console.WriteLine(string.Format("!LC {0}", bt.Name));
+            //Console.WriteLine(string.Format("!LC {0}", bt.Name));
             bt.RightToLeft = RightToLeft.Yes;
             bt.PerformClick();
             IsMovingToolbar = 0;
@@ -1020,7 +1020,7 @@ namespace gInk
             Stroke st;
             float pos;
             Point pt = new Point(int.MaxValue, int.MaxValue);
-            int x2 = int.MaxValue, y2 = int.MaxValue, x_a = int.MaxValue, y_a = int.MaxValue;
+            int x2 = int.MaxValue, y2 = int.MaxValue;//, x_a = int.MaxValue, y_a = int.MaxValue;
             if ((Control.ModifierKeys & Keys.Control) != Keys.None || (Control.ModifierKeys & Keys.Shift) != Keys.None)  // force temporarily Magnetic off if ctrl or shift is depressed
                 Magnetic = false;   
             if ((Magnetic || (Control.ModifierKeys & Keys.Control)!=Keys.None  ) &&
@@ -1653,6 +1653,9 @@ namespace gInk
 		{
             btPan.BackgroundImage = global::gInk.Properties.Resources.pan;
             // -3=pan, -2=pointer, -1=erasor, 0+=pens
+            //Console.WriteLine("SelectPen : " + pen.ToString());
+            //System.Diagnostics.StackTrace t = new System.Diagnostics.StackTrace();
+            //Console.WriteLine(t.ToString());
             if (pen == -3)
 			{
                 if (AltKeyPressed() && SavedPen < 0)
@@ -1722,10 +1725,10 @@ namespace gInk
                     {
                         IC.Cursor = new System.Windows.Forms.Cursor(cursorerase.Handle);
                     }
-                    catch(Exception e)
+                    catch
                     {
                         cursorerase = getCursFromDiskOrRes("cursoreraser");
-                        Console.WriteLine(e.Message);
+                        //Console.WriteLine(e.Message);
                         continue;
                     }
                     break;
@@ -1781,7 +1784,7 @@ namespace gInk
                 }
                 catch
                 {
-                    Console.WriteLine("!!excpt IC.SetWindowInputRectangle");
+                    //Console.WriteLine("!!excpt IC.SetWindowInputRectangle");
                     SetWindowInputRectFlag = true;
                 }
             }
@@ -1840,6 +1843,7 @@ namespace gInk
             {
                 SavedTool = Root.ToolSelected;
                 SavedFilled = Root.FilledSelected;
+                //Console.WriteLine("------------------------ "+DateTime.Now.ToString());
 			    SelectPen(-2);
             }
             else
@@ -2182,6 +2186,7 @@ namespace gInk
                     }
                 }
                 Root.UponButtonsUpdate |= 2;
+                //Console.WriteLine("----------- zzzzzzzzzzzzzz    -------------"+DateTime.Now.ToString());
                 ButtonsEntering = 0;
             }
 
@@ -2330,7 +2335,6 @@ namespace gInk
                 pressed = (GetKeyState(Root.Hotkey_DockUndock.Key) & 0x8000) == 0x8000;
                 if (pressed && !LastDockStatus && Root.Hotkey_DockUndock.ModifierMatch(control, alt, shift, win))
                 {
-                    Console.WriteLine("DockKey");
                     btDock_Click(null, null);
                 }
                 LastDockStatus = pressed;
@@ -2815,7 +2819,7 @@ namespace gInk
             }
             else
             {
-                try
+                /*try
                 {
                     Console.Write("-->" + (Root.ObsRecvTask == null).ToString());
                     if (Root.ObsRecvTask != null)
@@ -2824,7 +2828,7 @@ namespace gInk
                 finally
                 {
                     Console.WriteLine();
-                }
+                }*/
                 if (Root.ObsRecvTask == null || Root.ObsRecvTask.IsCompleted)
                 {
                     Root.ObsRecvTask = Task.Run(() => ReceiveObsMesgs(this));
@@ -2850,7 +2854,7 @@ namespace gInk
 
             Root.FFmpegProcess = new Process();
             string[] cmdArgs = Root.ExpandVarCmd(Root.FFMpegCmd, rect.X, rect.Y, rect.Width, rect.Height).Split(new char[] {' '}, 2);
-            Console.WriteLine(string.Format("%s %s", cmdArgs[0], cmdArgs[1]));
+            //Console.WriteLine(string.Format("%s %s", cmdArgs[0], cmdArgs[1]));
 
             Root.FFmpegProcess.StartInfo.FileName = cmdArgs[0];
             Root.FFmpegProcess.StartInfo.Arguments = cmdArgs[1];
@@ -2888,7 +2892,7 @@ namespace gInk
             if (frm.Root.ObsWs == null)
             {
                 frm.Root.ObsWs = new ClientWebSocket();
-                Console.WriteLine("WS Created");
+                //Console.WriteLine("WS Created");
             }
             var rcvBytes = new byte[4096];
             var rcvBuffer = new ArraySegment<byte>(rcvBytes);
@@ -2896,11 +2900,11 @@ namespace gInk
             if (frm.Root.ObsWs.State != WebSocketState.Open)
             {
                 await frm.Root.ObsWs.ConnectAsync(new Uri(frm.Root.ObsUrl), ct);
-                Console.WriteLine("WS Connected");
+                //Console.WriteLine("WS Connected");
                 await SendInWs(frm.Root.ObsWs, "GetAuthRequired", ct);
                 rcvResult = await frm.Root.ObsWs.ReceiveAsync(rcvBuffer, ct);
                 string st = Encoding.UTF8.GetString(rcvBuffer.Array, 0, rcvResult.Count);
-                Console.WriteLine("getAuth => " + st);
+                //Console.WriteLine("getAuth => " + st);
                 if (st.Contains("authRequired\": t"))
                 {
                     int i = st.IndexOf("\"challenge\":");
@@ -2911,7 +2915,7 @@ namespace gInk
                     i = st.IndexOf("\"", i + "\"salt\":".Length + 1)+1;                    
                     j = st.IndexOf("\"", i + 1);
                     string salt = st.Substring(i, j - i);
-                    Console.WriteLine(challenge + " - " + salt);
+                    //Console.WriteLine(challenge + " - " + salt);
                     string authResponse = HashEncode(HashEncode(frm.Root.ObsPwd + salt) + challenge);
                     await SendInWs(frm.Root.ObsWs, "Authenticate", ct,",\"auth\": \"" + authResponse + "\"");
                     rcvResult = await frm.Root.ObsWs.ReceiveAsync(rcvBuffer, ct);
@@ -2933,7 +2937,7 @@ namespace gInk
                 if (ct.IsCancellationRequested)
                     return;
                 string st = Encoding.UTF8.GetString(rcvBuffer.Array, 0, rcvResult.Count);
-                Console.WriteLine("ObsReturned " + st);
+                //Console.WriteLine("ObsReturned " + st);
                 if (st.Contains("\"RecordingStopped\""))
                     frm.Root.VideoRecInProgress = VideoRecInProgress.Stopped;
                 else if (st.Contains("\"RecordingPaused\""))
@@ -2954,26 +2958,26 @@ namespace gInk
                 else if (st.Contains("\"recording\": false") || st.Contains("\"isRecording\": false") || st.Contains("\"streaming\": false"))
                     frm.Root.VideoRecInProgress = VideoRecInProgress.Stopped;
                 frm.SetVidBgImage();
-                Console.WriteLine("vidbg " + frm.Root.VideoRecInProgress.ToString());
+                //Console.WriteLine("vidbg " + frm.Root.VideoRecInProgress.ToString());
                 // for unknown reasons, button update seems unreliable : robustify repeating update after 100ms
                 Thread.Sleep(100);
                 frm.SetVidBgImage();
                 //Console.WriteLine(frm.btVideo.BackgroundImage.ToString()+" vidbg2 " + frm.Root.UponButtonsUpdate);
             }
             frm.btVideo.BackgroundImage = global::gInk.Properties.Resources.VidDead; // the recv task is dead so we put the cross;
-            Console.WriteLine("endoft");
+            //Console.WriteLine("endoft");
         }
 
         static async Task ObsStartRecording(FormCollection frm)
         {
-            Console.WriteLine("StartRec");
+            //Console.WriteLine("StartRec");
             while ((frm.Root.ObsWs==null || frm.Root.VideoRecordWindowInProgress) && !frm.Root.ObsCancel.Token.IsCancellationRequested)// frm.Root.ObsWs.State != WebSocketState.Open)
                 await Task.Delay(50);
             if(frm.Root.VideoRecordMode== VideoRecordMode.OBSRec)
                 await Task.Run(() => SendInWs(frm.Root.ObsWs,"StartRecording", frm.Root.ObsCancel.Token));
             else if (frm.Root.VideoRecordMode == VideoRecordMode.OBSBcst)
                 await Task.Run(() => SendInWs(frm.Root.ObsWs, "StartStreaming", frm.Root.ObsCancel.Token));
-            Console.WriteLine("ExitStartRec");
+            //Console.WriteLine("ExitStartRec");
         }
 
         public void VideoRecordStop()
@@ -3026,14 +3030,14 @@ namespace gInk
 
         static async Task SendInWs(ClientWebSocket ws, string cmd, CancellationToken ct, string parameters="")
         {
-            Console.WriteLine("enter " + cmd);
+            //Console.WriteLine("enter " + cmd);
             string msg = string.Format("{{\"message-id\":\"{0}\",\"request-type\":\"{1}\" {2} }}", (int)(DateTime.UtcNow.TimeOfDay.TotalSeconds), cmd, parameters);
             byte[] sendBytes = Encoding.UTF8.GetBytes(msg);
             var sendBuffer = new ArraySegment<byte>(sendBytes);
             while ((ws.State != WebSocketState.Open ) && !ct.IsCancellationRequested)// frm.Root.ObsWs.State != WebSocketState.Open)
                 await Task.Delay(50);
             await ws.SendAsync(sendBuffer, WebSocketMessageType.Text, true, ct);
-            Console.WriteLine("exit " + cmd);
+            //Console.WriteLine("exit " + cmd);
         }
 
         private void btClear_RightToLeftChanged(object sender, EventArgs e)
@@ -3045,7 +3049,7 @@ namespace gInk
                 (sender as Button).BackgroundImage = global::gInk.Properties.Resources.garbage;
             */
             btClear.BackgroundImage = global::gInk.Properties.Resources.garbage;
-            Console.WriteLine("R2L " + (sender as Button).Name + " . " + (sender as Button).RightToLeft.ToString());
+            //Console.WriteLine("R2L " + (sender as Button).Name + " . " + (sender as Button).RightToLeft.ToString());
             Root.UponButtonsUpdate |= 0x2;
         }
 
