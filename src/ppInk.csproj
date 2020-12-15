@@ -70,6 +70,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BuildTimestamp.cs" />
     <Compile Include="CallForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -316,6 +317,9 @@
     <None Include="icon_white.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>echo namespace gInk { public static class Build { public static string Timestamp = "%25DATE%25 %25TIME%25".Substring(0,16);}} &gt; "$(ProjectDir)\BuildTimestamp.cs"</PreBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
