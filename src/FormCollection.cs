@@ -73,7 +73,7 @@ namespace gInk
         public System.Windows.Forms.Cursor cursorred, cursorsnap, cursorerase;
         public System.Windows.Forms.Cursor cursortip;
         public System.Windows.Forms.Cursor tempArrowCursor = null;
-        private bool Initializing;
+        public bool Initializing;
 
         public DateTime MouseTimeDown;
         public object MouseDownButtonObject;
@@ -682,7 +682,11 @@ namespace gInk
                 Initializing = false;
                 return;
             }
-            Console.WriteLine("activating " + (Root.PointerMode ? "pointer" : "not") + (Root.FormButtonHitter.Visible ? "visible" : "not")+ Root.FormButtonHitter.Width.ToString());
+            if(ButtonsEntering != 0)
+            {
+                //Console.WriteLine("Entering");
+                return;
+            }
             //Console.WriteLine("activating " + (Root.PointerMode ? "pointer" : "not") + (Root.FormButtonHitter.Visible ? "visible" : "not")+ Root.FormButtonHitter.Width.ToString());
             if (Root.FormButtonHitter.Visible && Root.FormButtonHitter.Width < 100)
             {
@@ -1828,7 +1832,14 @@ namespace gInk
 			}
 			else
 			{
-				Root.UnDock();
+                //Console.WriteLine("--------- undocking --------------- "+DateTime.Now.ToString());
+                if (Root.PointerMode)
+                {
+                    //Console.WriteLine("undockPointer");
+                    btPointer_Click(null, null);
+                    Root.UponButtonsUpdate |= 0x7;
+                }
+                Root.UnDock();
 			}
 		}
 
@@ -1845,6 +1856,10 @@ namespace gInk
                 SavedFilled = Root.FilledSelected;
                 //Console.WriteLine("------------------------ "+DateTime.Now.ToString());
 			    SelectPen(-2);
+                if(Root.AltTabPointer)
+                {
+                    Root.Dock();
+                }
             }
             else
             {

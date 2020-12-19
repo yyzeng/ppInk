@@ -37,7 +37,14 @@ namespace gInk
                 bool activePointer = (m.Msg == 0x0312 && Root.FormCollection != null);
                 Root.callshortcut();
                 if (activePointer)           // StartInkingMsg is received twice, therefore we have to froce pointerMode at that time...
+                {
                     Root.FormCollection.btPointer_Click(null,null);
+                    if (Root.AltTabPointer && !Root.PointerMode && !Root.FormCollection.Initializing) // to unfold the bar if AltTabPointer option has been set
+                    {
+                        Root.UnDock();
+                    }
+
+                }
                 return true;
 			}
 			return false;
@@ -520,9 +527,10 @@ namespace gInk
 				return;
 
 			PointerMode = true;
-			FormCollection.ToThrough();
+			FormCollection.ToThrough();     
 			FormButtonHitter.Show();
-		}
+            FormButtonHitter.timer1_Tick(null,null); // Force Size recomputation for alt+tab processing
+        }
 
 		public void UnPointer()
 		{

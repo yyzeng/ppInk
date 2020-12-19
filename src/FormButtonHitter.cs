@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -83,9 +83,9 @@ namespace gInk
 			SetWindowPos(this.Handle, (IntPtr)(-1), 0, 0, 0, 0, 0x0002 | 0x0001 | 0x0020);
 		}
 
-		private void timer1_Tick(object sender, EventArgs e)
+		public void timer1_Tick(object sender, EventArgs e)
 		{
-			if (this.Visible)
+			if (true||this.Visible)  // we force resizing weither visible or not in order to have the good size during alt+tab
 			{
 				this.Left = FC.gpButtons.Left + FC.Left;
 				this.Top = FC.gpButtons.Top + FC.Top;
