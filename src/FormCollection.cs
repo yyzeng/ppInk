@@ -152,10 +152,15 @@ namespace gInk
             return new System.Windows.Forms.Cursor(((System.Drawing.Icon)Properties.Resources.ResourceManager.GetObject(name)).Handle);
         }
 
+        string[] ImageExts = { ".png" };
 
-        public Bitmap getImgFromDiskOrRes(string name, string[] exts)
+        public Bitmap getImgFromDiskOrRes(string name, string[] exts = null)
         {
             string filename;
+            if (exts == null)
+            {
+                exts = new string[] { ".png" };
+            }
             foreach(string ext in exts)
             {
                 filename= Root.ProgramFolder + Path.DirectorySeparatorChar + name+ ext;
@@ -180,8 +185,8 @@ namespace gInk
             ColorMatrix colorMatrix = new ColorMatrix(colorMatrixElements);
             imageAttributes.SetColorMatrix( colorMatrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
 
-            img = getImgFromDiskOrRes((Large ? "Lpen" : "pen") + (Sel ? "S" : "") + "_bg", new string[] { ".png" });
-            fg = getImgFromDiskOrRes((Large ? "Lpen" : "pen") + (Sel ? "S" : "") + "_col", new string[] { ".png" });
+            img = getImgFromDiskOrRes((Large ? "Lpen" : "pen") + (Sel ? "S" : "") + "_bg", ImageExts);
+            fg = getImgFromDiskOrRes((Large ? "Lpen" : "pen") + (Sel ? "S" : "") + "_col", ImageExts);
 
             Graphics g = Graphics.FromImage(img);
             g.DrawImage(fg, new Rectangle(0, 0, img.Width, img.Height), 0, 0, img.Width, img.Height,GraphicsUnit.Pixel, imageAttributes);
@@ -201,14 +206,14 @@ namespace gInk
             TextItalic = Root.TextItalic;
             TextSize = Root.TextSize;
 
-            gpButtons.BackColor = Color.FromArgb(Root.ToolbarBGColor[0],Root.ToolbarBGColor[1], Root.ToolbarBGColor[2], Root.ToolbarBGColor[3]);
+            gpButtons.BackColor = Color.FromArgb(Root.ToolbarBGColor[0], Root.ToolbarBGColor[1], Root.ToolbarBGColor[2], Root.ToolbarBGColor[3]);
             gpPenWidth.BackColor = Color.FromArgb(Root.ToolbarBGColor[0], Root.ToolbarBGColor[1], Root.ToolbarBGColor[2], Root.ToolbarBGColor[3]);
 
             longClickTimer.Interval = (int)(Root.LongClickTime * 1000 +100);
             if (Root.MagneticRadius>0)
-                this.btMagn.BackgroundImage = getImgFromDiskOrRes("Magnetic_act", new string[] { ".png" });
+                this.btMagn.BackgroundImage = getImgFromDiskOrRes("Magnetic_act", ImageExts);
             else
-                this.btMagn.BackgroundImage = getImgFromDiskOrRes("Magnetic", new string[] { ".png" });
+                this.btMagn.BackgroundImage = getImgFromDiskOrRes("Magnetic", ImageExts);
 
             PrimaryLeft = Screen.PrimaryScreen.Bounds.Left - SystemInformation.VirtualScreen.Left;
             PrimaryTop = Screen.PrimaryScreen.Bounds.Top - SystemInformation.VirtualScreen.Top;
@@ -572,8 +577,7 @@ namespace gInk
 
             IC.Enabled = true;
 
-            Graphics g;
-            string[] ImageExts = { ".png" };
+            //Graphics g;
             btStop.BackgroundImage = getImgFromDiskOrRes("exit", ImageExts);
             //btClear.Image = image_clear;
             btUndo.BackgroundImage = getImgFromDiskOrRes("undo", ImageExts);
@@ -591,23 +595,6 @@ namespace gInk
                 btDock.BackgroundImage = getImgFromDiskOrRes("dockback", ImageExts);
             else
                 btDock.BackgroundImage = getImgFromDiskOrRes("dock", ImageExts);
-
-            image_pencil = new Bitmap(btPen[2].Width, btPen[2].Height);
-            g = Graphics.FromImage(image_pencil);
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            g.DrawImage(global::gInk.Properties.Resources.pencil, 0, 0, btPen[2].Width, btPen[2].Height);
-            image_highlighter = new Bitmap(btPen[2].Width, btPen[2].Height);
-            g = Graphics.FromImage(image_highlighter);
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            g.DrawImage(global::gInk.Properties.Resources.highlighter, 0, 0, btPen[2].Width, btPen[2].Height);
-            image_pencil_act = new Bitmap(btPen[2].Width, btPen[2].Height);
-            g = Graphics.FromImage(image_pencil_act);
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            g.DrawImage(global::gInk.Properties.Resources.pencil_act, 0, 0, btPen[2].Width, btPen[2].Height);
-            image_highlighter_act = new Bitmap(btPen[2].Width, btPen[2].Height);
-            g = Graphics.FromImage(image_highlighter_act);
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            g.DrawImage(global::gInk.Properties.Resources.highlighter_act, 0, 0, btPen[2].Width, btPen[2].Height);
 
             image_pointer = getImgFromDiskOrRes("pointer", ImageExts);
             image_pointer_act = getImgFromDiskOrRes("pointer_act", ImageExts);
@@ -731,16 +718,16 @@ namespace gInk
         private void SetVidBgImage()
         {
             if (Root.VideoRecInProgress == VideoRecInProgress.Stopped)
-                btVideo.BackgroundImage = global::gInk.Properties.Resources.VidStop;
+                btVideo.BackgroundImage = getImgFromDiskOrRes("VidStop", ImageExts);
             else if (Root.VideoRecInProgress == VideoRecInProgress.Recording)
-                btVideo.BackgroundImage = global::gInk.Properties.Resources.VidRecord;
+                btVideo.BackgroundImage = getImgFromDiskOrRes("VidRecord", ImageExts);
             else if (Root.VideoRecInProgress == VideoRecInProgress.Streaming)
-                btVideo.BackgroundImage = global::gInk.Properties.Resources.VidBroadcast;
+                btVideo.BackgroundImage = getImgFromDiskOrRes("VidBroadcast", ImageExts);
             else if (Root.VideoRecInProgress == VideoRecInProgress.Paused)
-                btVideo.BackgroundImage = global::gInk.Properties.Resources.VidPause;
+                btVideo.BackgroundImage = getImgFromDiskOrRes("VidPause", ImageExts);
             else
             {
-                btVideo.BackgroundImage = global::gInk.Properties.Resources.VidUnk;
+                btVideo.BackgroundImage = getImgFromDiskOrRes("VidUnk", ImageExts);
                 //Console.WriteLine("VideoRecInProgress " + Root.VideoRecInProgress.ToString());
                 }
             Root.UponButtonsUpdate |= 0x2;
@@ -1532,17 +1519,17 @@ namespace gInk
         // filled : empty(0),PenColorFilled(1),WhiteFilled(2),BlackFilled(3)
         // filled is applicable to Hand,Rect,Oval
         {
-            btHand.BackgroundImage = global::gInk.Properties.Resources.tool_hand;
-            btLine.BackgroundImage = global::gInk.Properties.Resources.tool_line;
-            btRect.BackgroundImage = global::gInk.Properties.Resources.tool_rect;
-            btOval.BackgroundImage = global::gInk.Properties.Resources.tool_oval;
+            btHand.BackgroundImage = getImgFromDiskOrRes("tool_hand", ImageExts);
+            btLine.BackgroundImage = getImgFromDiskOrRes("tool_line", ImageExts);
+            btRect.BackgroundImage = getImgFromDiskOrRes("tool_rect", ImageExts);
+            btOval.BackgroundImage = getImgFromDiskOrRes("tool_oval", ImageExts);
             if (Root.DefaultArrow_start)
-                btArrow.BackgroundImage = global::gInk.Properties.Resources.tool_stAr;
+                btArrow.BackgroundImage = getImgFromDiskOrRes("tool_stAr", ImageExts);
             else
-                btArrow.BackgroundImage = global::gInk.Properties.Resources.tool_enAr;
-            btNumb.BackgroundImage = global::gInk.Properties.Resources.tool_numb;
-            btText.BackgroundImage = global::gInk.Properties.Resources.tool_txtL;
-            btEdit.BackgroundImage = global::gInk.Properties.Resources.tool_edit;
+                btArrow.BackgroundImage = getImgFromDiskOrRes("tool_enAr", ImageExts);
+            btNumb.BackgroundImage = getImgFromDiskOrRes("tool_numb", ImageExts);
+            btText.BackgroundImage = getImgFromDiskOrRes("tool_txtL", ImageExts);
+            btEdit.BackgroundImage = getImgFromDiskOrRes("tool_edit", ImageExts);
 
             if (AltKeyPressed())
             {
@@ -1573,89 +1560,89 @@ namespace gInk
             else if (tool == 0)
             {
                 if (Root.FilledSelected == 0)
-                    btHand.BackgroundImage = global::gInk.Properties.Resources.tool_hand_act;
+                    btHand.BackgroundImage = getImgFromDiskOrRes("tool_hand_act", ImageExts);
                 else if (Root.FilledSelected == 1)
-                    btHand.BackgroundImage = global::gInk.Properties.Resources.tool_hand_filledC;
+                    btHand.BackgroundImage = getImgFromDiskOrRes("tool_hand_filledC", ImageExts);
                 else if (Root.FilledSelected == 2)
-                    btHand.BackgroundImage = global::gInk.Properties.Resources.tool_hand_filledW;
+                    btHand.BackgroundImage = getImgFromDiskOrRes("tool_hand_filledW", ImageExts);
                 else if (Root.FilledSelected == 3)
-                    btHand.BackgroundImage = global::gInk.Properties.Resources.tool_hand_filledB;
+                    btHand.BackgroundImage = getImgFromDiskOrRes("tool_hand_filledB", ImageExts);
                 EnterEraserMode(false);
             }
             else if (tool == 1)
-                btLine.BackgroundImage = global::gInk.Properties.Resources.tool_line_act;
+                btLine.BackgroundImage = getImgFromDiskOrRes("tool_line_act", ImageExts);
             else if (tool == 2)
             {
                 if (Root.FilledSelected == 0)
-                    btRect.BackgroundImage = global::gInk.Properties.Resources.tool_rect_act;
+                    btRect.BackgroundImage = getImgFromDiskOrRes("tool_rect_act", ImageExts);
                 else if (Root.FilledSelected == 1)
-                    btRect.BackgroundImage = global::gInk.Properties.Resources.tool_rect_filledC;
+                    btRect.BackgroundImage = getImgFromDiskOrRes("tool_rect_filledC", ImageExts);
                 else if (Root.FilledSelected == 2)
-                    btRect.BackgroundImage = global::gInk.Properties.Resources.tool_rect_filledW;
+                    btRect.BackgroundImage = getImgFromDiskOrRes("tool_rect_filledW", ImageExts);
                 else if (Root.FilledSelected == 3)
-                    btRect.BackgroundImage = global::gInk.Properties.Resources.tool_rect_filledB;
+                    btRect.BackgroundImage = getImgFromDiskOrRes("tool_rect_filledB", ImageExts);
 
             }
             else if (tool == 3)
             {
                 if (Root.FilledSelected == 0)
-                    btOval.BackgroundImage = global::gInk.Properties.Resources.tool_oval_act;
+                    btOval.BackgroundImage = getImgFromDiskOrRes("tool_oval_act", ImageExts);
                 else if (Root.FilledSelected == 1)
-                    btOval.BackgroundImage = global::gInk.Properties.Resources.tool_oval_filledC;
+                    btOval.BackgroundImage = getImgFromDiskOrRes("tool_oval_filledC", ImageExts);
                 else if (Root.FilledSelected == 2)
-                    btOval.BackgroundImage = global::gInk.Properties.Resources.tool_oval_filledW;
+                    btOval.BackgroundImage = getImgFromDiskOrRes("tool_oval_filledW", ImageExts);
                 else if (Root.FilledSelected == 3)
-                    btOval.BackgroundImage = global::gInk.Properties.Resources.tool_oval_filledB;
+                    btOval.BackgroundImage = getImgFromDiskOrRes("tool_oval_filledB", ImageExts);
             }
             else if ((tool == 4) || (tool == 5)) // also include tool=5
                 if ((tool == 5) || (Root.ToolSelected == 4))
                 {
-                    btArrow.BackgroundImage = global::gInk.Properties.Resources.tool_enAr_act;
+                    btArrow.BackgroundImage = getImgFromDiskOrRes("tool_enAr_act", ImageExts);
                     tool = 5;
                 }
                 else
                 {
-                    btArrow.BackgroundImage = global::gInk.Properties.Resources.tool_stAr_act;
+                    btArrow.BackgroundImage = getImgFromDiskOrRes("tool_stAr_act", ImageExts);
                     tool = 4;
                 }
             else if (tool == 6)
             {
                 if (Root.FilledSelected == 0)
-                    btNumb.BackgroundImage = global::gInk.Properties.Resources.tool_numb_act;
+                    btNumb.BackgroundImage = getImgFromDiskOrRes("tool_numb_act", ImageExts);
                 else if (Root.FilledSelected == 1)
                 { // we use the state FilledColor to do the modification of the tag number
                     SetTagNumber();
-                    btNumb.BackgroundImage = global::gInk.Properties.Resources.tool_numb_act;
+                    btNumb.BackgroundImage = getImgFromDiskOrRes("tool_numb_act", ImageExts);
                 }
                 else if (Root.FilledSelected == 2)
-                    btNumb.BackgroundImage = global::gInk.Properties.Resources.tool_numb_fillW;
+                    btNumb.BackgroundImage = getImgFromDiskOrRes("tool_numb_fillW", ImageExts);
                 else if (Root.FilledSelected == 3)
-                    btNumb.BackgroundImage = global::gInk.Properties.Resources.tool_numb_fillB;
+                    btNumb.BackgroundImage = getImgFromDiskOrRes("tool_numb_fillB", ImageExts);
             }
             else if (tool == 7)
-                btEdit.BackgroundImage = global::gInk.Properties.Resources.tool_edit_act;
+                btEdit.BackgroundImage = getImgFromDiskOrRes("tool_edit_act");
             else if ((tool == 8) || (tool == 9))
                 if ((tool == 9) || (Root.ToolSelected == 8))
                 {
-                    btText.BackgroundImage = global::gInk.Properties.Resources.tool_txtR_act;
+                    btText.BackgroundImage = getImgFromDiskOrRes("tool_txtR_act", ImageExts);
                     tool = 9;
                 }
                 else
                 {
-                    btText.BackgroundImage = global::gInk.Properties.Resources.tool_txtL_act;
+                    btText.BackgroundImage = getImgFromDiskOrRes("tool_txtL_act", ImageExts);
                     tool = 8;
                 }
             else if (tool == 10)
             {
                 //SelectPen(LastPenSelected);
-                btPan.BackgroundImage = global::gInk.Properties.Resources.pan1_act;
+                btPan.BackgroundImage = getImgFromDiskOrRes("pan1_act", ImageExts);
             }
             Root.ToolSelected = tool;
         }
 
         public void SelectPen(int pen)
 		{
-            btPan.BackgroundImage = global::gInk.Properties.Resources.pan;
+            btPan.BackgroundImage = getImgFromDiskOrRes("pan", ImageExts);
             // -3=pan, -2=pointer, -1=erasor, 0+=pens
             //Console.WriteLine("SelectPen : " + pen.ToString());
             //System.Diagnostics.StackTrace t = new System.Diagnostics.StackTrace();
@@ -1672,7 +1659,7 @@ namespace gInk
                     btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, false);// image_pen[b];
                 btEraser.BackgroundImage = image_eraser;
 				btPointer.BackgroundImage = image_pointer;
-                btPan.BackgroundImage = global::gInk.Properties.Resources.pan_act;
+                btPan.BackgroundImage = getImgFromDiskOrRes("pan_act", ImageExts);
                 EnterEraserMode(false);
 				Root.UnPointer();
 				Root.PanMode = true;
@@ -2940,7 +2927,7 @@ namespace gInk
                         await frm.Root.ObsWs.CloseAsync(WebSocketCloseStatus.PolicyViolation, "Authentication failed", ct);
                         frm.Root.ObsWs = null;
                         frm.Root.ObsRecvTask  = null;
-                        frm.btVideo.BackgroundImage = global::gInk.Properties.Resources.VidDead;
+                        frm.btVideo.BackgroundImage = frm.getImgFromDiskOrRes("VidDead", frm.ImageExts);
                     }
                 }
 
@@ -2979,7 +2966,7 @@ namespace gInk
                 frm.SetVidBgImage();
                 //Console.WriteLine(frm.btVideo.BackgroundImage.ToString()+" vidbg2 " + frm.Root.UponButtonsUpdate);
             }
-            frm.btVideo.BackgroundImage = global::gInk.Properties.Resources.VidDead; // the recv task is dead so we put the cross;
+            frm.btVideo.BackgroundImage = frm.getImgFromDiskOrRes("VidDead", frm.ImageExts); // the recv task is dead so we put the cross;
             //Console.WriteLine("endoft");
         }
 
@@ -3001,7 +2988,7 @@ namespace gInk
             {
                 Root.FFmpegProcess.Kill();
                 Root.VideoRecInProgress = VideoRecInProgress.Stopped;
-                btVideo.BackgroundImage = global::gInk.Properties.Resources.VidStop;
+                btVideo.BackgroundImage = getImgFromDiskOrRes("VidStop", ImageExts);
                 Root.UponButtonsUpdate |= 0x2;
             }
             else
@@ -3029,7 +3016,7 @@ namespace gInk
             if (Root.VideoRecordMode == VideoRecordMode.FfmpegRec)
             {
                 Root.FFmpegProcess.Kill();
-                btVideo.BackgroundImage = global::gInk.Properties.Resources.VidStop;
+                btVideo.BackgroundImage = getImgFromDiskOrRes("VidStop", ImageExts);
                 Root.UponButtonsUpdate |= 0x2;
             }
             else if (Root.VideoRecordMode == VideoRecordMode.OBSRec)
@@ -3063,7 +3050,7 @@ namespace gInk
             else 
                 (sender as Button).BackgroundImage = global::gInk.Properties.Resources.garbage;
             */
-            btClear.BackgroundImage = global::gInk.Properties.Resources.garbage;
+            btClear.BackgroundImage = getImgFromDiskOrRes("garbage", ImageExts);
             //Console.WriteLine("R2L " + (sender as Button).Name + " . " + (sender as Button).RightToLeft.ToString());
             Root.UponButtonsUpdate |= 0x2;
         }
@@ -3205,9 +3192,9 @@ namespace gInk
             }
             Root.MagneticRadius *= -1; //invert
             if (Root.MagneticRadius > 0)
-                btMagn.BackgroundImage = global::gInk.Properties.Resources.Magnetic_act;
+                btMagn.BackgroundImage = getImgFromDiskOrRes("Magnetic_act", ImageExts);
             else
-                btMagn.BackgroundImage = global::gInk.Properties.Resources.Magnetic;
+                btMagn.BackgroundImage = getImgFromDiskOrRes("Magnetic", ImageExts);
             Root.UponButtonsUpdate |= 0x2;
         }
 
