@@ -1,5 +1,11 @@
 p1.3 (In Progress)
 =================
+---> alpha3
+* New : Buttons and background color customisable
+* New : Customisable keyboard shortcuts for docking/undocking and closing
+* New : Alt+Tab engages/disengages Pointer mode and also introduces automatic toolbar folding in those conditions
+* Enh : Cursors management has been improved and allow customisations
+* various fixes (see commits)
 ---> alpha2
 * Fix : prevent exception raised when opening toolbar (tasks asyncronocity)
 * New : long click on edit to modify default font for the session

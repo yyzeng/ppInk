@@ -18,7 +18,7 @@ namespace gInk
 		private void FormAbout_Load(object sender, EventArgs e)
 		{
 			this.Icon = gInk.Properties.Resources.icon_red;
-			string version = Application.ProductVersion.Substring(0, Application.ProductVersion.Length - 2);
+			string version = Application.ProductVersion.Substring(0, Application.ProductVersion.Length-2)+"    built on " +Build.Timestamp;
 			string about = "ppInk v" + version + "\r\n";
             about += "Forked from gInk   (c) 2016-2020 Weizhi Nai\r\n";
             about += "changes (c) 2002-2020 Pubpub-ZZ\r\n";
