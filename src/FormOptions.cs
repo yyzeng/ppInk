@@ -60,6 +60,8 @@ namespace gInk
 			if (Root.AllowHotkeyInPointerMode)
 				cbAllowHotkeyInPointer.Checked = true;
 
+            AltTabActivateCb.Checked = Root.AltTabPointer;
+
             ToolBarHeight.Text = string.Format("{0:F1}", Root.ToolbarHeight * 100);
             //MoveToolBarCb.Checked = Root.AllowDraggingToolbar;
 
@@ -231,6 +233,8 @@ namespace gInk
 			VideoTabCtrl.TabPages[0].Text = Root.Local.OptionsTabGeneral;
 			VideoTabCtrl.TabPages[1].Text = Root.Local.OptionsTabPens;
 			VideoTabCtrl.TabPages[2].Text = Root.Local.OptionsTabHotkeys;
+            this.ToolBarColorLbl.Text = Root.Local.OptionsGeneralToolBarColorText;
+            this.AltTabActivateCb.Text = Root.Local.OptionsGeneralAltTabActivateText;
             this.lblToolbarHeight.Text = Root.Local.OptionsGeneralToolbarHeight;
 			this.lbLanguage.Text = Root.Local.OptionsGeneralLanguage;
 			this.lbCanvascursor.Text = Root.Local.OptionsGeneralCanvascursor;
@@ -695,6 +699,11 @@ namespace gInk
                 Root.ToolbarBGColor[3] = at.Color.B;
                 ToolbarDwg.BackColor = Color.FromArgb(Root.ToolbarBGColor[0], at.Color);
             }
+        }
+
+        private void AltTabActivateCb_CheckedChanged(object sender, EventArgs e)
+        {
+            Root.AltTabPointer = AltTabActivateCb.Checked;
         }
 
         private void cbAllowHotkeyInPointer_CheckedChanged(object sender, EventArgs e)

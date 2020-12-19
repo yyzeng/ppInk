@@ -68,6 +68,8 @@ namespace gInk
 		public string OptionsTabHotkeys = "Hotkeys";
 
 		public string OptionsGeneralLanguage = "Language";
+        public string OptionsGeneralToolBarColorText = "Click on toolbar to select background color";
+        public string OptionsGeneralAltTabActivateText = "Engage Pointer and Auto-Fold with Alt+Tab";
         public string OptionsGeneralToolbarHeight = "height(%scr)\n\n\nchanges after closing toolbar";
 
         public string OptionsGeneralCanvascursor = "Canvus cursor";
