@@ -59,23 +59,7 @@ namespace gInk
 
 		protected void UpdateText()
 		{
-			if (Hotkey.Key > 0)
-			{
-				Text = "";
-				if (Hotkey.Control)
-					Text += "Ctrl + ";
-				if (Hotkey.Alt)
-					Text += "Alt + ";
-				if (Hotkey.Shift)
-					Text += "Shift + ";
-				if (Hotkey.Win)
-					Text += "Win + ";
-				Text += (char)Hotkey.Key;
-			}
-			else
-			{
-				Text = "None";
-			}
+            Text = Hotkey.ToString();
 		}
 
 		protected void SetBackColor()
@@ -96,9 +80,9 @@ namespace gInk
 			Keys modifierKeys = e.Modifiers;
 			Keys pressedKey = e.KeyData ^ modifierKeys;
 
-			bool deleting = pressedKey == Keys.Escape || pressedKey == Keys.Delete || pressedKey == Keys.Back;
-
-			if (deleting)
+            //bool deleting = pressedKey == Keys.Escape || pressedKey == Keys.Delete || pressedKey == Keys.Back;
+            bool deleting = pressedKey == Keys.Delete || pressedKey == Keys.Back;
+            if (deleting)
 			{
 				Text = "None";
 			}
@@ -115,7 +99,9 @@ namespace gInk
 					Text += "Win + ";
 
 				if (Hotkey.IsValidKey(pressedKey))
-					Text += (char)pressedKey;
+                {
+                        Text += pressedKey.ToString();
+                }
 			}
 
 			if (deleting)
@@ -169,7 +155,7 @@ namespace gInk
 					Text += "Win + ";
 
 				if (Hotkey.IsValidKey(pressedKey))
-					Text += (char)pressedKey;
+					Text += pressedKey.ToString();
 			}
 
 			if (modifierKeys == Keys.None)

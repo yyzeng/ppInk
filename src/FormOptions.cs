@@ -33,7 +33,7 @@ namespace gInk
 		private void FormOptions_Load(object sender, EventArgs e)
 		{
 			Root.UnsetHotkey();
-
+            ToolbarDwg.BackColor = Color.FromArgb(Root.ToolbarBGColor[0], Root.ToolbarBGColor[1], Root.ToolbarBGColor[2], Root.ToolbarBGColor[3]);
 			if (Root.EraserEnabled)
 				cbEraserEnabled.Checked = true;
 			if (Root.PointerEnabled)
@@ -59,6 +59,8 @@ namespace gInk
 				cbAllowDragging.Checked = true;
 			if (Root.AllowHotkeyInPointerMode)
 				cbAllowHotkeyInPointer.Checked = true;
+
+            AltTabActivateCb.Checked = Root.AltTabPointer;
 
             ToolBarHeight.Text = string.Format("{0:F1}", Root.ToolbarHeight * 100);
             //MoveToolBarCb.Checked = Root.AllowDraggingToolbar;
@@ -183,6 +185,8 @@ namespace gInk
 			hiRedo.Hotkey = Root.Hotkey_Redo;
 			hiClear.Hotkey = Root.Hotkey_Clear;
             hiVideo.Hotkey = Root.Hotkey_Video;
+            hiDockUndock.Hotkey = Root.Hotkey_DockUndock;
+            hiClose.Hotkey = Root.Hotkey_Close;
 
             hiToolHand.Hotkey = Root.Hotkey_Hand;
             hiToolLine.Hotkey = Root.Hotkey_Line;
@@ -229,6 +233,8 @@ namespace gInk
 			VideoTabCtrl.TabPages[0].Text = Root.Local.OptionsTabGeneral;
 			VideoTabCtrl.TabPages[1].Text = Root.Local.OptionsTabPens;
 			VideoTabCtrl.TabPages[2].Text = Root.Local.OptionsTabHotkeys;
+            this.ToolBarColorLbl.Text = Root.Local.OptionsGeneralToolBarColorText;
+            this.AltTabActivateCb.Text = Root.Local.OptionsGeneralAltTabActivateText;
             this.lblToolbarHeight.Text = Root.Local.OptionsGeneralToolbarHeight;
 			this.lbLanguage.Text = Root.Local.OptionsGeneralLanguage;
 			this.lbCanvascursor.Text = Root.Local.OptionsGeneralCanvascursor;
@@ -257,7 +263,11 @@ namespace gInk
 			this.lbHkPointer.Text = shortTxt(Root.Local.ButtonNameMousePointer);
 			this.lbHkRedo.Text = shortTxt(Root.Local.ButtonNameRedo);
 			this.lbHkSnapshot.Text = shortTxt(Root.Local.ButtonNameSnapshot);
-			this.lbHkUndo.Text = shortTxt(Root.Local.ButtonNameUndo);
+            this.lbHkUndo.Text = shortTxt(Root.Local.ButtonNameUndo);
+            this.lbHkDockUndock.Text = shortTxt(Root.Local.ButtonNameDock);
+            this.lbHkClose.Text = Root.Local.ButtonNameClose;
+            this.lbHkUndo.Text = shortTxt(Root.Local.ButtonNameUndo);
+
             this.lbHkHand.Text = shortTxt(Root.Local.ButtonNameHand);
             this.lbHkLine.Text = shortTxt(Root.Local.ButtonNameLine);
             this.lbHkRect.Text = shortTxt(Root.Local.ButtonNameRect);
@@ -648,7 +658,6 @@ namespace gInk
                 Root.Gray1[3] = at.Color.B;
                 BoardCustColorPnl.BackColor = Color.FromArgb(Root.Gray1[0], at.Color);
             }
-
         }
 
         private void WsUrlTxt_TextChanged(object sender, EventArgs e)
@@ -670,6 +679,31 @@ namespace gInk
         {
             if ((sender as RadioButton).Checked)
                 Root.VideoRecordMode = (VideoRecordMode)Int32.Parse((string)(sender as Control).Tag);
+        }
+
+        private void ToolbarDwg_Click(object sender, EventArgs e)
+        {
+            PenModifyDlg dlg = new PenModifyDlg(Root);
+            dlg.Text = "";
+            Microsoft.Ink.DrawingAttributes at = new Microsoft.Ink.DrawingAttributes();
+
+            at.Transparency = (byte)(255 - Root.ToolbarBGColor[0]);
+            at.Color = Color.FromArgb(Root.ToolbarBGColor[0], Root.ToolbarBGColor[1], Root.ToolbarBGColor[2], Root.ToolbarBGColor[3]);
+            at.Width = 0;
+
+            if (dlg.ModifyPen(ref at))
+            {
+                Root.ToolbarBGColor[0] = 255 - at.Transparency;
+                Root.ToolbarBGColor[1] = at.Color.R;
+                Root.ToolbarBGColor[2] = at.Color.G;
+                Root.ToolbarBGColor[3] = at.Color.B;
+                ToolbarDwg.BackColor = Color.FromArgb(Root.ToolbarBGColor[0], at.Color);
+            }
+        }
+
+        private void AltTabActivateCb_CheckedChanged(object sender, EventArgs e)
+        {
+            Root.AltTabPointer = AltTabActivateCb.Checked;
         }
 
         private void cbAllowHotkeyInPointer_CheckedChanged(object sender, EventArgs e)

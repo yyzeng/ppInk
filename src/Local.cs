@@ -24,7 +24,8 @@ namespace gInk
 		public string ButtonNameRedo = "Redo";
 		public string ButtonNameClear = "Clear";
 		public string ButtonNameExit = "Exit drawing";
-		public string ButtonNameDock = "Dock";
+		public string ButtonNameDock = "Dock/Undock";
+        public string ButtonNameClose = "Close\n(in addition to Alt+F4)";
         public string ButtonNameHand = "Handfree drawing (standard | color filled | White filled | Black filled)";
         public string ButtonNameLine = "Line Shape";
         public string ButtonNameRect = "Rectangle shape (empty | color filled | White filled | Black filled)";
@@ -67,6 +68,8 @@ namespace gInk
 		public string OptionsTabHotkeys = "Hotkeys";
 
 		public string OptionsGeneralLanguage = "Language";
+        public string OptionsGeneralToolBarColorText = "Click on toolbar to select background color";
+        public string OptionsGeneralAltTabActivateText = "Engage Pointer and Auto-Fold with Alt+Tab";
         public string OptionsGeneralToolbarHeight = "height(%scr)\n\n\nchanges after closing toolbar";
 
         public string OptionsGeneralCanvascursor = "Canvus cursor";
@@ -226,9 +229,10 @@ namespace gInk
 					sLine.Substring(0, 1) != "!" &&
 					sLine.Substring(0, 1) != "[" &&
 					sLine.Substring(0, 1) != "#" &&
-					sLine.Contains("=") &&
-					!sLine.Substring(sLine.IndexOf("=") + 1).Contains("=")
-				)
+                    sLine.Contains("=")
+                    //sLine.Contains("=") &&
+                    //!sLine.Substring(sLine.IndexOf("=") + 1).Contains("=")
+                )
 				{
 					sName = sLine.Substring(0, sLine.IndexOf("="));
 					sName = sName.Trim();

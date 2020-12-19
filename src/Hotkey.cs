@@ -16,13 +16,13 @@ namespace gInk
 
 		public static bool IsValidKey(Keys key)
 		{
-			if (key >= Keys.A && key <= Keys.Z)
-				return true;
-			if (key >= Keys.D0 && key <= Keys.D9)
-				return true;
-			if (key >= Keys.NumPad0 && key <= Keys.NumPad9)
-				return true;
-			return false;
+            // we ignore ctrl,alt,shift as unique keys : they must be part of a global key
+            if (key != Keys.ControlKey && key != Keys.LControlKey && key != Keys.RControlKey
+                 && key != Keys.Menu && key != Keys.LMenu && key != Keys.RMenu
+                 && key != Keys.ShiftKey && key != Keys.LShiftKey && key != Keys.RShiftKey)
+                return true;
+            else
+                return false;
 		}
 
 		public override string ToString()
@@ -34,7 +34,7 @@ namespace gInk
 				if (Alt) str += "Alt + ";
 				if (Shift) str += "Shift + ";
 				if (Win) str += "Win + ";
-				str += (char)Key;
+				str += ((Keys)Key).ToString();
 				return str;
 			}
 			else
@@ -45,7 +45,8 @@ namespace gInk
 
 		public bool Parse(string para)
 		{
-			if (para == "None")
+            Keys kk;
+            if (para == "None")
 			{
 				Key = 0;
 				Control = false;
@@ -56,26 +57,23 @@ namespace gInk
 			}
 			else if (para.Length >= 1)
 			{
-				Control = false;
-				Alt = false;
-				Shift = false;
-				Win = false;
-				Keys key = (Keys)para[para.Length - 1];
-				if (IsValidKey(key))
-				{
-					if (para.Contains("Control")) Control = true;
-                    if (para.Contains("Ctrl")) Control = true;
-                    if (para.Contains("Alt")) Alt = true;
-					if (para.Contains("Shift")) Shift = true;
-					if (para.Contains("Win")) Win = true;
-					Key = (char)key;
-					return true;
-				}
-				else
-				{
-					return false;
-				}
-			}
+                try
+                {
+                    Control = para.Contains("Control") || para.Contains("Ctrl");
+                    Alt = para.Contains("Alt");
+                    Shift = para.Contains("Shift");
+                    Win = para.Contains("Win");
+                    para = para.Replace(" ", "");
+                    para = para.Split('+').Last();
+                    kk = (Keys)Enum.Parse(typeof(Keys), para, true);
+                    Key = (int)kk;
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
 			else
 			{
 				return false;

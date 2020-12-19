@@ -1,4 +1,4 @@
-﻿LanguageName = "简体中文 by zyc101"
+﻿LanguageName = "简体中文 by zyc101/52fisher"
 
 ButtonNamePen0 = "0号笔"
 ButtonNamePen1 = "1号笔"
@@ -105,6 +105,10 @@ LblWsPwd="密码"
 LblObsNote = "注意：请在启用录制之前启动OBS. OBS应安装Websocket插件，并配置端口和密码"
 OptFfmpeg="FFmpeg 录制"
 LblFfmpegCmd="命令行"
+<<<<<<< HEAD
 LblFfmpegNote= "注意 :命令行可用的替换语句\n            $xx$ $yy$                           : 左上角\n            $ww$ $hh$                           : 捕获的宽度和高度\n            $DD$ $MM$ $YY$ $YYYY$               : 日期\n            $H$ $M$ $S$                         : 时间\n            %DD% %MM% %YY% %YYYY%               : ppInk的启动日期\n            %H% %M% %S%                         : ppInk的启动时间\n            $nn$                                : 计数器（ppink重新启动后重置为1）\n            %VAR%                               : 使用环境变量VAR"
+=======
+LblFfmpegNote= "注意 :命令行可用的替换语句\n            $xx$ $yy$                                             : 左上角\n            $ww$ $hh$                                            : 捕获的宽度和高度\n            $DD$ $MM$ $YY$ $YYYY$               : 日期\n            $H$ $M$ $S$                                      : 时间\n            %DD% %MM% %YY% %YYYY%     : ppInk的启动日期\n            %H% %M% %S%                               : ppInk的启动时间\n            $nn$                                                      : 计数器（ppink重新启动后重置为1）\n            %VAR%                                                : 使用环境变量VAR"
+>>>>>>> d581845f01dcacc92823c03aa1b0b72e4d4f531b
 
 NotificationSnapshot = "快照已保存，单击此处浏览快照... "

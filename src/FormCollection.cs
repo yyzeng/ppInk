@@ -14,6 +14,8 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Text;
 using System.Security.Cryptography;
+using System.Reflection;
+using System.Drawing.Imaging;
 
 namespace gInk
 {
@@ -28,6 +30,23 @@ namespace gInk
         }
         [DllImport("user32.dll", SetLastError = true)]
         static extern bool RegisterTouchWindow(IntPtr hWnd, RegisterTouchFlags flags);
+
+        // to load correctly customed cursor file
+        static class MyNativeMethods
+        {
+            public static System.Windows.Forms.Cursor LoadCustomCursor(string path)
+            {
+                IntPtr hCurs = LoadCursorFromFile(path);
+                if (hCurs == IntPtr.Zero) throw new Win32Exception();
+                var curs = new System.Windows.Forms.Cursor(hCurs);
+                // Note: force the cursor to own the handle so it gets released properly
+                //var fi = typeof(System.Windows.Forms.Cursor).GetField("ownHandle", BindingFlags.NonPublic | BindingFlags.Instance);
+                //fi.SetValue(curs, true);
+                return curs;
+            }
+            [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+            private static extern IntPtr LoadCursorFromFile(string path);
+        }
 
         // hotkeys
         const int VK_LCONTROL = 0xA2;
@@ -48,12 +67,13 @@ namespace gInk
 		public Bitmap image_pencil, image_highlighter, image_pencil_act, image_highlighter_act;
 		public Bitmap image_pointer, image_pointer_act;
 		public Bitmap[] image_pen;
-		public Bitmap[] image_pen_act;
+        public Bitmap[] image_pen_act;
         public Bitmap image_eraser_act, image_eraser;
-		public Bitmap image_visible_not, image_visible;
-		public System.Windows.Forms.Cursor cursorred, cursorsnap;
-		public System.Windows.Forms.Cursor cursortip;
-        public System.Windows.Forms.Cursor tempArrowCursor=null;
+        public Bitmap image_visible_not, image_visible;
+        public System.Windows.Forms.Cursor cursorred, cursorsnap, cursorerase;
+        public System.Windows.Forms.Cursor cursortip;
+        public System.Windows.Forms.Cursor tempArrowCursor = null;
+        public bool Initializing;
 
         public DateTime MouseTimeDown;
         public object MouseDownButtonObject;
@@ -62,9 +82,9 @@ namespace gInk
 
 		public bool gpPenWidth_MouseOn = false;
 
-		public int PrimaryLeft, PrimaryTop;
+        public int PrimaryLeft, PrimaryTop;
 
-        private int LastPenSelected=0;
+        private int LastPenSelected = 0;
         private int SavedTool = -1;
         private int SavedFilled = -1;
         private int SavedPen = -1;
@@ -75,9 +95,11 @@ namespace gInk
         public bool TextItalic = false;
         public bool TextBold = false;
 
+        private bool SetWindowInputRectFlag = false;
+
         // http://www.csharp411.com/hide-form-from-alttab/
         protected override CreateParams CreateParams
-		{
+        {
 			get
 			{
 				CreateParams cp = base.CreateParams;
@@ -116,22 +138,82 @@ namespace gInk
             public static extern uint ResumeThread(IntPtr hThread);
         }
 
+        public System.Windows.Forms.Cursor getCursFromDiskOrRes(string name)
+        {
+            string filename;
+            string[] exts = { ".cur", ".ani", ".ico" };
+            foreach (string ext in exts)
+            {
+                filename = Root.ProgramFolder + Path.DirectorySeparatorChar + name + ext;
+                if (File.Exists(filename))
+                    return new System.Windows.Forms.Cursor(filename);
+            }
+            //cursorred = new System.Windows.Forms.Cursor(gInk.Properties.Resources.cursor.Handle);
+            return new System.Windows.Forms.Cursor(((System.Drawing.Icon)Properties.Resources.ResourceManager.GetObject(name)).Handle);
+        }
+
+        string[] ImageExts = { ".png" };
+
+        public Bitmap getImgFromDiskOrRes(string name, string[] exts = null)
+        {
+            string filename;
+            if (exts == null)
+            {
+                exts = new string[] { ".png" };
+            }
+            foreach(string ext in exts)
+            {
+                filename= Root.ProgramFolder + Path.DirectorySeparatorChar + name+ ext;
+                if (File.Exists(filename))
+                    return new Bitmap(filename);
+            }
+            return new Bitmap((Bitmap)Properties.Resources.ResourceManager.GetObject(name));
+        }
+
+        public Bitmap buildPenIcon(Color col,int transparency,Boolean Sel)
+        {
+            Bitmap fg,img;
+            ImageAttributes imageAttributes = new ImageAttributes();
+            bool Large = transparency>=100;
+
+            float[][] colorMatrixElements = {
+                       new float[] {col.R/255.0f,  0,  0,  0, 0},
+                       new float[] {0,  col.G / 255.0f,  0,  0, 0},
+                       new float[] {0,  0,  col.B / 255.0f,  0, 0},
+                       new float[] {0,  0,  0,  (255-transparency) / 255.0f, 0},
+                       new float[] {0,  0,  0,     0,  1}};
+            ColorMatrix colorMatrix = new ColorMatrix(colorMatrixElements);
+            imageAttributes.SetColorMatrix( colorMatrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+
+            img = getImgFromDiskOrRes((Large ? "Lpen" : "pen") + (Sel ? "S" : "") + "_bg", ImageExts);
+            fg = getImgFromDiskOrRes((Large ? "Lpen" : "pen") + (Sel ? "S" : "") + "_col", ImageExts);
+
+            Graphics g = Graphics.FromImage(img);
+            g.DrawImage(fg, new Rectangle(0, 0, img.Width, img.Height), 0, 0, img.Width, img.Height,GraphicsUnit.Pixel, imageAttributes);
+            return img;
+        }
+
         public FormCollection(Root root)
         {
             Root = root;
+            //Console.WriteLine("A=" + (DateTime.Now.Ticks/1e7).ToString());
             InitializeComponent();
-
+            //Console.WriteLine("B=" + (DateTime.Now.Ticks/1e7).ToString());
+            Initializing = true;
             //loading default params
             TextFont = Root.TextFont;
             TextBold = Root.TextBold;
             TextItalic = Root.TextItalic;
             TextSize = Root.TextSize;
 
+            gpButtons.BackColor = Color.FromArgb(Root.ToolbarBGColor[0], Root.ToolbarBGColor[1], Root.ToolbarBGColor[2], Root.ToolbarBGColor[3]);
+            gpPenWidth.BackColor = Color.FromArgb(Root.ToolbarBGColor[0], Root.ToolbarBGColor[1], Root.ToolbarBGColor[2], Root.ToolbarBGColor[3]);
+
             longClickTimer.Interval = (int)(Root.LongClickTime * 1000 +100);
             if (Root.MagneticRadius>0)
-                this.btMagn.BackgroundImage = global::gInk.Properties.Resources.Magnetic_act;
+                this.btMagn.BackgroundImage = getImgFromDiskOrRes("Magnetic_act", ImageExts);
             else
-                this.btMagn.BackgroundImage = global::gInk.Properties.Resources.Magnetic;
+                this.btMagn.BackgroundImage = getImgFromDiskOrRes("Magnetic", ImageExts);
 
             PrimaryLeft = Screen.PrimaryScreen.Bounds.Left - SystemInformation.VirtualScreen.Left;
             PrimaryTop = Screen.PrimaryScreen.Bounds.Top - SystemInformation.VirtualScreen.Top;
@@ -200,7 +282,7 @@ namespace gInk
 
             btPen = new Button[Root.MaxPenCount];
 
-            int cumulatedleft = (int)(btDock.Width * 2.5);
+            int cumulatedleft = (int)(btDock.Width * 1.5);
             for (int b = 0; b < Root.MaxPenCount; b++)
             {
                 btPen[b] = new Button();
@@ -208,21 +290,23 @@ namespace gInk
                 btPen[b].Width = (int)(gpButtons.Height * 0.85);
                 btPen[b].Height = (int)(gpButtons.Height * 0.85);
                 btPen[b].Top = (int)(gpButtons.Height * 0.08);
-                btPen[b].FlatAppearance.BorderColor = System.Drawing.Color.WhiteSmoke;
-                btPen[b].FlatAppearance.BorderSize = 3;
-                btPen[b].FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(250, 50, 50);
+                //btPen[b].FlatAppearance.BorderColor = System.Drawing.Color.WhiteSmoke;
+                btPen[b].FlatAppearance.BorderSize = 0;
+                btPen[b].FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent; // System.Drawing.Color.FromArgb(250, 50, 50);
                 btPen[b].FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-                btPen[b].ForeColor = System.Drawing.Color.Transparent;
+                //btPen[b].ForeColor = System.Drawing.Color.Transparent;
                 //btPen[b].Name = "btPen" + b.ToString();
-                btPen[b].UseVisualStyleBackColor = false;
+                //btPen[b].UseVisualStyleBackColor = false;
                 
                 btPen[b].ContextMenu = new ContextMenu();
                 btPen[b].ContextMenu.Popup += new System.EventHandler(this.btColor_Click);
                 btPen[b].Click += new System.EventHandler(this.btColor_Click);
 
-                btPen[b].BackColor = Root.PenAttr[b].Color;
-                btPen[b].FlatAppearance.MouseDownBackColor = Root.PenAttr[b].Color;
-                btPen[b].FlatAppearance.MouseOverBackColor = Root.PenAttr[b].Color;
+                btPen[b].BackColor = System.Drawing.Color.Transparent;
+                btPen[b].BackgroundImageLayout = ImageLayout.Stretch;
+                //btPen[b].BackColor = Root.PenAttr[b].Color;
+                //btPen[b].FlatAppearance.MouseDownBackColor = Root.PenAttr[b].Color;
+                //btPen[b].FlatAppearance.MouseOverBackColor = Root.PenAttr[b].Color;
                 this.toolTip.SetToolTip(this.btPen[b], Root.Local.ButtonNamePen[b] + " (" + Root.Hotkey_Pens[b].ToString() + ")");
 
                 btPen[b].MouseDown += gpButtons_MouseDown;
@@ -323,7 +407,7 @@ namespace gInk
             {
                 btPenWidth.Visible = true;
                 btPenWidth.Height = (int)(gpButtons.Height * 0.85);
-                btDock.Width = btDock.Height;
+                //btDock.Width = btDock.Height;
                 btPenWidth.Left = cumulatedleft;
                 cumulatedleft += (int)(btPenWidth.Width * 1.1);
             }
@@ -388,7 +472,7 @@ namespace gInk
                         Task.Delay(50);
                     Task.Delay(100);
                     //Task.Run(() => SendInWs(Root.ObsWs, "GetRecordingStatus", new CancellationToken()));
-                    //Task.Run(() => SendInWs(Root.ObsWs, "GetStreamingStatus", new CancellationToken()));
+                    Task.Run(() => SendInWs(Root.ObsWs, "GetStreamingStatus", new CancellationToken()));
                 }
                 cumulatedleft += (int)(btClear.Width * 1.1);
             }
@@ -468,96 +552,52 @@ namespace gInk
             IC.DefaultDrawingAttributes.AntiAliased = true;
             IC.DefaultDrawingAttributes.FitToCurve = true;
 
-            string icon_filename= Root.ProgramFolder + Path.DirectorySeparatorChar + "cursor.ico";
-            if (File.Exists(icon_filename)) 
-                cursorred = new System.Windows.Forms.Cursor(icon_filename);
+            /*string icon_filename= Root.ProgramFolder + Path.DirectorySeparatorChar + "cursor";
+            if (File.Exists(icon_filename+".cur")) 
+                cursorred = MyNativeMethods.LoadCustomCursor(icon_filename+".cur");
+            else if (File.Exists(icon_filename + ".ani"))
+                cursorred = MyNativeMethods.LoadCustomCursor(icon_filename + ".ani");
+            else if (File.Exists(icon_filename + ".ico"))
+                cursorred = new System.Windows.Forms.Cursor(icon_filename+".ico");
             else
                 cursorred = new System.Windows.Forms.Cursor(gInk.Properties.Resources.cursorred.Handle);
+
+            icon_filename = Root.ProgramFolder + Path.DirectorySeparatorChar + "eraser";
+            if (File.Exists(icon_filename + ".cur"))
+                cursorerase = MyNativeMethods.LoadCustomCursor(icon_filename + ".cur");
+            else if (File.Exists(icon_filename + ".ani"))
+                cursorerase = MyNativeMethods.LoadCustomCursor(icon_filename + ".ani");
+            else if (File.Exists(icon_filename + ".ico"))
+                cursorerase = new System.Windows.Forms.Cursor(icon_filename + ".ico");
+            else
+                cursorerase = new System.Windows.Forms.Cursor(gInk.Properties.Resources.cursoreraser.Handle);
+            */
+            cursorred = getCursFromDiskOrRes("cursorarrow");
+            cursorerase = getCursFromDiskOrRes("cursoreraser");
+
             IC.Enabled = true;
 
-            image_exit = new Bitmap(btStop.Width, btStop.Height);
-            Graphics g = Graphics.FromImage(image_exit);
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            g.DrawImage(global::gInk.Properties.Resources.exit, 0, 0, btStop.Width, btStop.Height);
-            btStop.Image = image_exit;
-            image_clear = new Bitmap(btClear.Width, btClear.Height);
-            g = Graphics.FromImage(image_clear);
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            g.DrawImage(global::gInk.Properties.Resources.garbage, 0, 0, btClear.Width, btClear.Height);
+            //Graphics g;
+            btStop.BackgroundImage = getImgFromDiskOrRes("exit", ImageExts);
             //btClear.Image = image_clear;
-            image_undo = new Bitmap(btUndo.Width, btUndo.Height);
-            g = Graphics.FromImage(image_undo);
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            g.DrawImage(global::gInk.Properties.Resources.undo, 0, 0, btUndo.Width, btUndo.Height);
-            btUndo.Image = image_undo;
-            image_eraser_act = new Bitmap(btEraser.Width, btEraser.Height);
-            g = Graphics.FromImage(image_eraser_act);
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            g.DrawImage(global::gInk.Properties.Resources.eraser_act, 0, 0, btEraser.Width, btEraser.Height);
-            image_eraser = new Bitmap(btEraser.Width, btEraser.Height);
-            g = Graphics.FromImage(image_eraser);
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            g.DrawImage(global::gInk.Properties.Resources.eraser, 0, 0, btEraser.Width, btEraser.Height);
-            btEraser.Image = image_eraser;
+            btUndo.BackgroundImage = getImgFromDiskOrRes("undo", ImageExts);
+            image_eraser_act = getImgFromDiskOrRes("eraser_act", ImageExts);
+            image_eraser = getImgFromDiskOrRes("eraser", ImageExts);
+            btEraser.BackgroundImage = image_eraser;
 
-            image_visible_not = new Bitmap(btInkVisible.Width, btInkVisible.Height);
-            g = Graphics.FromImage(image_visible_not);
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            g.DrawImage(global::gInk.Properties.Resources.visible_not, 0, 0, btInkVisible.Width, btInkVisible.Height);
-            image_visible = new Bitmap(btInkVisible.Width, btInkVisible.Height);
-            g = Graphics.FromImage(image_visible);
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            g.DrawImage(global::gInk.Properties.Resources.visible, 0, 0, btInkVisible.Width, btInkVisible.Height);
-            btInkVisible.Image = image_visible;
+            image_visible_not = getImgFromDiskOrRes("visible_not", ImageExts);
+            image_visible = getImgFromDiskOrRes("visible", ImageExts);
+            btInkVisible.BackgroundImage = image_visible;
+            btSnap.BackgroundImage = getImgFromDiskOrRes("snap", ImageExts); ;
 
-            image_snap = new Bitmap(btSnap.Width, btSnap.Height);
-            g = Graphics.FromImage(image_snap);
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            g.DrawImage(global::gInk.Properties.Resources.snap, 0, 0, btSnap.Width, btSnap.Height);
-            btSnap.Image = image_snap;
-            image_penwidth = new Bitmap(btPenWidth.Width, btPenWidth.Height);
-            g = Graphics.FromImage(image_penwidth);
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            g.DrawImage(global::gInk.Properties.Resources.penwidth, 0, 0, btPenWidth.Width, btPenWidth.Height);
-            btPenWidth.Image = image_penwidth;
-            image_dock = new Bitmap(btDock.Width, btDock.Height);
-            g = Graphics.FromImage(image_dock);
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            g.DrawImage(global::gInk.Properties.Resources.dock, 0, 0, btDock.Width, btDock.Height);
-            image_dockback = new Bitmap(btDock.Width, btDock.Height);
-            g = Graphics.FromImage(image_dockback);
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            g.DrawImage(global::gInk.Properties.Resources.dockback, 0, 0, btDock.Width, btDock.Height);
+            btPenWidth.BackgroundImage = getImgFromDiskOrRes("penwidth", ImageExts); 
             if (Root.Docked)
-                btDock.Image = image_dockback;
+                btDock.BackgroundImage = getImgFromDiskOrRes("dockback", ImageExts);
             else
-                btDock.Image = image_dock;
+                btDock.BackgroundImage = getImgFromDiskOrRes("dock", ImageExts);
 
-            image_pencil = new Bitmap(btPen[2].Width, btPen[2].Height);
-            g = Graphics.FromImage(image_pencil);
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            g.DrawImage(global::gInk.Properties.Resources.pencil, 0, 0, btPen[2].Width, btPen[2].Height);
-            image_highlighter = new Bitmap(btPen[2].Width, btPen[2].Height);
-            g = Graphics.FromImage(image_highlighter);
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            g.DrawImage(global::gInk.Properties.Resources.highlighter, 0, 0, btPen[2].Width, btPen[2].Height);
-            image_pencil_act = new Bitmap(btPen[2].Width, btPen[2].Height);
-            g = Graphics.FromImage(image_pencil_act);
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            g.DrawImage(global::gInk.Properties.Resources.pencil_act, 0, 0, btPen[2].Width, btPen[2].Height);
-            image_highlighter_act = new Bitmap(btPen[2].Width, btPen[2].Height);
-            g = Graphics.FromImage(image_highlighter_act);
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            g.DrawImage(global::gInk.Properties.Resources.highlighter_act, 0, 0, btPen[2].Width, btPen[2].Height);
-
-            image_pointer = new Bitmap(btPointer.Width, btPointer.Height);
-            g = Graphics.FromImage(image_pointer);
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            g.DrawImage(global::gInk.Properties.Resources.pointer, 0, 0, btPointer.Width, btPointer.Height);
-            image_pointer_act = new Bitmap(btPointer.Width, btPointer.Height);
-            g = Graphics.FromImage(image_pointer_act);
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            g.DrawImage(global::gInk.Properties.Resources.pointer_act, 0, 0, btPointer.Width, btPointer.Height);
+            image_pointer = getImgFromDiskOrRes("pointer", ImageExts);
+            image_pointer_act = getImgFromDiskOrRes("pointer_act", ImageExts);
 
             image_pen = new Bitmap[Root.MaxPenCount];
             image_pen_act = new Bitmap[Root.MaxPenCount];
@@ -575,7 +615,7 @@ namespace gInk
             ToTransparent();
             ToTopMost();
 
-            this.toolTip.SetToolTip(this.btDock, Root.Local.ButtonNameDock);
+            this.toolTip.SetToolTip(this.btDock, Root.Local.ButtonNameDock + " (" + Root.Hotkey_DockUndock.ToString() + ")");
             this.toolTip.SetToolTip(this.btPenWidth, Root.Local.ButtonNamePenwidth);
             this.toolTip.SetToolTip(this.btEraser, Root.Local.ButtonNameErasor + " (" + Root.Hotkey_Eraser.ToString() + ")");
             this.toolTip.SetToolTip(this.btPan, Root.Local.ButtonNamePan + " (" + Root.Hotkey_Pan.ToString() + ")");
@@ -585,7 +625,7 @@ namespace gInk
             this.toolTip.SetToolTip(this.btUndo, Root.Local.ButtonNameUndo + " (" + Root.Hotkey_Undo.ToString() + ")");
             this.toolTip.SetToolTip(this.btClear, Root.Local.ButtonNameClear + " (" + Root.Hotkey_Clear.ToString() + ")");
             this.toolTip.SetToolTip(this.btVideo, Root.Local.ButtonNameVideo + " (" + Root.Hotkey_Video.ToString() + ")");
-            this.toolTip.SetToolTip(this.btStop, Root.Local.ButtonNameExit + " ( Esc/ Alt+F4)");
+            this.toolTip.SetToolTip(this.btStop, Root.Local.ButtonNameExit + " (" + Root.Hotkey_Close.ToString() +"/Alt+F4)");
             this.toolTip.SetToolTip(this.btHand, Root.Local.ButtonNameHand + " (" + Root.Hotkey_Hand.ToString() + ")");
             this.toolTip.SetToolTip(this.btLine, Root.Local.ButtonNameLine + " (" + Root.Hotkey_Line.ToString() + ")");
             this.toolTip.SetToolTip(this.btRect, Root.Local.ButtonNameRect + " (" + Root.Hotkey_Rect.ToString() + ")");
@@ -610,20 +650,85 @@ namespace gInk
             PenModifyDlg = new PenModifyDlg(Root); // It seems to be a little long to build so we prepare it.
             SelectTool(0, 0); // Select Hand Drawing by Default
 
+        //Console.WriteLine("C=" + (DateTime.Now.Ticks/1e7).ToString());
+        }
+
+        // I want to be able to use the space,escape,... I must not leave leave the application handle those and generate clicks...
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            return true;
+        }
+
+        //public override bool PreProcessMessage(ref Message msg)
+        //[System.Security.Permissions.PermissionSet(System.Security.Permissions.SecurityAction.Demand, Name = "FullTrust")]
+
+        public void AltTabActivate()
+        {
+            if (Initializing)
+            {
+                Initializing = false;
+                return;
+            }
+            if(ButtonsEntering != 0)
+            {
+                //Console.WriteLine("Entering");
+                return;
+            }
+            //Console.WriteLine("activating " + (Root.PointerMode ? "pointer" : "not") + (Root.FormButtonHitter.Visible ? "visible" : "not")+ Root.FormButtonHitter.Width.ToString());
+            if (Root.FormButtonHitter.Visible && Root.FormButtonHitter.Width < 100)
+            {
+                //Console.WriteLine("process ");
+                SelectPen(LastPenSelected);
+                SelectTool(SavedTool, SavedFilled);
+                SavedTool = -1;
+                SavedFilled = -1;
+                Root.UnDock();
+                Root.UponAllDrawingUpdate = true;
+                Root.UponButtonsUpdate |= 0x7;
+
+            }
+        }
+        protected override void WndProc(ref Message msg)
+        {
+            if (msg.Msg == 0x001C) //WM_ACTIVATEAPP : generated through alt+tab
+            {
+                if (!Root.AltTabPointer)
+                    return;
+                if (msg.WParam == IntPtr.Zero)
+                {   //Console.WriteLine("desactivating ");
+                    if (!Root.PointerMode)
+                    {
+                        //Console.WriteLine("process ");
+                        SavedTool = Root.ToolSelected;
+                        SavedFilled = Root.FilledSelected;
+                        SelectPen(-2);
+                        Root.Dock();
+                        return;
+                    }
+                }
+                else
+                {
+                    AltTabActivate();
+                    return;
+                }
+            }
+            base.WndProc(ref msg);
         }
 
         private void SetVidBgImage()
         {
             if (Root.VideoRecInProgress == VideoRecInProgress.Stopped)
-                btVideo.BackgroundImage = global::gInk.Properties.Resources.VidStop;
+                btVideo.BackgroundImage = getImgFromDiskOrRes("VidStop", ImageExts);
             else if (Root.VideoRecInProgress == VideoRecInProgress.Recording)
-                btVideo.BackgroundImage = global::gInk.Properties.Resources.VidRecord;
+                btVideo.BackgroundImage = getImgFromDiskOrRes("VidRecord", ImageExts);
+            else if (Root.VideoRecInProgress == VideoRecInProgress.Streaming)
+                btVideo.BackgroundImage = getImgFromDiskOrRes("VidBroadcast", ImageExts);
             else if (Root.VideoRecInProgress == VideoRecInProgress.Paused)
-                btVideo.BackgroundImage = global::gInk.Properties.Resources.VidPause;
+                btVideo.BackgroundImage = getImgFromDiskOrRes("VidPause", ImageExts);
             else
             {
-                btVideo.BackgroundImage = global::gInk.Properties.Resources.VidUnk;
-                Console.WriteLine("VideoRecInProgress " + Root.VideoRecInProgress.ToString());
+                btVideo.BackgroundImage = getImgFromDiskOrRes("VidUnk", ImageExts);
+                //Console.WriteLine("VideoRecInProgress " + Root.VideoRecInProgress.ToString());
                 }
             Root.UponButtonsUpdate |= 0x2;
         }
@@ -636,7 +741,7 @@ namespace gInk
             /*if (Root.GlobalPenWidth > 120)
                 Root.GlobalPenWidth = 120;
             */
-            Console.WriteLine(Root.GlobalPenWidth);
+            //Console.WriteLine(Root.GlobalPenWidth);
             IC.DefaultDrawingAttributes.Width = Root.GlobalPenWidth;
             if (Root.CanvasCursor == 1)
                 SetPenTipCursor();
@@ -654,12 +759,12 @@ namespace gInk
             MouseDownButtonObject = sender;            
             longClickTimer.Start();
             longClickTimer.Tag = sender;
-            Console.WriteLine(string.Format("MD {0} {1}", DateTime.Now.Second, DateTime.Now.Millisecond));
+            //Console.WriteLine(string.Format("MD {0} {1}", DateTime.Now.Second, DateTime.Now.Millisecond));
         }
 
         private void btAllButtons_MouseUp(object sender, MouseEventArgs e)
         {
-            Console.WriteLine("MU " + (sender as Control).Name);
+            //Console.WriteLine("MU " + (sender as Control).Name);
             MouseDownButtonObject = null;
             (sender as Button).RightToLeft = RightToLeft.No;
             longClickTimer.Stop();
@@ -673,7 +778,7 @@ namespace gInk
             longClickTimer.Stop();
             sender = (sender as ContextMenu).SourceControl;
             (sender as Button).RightToLeft = RightToLeft.No;
-            Console.WriteLine(string.Format("RC {0}", (sender as Control).Name));
+            //Console.WriteLine(string.Format("RC {0}", (sender as Control).Name));
             (sender as Button).PerformClick();
         }
 
@@ -682,7 +787,7 @@ namespace gInk
             Button bt = MouseDownButtonObject as Button;
             MouseDownButtonObject = null;
             longClickTimer.Stop();
-            Console.WriteLine(string.Format("!LC {0}", bt.Name));
+            //Console.WriteLine(string.Format("!LC {0}", bt.Name));
             bt.RightToLeft = RightToLeft.Yes;
             bt.PerformClick();
             IsMovingToolbar = 0;
@@ -906,7 +1011,7 @@ namespace gInk
             Stroke st;
             float pos;
             Point pt = new Point(int.MaxValue, int.MaxValue);
-            int x2 = int.MaxValue, y2 = int.MaxValue, x_a = int.MaxValue, y_a = int.MaxValue;
+            int x2 = int.MaxValue, y2 = int.MaxValue;//, x_a = int.MaxValue, y_a = int.MaxValue;
             if ((Control.ModifierKeys & Keys.Control) != Keys.None || (Control.ModifierKeys & Keys.Shift) != Keys.None)  // force temporarily Magnetic off if ctrl or shift is depressed
                 Magnetic = false;   
             if ((Magnetic || (Control.ModifierKeys & Keys.Control)!=Keys.None  ) &&
@@ -1414,17 +1519,17 @@ namespace gInk
         // filled : empty(0),PenColorFilled(1),WhiteFilled(2),BlackFilled(3)
         // filled is applicable to Hand,Rect,Oval
         {
-            btHand.BackgroundImage = global::gInk.Properties.Resources.tool_hand;
-            btLine.BackgroundImage = global::gInk.Properties.Resources.tool_line;
-            btRect.BackgroundImage = global::gInk.Properties.Resources.tool_rect;
-            btOval.BackgroundImage = global::gInk.Properties.Resources.tool_oval;
+            btHand.BackgroundImage = getImgFromDiskOrRes("tool_hand", ImageExts);
+            btLine.BackgroundImage = getImgFromDiskOrRes("tool_line", ImageExts);
+            btRect.BackgroundImage = getImgFromDiskOrRes("tool_rect", ImageExts);
+            btOval.BackgroundImage = getImgFromDiskOrRes("tool_oval", ImageExts);
             if (Root.DefaultArrow_start)
-                btArrow.BackgroundImage = global::gInk.Properties.Resources.tool_stAr;
+                btArrow.BackgroundImage = getImgFromDiskOrRes("tool_stAr", ImageExts);
             else
-                btArrow.BackgroundImage = global::gInk.Properties.Resources.tool_enAr;
-            btNumb.BackgroundImage = global::gInk.Properties.Resources.tool_numb;
-            btText.BackgroundImage = global::gInk.Properties.Resources.tool_txtL;
-            btEdit.BackgroundImage = global::gInk.Properties.Resources.tool_edit;
+                btArrow.BackgroundImage = getImgFromDiskOrRes("tool_enAr", ImageExts);
+            btNumb.BackgroundImage = getImgFromDiskOrRes("tool_numb", ImageExts);
+            btText.BackgroundImage = getImgFromDiskOrRes("tool_txtL", ImageExts);
+            btEdit.BackgroundImage = getImgFromDiskOrRes("tool_edit", ImageExts);
 
             if (AltKeyPressed())
             {
@@ -1455,90 +1560,93 @@ namespace gInk
             else if (tool == 0)
             {
                 if (Root.FilledSelected == 0)
-                    btHand.BackgroundImage = global::gInk.Properties.Resources.tool_hand_act;
+                    btHand.BackgroundImage = getImgFromDiskOrRes("tool_hand_act", ImageExts);
                 else if (Root.FilledSelected == 1)
-                    btHand.BackgroundImage = global::gInk.Properties.Resources.tool_hand_filledC;
+                    btHand.BackgroundImage = getImgFromDiskOrRes("tool_hand_filledC", ImageExts);
                 else if (Root.FilledSelected == 2)
-                    btHand.BackgroundImage = global::gInk.Properties.Resources.tool_hand_filledW;
+                    btHand.BackgroundImage = getImgFromDiskOrRes("tool_hand_filledW", ImageExts);
                 else if (Root.FilledSelected == 3)
-                    btHand.BackgroundImage = global::gInk.Properties.Resources.tool_hand_filledB;
+                    btHand.BackgroundImage = getImgFromDiskOrRes("tool_hand_filledB", ImageExts);
                 EnterEraserMode(false);
             }
             else if (tool == 1)
-                btLine.BackgroundImage = global::gInk.Properties.Resources.tool_line_act;
+                btLine.BackgroundImage = getImgFromDiskOrRes("tool_line_act", ImageExts);
             else if (tool == 2)
             {
                 if (Root.FilledSelected == 0)
-                    btRect.BackgroundImage = global::gInk.Properties.Resources.tool_rect_act;
+                    btRect.BackgroundImage = getImgFromDiskOrRes("tool_rect_act", ImageExts);
                 else if (Root.FilledSelected == 1)
-                    btRect.BackgroundImage = global::gInk.Properties.Resources.tool_rect_filledC;
+                    btRect.BackgroundImage = getImgFromDiskOrRes("tool_rect_filledC", ImageExts);
                 else if (Root.FilledSelected == 2)
-                    btRect.BackgroundImage = global::gInk.Properties.Resources.tool_rect_filledW;
+                    btRect.BackgroundImage = getImgFromDiskOrRes("tool_rect_filledW", ImageExts);
                 else if (Root.FilledSelected == 3)
-                    btRect.BackgroundImage = global::gInk.Properties.Resources.tool_rect_filledB;
+                    btRect.BackgroundImage = getImgFromDiskOrRes("tool_rect_filledB", ImageExts);
 
             }
             else if (tool == 3)
             {
                 if (Root.FilledSelected == 0)
-                    btOval.BackgroundImage = global::gInk.Properties.Resources.tool_oval_act;
+                    btOval.BackgroundImage = getImgFromDiskOrRes("tool_oval_act", ImageExts);
                 else if (Root.FilledSelected == 1)
-                    btOval.BackgroundImage = global::gInk.Properties.Resources.tool_oval_filledC;
+                    btOval.BackgroundImage = getImgFromDiskOrRes("tool_oval_filledC", ImageExts);
                 else if (Root.FilledSelected == 2)
-                    btOval.BackgroundImage = global::gInk.Properties.Resources.tool_oval_filledW;
+                    btOval.BackgroundImage = getImgFromDiskOrRes("tool_oval_filledW", ImageExts);
                 else if (Root.FilledSelected == 3)
-                    btOval.BackgroundImage = global::gInk.Properties.Resources.tool_oval_filledB;
+                    btOval.BackgroundImage = getImgFromDiskOrRes("tool_oval_filledB", ImageExts);
             }
             else if ((tool == 4) || (tool == 5)) // also include tool=5
                 if ((tool == 5) || (Root.ToolSelected == 4))
                 {
-                    btArrow.BackgroundImage = global::gInk.Properties.Resources.tool_enAr_act;
+                    btArrow.BackgroundImage = getImgFromDiskOrRes("tool_enAr_act", ImageExts);
                     tool = 5;
                 }
                 else
                 {
-                    btArrow.BackgroundImage = global::gInk.Properties.Resources.tool_stAr_act;
+                    btArrow.BackgroundImage = getImgFromDiskOrRes("tool_stAr_act", ImageExts);
                     tool = 4;
                 }
             else if (tool == 6)
             {
                 if (Root.FilledSelected == 0)
-                    btNumb.BackgroundImage = global::gInk.Properties.Resources.tool_numb_act;
+                    btNumb.BackgroundImage = getImgFromDiskOrRes("tool_numb_act", ImageExts);
                 else if (Root.FilledSelected == 1)
                 { // we use the state FilledColor to do the modification of the tag number
                     SetTagNumber();
-                    btNumb.BackgroundImage = global::gInk.Properties.Resources.tool_numb_act;
+                    btNumb.BackgroundImage = getImgFromDiskOrRes("tool_numb_act", ImageExts);
                 }
                 else if (Root.FilledSelected == 2)
-                    btNumb.BackgroundImage = global::gInk.Properties.Resources.tool_numb_fillW;
+                    btNumb.BackgroundImage = getImgFromDiskOrRes("tool_numb_fillW", ImageExts);
                 else if (Root.FilledSelected == 3)
-                    btNumb.BackgroundImage = global::gInk.Properties.Resources.tool_numb_fillB;
+                    btNumb.BackgroundImage = getImgFromDiskOrRes("tool_numb_fillB", ImageExts);
             }
             else if (tool == 7)
-                btEdit.BackgroundImage = global::gInk.Properties.Resources.tool_edit_act;
+                btEdit.BackgroundImage = getImgFromDiskOrRes("tool_edit_act");
             else if ((tool == 8) || (tool == 9))
                 if ((tool == 9) || (Root.ToolSelected == 8))
                 {
-                    btText.BackgroundImage = global::gInk.Properties.Resources.tool_txtR_act;
+                    btText.BackgroundImage = getImgFromDiskOrRes("tool_txtR_act", ImageExts);
                     tool = 9;
                 }
                 else
                 {
-                    btText.BackgroundImage = global::gInk.Properties.Resources.tool_txtL_act;
+                    btText.BackgroundImage = getImgFromDiskOrRes("tool_txtL_act", ImageExts);
                     tool = 8;
                 }
             else if (tool == 10)
             {
                 //SelectPen(LastPenSelected);
-                btPan.BackgroundImage = global::gInk.Properties.Resources.pan1_act;
+                btPan.BackgroundImage = getImgFromDiskOrRes("pan1_act", ImageExts);
             }
             Root.ToolSelected = tool;
         }
 
         public void SelectPen(int pen)
 		{
-            btPan.BackgroundImage = global::gInk.Properties.Resources.pan;
+            btPan.BackgroundImage = getImgFromDiskOrRes("pan", ImageExts);
             // -3=pan, -2=pointer, -1=erasor, 0+=pens
+            //Console.WriteLine("SelectPen : " + pen.ToString());
+            //System.Diagnostics.StackTrace t = new System.Diagnostics.StackTrace();
+            //Console.WriteLine(t.ToString());
             if (pen == -3)
 			{
                 if (AltKeyPressed() && SavedPen < 0)
@@ -1547,10 +1655,11 @@ namespace gInk
                 }
                 SelectTool(-1, 0);       // Alt will be processed inhere
                 for (int b = 0; b < Root.MaxPenCount; b++)
-					btPen[b].Image = image_pen[b];
-				btEraser.Image = image_eraser;
-				btPointer.Image = image_pointer;
-                btPan.BackgroundImage = global::gInk.Properties.Resources.pan_act;
+                    //btPen[b].Image = image_pen[b];
+                    btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, false);// image_pen[b];
+                btEraser.BackgroundImage = image_eraser;
+				btPointer.BackgroundImage = image_pointer;
+                btPan.BackgroundImage = getImgFromDiskOrRes("pan_act", ImageExts);
                 EnterEraserMode(false);
 				Root.UnPointer();
 				Root.PanMode = true;
@@ -1573,9 +1682,10 @@ namespace gInk
                 }
                 SelectTool(-1, 0);       // Alt will be processed inhere
                 for (int b = 0; b < Root.MaxPenCount; b++)
-					btPen[b].Image = image_pen[b];
-				btEraser.Image = image_eraser;
-				btPointer.Image = image_pointer_act;
+                    //btPen[b].Image = image_pen[b];
+                    btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, false);// image_pen[b];
+                btEraser.BackgroundImage = image_eraser;
+				btPointer.BackgroundImage = image_pointer_act;
 				EnterEraserMode(false);
 				Root.Pointer();
 				Root.PanMode = false;
@@ -1587,24 +1697,33 @@ namespace gInk
                     SavedPen = LastPenSelected;
                 }
                 SelectTool(-1,0);       // Alt will be processed inhere
-                if (this.Cursor != System.Windows.Forms.Cursors.Default)
-					this.Cursor = System.Windows.Forms.Cursors.Default;
+                //if (this.Cursor != System.Windows.Forms.Cursors.Default)
+				//	this.Cursor = System.Windows.Forms.Cursors.Default;
+                
+                for (int b = 0; b < Root.MaxPenCount; b++)
+					//btPen[b].Image = image_pen[b];
+                    btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, false);// image_pen[b];
 
-				for (int b = 0; b < Root.MaxPenCount; b++)
-					btPen[b].Image = image_pen[b];
-				btEraser.Image = image_eraser_act;
-				btPointer.Image = image_pointer;
+                btEraser.BackgroundImage = image_eraser_act;
+				btPointer.BackgroundImage = image_pointer;
 				EnterEraserMode(true);
 				Root.UnPointer();
 				Root.PanMode = false;
-
-				if (Root.CanvasCursor == 0)
-				{
-					//cursorred = new System.Windows.Forms.Cursor(gInk.Properties.Resources.cursorred.Handle);
-					IC.Cursor = cursorred;
-				}
-				else if (Root.CanvasCursor == 1)
-					SetPenTipCursor();
+                // !!!!!!!!!!!!!!! random exception
+                for(int i=0; i<10; i++)
+                {
+                    try
+                    {
+                        IC.Cursor = new System.Windows.Forms.Cursor(cursorerase.Handle);
+                    }
+                    catch
+                    {
+                        cursorerase = getCursFromDiskOrRes("cursoreraser");
+                        //Console.WriteLine(e.Message);
+                        continue;
+                    }
+                    break;
+                }
 
 				try
 				{
@@ -1633,10 +1752,11 @@ namespace gInk
 				}
                 IC.DefaultDrawingAttributes.FitToCurve = true;
                 for (int b = 0; b < Root.MaxPenCount; b++)
-					btPen[b].Image = image_pen[b];
-				btPen[pen].Image = image_pen_act[pen];
-				btEraser.Image = image_eraser;
-				btPointer.Image = image_pointer;
+                    //btPen[b].Image = image_pen[b];
+                    btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, b == pen);
+				//btPen[pen].Image = image_pen_act[pen];
+				btEraser.BackgroundImage = image_eraser;
+				btPointer.BackgroundImage = image_pointer;
 				EnterEraserMode(false);
 				Root.UnPointer();
 				Root.PanMode = false;
@@ -1648,17 +1768,17 @@ namespace gInk
 				}
 				else if (Root.CanvasCursor == 1)
 					SetPenTipCursor();
-
-				try
-				{
-					IC.SetWindowInputRectangle(new Rectangle(0, 0, this.Width, this.Height));
-				}
-				catch
-				{
-					Thread.Sleep(1);
-					IC.SetWindowInputRectangle(new Rectangle(0, 0, this.Width, this.Height));
-				}
-			}
+                // !!!!! TODO problem re-entrant
+                try
+                {
+                    IC.SetWindowInputRectangle(new Rectangle(0, 0, this.Width, this.Height));
+                }
+                catch
+                {
+                    //Console.WriteLine("!!excpt IC.SetWindowInputRectangle");
+                    SetWindowInputRectFlag = true;
+                }
+            }
 			Root.CurrentPen = pen;
 			if (Root.gpPenWidthVisible)
 			{
@@ -1684,10 +1804,6 @@ namespace gInk
 			ButtonsEntering = -9;
 		}
 
-		private void Form1_Load(object sender, EventArgs e)
-		{
-		}
-
 		public void btDock_Click(object sender, EventArgs e)
 		{
 			if (ToolbarMoved)
@@ -1703,7 +1819,14 @@ namespace gInk
 			}
 			else
 			{
-				Root.UnDock();
+                //Console.WriteLine("--------- undocking --------------- "+DateTime.Now.ToString());
+                if (Root.PointerMode)
+                {
+                    //Console.WriteLine("undockPointer");
+                    btPointer_Click(null, null);
+                    Root.UponButtonsUpdate |= 0x7;
+                }
+                Root.UnDock();
 			}
 		}
 
@@ -1718,7 +1841,12 @@ namespace gInk
             {
                 SavedTool = Root.ToolSelected;
                 SavedFilled = Root.FilledSelected;
+                //Console.WriteLine("------------------------ "+DateTime.Now.ToString());
 			    SelectPen(-2);
+                if(Root.AltTabPointer)
+                {
+                    Root.Dock();
+                }
             }
             else
             {
@@ -1826,6 +1954,7 @@ namespace gInk
 		bool LastSnapStatus = false;
 		bool LastClearStatus = false;
         bool LastVideoStatus = false;
+        bool LastDockStatus = false;
         bool LastHandStatus = false;
         bool LastLineStatus = false;
         bool LastRectStatus = false;
@@ -1921,7 +2050,14 @@ namespace gInk
 				cbrush = new SolidBrush(Color.Black);
 				widt = new Point(60, 0);
 			}
-			IC.Renderer.InkSpaceToPixel(IC.Handle, ref widt);
+            try
+            {
+			    IC.Renderer.InkSpaceToPixel(IC.Handle, ref widt);
+            }
+            catch  // not in good context. considered to be able to stop processing at that time
+            {
+                return;
+            }
 
 			IntPtr screenDc = GetDC(IntPtr.Zero);
 			const int VERTRES = 10;
@@ -1946,8 +2082,13 @@ namespace gInk
         short LastESCStatus = 0;
 		private void tiSlide_Tick(object sender, EventArgs e)
 		{
-			// ignore the first tick
-			if (LastTickTime.Year == 1987)
+            Initializing = false;
+
+            if(SetWindowInputRectFlag) // alternative to prevent some error when trying to call this function from WM_ACTIVATE event handler
+                IC.SetWindowInputRectangle(new Rectangle(0, 0, this.Width, this.Height));
+            SetWindowInputRectFlag = false;
+            // ignore the first tick
+            if (LastTickTime.Year == 1987)
 			{
 				LastTickTime = DateTime.Now;
 				return;
@@ -2030,25 +2171,25 @@ namespace gInk
 				Root.UponAllDrawingUpdate = true;
 				Root.UponButtonsUpdate = 0;
 			}
-			if (gpButtons.Left == aimedleft)
-			{
-                // add a background if required at opening
-                if (ButtonsEntering != 0)
+			if ((gpButtons.Left == aimedleft) && (ButtonsEntering != 0))
+            {
+                // add a background if required at opening but not when snapping is in progress
+                if (Root.Snapping==0)
                 {
-                if ((Root.BoardAtOpening == 1) || (Root.BoardAtOpening == 4 && Root.BoardSelected == 1)) // White
-                    AddBackGround(255, 255, 255, 255);
+                    if ((Root.BoardAtOpening == 1) || (Root.BoardAtOpening == 4 && Root.BoardSelected == 1)) // White
+                        AddBackGround(255, 255, 255, 255);
                 else if ((Root.BoardAtOpening == 2) || (Root.BoardAtOpening == 4 && Root.BoardSelected == 2)) // Customed
-                    AddBackGround(Root.Gray1[0], Root.Gray1[1], Root.Gray1[2], Root.Gray1[3]);
-                else if ((Root.BoardAtOpening == 3) || (Root.BoardAtOpening == 4 && Root.BoardSelected == 3)) // Black
-                    AddBackGround(255, 0, 0, 0);
-                if(Root.BoardAtOpening != 4)    // reset the board selected at opening
+                        AddBackGround(Root.Gray1[0], Root.Gray1[1], Root.Gray1[2], Root.Gray1[3]);
+                    else if ((Root.BoardAtOpening == 3) || (Root.BoardAtOpening == 4 && Root.BoardSelected == 3)) // Black
+                        AddBackGround(255, 0, 0, 0);
+                    if (Root.BoardAtOpening != 4)    // reset the board selected at opening
                     {
                         Root.BoardSelected = Root.BoardAtOpening;
                     }
                 }
-				ButtonsEntering = 0;
-
-
+                Root.UponButtonsUpdate |= 2;
+                //Console.WriteLine("----------- zzzzzzzzzzzzzz    -------------"+DateTime.Now.ToString());
+                ButtonsEntering = 0;
             }
 
 
@@ -2067,12 +2208,14 @@ namespace gInk
 			{
 				// ESC key : Exit
 				short retVal;
-				retVal = GetKeyState(27);
-				if ((retVal & 0x8000) == 0x8000 && (LastESCStatus & 0x8000) == 0x0000  && ! TextEdited)
-				{
-					if (Root.Snapping > 0)
-					{
-						ExitSnapping();
+                if (Root.Hotkey_Close.Key != 0)
+                {
+                    retVal = GetKeyState(Root.Hotkey_Close.Key);
+                    if ((retVal & 0x8000) == 0x8000 && (LastESCStatus & 0x8000) == 0x0000 && !TextEdited)
+                    {
+                        if (Root.Snapping > 0)
+                        {
+                            ExitSnapping();
 					}
 					else if (Root.gpPenWidthVisible)
 					{
@@ -2082,9 +2225,10 @@ namespace gInk
 					else if (Root.Snapping == 0)
 						RetreatAndExit();
 				}
-				LastESCStatus = retVal;
-                TextEdited = false;
-			}
+                    LastESCStatus = retVal;
+                    TextEdited = false;
+                }
+            }
 
             if (!AltKeyPressed() && !Root.PointerMode )//&& (SavedPen>=0 || SavedTool>=0))
             {
@@ -2189,6 +2333,13 @@ namespace gInk
                     btVideo_Click(null, null);
                 }
                 LastVideoStatus = pressed;
+
+                pressed = (GetKeyState(Root.Hotkey_DockUndock.Key) & 0x8000) == 0x8000;
+                if (pressed && !LastDockStatus && Root.Hotkey_DockUndock.ModifierMatch(control, alt, shift, win))
+                {
+                    btDock_Click(null, null);
+                }
+                LastDockStatus = pressed;
 
                 pressed = (GetKeyState(Root.Hotkey_Snap.Key) & 0x8000) == 0x8000;
 				if (pressed && !LastSnapStatus && Root.Hotkey_Snap.ModifierMatch(control, alt, shift, win))
@@ -2580,8 +2731,9 @@ namespace gInk
                         if ((Root.ToolSelected == 10) || (Root.ToolSelected == 5)) // if move
                             SelectTool(0);
                         PreparePenImages(Root.PenAttr[b].Transparency, ref image_pen[b], ref image_pen_act[b]);
-                        btPen[b].Image = image_pen_act[b];
-                        btPen[b].BackColor = Root.PenAttr[b].Color;
+                        //btPen[b].Image = image_pen_act[b];
+                        btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, false);// image_pen[b];
+                        //btPen[b].BackColor = Root.PenAttr[b].Color;
                         btPen[b].FlatAppearance.MouseDownBackColor = Root.PenAttr[b].Color;
                         btPen[b].FlatAppearance.MouseOverBackColor = Root.PenAttr[b].Color;
                         SelectPen(b);
@@ -2669,7 +2821,7 @@ namespace gInk
             }
             else
             {
-                try
+                /*try
                 {
                     Console.Write("-->" + (Root.ObsRecvTask == null).ToString());
                     if (Root.ObsRecvTask != null)
@@ -2678,7 +2830,7 @@ namespace gInk
                 finally
                 {
                     Console.WriteLine();
-                }
+                }*/
                 if (Root.ObsRecvTask == null || Root.ObsRecvTask.IsCompleted)
                 {
                     Root.ObsRecvTask = Task.Run(() => ReceiveObsMesgs(this));
@@ -2704,7 +2856,7 @@ namespace gInk
 
             Root.FFmpegProcess = new Process();
             string[] cmdArgs = Root.ExpandVarCmd(Root.FFMpegCmd, rect.X, rect.Y, rect.Width, rect.Height).Split(new char[] {' '}, 2);
-            Console.WriteLine(string.Format("%s %s", cmdArgs[0], cmdArgs[1]));
+            //Console.WriteLine(string.Format("%s %s", cmdArgs[0], cmdArgs[1]));
 
             Root.FFmpegProcess.StartInfo.FileName = cmdArgs[0];
             Root.FFmpegProcess.StartInfo.Arguments = cmdArgs[1];
@@ -2742,7 +2894,7 @@ namespace gInk
             if (frm.Root.ObsWs == null)
             {
                 frm.Root.ObsWs = new ClientWebSocket();
-                Console.WriteLine("WS Created");
+                //Console.WriteLine("WS Created");
             }
             var rcvBytes = new byte[4096];
             var rcvBuffer = new ArraySegment<byte>(rcvBytes);
@@ -2750,11 +2902,11 @@ namespace gInk
             if (frm.Root.ObsWs.State != WebSocketState.Open)
             {
                 await frm.Root.ObsWs.ConnectAsync(new Uri(frm.Root.ObsUrl), ct);
-                Console.WriteLine("WS Connected");
+                //Console.WriteLine("WS Connected");
                 await SendInWs(frm.Root.ObsWs, "GetAuthRequired", ct);
                 rcvResult = await frm.Root.ObsWs.ReceiveAsync(rcvBuffer, ct);
                 string st = Encoding.UTF8.GetString(rcvBuffer.Array, 0, rcvResult.Count);
-                Console.WriteLine("getAuth => " + st);
+                //Console.WriteLine("getAuth => " + st);
                 if (st.Contains("authRequired\": t"))
                 {
                     int i = st.IndexOf("\"challenge\":");
@@ -2765,7 +2917,7 @@ namespace gInk
                     i = st.IndexOf("\"", i + "\"salt\":".Length + 1)+1;                    
                     j = st.IndexOf("\"", i + 1);
                     string salt = st.Substring(i, j - i);
-                    Console.WriteLine(challenge + " - " + salt);
+                    //Console.WriteLine(challenge + " - " + salt);
                     string authResponse = HashEncode(HashEncode(frm.Root.ObsPwd + salt) + challenge);
                     await SendInWs(frm.Root.ObsWs, "Authenticate", ct,",\"auth\": \"" + authResponse + "\"");
                     rcvResult = await frm.Root.ObsWs.ReceiveAsync(rcvBuffer, ct);
@@ -2775,7 +2927,7 @@ namespace gInk
                         await frm.Root.ObsWs.CloseAsync(WebSocketCloseStatus.PolicyViolation, "Authentication failed", ct);
                         frm.Root.ObsWs = null;
                         frm.Root.ObsRecvTask  = null;
-                        frm.btVideo.BackgroundImage = global::gInk.Properties.Resources.VidDead;
+                        frm.btVideo.BackgroundImage = frm.getImgFromDiskOrRes("VidDead", frm.ImageExts);
                     }
                 }
 
@@ -2787,37 +2939,47 @@ namespace gInk
                 if (ct.IsCancellationRequested)
                     return;
                 string st = Encoding.UTF8.GetString(rcvBuffer.Array, 0, rcvResult.Count);
-                Console.WriteLine("ObsReturned " + st);
+                //Console.WriteLine("ObsReturned " + st);
                 if (st.Contains("\"RecordingStopped\""))
                     frm.Root.VideoRecInProgress = VideoRecInProgress.Stopped;
                 else if (st.Contains("\"RecordingPaused\""))
                     frm.Root.VideoRecInProgress = VideoRecInProgress.Paused;
+                else if (st.Contains("StreamStopping"))
+                    frm.Root.VideoRecInProgress = VideoRecInProgress.Stopped;
+                else if (st.Contains("StreamStarted"))
+                    frm.Root.VideoRecInProgress = VideoRecInProgress.Streaming;
                 else if (st.Contains("\"RecordingStarted\"") || st.Contains("\"RecordingResumed\""))
                     frm.Root.VideoRecInProgress = VideoRecInProgress.Recording;
                 // cases from getInitialStatus;
-                else if (st.Contains("\"recording - paused\": true"))
+                else if (st.Contains("\"recording - paused\": true") || st.Contains("\"recording-paused\": true") || st.Contains("\"isRecordingPaused\": true"))
                     frm.Root.VideoRecInProgress = VideoRecInProgress.Paused;
-                else if (st.Contains("\"recording\": true"))
+                else if (st.Contains("\"recording\": true") || st.Contains("\"isRecording\": true"))
                     frm.Root.VideoRecInProgress = VideoRecInProgress.Recording;
-                else if (st.Contains("\"recording\": false"))
+                else if (st.Contains("\"streaming\": true"))
+                    frm.Root.VideoRecInProgress = VideoRecInProgress.Streaming;
+                else if (st.Contains("\"recording\": false") || st.Contains("\"isRecording\": false") || st.Contains("\"streaming\": false"))
                     frm.Root.VideoRecInProgress = VideoRecInProgress.Stopped;
-                Console.WriteLine("vidbg " + frm.Root.VideoRecInProgress.ToString());
                 frm.SetVidBgImage();
+                //Console.WriteLine("vidbg " + frm.Root.VideoRecInProgress.ToString());
+                // for unknown reasons, button update seems unreliable : robustify repeating update after 100ms
+                Thread.Sleep(100);
+                frm.SetVidBgImage();
+                //Console.WriteLine(frm.btVideo.BackgroundImage.ToString()+" vidbg2 " + frm.Root.UponButtonsUpdate);
             }
-            frm.btVideo.BackgroundImage = global::gInk.Properties.Resources.VidDead; // the recv task is dead so we put the cross;
-            Console.WriteLine("endoft");
+            frm.btVideo.BackgroundImage = frm.getImgFromDiskOrRes("VidDead", frm.ImageExts); // the recv task is dead so we put the cross;
+            //Console.WriteLine("endoft");
         }
 
         static async Task ObsStartRecording(FormCollection frm)
         {
-            Console.WriteLine("StartRec");
+            //Console.WriteLine("StartRec");
             while ((frm.Root.ObsWs==null || frm.Root.VideoRecordWindowInProgress) && !frm.Root.ObsCancel.Token.IsCancellationRequested)// frm.Root.ObsWs.State != WebSocketState.Open)
                 await Task.Delay(50);
             if(frm.Root.VideoRecordMode== VideoRecordMode.OBSRec)
                 await Task.Run(() => SendInWs(frm.Root.ObsWs,"StartRecording", frm.Root.ObsCancel.Token));
             else if (frm.Root.VideoRecordMode == VideoRecordMode.OBSBcst)
                 await Task.Run(() => SendInWs(frm.Root.ObsWs, "StartStreaming", frm.Root.ObsCancel.Token));
-            Console.WriteLine("ExitStartRec");
+            //Console.WriteLine("ExitStartRec");
         }
 
         public void VideoRecordStop()
@@ -2826,7 +2988,7 @@ namespace gInk
             {
                 Root.FFmpegProcess.Kill();
                 Root.VideoRecInProgress = VideoRecInProgress.Stopped;
-                btVideo.BackgroundImage = global::gInk.Properties.Resources.VidStop;
+                btVideo.BackgroundImage = getImgFromDiskOrRes("VidStop", ImageExts);
                 Root.UponButtonsUpdate |= 0x2;
             }
             else
@@ -2854,7 +3016,7 @@ namespace gInk
             if (Root.VideoRecordMode == VideoRecordMode.FfmpegRec)
             {
                 Root.FFmpegProcess.Kill();
-                btVideo.BackgroundImage = global::gInk.Properties.Resources.VidStop;
+                btVideo.BackgroundImage = getImgFromDiskOrRes("VidStop", ImageExts);
                 Root.UponButtonsUpdate |= 0x2;
             }
             else if (Root.VideoRecordMode == VideoRecordMode.OBSRec)
@@ -2870,14 +3032,14 @@ namespace gInk
 
         static async Task SendInWs(ClientWebSocket ws, string cmd, CancellationToken ct, string parameters="")
         {
-            Console.WriteLine("enter " + cmd);
+            //Console.WriteLine("enter " + cmd);
             string msg = string.Format("{{\"message-id\":\"{0}\",\"request-type\":\"{1}\" {2} }}", (int)(DateTime.UtcNow.TimeOfDay.TotalSeconds), cmd, parameters);
             byte[] sendBytes = Encoding.UTF8.GetBytes(msg);
             var sendBuffer = new ArraySegment<byte>(sendBytes);
             while ((ws.State != WebSocketState.Open ) && !ct.IsCancellationRequested)// frm.Root.ObsWs.State != WebSocketState.Open)
                 await Task.Delay(50);
             await ws.SendAsync(sendBuffer, WebSocketMessageType.Text, true, ct);
-            Console.WriteLine("exit " + cmd);
+            //Console.WriteLine("exit " + cmd);
         }
 
         private void btClear_RightToLeftChanged(object sender, EventArgs e)
@@ -2888,8 +3050,8 @@ namespace gInk
             else 
                 (sender as Button).BackgroundImage = global::gInk.Properties.Resources.garbage;
             */
-            btClear.BackgroundImage = global::gInk.Properties.Resources.garbage;
-            Console.WriteLine("R2L " + (sender as Button).Name + " . " + (sender as Button).RightToLeft.ToString());
+            btClear.BackgroundImage = getImgFromDiskOrRes("garbage", ImageExts);
+            //Console.WriteLine("R2L " + (sender as Button).Name + " . " + (sender as Button).RightToLeft.ToString());
             Root.UponButtonsUpdate |= 0x2;
         }
 
@@ -3030,9 +3192,9 @@ namespace gInk
             }
             Root.MagneticRadius *= -1; //invert
             if (Root.MagneticRadius > 0)
-                btMagn.BackgroundImage = global::gInk.Properties.Resources.Magnetic_act;
+                btMagn.BackgroundImage = getImgFromDiskOrRes("Magnetic_act", ImageExts);
             else
-                btMagn.BackgroundImage = global::gInk.Properties.Resources.Magnetic;
+                btMagn.BackgroundImage = getImgFromDiskOrRes("Magnetic", ImageExts);
             Root.UponButtonsUpdate |= 0x2;
         }
 

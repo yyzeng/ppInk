@@ -16,7 +16,7 @@ using System.Net.WebSockets;
 namespace gInk
 {
     public enum VideoRecordMode {NoVideo=0 , OBSRec=1 , OBSBcst=2 , FfmpegRec=3 };
-    public enum VideoRecInProgress { Stopped=0, Starting=1, Recording=2, Stopping = 3, Pausing=4, Paused=5, Resuming=6 };
+    public enum VideoRecInProgress { Stopped=0, Starting=1, Recording=2, Stopping = 3, Pausing=4, Paused=5, Resuming=6, Streaming = 7 };
 
     public class TestMessageFilter : IMessageFilter
 	{
@@ -37,7 +37,14 @@ namespace gInk
                 bool activePointer = (m.Msg == 0x0312 && Root.FormCollection != null);
                 Root.callshortcut();
                 if (activePointer)           // StartInkingMsg is received twice, therefore we have to froce pointerMode at that time...
+                {
                     Root.FormCollection.btPointer_Click(null,null);
+                    if (Root.AltTabPointer && !Root.PointerMode && !Root.FormCollection.Initializing) // to unfold the bar if AltTabPointer option has been set
+                    {
+                        Root.UnDock();
+                    }
+
+                }
                 return true;
 			}
 			return false;
@@ -83,6 +90,7 @@ namespace gInk
         public bool ToolsEnabled = true;
         public bool EraserEnabled = true;
         public bool PointerEnabled = true;
+        public bool AltTabPointer = false;
         public bool PenWidthEnabled = false;
         public bool WidthAtPenSel = true;
         public bool SnapEnabled = true;
@@ -113,6 +121,7 @@ namespace gInk
         // the two grays for "white board" effect
         public int[] Gray1 = new int[] { 80, 150, 150, 150 };
         public int[] Gray2 = new int[] {100, 100, 100, 100};
+        public int[] ToolbarBGColor = new int[] { 245, 245, 245, 0 };
         public int BoardAtOpening = 0;      // 0:Transparent/1:White/2:Customed/3:Black/4:AtSelection
         public int BoardSelected = 0;       // by default transparent
 
@@ -128,6 +137,8 @@ namespace gInk
 		public Hotkey Hotkey_Snap = new Hotkey();
 		public Hotkey Hotkey_Clear = new Hotkey();
         public Hotkey Hotkey_Video = new Hotkey();
+        public Hotkey Hotkey_DockUndock = new Hotkey();
+        public Hotkey Hotkey_Close = new Hotkey();
 
         public Hotkey Hotkey_Hand = new Hotkey();
         public Hotkey Hotkey_Line = new Hotkey();
@@ -457,9 +468,9 @@ namespace gInk
 		{
 			InkVisible = visible;
 			if (visible)
-				FormCollection.btInkVisible.Image = FormCollection.image_visible;
+				FormCollection.btInkVisible.BackgroundImage = FormCollection.image_visible;
 			else
-				FormCollection.btInkVisible.Image = FormCollection.image_visible_not;
+				FormCollection.btInkVisible.BackgroundImage = FormCollection.image_visible_not;
 
 			FormDisplay.ClearCanvus();
 			FormDisplay.DrawStrokes();
@@ -494,7 +505,7 @@ namespace gInk
 
 			Docked = true;
 			gpPenWidthVisible = false;
-			FormCollection.btDock.Image = FormCollection.image_dockback;
+			FormCollection.btDock.BackgroundImage = gInk.Properties.Resources.dockback;
 			FormCollection.ButtonsEntering = -1;
 			UponButtonsUpdate |= 0x2;
 		}
@@ -505,7 +516,7 @@ namespace gInk
 				return;
 
 			Docked = false;
-			FormCollection.btDock.Image = FormCollection.image_dock;
+			FormCollection.btDock.BackgroundImage = gInk.Properties.Resources.dock;
 			FormCollection.ButtonsEntering = 1;
 			UponButtonsUpdate |= 0x2;
 		}
@@ -516,21 +527,21 @@ namespace gInk
 				return;
 
 			PointerMode = true;
-			FormCollection.ToThrough();
+			FormCollection.ToThrough();     
 			FormButtonHitter.Show();
-		}
+            FormButtonHitter.timer1_Tick(null,null); // Force Size recomputation for alt+tab processing
+        }
 
 		public void UnPointer()
 		{
 			if (PointerMode == false)
 				return;
 
-			PointerMode = false;
+			FormButtonHitter.Hide();
 			FormCollection.ToUnThrough();
 			FormCollection.ToTopMost();
 			FormCollection.Activate();
-
-			FormButtonHitter.Hide();
+			PointerMode = false;
 		}
 
 		public void SelectPen(int pen)
@@ -756,6 +767,12 @@ namespace gInk
                         case "HOTKEY_VIDEOREC":
                             Hotkey_Video.Parse(sPara);
                             break;
+                        case "HOTKEY_DOCKUNDOCK":
+                            Hotkey_DockUndock.Parse(sPara);
+                            break;
+                        case "HOTKEY_CLOSE":
+                            Hotkey_Close.Parse(sPara);
+                            break;
                         case "HOTKEY_HAND":
                             Hotkey_Hand.Parse(sPara);
                             break;
@@ -860,7 +877,13 @@ namespace gInk
 						case "POINTER_ICON":
 							if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
 								PointerEnabled = false;
-							break;
+                            break;
+                        case "ALTTAB_POINTER":
+                            if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
+                                AltTabPointer = true;
+                            else
+                                AltTabPointer = false;
+                            break;
                         case "PEN_WIDTH_AT_SELECTION":
                             if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
                                 WidthAtPenSel = false;
@@ -951,6 +974,14 @@ namespace gInk
                             {
                                 for (int i = 0; i < 4; i++)
                                     Gray2[i] = Int32.Parse(tab[i]);
+                            };
+                            break;
+                        case "TOOLBAR_COLOR": // if not defined, no window else 2 to 4 integers Top,Left,[Width/Height,[Opacity]]
+                            tab = sPara.Split(',');
+                            if (tab.Length == 4)
+                            {
+                                for (int i = 0; i < 4; i++)
+                                    ToolbarBGColor[i] = Int32.Parse(tab[i]);
                             };
                             break;
                         case "BOARDATOPENING":
@@ -1105,6 +1136,12 @@ namespace gInk
                         case "HOTKEY_VIDEOREC":
                             sPara = Hotkey_Video.ToString();
                             break;
+                        case "HOTKEY_DOCKUNDOCK":
+                            sPara = Hotkey_DockUndock.ToString();
+                            break;
+                        case "HOTKEY_CLOSE":
+                            sPara = Hotkey_Close.ToString();
+                            break;
                         case "HOTKEY_HAND":
                             sPara = Hotkey_Hand.ToString();
                             break;
@@ -1184,6 +1221,9 @@ namespace gInk
 							else
 								sPara = "False";
 							break;
+                        case "ALTTAB_POINTER":
+                            sPara = AltTabPointer?"True":"False";
+                            break;
                         case "PEN_WIDTH_AT_SELECTION":
                             sPara = WidthAtPenSel ? "True" : "False";
                             break;
@@ -1269,6 +1309,9 @@ namespace gInk
                             break;
                         case "GRAYBOARD2":
                             sPara = Gray2[0].ToString() + "," + Gray2[1].ToString() + "," + Gray2[2].ToString() + "," + Gray2[3].ToString();
+                            break;
+                        case "TOOLBAR_COLOR":
+                            sPara = ToolbarBGColor[0].ToString() + "," + ToolbarBGColor[1].ToString() + "," + ToolbarBGColor[2].ToString() + "," + ToolbarBGColor[3].ToString();
                             break;
                         case "BOARDATOPENING":
                             sPara = BoardAtOpening.ToString();

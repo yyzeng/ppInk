@@ -54,6 +54,7 @@ When this option is activated (yes by default), when Alt is pressed and hold, th
 eg : with Hand drawing selected, press Alt and keep it  down. Press and release R : rectangle is active, as long as Alt is depressed, and Hand will be reengaged when Alt is released
 This can be reset any combinaisons of Pens and Tools : eg : press Alt, you can engage Filled Blue rectangle, depressing R twice, and 3 (in any order), and return to previous tools/color releasing Alt
 This can be also used with Erasor
+when pressing down Alt, the cursor is also temporary change to the big arrow to ease finding it on screen.
 
 *Option Capture at toolbar opening*
 Capture can be engaged as toolbar is opened. This option is set to false by default.
@@ -79,7 +80,16 @@ ppInk has now some capability to do some video recording. tuning is available in
    You need to first install ffmpeg. and select the option in the video tab. In this case the button will be proposed. you can start/stop recording. Names and destination folders are defined throught the command line.
    - advanced recording with OBS-studio:
    You need to first install and configure OBS-studio(https://obsproject.com/fr/download) with OBS-websocket(https://github.com/Palakis/obs-websocket). select the required option (recording or broadcasting). with this program you will be able to start/stop broadcasting or start/pause/resume/stop video recording. file names and folders are defined in OBS-studio.
-   Note : the current release 4.8 of OBS-websocket does not include yet correct API to recover current OBS recording status. this induce some issue to recover OBS status. this should be fixed in very next release. for the moment,prefer to stop recording when stopping Ink mode
+   Note : ppink is now compatible with release 4.8 of OBS-websocket. this should be fixed in very next release. for the moment,prefer to stop recording when stopping Ink mode
+
+*UI customisation*
+You add arrow.ani/cur/ico and eraser.ani/cur/ico to put your own cursors. if you use ico file the cursor is down with the file sized ( you can then put a bigger or smaller image)
+toolbar Background Color can be changed in the options. currently a draw hickup make the background color incorrect during opening. transparency is currenly ignored
+Button Images can be customized putting Png files in the ppink exe folder. the name to be used are the same as the one from the src folder.
+
+*Alt+Tab engaging Pointer*
+When the option is set in the options, switching application (with alt+tab) will engage pointer mode. Also, when pointer mode is activated (by any means, ie button click, alt+tab, global short cut), the toolbar is folded automatically, and when pressing undock button, alt+tab, or global shortcut,the inking mode is restored and the toolbar is unfolded.
+Note that you can still fold toolbar when drawing without engaging pointer mode with the dock button.
 
 
 #### Screen Shots
