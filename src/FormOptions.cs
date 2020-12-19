@@ -33,7 +33,7 @@ namespace gInk
 		private void FormOptions_Load(object sender, EventArgs e)
 		{
 			Root.UnsetHotkey();
-
+            ToolbarDwg.BackColor = Color.FromArgb(Root.ToolbarBGColor[0], Root.ToolbarBGColor[1], Root.ToolbarBGColor[2], Root.ToolbarBGColor[3]);
 			if (Root.EraserEnabled)
 				cbEraserEnabled.Checked = true;
 			if (Root.PointerEnabled)
@@ -654,7 +654,6 @@ namespace gInk
                 Root.Gray1[3] = at.Color.B;
                 BoardCustColorPnl.BackColor = Color.FromArgb(Root.Gray1[0], at.Color);
             }
-
         }
 
         private void WsUrlTxt_TextChanged(object sender, EventArgs e)
@@ -676,6 +675,26 @@ namespace gInk
         {
             if ((sender as RadioButton).Checked)
                 Root.VideoRecordMode = (VideoRecordMode)Int32.Parse((string)(sender as Control).Tag);
+        }
+
+        private void ToolbarDwg_Click(object sender, EventArgs e)
+        {
+            PenModifyDlg dlg = new PenModifyDlg(Root);
+            dlg.Text = "";
+            Microsoft.Ink.DrawingAttributes at = new Microsoft.Ink.DrawingAttributes();
+
+            at.Transparency = (byte)(255 - Root.ToolbarBGColor[0]);
+            at.Color = Color.FromArgb(Root.ToolbarBGColor[0], Root.ToolbarBGColor[1], Root.ToolbarBGColor[2], Root.ToolbarBGColor[3]);
+            at.Width = 0;
+
+            if (dlg.ModifyPen(ref at))
+            {
+                Root.ToolbarBGColor[0] = 255 - at.Transparency;
+                Root.ToolbarBGColor[1] = at.Color.R;
+                Root.ToolbarBGColor[2] = at.Color.G;
+                Root.ToolbarBGColor[3] = at.Color.B;
+                ToolbarDwg.BackColor = Color.FromArgb(Root.ToolbarBGColor[0], at.Color);
+            }
         }
 
         private void cbAllowHotkeyInPointer_CheckedChanged(object sender, EventArgs e)

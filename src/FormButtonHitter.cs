@@ -14,7 +14,7 @@ namespace gInk
 	{
 		Root Root;
 		FormCollection FC;
-        DateTime MouseTimeDown;
+        // DateTime MouseTimeDown;
 		// http://www.csharp411.com/hide-form-from-alttab/
 		protected override CreateParams CreateParams
 		{
@@ -39,10 +39,30 @@ namespace gInk
 			this.Height = FC.gpButtons.Height;
 		}
 
-		private void FormButtonHitter_Click(object sender, EventArgs e)
+        protected override void WndProc(ref Message msg)
+        {
+            //if ((msg.Msg == 0x001C) || (msg.Msg == 6)) //WM_ACTIVATEAPP : generated through alt+tab
+            if ((msg.Msg == 6)) //WM_ACTIVATE : generated through alt+tab
+            {
+                //Console.WriteLine(DateTime.Now.ToString() + " !msgH " + msg.Msg.ToString()+" - "+ msg.WParam.ToString());
+                //if ((msg.Msg == 6) || ((msg.Msg == 0x001C) && (msg.WParam != IntPtr.Zero))
+                {
+                    //Console.WriteLine("activating from hitter " + (Root.PointerMode ? "pointer" : "not") + (Root.Docked ? "docked" : "not"));
+                    Root.FormCollection.AltTabActivate();
+                    return;
+                }
+            }
+            /*else if (msg.Msg != 0x0113)
+            {
+                Console.WriteLine(DateTime.Now.ToString()+" msgH " + msg.Msg.ToString());
+            }*/
+            base.WndProc(ref msg);
+        }
+
+        private void FormButtonHitter_Click(object sender, EventArgs e)
 		{
 			MouseEventArgs m = (MouseEventArgs)e;
-            TimeSpan tsp= DateTime.Now - MouseTimeDown;
+            TimeSpan tsp= DateTime.Now - Root.FormCollection.MouseTimeDown;
             //MessageBox.Show(string.Format("t = {0:N3}",tsp.TotalSeconds));
 			foreach (Control control in FC.gpButtons.Controls)
 			{
@@ -63,9 +83,9 @@ namespace gInk
 			SetWindowPos(this.Handle, (IntPtr)(-1), 0, 0, 0, 0, 0x0002 | 0x0001 | 0x0020);
 		}
 
-		private void timer1_Tick(object sender, EventArgs e)
+		public void timer1_Tick(object sender, EventArgs e)
 		{
-			if (this.Visible)
+			if (true||this.Visible)  // we force resizing weither visible or not in order to have the good size during alt+tab
 			{
 				this.Left = FC.gpButtons.Left + FC.Left;
 				this.Top = FC.gpButtons.Top + FC.Top;
@@ -85,7 +105,7 @@ namespace gInk
 
         private void FormButtonHitter_MouseDown(object sender, MouseEventArgs e)
         {
-            Console.WriteLine("BH", (sender as Control).Name);
+            //Console.WriteLine("BH", (sender as Control).Name);
             Root.FormCollection.MouseTimeDown = DateTime.Now;
         }
     }

@@ -93,9 +93,9 @@ namespace gInk.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Icon semblable à (Icône).
         /// </summary>
-        public static System.Drawing.Icon cursoreraser {
+        public static System.Drawing.Icon cursorarrow {
             get {
-                object obj = ResourceManager.GetObject("cursoreraser", resourceCulture);
+                object obj = ResourceManager.GetObject("cursorarrow", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
@@ -103,9 +103,9 @@ namespace gInk.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Icon semblable à (Icône).
         /// </summary>
-        public static System.Drawing.Icon cursorred {
+        public static System.Drawing.Icon cursoreraser {
             get {
-                object obj = ResourceManager.GetObject("cursorred", resourceCulture);
+                object obj = ResourceManager.GetObject("cursoreraser", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
@@ -263,6 +263,46 @@ namespace gInk.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap Lpen_bg {
+            get {
+                object obj = ResourceManager.GetObject("Lpen_bg", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Lpen_col {
+            get {
+                object obj = ResourceManager.GetObject("Lpen_col", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap LpenS_bg {
+            get {
+                object obj = ResourceManager.GetObject("LpenS_bg", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap LpenS_col {
+            get {
+                object obj = ResourceManager.GetObject("LpenS_col", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap Magnetic {
             get {
                 object obj = ResourceManager.GetObject("Magnetic", resourceCulture);
@@ -323,6 +363,26 @@ namespace gInk.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap pen_bg {
+            get {
+                object obj = ResourceManager.GetObject("pen_bg", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap pen_col {
+            get {
+                object obj = ResourceManager.GetObject("pen_col", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap pencil {
             get {
                 object obj = ResourceManager.GetObject("pencil", resourceCulture);
@@ -336,6 +396,26 @@ namespace gInk.Properties {
         public static System.Drawing.Bitmap pencil_act {
             get {
                 object obj = ResourceManager.GetObject("pencil_act", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap penS_bg {
+            get {
+                object obj = ResourceManager.GetObject("penS_bg", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap penS_col {
+            get {
+                object obj = ResourceManager.GetObject("penS_col", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

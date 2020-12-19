@@ -16,8 +16,8 @@ namespace gInk
 		IntPtr canvusDc;
 		IntPtr OneStrokeCanvus;
 		IntPtr onestrokeDc;
-		IntPtr BlankCanvus;
-		IntPtr blankcanvusDc;
+		//IntPtr BlankCanvus;
+		//IntPtr blankcanvusDc;
         IntPtr OutCanvus;
         IntPtr OutcanvusDc;
         Graphics gCanvus;
@@ -488,7 +488,7 @@ namespace gInk
 
 			int dj;
 			int maxidpixels = 0;
-			float maxidchdrio = 0;
+			//float maxidchdrio = 0;
 			int maxdj = 0;
 
 
@@ -497,7 +497,8 @@ namespace gInk
 			int iend = Width / 2 + Width / 4;
 			for (dj = -Height * 3 / 8 + 1; dj < Height * 3 / 8 - 1; dj++)
 			{
-				int chdpixels = 0, idpixels = 0;
+                //int chdpixels = 0;
+                int idpixels = 0;
 				for (int j = Height / 2 - Height / 8; j < Height / 2 + Height / 8; j += 10)
 				{
 					L(istart - 10, j);
@@ -548,9 +549,9 @@ namespace gInk
 		public void UpdateFormDisplay(bool draw,bool prepared=false)
 		{
 			IntPtr screenDc = GetDC(IntPtr.Zero);
-
-			//Display-rectangle
-			Size size = new Size(this.Width, this.Height);
+            IntPtr blankcanvusDc = new IntPtr(0) ;
+            //Display-rectangle
+            Size size = new Size(this.Width, this.Height);
 			Point pointSource = new Point(0, 0);
 			Point topPos = new Point(this.Left, this.Top);
 
@@ -580,7 +581,7 @@ namespace gInk
 
 		int stackmove = 0;
 		int Tick = 0;
-		DateTime TickStartTime;
+		//DateTime TickStartTime;
 
 		private void timer1_Tick(object sender, EventArgs e)
 		{

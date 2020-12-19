@@ -69,7 +69,7 @@ namespace gInk
                     Key = (int)kk;
                     return true;
                 }
-                catch (Exception e)
+                catch
                 {
                     return false;
                 }
