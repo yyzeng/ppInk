@@ -273,6 +273,10 @@
     <None Include="tool_hand_filledC.png" />
     <None Include="tool_hand_filledW.png" />
     <Content Include="tool_line_act.png" />
+    <None Include="tool_mlines.png" />
+    <None Include="tool_mlines_filledB.png" />
+    <None Include="tool_mlines_filledC.png" />
+    <None Include="tool_mlines_filledW.png" />
     <Content Include="tool_numb.png" />
     <Content Include="tool_numb_act.png" />
     <Content Include="tool_numb_fillB.png" />

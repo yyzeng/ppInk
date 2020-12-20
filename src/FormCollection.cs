@@ -88,6 +88,9 @@ namespace gInk
         private int SavedTool = -1;
         private int SavedFilled = -1;
         private int SavedPen = -1;
+        private int PolyLineLastX = Int32.MinValue;
+        private int PolyLineLastY = Int32.MinValue;
+        private Stroke PolyLineInProgress = null;
 
         // we have local variables for font to have an session limited default font characteristics
         public int TextSize = 25;
@@ -866,6 +869,26 @@ namespace gInk
             return st;
         }
 
+        private Stroke ExtendPolyLineStroke(Stroke st, int CursorX, int CursorY,int FilledSelected)
+        {
+            Point[] pts = st.GetPoints();
+            Array.Resize<Point>(ref pts,pts.GetLength(0)+1);
+            Point[] pts2 = new Point[1];
+            pts2[0] = new Point(CursorX, CursorY);
+
+            IC.Renderer.PixelToInkSpace(Root.FormDisplay.gOneStrokeCanvus, ref pts2);
+            pts[pts.Length-1] = new Point(pts2[0].X, pts2[0].Y);
+
+            Stroke st1 = Root.FormCollection.IC.Ink.CreateStroke(pts);
+            st1.DrawingAttributes = st.DrawingAttributes.Clone();
+            st1.DrawingAttributes.AntiAliased = true;
+            st1.DrawingAttributes.FitToCurve = false;
+            setStrokeProperties(ref st1, FilledSelected);
+            Root.FormCollection.IC.Ink.DeleteStroke(st);
+            Root.FormCollection.IC.Ink.Strokes.Add(st1);
+            return st1;
+        }
+
         private Stroke AddArrowStroke(int CursorX0, int CursorY0, int CursorX, int CursorY)
         // arrow at starting point
         {
@@ -1205,6 +1228,26 @@ namespace gInk
                 }
                 else if (Root.ToolSelected == 10)// Move : do Nothing
                     movedStroke = null;
+                else if ((Root.ToolSelected == 11) && ((Root.CursorX0 != Int32.MinValue)||(Math.Abs(Root.CursorY - PolyLineLastY) + Math.Abs(Root.CursorX - PolyLineLastX) < Root.MinMagneticRadius())))
+                {
+                    if(PolyLineLastX == Int32.MinValue)
+                    {
+                        PolyLineInProgress = AddLineStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY);
+                        PolyLineLastX = Root.CursorX;PolyLineLastY = Root.CursorY;
+                    }
+                    else
+                    {
+                        if (Math.Abs(Root.CursorY-PolyLineLastY)+Math.Abs(Root.CursorX-PolyLineLastX) < Root.MinMagneticRadius())
+                        {
+                            PolyLineLastX = Int32.MinValue; PolyLineLastY = Int32.MinValue; PolyLineInProgress = null;
+                        }
+                        else
+                        {
+                            PolyLineLastX = Root.CursorX; PolyLineLastY = Root.CursorY;
+                            PolyLineInProgress = ExtendPolyLineStroke(PolyLineInProgress, Root.CursorX, Root.CursorY, Root.FilledSelected);
+                        }
+                    }
+                }
             }
             SaveUndoStrokes();
             Root.FormDisplay.ClearCanvus();
@@ -1244,7 +1287,11 @@ namespace gInk
 				Root.UndoStrokes[Root.UndoP] = new Ink();
 			Root.UndoStrokes[Root.UndoP].DeleteStrokes();
 			if (IC.Ink.Strokes.Count > 0)
-				Root.UndoStrokes[Root.UndoP].AddStrokesAtRectangle(IC.Ink.Strokes, IC.Ink.Strokes.GetBoundingBox());
+            {
+                Rectangle r = IC.Ink.Strokes.GetBoundingBox();
+                if (r.Width>0)
+                    Root.UndoStrokes[Root.UndoP].AddStrokesAtRectangle(IC.Ink.Strokes,r);
+            }
 		}
         Stroke movedStroke = null;
 
@@ -1318,8 +1365,16 @@ namespace gInk
 			LasteXY.X = e.X;
 			LasteXY.Y = e.Y;
 			IC.Renderer.PixelToInkSpace(Root.FormDisplay.gOneStrokeCanvus, ref LasteXY);
-            Root.CursorX0 = e.X;
-            Root.CursorY0 = e.Y;
+            if((Root.ToolSelected == 11)&&(PolyLineLastX != Int32.MinValue))
+            {
+                Root.CursorX0 = PolyLineLastX;
+                Root.CursorY0 = PolyLineLastY;
+            }
+            else
+            {
+                Root.CursorX0 = e.X;
+                Root.CursorY0 = e.Y;
+            }
             MagneticEffect(Root.CursorX0 - 1, Root.CursorY0, ref Root.CursorX0, ref Root.CursorY0, Root.MagneticRadius>0); // analysis of magnetic will be done within the module
             if (Root.InkVisible)
             {
@@ -1515,7 +1570,7 @@ namespace gInk
 		}
 
         public void SelectTool(int tool, int filled = -1)
-        // Hand (0),Line(1),Rect(2),Oval(3),StartArrow(4),EndArrow(5),NumberTag(6),Edit(7),txtLeftAligned(8),txtRightAligned(9),Move(10)
+        // Hand (0),Line(1),Rect(2),Oval(3),StartArrow(4),EndArrow(5),NumberTag(6),Edit(7),txtLeftAligned(8),txtRightAligned(9),Move(10),polyline/polygone(11)
         // filled : empty(0),PenColorFilled(1),WhiteFilled(2),BlackFilled(3)
         // filled is applicable to Hand,Rect,Oval
         {
@@ -1542,7 +1597,7 @@ namespace gInk
                 }
             }
 
-            int[] applicableTool = { 0, 2, 3, 6 };
+            int[] applicableTool = { 0, 1,11, 2, 3, 6 };
             if (filled >= 0)
                 Root.FilledSelected = filled;
             else if ((Array.IndexOf(applicableTool, tool) >= 0) && (tool == Root.ToolSelected))
@@ -1569,8 +1624,35 @@ namespace gInk
                     btHand.BackgroundImage = getImgFromDiskOrRes("tool_hand_filledB", ImageExts);
                 EnterEraserMode(false);
             }
-            else if (tool == 1)
-                btLine.BackgroundImage = getImgFromDiskOrRes("tool_line_act", ImageExts);
+            else if ((tool == 1)|| (tool == 11))
+            {
+                if(Root.ToolSelected == 1)
+                {
+                    tool = 11;
+                    Root.FilledSelected = 0;
+                    btLine.BackgroundImage = getImgFromDiskOrRes("tool_mlines", ImageExts);
+                    filled = 0;
+                    PolyLineLastX = Int32.MinValue; PolyLineLastY = Int32.MinValue;
+                }
+                else if((Root.ToolSelected == 11 && ((Root.FilledSelected == 4)|| (Root.FilledSelected == 0))) || (Root.ToolSelected != 11))
+                {
+                    tool = 1;
+                    Root.FilledSelected = 0;
+                    btLine.BackgroundImage = getImgFromDiskOrRes("tool_line_act", ImageExts);
+                }
+                else // Root.ToolSelected == 11 && Root.FilledSelected != 4
+                {
+                    tool = 11;
+                    PolyLineLastX = Int32.MinValue; PolyLineLastY = Int32.MinValue;
+                    if (Root.FilledSelected == 1)
+                        btLine.BackgroundImage = getImgFromDiskOrRes("tool_mlines_filledC", ImageExts);
+                    else if (Root.FilledSelected == 2)
+                        btLine.BackgroundImage = getImgFromDiskOrRes("tool_mlines_filledW", ImageExts);
+                    else if (Root.FilledSelected == 3)
+                        btLine.BackgroundImage = getImgFromDiskOrRes("tool_mlines_filledB", ImageExts);
+                }
+
+            }
             else if (tool == 2)
             {
                 if (Root.FilledSelected == 0)
@@ -1837,7 +1919,8 @@ namespace gInk
 				ToolbarMoved = false;
 				return;
 			}
-            if(!Root.PointerMode)
+            PolyLineLastX = Int32.MinValue; PolyLineLastY = Int32.MinValue;PolyLineInProgress = null;
+            if (!Root.PointerMode)
             {
                 SavedTool = Root.ToolSelected;
                 SavedFilled = Root.FilledSelected;
@@ -1889,8 +1972,8 @@ namespace gInk
 
 			if (Root.Snapping > 0)
 				return;
-
-			cursorsnap = new System.Windows.Forms.Cursor(gInk.Properties.Resources.cursorsnap.Handle);
+            PolyLineLastX = Int32.MinValue; PolyLineLastY = Int32.MinValue; PolyLineInProgress = null;
+            cursorsnap = new System.Windows.Forms.Cursor(gInk.Properties.Resources.cursorsnap.Handle);
 			this.Cursor = cursorsnap;
 
 			Root.gpPenWidthVisible = false;
@@ -2583,8 +2666,8 @@ namespace gInk
 				ToolbarMoved = false;
 				return;
 			}
-
-			Root.SetInkVisible(!Root.InkVisible);
+            PolyLineLastX = Int32.MinValue; PolyLineLastY = Int32.MinValue; PolyLineInProgress = null;
+            Root.SetInkVisible(!Root.InkVisible);
 		}
 
         private Stroke AddBackGround(int A, int B, int C, int D)
@@ -2670,7 +2753,7 @@ namespace gInk
 			}
 
             TimeSpan tsp = DateTime.Now - MouseTimeDown;
-
+            PolyLineLastX = Int32.MinValue; PolyLineLastY = Int32.MinValue; PolyLineInProgress = null;
             if (sender != null && tsp.TotalSeconds > Root.LongClickTime)
             {   
                 int rst = SelectCleanBackground();
@@ -2753,17 +2836,18 @@ namespace gInk
                 sender = (sender as ContextMenu).SourceControl;
                 MouseTimeDown = DateTime.FromBinary(0);
             }
+            if (ToolbarMoved)
+			{
+				ToolbarMoved = false;
+				return;
+			}
+            PolyLineLastX = Int32.MinValue; PolyLineLastY = Int32.MinValue; PolyLineInProgress = null;
             TimeSpan tsp = DateTime.Now - MouseTimeDown;
             //Console.WriteLine(string.Format("{1},t = {0:N3}", tsp.TotalSeconds,e.ToString()));
             if (sender != null && tsp.TotalSeconds > Root.LongClickTime)
             {
                 btColor_LongClick(sender);
             }
-            if (ToolbarMoved)
-			{
-				ToolbarMoved = false;
-				return;
-			}
 
 			for (int b = 0; b < Root.MaxPenCount; b++)
 				if ((Button)sender == btPen[b])
@@ -2788,7 +2872,7 @@ namespace gInk
                 ToolbarMoved = false;
                 return;
             }
-
+            PolyLineLastX = Int32.MinValue; PolyLineLastY = Int32.MinValue; PolyLineInProgress = null;
             TimeSpan tsp = DateTime.Now - MouseTimeDown;
             if (Root.VideoRecordMode == VideoRecordMode.NoVideo) // button should be hidden but as security we do the check
                 return;
@@ -3117,7 +3201,7 @@ namespace gInk
             if (((Button)sender).Name.Contains("Hand"))
                 i = 0;
             else if (((Button)sender).Name.Contains("Line"))
-                i = 1;
+                i = Root.ToolSelected==11?11:1;    // to keep filled
             else if (((Button)sender).Name.Contains("Rect"))
                 i = 2;
             else if (((Button)sender).Name.Contains("Oval"))
@@ -3224,6 +3308,18 @@ namespace gInk
 
 			LastF4Status = retVal;
 		}
+
+        public void RestorePolylineData(Stroke st)
+        {
+            if (PolyLineLastX == Int32.MinValue)
+                return;
+            Point pt = st.GetPoint(st.GetPoints().Length - 1);
+            IC.Renderer.InkSpaceToPixel(Root.FormDisplay.gOneStrokeCanvus, ref pt);
+            PolyLineInProgress = st;
+            PolyLineLastX = pt.X;
+            PolyLineLastY = pt.Y;
+        }
+
 
 
         [DllImport("user32.dll")]

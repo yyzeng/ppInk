@@ -583,6 +583,46 @@ namespace gInk.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap tool_mlines {
+            get {
+                object obj = ResourceManager.GetObject("tool_mlines", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap tool_mlines_filledB {
+            get {
+                object obj = ResourceManager.GetObject("tool_mlines_filledB", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap tool_mlines_filledC {
+            get {
+                object obj = ResourceManager.GetObject("tool_mlines_filledC", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap tool_mlines_filledW {
+            get {
+                object obj = ResourceManager.GetObject("tool_mlines_filledW", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap tool_numb {
             get {
                 object obj = ResourceManager.GetObject("tool_numb", resourceCulture);

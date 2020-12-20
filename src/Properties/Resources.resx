@@ -364,4 +364,16 @@
   <data name="Lpen_col" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Lpen_col.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="tool_mlines" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\tool_mlines.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="tool_mlines_filledB" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\tool_mlines_filledB.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="tool_mlines_filledC" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\tool_mlines_filledC.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="tool_mlines_filledW" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\tool_mlines_filledW.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

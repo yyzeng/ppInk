@@ -477,7 +477,7 @@ namespace gInk
         {
             if ((CursorX0 != int.MinValue) || (CursorY0 != int.MinValue))
             {
-                if (Root.ToolSelected == 1)
+                if ((Root.ToolSelected == 1)|| (Root.ToolSelected == 11))
                     DrawLineOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY);
                 else if (Root.ToolSelected == 2)
                     DrawRectOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY);

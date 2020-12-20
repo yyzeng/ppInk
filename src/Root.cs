@@ -435,8 +435,11 @@ namespace gInk
 			RedoDepth++;
 			FormCollection.IC.Ink.DeleteStrokes();
 			if (UndoStrokes[UndoP].Strokes.Count > 0)
+            {
 				FormCollection.IC.Ink.AddStrokesAtRectangle(UndoStrokes[UndoP].Strokes, UndoStrokes[UndoP].Strokes.GetBoundingBox());
-
+                if (ToolSelected == 11)
+                    FormCollection.RestorePolylineData(FormCollection.IC.Ink.Strokes[FormCollection.IC.Ink.Strokes.Count-1]);
+            }
 			FormDisplay.ClearCanvus();
 			FormDisplay.DrawStrokes();
 			FormDisplay.DrawButtons(true);
