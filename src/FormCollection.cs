@@ -2166,7 +2166,7 @@ namespace gInk
 				Root.StopInk();
 				return;
 			}
-			else if (ButtonsEntering < 0)
+			else if (ButtonsEntering != 0) // we need redrawing for both fold and unfold
 			{
 				Root.UponAllDrawingUpdate = true;
 				Root.UponButtonsUpdate = 0;
