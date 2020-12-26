@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Microsoft.Ink;
 
 namespace gInk
 {
@@ -43,6 +44,7 @@ namespace gInk
             else
             {
                 FontBtn.Visible = true;
+                ColorBtn.Visible = true;
                 FontDlg.Font = new Font((string)stk.ExtendedProperties[Root.TEXTFONT_GUID].Data, (float)stk.ExtendedProperties[Root.TEXTFONTSIZE_GUID].Data,
                                         (System.Drawing.FontStyle)stk.ExtendedProperties[Root.TEXTFONTSTYLE_GUID].Data);
                 InputML.TextChanged += new System.EventHandler(this.InputML_TextChanged);
@@ -69,9 +71,6 @@ namespace gInk
         {
             if (FontDlg.ShowDialog() == DialogResult.OK)
             {
-                //stroke.ExtendedProperties.Remove(Root.TEXTFONT_GUID);
-                //stroke.ExtendedProperties.Remove(Root.TEXTFONTSIZE_GUID);
-                //stroke.ExtendedProperties.Remove(Root.TEXTFONTSTYLE_GUID);
                 stroke.ExtendedProperties.Add(Root.TEXTFONT_GUID, FontDlg.Font.Name);
                 stroke.ExtendedProperties.Add(Root.TEXTFONTSIZE_GUID, (float)FontDlg.Font.Size);
                 stroke.ExtendedProperties.Add(Root.TEXTFONTSTYLE_GUID, FontDlg.Font.Style);
@@ -80,6 +79,21 @@ namespace gInk
                 InputML.Text = "";InputML.Text = st;
             }
         }
+
+        private void ColorBtn_Click(object sender, EventArgs e)
+        {
+            PenModifyDlg dlg = new PenModifyDlg(Root);
+            DrawingAttributes da = stroke.DrawingAttributes.Clone();
+            dlg.hideWidth();
+            if (dlg.ModifyPen(ref da))
+            {
+                stroke.DrawingAttributes = da;
+                Root.FormDisplay.ClearCanvus();
+                Root.FormDisplay.DrawStrokes();
+                Root.FormDisplay.UpdateFormDisplay(true);
+            }
+        }
+
         private void InputML_TextChanged(object sender, EventArgs e)
         {
             string t = ((TextBox)sender).Text;

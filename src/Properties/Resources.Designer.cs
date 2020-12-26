@@ -343,6 +343,16 @@ namespace gInk.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap pan_copy {
+            get {
+                object obj = ResourceManager.GetObject("pan_copy", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap pan1_act {
             get {
                 object obj = ResourceManager.GetObject("pan1_act", resourceCulture);

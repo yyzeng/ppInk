@@ -1207,14 +1207,30 @@ namespace gInk
                 {
                     float pos;
                     Stroke minStroke;
-                    if (NearestStroke(new Point(Root.CursorX, Root.CursorY), true, out minStroke, out pos, true, false) < Root.PixelToHiMetric(Root.MinMagneticRadius()))
+                    if (NearestStroke(new Point(Root.CursorX, Root.CursorY), true, out minStroke, out pos, false, false) < Root.PixelToHiMetric(Root.MinMagneticRadius()))
                     {
-                        ModifyTextInStroke(minStroke, (string)(minStroke.ExtendedProperties[Root.TEXT_GUID].Data));
-                        SelectTool(0, 0);
-                        ComputeTextBoxSize(ref minStroke);
+                        if (minStroke.ExtendedProperties.Contains(Root.TEXT_GUID))
+                        {
+                            ModifyTextInStroke(minStroke, (string)(minStroke.ExtendedProperties[Root.TEXT_GUID].Data));
+                            SelectTool(0, 0);
+                            ComputeTextBoxSize(ref minStroke);
+
+                        }
+                        else
+                        {
+                            DrawingAttributes da = minStroke.DrawingAttributes.Clone();
+                            tiSlide.Stop();
+                            IC.Enabled = false;
+                            if (PenModifyDlg.ModifyPen(ref da))
+                            {
+                                minStroke.DrawingAttributes = da;
+                            }
+                            IC.Enabled = true;
+                            tiSlide.Start();
+                        }
                     }
                 }
-                else if ((Root.ToolSelected == 8) || (Root.ToolSelected == 9))  // new text
+                else if ((Root.ToolSelected == Tools.txtLeftAligned) || (Root.ToolSelected == Tools.txtRightAligned))  // new text
                 {
                     Stroke st = AddTextStroke(Root.CursorX, Root.CursorY, Root.CursorX, Root.CursorY, "Text", (Root.ToolSelected == 8)?StringAlignment.Near:StringAlignment.Far);
                     Root.FormDisplay.DrawStrokes();
@@ -1226,7 +1242,7 @@ namespace gInk
                         ComputeTextBoxSize(ref st);
                     }
                 }
-                else if (Root.ToolSelected == 10)// Move : do Nothing
+                else if ((Root.ToolSelected == Tools.Move)|| (Root.ToolSelected == Tools.Copy))// Move : do Nothing
                     movedStroke = null;
                 else if ((Root.ToolSelected == 11) && ((Root.CursorX0 != Int32.MinValue)||(Math.Abs(Root.CursorY - PolyLineLastY) + Math.Abs(Root.CursorX - PolyLineLastX) < Root.MinMagneticRadius())))
                 {
@@ -1382,11 +1398,22 @@ namespace gInk
                 Root.CursorY = Root.CursorY0;
             }
 
-            if (Root.ToolSelected == 10) // Move
+            if (( Root.ToolSelected == Tools.Move )|| ( Root.ToolSelected == Tools.Copy )) // Move
             {
                 float pos;
                 if (NearestStroke(new Point(Root.CursorX, Root.CursorY), true, out movedStroke, out pos, false, true) > Root.PixelToHiMetric(Root.MinMagneticRadius()))
                     movedStroke = null;
+                else if (Root.ToolSelected == Tools.Copy)
+                {
+                    Stroke copied = movedStroke;
+                    movedStroke = Root.FormCollection.IC.Ink.CreateStroke(copied.GetPoints());
+                    movedStroke.DrawingAttributes = copied.DrawingAttributes.Clone();
+                    foreach(ExtendedProperty prop in copied.ExtendedProperties)
+                    {
+                        movedStroke.ExtendedProperties.Add(prop.Id, prop.Data);
+                    }
+                    Root.FormCollection.IC.Ink.Strokes.Add(movedStroke);
+                }
             }
         }
 
@@ -1424,11 +1451,17 @@ namespace gInk
 			{
 				Root.Pan(currentxy.X - LasteXY.X, currentxy.Y - LasteXY.Y);			
 			}
-            else if (Root.ToolSelected==10)
+            else if ((Root.ToolSelected==Tools.Move)|| (Root.ToolSelected == Tools.Copy))
             {
                 if (movedStroke != null)
                 {
-                    movedStroke.Move(currentxy.X - LasteXY.X, currentxy.Y - LasteXY.Y);
+                    //TODO: ajouter aimantation
+                    /*Console.WriteLine(Root.CursorX0.ToString() + " ~ " + Root.CursorY0.ToString());
+                    Point xy = new Point(Root.CursorX,Root.CursorY);
+                    IC.Renderer.PixelToInkSpace(Root.FormDisplay.gOneStrokeCanvus, ref xy);
+                    */
+                    movedStroke.Move( currentxy.X - LasteXY.X, currentxy.Y - LasteXY.Y);
+
                     if (movedStroke.ExtendedProperties.Contains(Root.TEXT_GUID))
                     {
                         movedStroke.ExtendedProperties.Add(Root.TEXTX_GUID, ((int)movedStroke.ExtendedProperties[Root.TEXTX_GUID].Data) + (currentxy.X - LasteXY.X));
@@ -1570,7 +1603,7 @@ namespace gInk
 		}
 
         public void SelectTool(int tool, int filled = -1)
-        // Hand (0),Line(1),Rect(2),Oval(3),StartArrow(4),EndArrow(5),NumberTag(6),Edit(7),txtLeftAligned(8),txtRightAligned(9),Move(10),polyline/polygone(11)
+        // Hand (0),Line(1),Rect(2),Oval(3),StartArrow(4),EndArrow(5),NumberTag(6),Edit(7),txtLeftAligned(8),txtRightAligned(9),Move(10),Copy(11),polyline/polygone(21)
         // filled : empty(0),PenColorFilled(1),WhiteFilled(2),BlackFilled(3)
         // filled is applicable to Hand,Rect,Oval
         {
@@ -1592,7 +1625,7 @@ namespace gInk
                 {
                     SavedTool = Root.ToolSelected;
                     SavedFilled = Root.FilledSelected;
-                    if (tool == 10 && SavedPen <0)
+                    if ((tool == Tools.Move || tool == Tools.Copy ) && SavedPen <0)
                         SavedPen = LastPenSelected;
                 }
             }
@@ -1713,11 +1746,18 @@ namespace gInk
                 {
                     btText.BackgroundImage = getImgFromDiskOrRes("tool_txtL_act", ImageExts);
                     tool = 8;
-                }
-            else if (tool == 10)
+            }
+            else if (tool == Tools.Move)
             {
                 //SelectPen(LastPenSelected);
                 btPan.BackgroundImage = getImgFromDiskOrRes("pan1_act", ImageExts);
+                IC.Cursor = cursorred;
+            }
+            else if (tool == Tools.Copy)
+            {
+                //SelectPen(LastPenSelected);
+                btPan.BackgroundImage = getImgFromDiskOrRes("pan_copy", ImageExts);
+                IC.Cursor = cursorred;
             }
             Root.ToolSelected = tool;
         }
@@ -2811,7 +2851,7 @@ namespace gInk
                     
                     if (PenModifyDlg.ModifyPen(ref Root.PenAttr[b]))
                     {
-                        if ((Root.ToolSelected == 10) || (Root.ToolSelected == 5)) // if move
+                        if ((Root.ToolSelected == Tools.Move) || (Root.ToolSelected == Tools.Copy) || (Root.ToolSelected == Tools.Edit )) // if move
                             SelectTool(0);
                         PreparePenImages(Root.PenAttr[b].Transparency, ref image_pen[b], ref image_pen_act[b]);
                         //btPen[b].Image = image_pen_act[b];
@@ -2852,7 +2892,7 @@ namespace gInk
 			for (int b = 0; b < Root.MaxPenCount; b++)
 				if ((Button)sender == btPen[b])
 				{
-                    if ((Root.ToolSelected == 10) || (Root.ToolSelected == 5)) // if move
+                    if ((Root.ToolSelected == Tools.Move) || (Root.ToolSelected == Tools.Copy)  || (Root.ToolSelected == Tools.Edit)) // if move
                         SelectTool(0);
                     SelectPen(b);
 				}
@@ -3258,13 +3298,20 @@ namespace gInk
 				ToolbarMoved = false;
 				return;
 			}
-            if (Root.ToolSelected != 10)
+            if (Root.ToolSelected == Tools.Move)
             {
                 SelectPen(LastPenSelected);
-                SelectTool(10);
+                SelectTool(Tools.Copy);
+            }
+            else if (Root.ToolSelected == Tools.Copy)
+            {
+                SelectPen(-3);
             }
             else
-			    SelectPen(-3);
+            {
+                SelectPen(LastPenSelected);
+                SelectTool(Tools.Move);
+            }
 		}
 
         private void btMagn_Click(object sender, EventArgs e)

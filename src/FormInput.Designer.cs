@@ -35,6 +35,7 @@ namespace gInk
             this.captionLbl = new System.Windows.Forms.Label();
             this.FontBtn = new System.Windows.Forms.Button();
             this.FontDlg = new System.Windows.Forms.FontDialog();
+            this.ColorBtn = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btOK
@@ -109,6 +110,18 @@ namespace gInk
             // 
             this.FontDlg.FontMustExist = true;
             // 
+            // ColorBtn
+            // 
+            this.ColorBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ColorBtn.Location = new System.Drawing.Point(99, 125);
+            this.ColorBtn.Name = "ColorBtn";
+            this.ColorBtn.Size = new System.Drawing.Size(75, 42);
+            this.ColorBtn.TabIndex = 6;
+            this.ColorBtn.Text = "Color";
+            this.ColorBtn.UseVisualStyleBackColor = true;
+            this.ColorBtn.Visible = false;
+            this.ColorBtn.Click += new System.EventHandler(this.ColorBtn_Click);
+            // 
             // FormInput
             // 
             this.AcceptButton = this.btOK;
@@ -116,6 +129,7 @@ namespace gInk
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btCancel;
             this.ClientSize = new System.Drawing.Size(481, 179);
+            this.Controls.Add(this.ColorBtn);
             this.Controls.Add(this.FontBtn);
             this.Controls.Add(this.captionLbl);
             this.Controls.Add(this.InputSL);
@@ -142,5 +156,6 @@ namespace gInk
         public  System.Windows.Forms.Label captionLbl;
         public System.Windows.Forms.Button FontBtn;
         public System.Windows.Forms.FontDialog FontDlg;
+        public System.Windows.Forms.Button ColorBtn;
     }
 }

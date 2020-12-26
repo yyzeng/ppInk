@@ -265,6 +265,7 @@
     <None Include="Resources\Lpen_col.png" />
     <None Include="Resources\LpenS_bg.png" />
     <None Include="Resources\LpenS_col.png" />
+    <None Include="pan_copy.png" />
     <Content Include="tool_edit.png" />
     <Content Include="tool_edit_act.png" />
     <Content Include="tool_enAr.png" />

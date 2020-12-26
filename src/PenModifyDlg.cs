@@ -60,6 +60,14 @@ namespace gInk
                 return false;
             }
         }
+
+        public void hideWidth()
+        {
+            pboxPenWidthIndicator.Visible = false;
+            gpPenWidth.BackgroundImage = null;
+            //gpPenWidth.Visible = false;
+            //previewPanel.Visible = false;
+        }
         /// inspired from FormCollection
         bool gpPenWidth_MouseOn;
         private void gpPenWidth_MouseDown(object sender, MouseEventArgs e)
