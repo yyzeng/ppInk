@@ -315,7 +315,7 @@ namespace gInk
                         g.DrawString((string)(st.ExtendedProperties[Root.TEXT_GUID].Data),
                                      new Font((string)st.ExtendedProperties[Root.TEXTFONT_GUID].Data,(float)st.ExtendedProperties[Root.TEXTFONTSIZE_GUID].Data,
                                         (System.Drawing.FontStyle)(int)st.ExtendedProperties[Root.TEXTFONTSTYLE_GUID].Data),
-                                     new SolidBrush(st.DrawingAttributes.Color), pt.X, pt.Y, stf);
+                                     new SolidBrush(Color.FromArgb(255-st.DrawingAttributes.Transparency, st.DrawingAttributes.Color)), pt.X, pt.Y, stf);
 
                     }
                 }

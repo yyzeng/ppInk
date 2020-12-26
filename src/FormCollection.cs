@@ -942,7 +942,7 @@ namespace gInk
             pts[0]=pt;
             Stroke st = Root.FormCollection.IC.Ink.CreateStroke(pts);
             st.DrawingAttributes = Root.FormCollection.IC.DefaultDrawingAttributes.Clone();
-            //st.DrawingAttributes.Width = 0; // no width to hide the point;
+            st.DrawingAttributes.Width = 100; // no width to hide the point;
             st.ExtendedProperties.Add(Root.TEXT_GUID, txt);
             st.ExtendedProperties.Add(Root.TEXTX_GUID, pt.X);
             st.ExtendedProperties.Add(Root.TEXTY_GUID, pt.Y);
