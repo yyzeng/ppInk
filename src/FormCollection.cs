@@ -798,13 +798,13 @@ namespace gInk
 
         private void setStrokeProperties(ref Stroke st, int FilledSelected)
         {
-            if (FilledSelected == 0)
+            if (FilledSelected == Filling.Empty)
                 st.ExtendedProperties.Add(Root.ISSTROKE_GUID, true);
-            else if (FilledSelected == 1)
+            else if (FilledSelected == Filling.PenColorFilled )
                 st.ExtendedProperties.Add(Root.ISFILLEDCOLOR_GUID, true);
-            else if (FilledSelected == 2)
+            else if (FilledSelected == Filling.WhiteFilled )
                 st.ExtendedProperties.Add(Root.ISFILLEDWHITE_GUID, true);
-            else if (FilledSelected == 3)
+            else if (FilledSelected == Filling.BlackFilled )
                 st.ExtendedProperties.Add(Root.ISFILLEDBLACK_GUID, true);
         }
 
@@ -915,7 +915,7 @@ namespace gInk
         // arrow at starting point
         {
             // for the filling, filled color is not used but this state is used to note that we edit the tag number
-            Stroke st = AddEllipseStroke(CursorX0, CursorY0, (int)(CursorX0 + TextSize * 1.2), (int)(CursorY0 + TextSize * 1.2), Root.FilledSelected==1?0:Root.FilledSelected);
+            Stroke st = AddEllipseStroke(CursorX0, CursorY0, (int)(CursorX0 + TextSize * 1.2), (int)(CursorY0 + TextSize * 1.2), Root.FilledSelected==Filling.PenColorFilled?0:Root.FilledSelected);
             st.ExtendedProperties.Add(Root.ISSTROKE_GUID, true);
             Point pt = new Point(CursorX0, CursorY0);
             IC.Renderer.PixelToInkSpace(IC.Handle, ref pt);
@@ -1173,7 +1173,7 @@ namespace gInk
 		{
             movedStroke = null; // reset the moving object
             try { if(e.Stroke.ExtendedProperties.Contains(Root.ISSTROKE_GUID)) e.Stroke.ExtendedProperties.Remove(Root.ISSTROKE_GUID); } catch { } // the ISSTROKE set for drawin
-            if (Root.ToolSelected==0)
+            if (Root.ToolSelected==Tools.Hand)
             {
                 Stroke st = e.Stroke;// IC.Ink.Strokes[IC.Ink.Strokes.Count-1];
                 setStrokeProperties(ref st, Root.FilledSelected);
@@ -1188,22 +1188,22 @@ namespace gInk
                     Root.CursorY = p.Y;
                 }
                 IC.Ink.DeleteStroke(e.Stroke); // the stroke that was just inserted has to be replaced.
-                if ((Root.ToolSelected == 1) && (Root.CursorX0 != Int32.MinValue))
+                if ((Root.ToolSelected == Tools.Line) && (Root.CursorX0 != Int32.MinValue))
                     AddLineStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY);
-                else if ((Root.ToolSelected == 2) && (Root.CursorX0 != Int32.MinValue))
+                else if ((Root.ToolSelected == Tools.Rect) && (Root.CursorX0 != Int32.MinValue))
                     AddRectStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY, Root.FilledSelected);
-                else if ((Root.ToolSelected == 3) && (Root.CursorX0 != Int32.MinValue))
+                else if ((Root.ToolSelected == Tools.Oval) && (Root.CursorX0 != Int32.MinValue))
                     AddEllipseStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY, Root.FilledSelected);
-                else if ((Root.ToolSelected == 4) && (Root.CursorX0 != Int32.MinValue))
+                else if ((Root.ToolSelected == Tools.StartArrow) && (Root.CursorX0 != Int32.MinValue))
                     AddArrowStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY);
-                else if ((Root.ToolSelected == 5) && (Root.CursorX0 != Int32.MinValue))
+                else if ((Root.ToolSelected == Tools.EndArrow) && (Root.CursorX0 != Int32.MinValue))
                     AddArrowStroke(Root.CursorX, Root.CursorY, Root.CursorX0, Root.CursorY0);
-                else if (Root.ToolSelected == 6)
+                else if (Root.ToolSelected == Tools.NumberTag)
                 {
                     Stroke st = AddNumberTagStroke(Root.CursorX, Root.CursorY, Root.CursorX, Root.CursorY, Root.TagNumbering.ToString());
                     Root.TagNumbering++;
                 }
-                else if (Root.ToolSelected == 7) // Edit
+                else if (Root.ToolSelected == Tools.Edit) // Edit
                 {
                     float pos;
                     Stroke minStroke;
@@ -1232,7 +1232,7 @@ namespace gInk
                 }
                 else if ((Root.ToolSelected == Tools.txtLeftAligned) || (Root.ToolSelected == Tools.txtRightAligned))  // new text
                 {
-                    Stroke st = AddTextStroke(Root.CursorX, Root.CursorY, Root.CursorX, Root.CursorY, "Text", (Root.ToolSelected == 8)?StringAlignment.Near:StringAlignment.Far);
+                    Stroke st = AddTextStroke(Root.CursorX, Root.CursorY, Root.CursorX, Root.CursorY, "Text", (Root.ToolSelected == Tools.txtLeftAligned) ?StringAlignment.Near:StringAlignment.Far);
                     Root.FormDisplay.DrawStrokes();
                     Root.FormDisplay.UpdateFormDisplay(true);
                     if (ModifyTextInStroke(st, (string)(st.ExtendedProperties[Root.TEXT_GUID].Data)) == DialogResult.Cancel)
@@ -1244,7 +1244,7 @@ namespace gInk
                 }
                 else if ((Root.ToolSelected == Tools.Move)|| (Root.ToolSelected == Tools.Copy))// Move : do Nothing
                     movedStroke = null;
-                else if ((Root.ToolSelected == 11) && ((Root.CursorX0 != Int32.MinValue)||(Math.Abs(Root.CursorY - PolyLineLastY) + Math.Abs(Root.CursorX - PolyLineLastX) < Root.MinMagneticRadius())))
+                else if ((Root.ToolSelected == Tools.Poly) && ((Root.CursorX0 != Int32.MinValue)||(Math.Abs(Root.CursorY - PolyLineLastY) + Math.Abs(Root.CursorX - PolyLineLastX) < Root.MinMagneticRadius())))
                 {
                     if(PolyLineLastX == Int32.MinValue)
                     {
@@ -1313,7 +1313,7 @@ namespace gInk
 
 		private void IC_CursorDown(object sender, InkCollectorCursorDownEventArgs e)
 		{
-            if (Root.ToolSelected == 0)
+            if (Root.ToolSelected == Tools.Hand)
                 e.Stroke.ExtendedProperties.Add(Root.ISSTROKE_GUID, true); // we set the ISTROKE_GUID in order to draw the inprogress as a line
             else
                 e.Stroke.ExtendedProperties.Add(Root.ISHIDDEN_GUID, true); // we set the ISTROKE_GUID in order to draw the inprogress as a line
@@ -1381,7 +1381,7 @@ namespace gInk
 			LasteXY.X = e.X;
 			LasteXY.Y = e.Y;
 			IC.Renderer.PixelToInkSpace(Root.FormDisplay.gOneStrokeCanvus, ref LasteXY);
-            if((Root.ToolSelected == 11)&&(PolyLineLastX != Int32.MinValue))
+            if(( Root.ToolSelected == Tools.Poly ) && ( PolyLineLastX != Int32.MinValue ))
             {
                 Root.CursorX0 = PolyLineLastX;
                 Root.CursorY0 = PolyLineLastY;
@@ -1425,7 +1425,7 @@ namespace gInk
             //Console.WriteLine("Cursor {0},{1} - {2}", e.X, e.Y, e.Button);
             Root.CursorX = e.X;
             Root.CursorY = e.Y;
-            MagneticEffect(Root.CursorX0, Root.CursorY0, ref Root.CursorX, ref Root.CursorY, Root.ToolSelected >0 && Root.MagneticRadius>0);
+            MagneticEffect(Root.CursorX0, Root.CursorY0, ref Root.CursorX, ref Root.CursorY, Root.ToolSelected >Tools.Hand && Root.MagneticRadius>0);
 
             if (LasteXY.X == 0 && LasteXY.Y == 0)
 			{
@@ -1602,6 +1602,7 @@ namespace gInk
 			while (exc && exceptiontick < 3);
 		}
 
+        private readonly int[] applicableTool = { Tools.Hand, Tools.Line, Tools.Poly, Tools.Rect, Tools.Oval, Tools.NumberTag };
         public void SelectTool(int tool, int filled = -1)
         // Hand (0),Line(1),Rect(2),Oval(3),StartArrow(4),EndArrow(5),NumberTag(6),Edit(7),txtLeftAligned(8),txtRightAligned(9),Move(10),Copy(11),polyline/polygone(21)
         // filled : empty(0),PenColorFilled(1),WhiteFilled(2),BlackFilled(3)
@@ -1621,7 +1622,7 @@ namespace gInk
 
             if (AltKeyPressed())
             {
-                if (SavedTool < 0 || tool != Root.ToolSelected)
+                if (SavedTool <= Tools.Invalid || tool != Root.ToolSelected)
                 {
                     SavedTool = Root.ToolSelected;
                     SavedFilled = Root.FilledSelected;
@@ -1630,7 +1631,6 @@ namespace gInk
                 }
             }
 
-            int[] applicableTool = { 0, 1,11, 2, 3, 6 };
             if (filled >= 0)
                 Root.FilledSelected = filled;
             else if ((Array.IndexOf(applicableTool, tool) >= 0) && (tool == Root.ToolSelected))
@@ -1640,112 +1640,119 @@ namespace gInk
 
             Root.UponButtonsUpdate |= 0x2;
 
-            if (tool == -1)
+            if (tool == Tools.Invalid )
             {
-                Root.ToolSelected = 0; // to prevent drawing
+                Root.ToolSelected = Tools.Hand; // to prevent drawing
                 return;
             }
-            else if (tool == 0)
+            else if (tool == Tools.Hand)
             {
-                if (Root.FilledSelected == 0)
+                if (Root.FilledSelected == Filling.Empty )
                     btHand.BackgroundImage = getImgFromDiskOrRes("tool_hand_act", ImageExts);
-                else if (Root.FilledSelected == 1)
+                else if (Root.FilledSelected == Filling.PenColorFilled )
                     btHand.BackgroundImage = getImgFromDiskOrRes("tool_hand_filledC", ImageExts);
-                else if (Root.FilledSelected == 2)
+                else if (Root.FilledSelected == Filling.WhiteFilled )
                     btHand.BackgroundImage = getImgFromDiskOrRes("tool_hand_filledW", ImageExts);
-                else if (Root.FilledSelected == 3)
+                else if (Root.FilledSelected == Filling.BlackFilled )
                     btHand.BackgroundImage = getImgFromDiskOrRes("tool_hand_filledB", ImageExts);
                 EnterEraserMode(false);
             }
-            else if ((tool == 1)|| (tool == 11))
+            else if ((tool == Tools.Line) || (tool == Tools.Poly))
             {
-                if(Root.ToolSelected == 1)
+                if (Root.ToolSelected == Tools.Line)
                 {
-                    tool = 11;
+                    tool = Tools.Poly;
                     Root.FilledSelected = 0;
                     btLine.BackgroundImage = getImgFromDiskOrRes("tool_mlines", ImageExts);
                     filled = 0;
                     PolyLineLastX = Int32.MinValue; PolyLineLastY = Int32.MinValue;
                 }
-                else if((Root.ToolSelected == 11 && ((Root.FilledSelected == 4)|| (Root.FilledSelected == 0))) || (Root.ToolSelected != 11))
+                else if ( (Root.ToolSelected == Tools.Poly && (Root.FilledSelected > Filling.BlackFilled )) || (Root.ToolSelected != Tools.Poly) )
                 {
-                    tool = 1;
+                    tool = Tools.Line;
                     Root.FilledSelected = 0;
                     btLine.BackgroundImage = getImgFromDiskOrRes("tool_line_act", ImageExts);
                 }
-                else // Root.ToolSelected == 11 && Root.FilledSelected != 4
+                else // Root.ToolSelected == Tools.Poly && Root.FilledSelected != 4
                 {
-                    tool = 11;
+                    tool = Tools.Poly;
                     PolyLineLastX = Int32.MinValue; PolyLineLastY = Int32.MinValue;
-                    if (Root.FilledSelected == 1)
+                    if (Root.FilledSelected == Filling.PenColorFilled )
                         btLine.BackgroundImage = getImgFromDiskOrRes("tool_mlines_filledC", ImageExts);
-                    else if (Root.FilledSelected == 2)
+                    else if (Root.FilledSelected == Filling.WhiteFilled)
                         btLine.BackgroundImage = getImgFromDiskOrRes("tool_mlines_filledW", ImageExts);
-                    else if (Root.FilledSelected == 3)
+                    else if (Root.FilledSelected == Filling.BlackFilled)
                         btLine.BackgroundImage = getImgFromDiskOrRes("tool_mlines_filledB", ImageExts);
                 }
 
             }
-            else if (tool == 2)
+            else if (tool == Tools.Rect)
             {
-                if (Root.FilledSelected == 0)
+                if (Root.FilledSelected == Filling.Empty)
                     btRect.BackgroundImage = getImgFromDiskOrRes("tool_rect_act", ImageExts);
-                else if (Root.FilledSelected == 1)
+                else if (Root.FilledSelected == Filling.PenColorFilled)
                     btRect.BackgroundImage = getImgFromDiskOrRes("tool_rect_filledC", ImageExts);
-                else if (Root.FilledSelected == 2)
+                else if (Root.FilledSelected == Filling.WhiteFilled)
                     btRect.BackgroundImage = getImgFromDiskOrRes("tool_rect_filledW", ImageExts);
-                else if (Root.FilledSelected == 3)
+                else if (Root.FilledSelected == Filling.BlackFilled)
                     btRect.BackgroundImage = getImgFromDiskOrRes("tool_rect_filledB", ImageExts);
 
             }
-            else if (tool == 3)
+            else if (tool == Tools.Oval)
             {
-                if (Root.FilledSelected == 0)
+                if (Root.FilledSelected == Filling.Empty)
                     btOval.BackgroundImage = getImgFromDiskOrRes("tool_oval_act", ImageExts);
-                else if (Root.FilledSelected == 1)
+                else if (Root.FilledSelected == Filling.PenColorFilled)
                     btOval.BackgroundImage = getImgFromDiskOrRes("tool_oval_filledC", ImageExts);
-                else if (Root.FilledSelected == 2)
+                else if (Root.FilledSelected == Filling.WhiteFilled)
                     btOval.BackgroundImage = getImgFromDiskOrRes("tool_oval_filledW", ImageExts);
-                else if (Root.FilledSelected == 3)
+                else if (Root.FilledSelected == Filling.BlackFilled)
                     btOval.BackgroundImage = getImgFromDiskOrRes("tool_oval_filledB", ImageExts);
             }
-            else if ((tool == 4) || (tool == 5)) // also include tool=5
-                if ((tool == 5) || (Root.ToolSelected == 4))
+            else if ((tool == Tools.StartArrow) || (tool == Tools.EndArrow)) // also include tool=5
+                if ((tool == Tools.EndArrow) || (Root.ToolSelected == Tools.StartArrow))
                 {
                     btArrow.BackgroundImage = getImgFromDiskOrRes("tool_enAr_act", ImageExts);
-                    tool = 5;
+                    tool = Tools.EndArrow;
                 }
                 else
                 {
                     btArrow.BackgroundImage = getImgFromDiskOrRes("tool_stAr_act", ImageExts);
-                    tool = 4;
+                    tool = Tools.StartArrow;
                 }
-            else if (tool == 6)
+            else if (tool == Tools.NumberTag)
             {
-                if (Root.FilledSelected == 0)
+                if (Root.FilledSelected == Filling.Empty)
                     btNumb.BackgroundImage = getImgFromDiskOrRes("tool_numb_act", ImageExts);
-                else if (Root.FilledSelected == 1)
+                else if (Root.FilledSelected == Filling.PenColorFilled)
                 { // we use the state FilledColor to do the modification of the tag number
                     SetTagNumber();
                     btNumb.BackgroundImage = getImgFromDiskOrRes("tool_numb_act", ImageExts);
                 }
-                else if (Root.FilledSelected == 2)
+                else if (Root.FilledSelected == Filling.WhiteFilled)
                     btNumb.BackgroundImage = getImgFromDiskOrRes("tool_numb_fillW", ImageExts);
-                else if (Root.FilledSelected == 3)
+                else if (Root.FilledSelected == Filling.BlackFilled)
                     btNumb.BackgroundImage = getImgFromDiskOrRes("tool_numb_fillB", ImageExts);
+                IC.Cursor = cursorred;
             }
-            else if (tool == 7)
+            else if (tool == Tools.Edit)
+            {
                 btEdit.BackgroundImage = getImgFromDiskOrRes("tool_edit_act");
-            else if ((tool == 8) || (tool == 9))
-                if ((tool == 9) || (Root.ToolSelected == 8))
+                IC.Cursor = cursorred;
+            }
+            else if ((tool == Tools.txtLeftAligned) || (tool == Tools.txtRightAligned))
+            {
+                if ((tool == Tools.txtRightAligned) || (Root.ToolSelected == Tools.txtLeftAligned))
                 {
                     btText.BackgroundImage = getImgFromDiskOrRes("tool_txtR_act", ImageExts);
-                    tool = 9;
+                    tool = Tools.txtRightAligned;
                 }
                 else
                 {
                     btText.BackgroundImage = getImgFromDiskOrRes("tool_txtL_act", ImageExts);
-                    tool = 8;
+                    tool = Tools.txtLeftAligned;
+                }
+                IC.Cursor = cursorred;
             }
             else if (tool == Tools.Move)
             {
@@ -1763,9 +1770,9 @@ namespace gInk
         }
 
         public void SelectPen(int pen)
+        // -3 = pan, -2 = pointer, -1 = erasor, >=0 = pens
 		{
             btPan.BackgroundImage = getImgFromDiskOrRes("pan", ImageExts);
-            // -3=pan, -2=pointer, -1=erasor, 0+=pens
             //Console.WriteLine("SelectPen : " + pen.ToString());
             //System.Diagnostics.StackTrace t = new System.Diagnostics.StackTrace();
             //Console.WriteLine(t.ToString());
@@ -3139,9 +3146,7 @@ namespace gInk
         {
             if (Root.VideoRecordMode == VideoRecordMode.FfmpegRec)
             {
-                Root.FFmpegProcess.Kill();
-                btVideo.BackgroundImage = getImgFromDiskOrRes("VidStop", ImageExts);
-                Root.UponButtonsUpdate |= 0x2;
+                VideoRecordStop();
             }
             else if (Root.VideoRecordMode == VideoRecordMode.OBSRec)
                 Task.Run(() => SendInWs(Root.ObsWs,"PauseRecording", Root.ObsCancel.Token));
@@ -3239,33 +3244,33 @@ namespace gInk
 
             int i = -1;
             if (((Button)sender).Name.Contains("Hand"))
-                i = 0;
+                i = Tools.Hand;
             else if (((Button)sender).Name.Contains("Line"))
-                i = Root.ToolSelected==11?11:1;    // to keep filled
+                i = Root.ToolSelected==Tools.Poly? Tools.Poly : Tools.Line;    // to keep filled
             else if (((Button)sender).Name.Contains("Rect"))
-                i = 2;
+                i = Tools.Rect;
             else if (((Button)sender).Name.Contains("Oval"))
-                i = 3;
+                i = Tools.Oval;
             else if (((Button)sender).Name.Contains("Arrow"))
-                if (Root.ToolSelected == 5)
-                    i = 4;
-                else if (Root.ToolSelected == 4)
-                    i = 5;
+                if (Root.ToolSelected == Tools.EndArrow)
+                    i = Tools.StartArrow;
+                else if (Root.ToolSelected == Tools.StartArrow)
+                    i = Tools.EndArrow;
                 else if (Root.DefaultArrow_start)
-                    i = 4;
+                    i = Tools.StartArrow;
                 else
-                    i = 5;
-                //               i = (Root.DefaultArrow_start ||Root.ToolSelected==5) ?4:5 ;
+                    i = Tools.EndArrow;
+            //               i = (Root.DefaultArrow_start ||Root.ToolSelected==5) ?4:5 ;
             else if (((Button)sender).Name.Contains("Numb"))
             {
                 /*if (Root.ToolSelected == 6) // if already selected, we open the index dialog
                 {
                     SetTagNumber();
                 }*/
-                i = 6;
+                i = Tools.NumberTag;
             }
             else if (((Button)sender).Name.Contains("Text"))
-                i = 8;
+                i = Tools.txtLeftAligned;
             else if (((Button)sender).Name.Contains("Edit"))
                 if (sender != null && tsp.TotalSeconds > Root.LongClickTime)
                 {
@@ -3273,8 +3278,8 @@ namespace gInk
                     return ;
                 }
                 else
-                    i = 7;
-            if(i>=0)
+                    i = Tools.Edit;
+            if(i>=Tools.Hand)
                 SelectPen(LastPenSelected);
             SelectTool(i);
         }

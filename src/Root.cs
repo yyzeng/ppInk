@@ -15,6 +15,21 @@ using System.Net.WebSockets;
 
 namespace gInk
 {
+    public class Tools
+    {
+        public const int Invalid = -1;
+        public const int Hand = 0; public const int Line = 1; public const int Rect = 2; public const int Oval = 3;
+        public const int StartArrow = 4; public const int EndArrow = 5; public const int NumberTag = 6;
+        public const int Edit = 7; public const int txtLeftAligned = 8; public const int txtRightAligned = 9;
+        public const int Move = 10; public const int Copy = 11; public const int Poly = 21;
+    };
+    public class Filling {
+        public const int Empty = 0;
+        public const int PenColorFilled = 1;
+        public const int WhiteFilled = 2;
+        public const int BlackFilled = 3;
+    }; // applicable to Hand,Rect,Oval
+
     public enum VideoRecordMode {NoVideo=0 , OBSRec=1 , OBSBcst=2 , FfmpegRec=3 };
     public enum VideoRecInProgress { Stopped=0, Starting=1, Recording=2, Stopping = 3, Pausing=4, Paused=5, Resuming=6, Streaming = 7 };
 
@@ -151,7 +166,7 @@ namespace gInk
         public Hotkey Hotkey_Move = new Hotkey();
         public Hotkey Hotkey_Magnet = new Hotkey();
 
-        public int ToolSelected = 0;        // indicates which tool (Hand,Line,...) is currently selected
+        public int ToolSelected = Tools.Hand;        // indicates which tool (Hand,Line,...) is currently selected
         public int FilledSelected = 0;      // indicates which filling (None, Selected color, ...) is currently select
         public bool EraserMode = false;
 		public bool Docked = false;
@@ -437,7 +452,7 @@ namespace gInk
 			if (UndoStrokes[UndoP].Strokes.Count > 0)
             {
 				FormCollection.IC.Ink.AddStrokesAtRectangle(UndoStrokes[UndoP].Strokes, UndoStrokes[UndoP].Strokes.GetBoundingBox());
-                if (ToolSelected == 11)
+                if (ToolSelected == Tools.Poly)
                     FormCollection.RestorePolylineData(FormCollection.IC.Ink.Strokes[FormCollection.IC.Ink.Strokes.Count-1]);
             }
 			FormDisplay.ClearCanvus();

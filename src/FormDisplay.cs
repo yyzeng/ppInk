@@ -477,15 +477,15 @@ namespace gInk
         {
             if ((CursorX0 != int.MinValue) || (CursorY0 != int.MinValue))
             {
-                if ((Root.ToolSelected == 1)|| (Root.ToolSelected == 11))
+                if ((Root.ToolSelected == Tools.Line)|| (Root.ToolSelected == Tools.Poly))
                     DrawLineOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY);
-                else if (Root.ToolSelected == 2)
+                else if (Root.ToolSelected == Tools.Rect)
                     DrawRectOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY);
-                else if (Root.ToolSelected == 3)
+                else if (Root.ToolSelected == Tools.Oval)
                     DrawEllipseOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY);
-                else if (Root.ToolSelected == 4)
+                else if (Root.ToolSelected == Tools.StartArrow)
                     DrawArrowOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY);
-                else if (Root.ToolSelected == 5)
+                else if (Root.ToolSelected == Tools.EndArrow)
                     DrawArrowOnGraphic(g, CursorX, CursorY, CursorX0, CursorY0);
             }
         }
@@ -671,12 +671,12 @@ namespace gInk
 				if (Root.FormCollection.IC.Ink.Strokes.Count > 0)
 				{
 					Stroke stroke = Root.FormCollection.IC.Ink.Strokes[Root.FormCollection.IC.Ink.Strokes.Count - 1];
-					if ((!stroke.Deleted) && (Root.ToolSelected == 0))
+					if ((!stroke.Deleted) && (Root.ToolSelected == Tools.Hand))
                     {
                         BitBlt(OutcanvusDc, 0, 0, this.Width, this.Height, canvusDc, 0, 0, 0x00CC0020);
                         Root.FormCollection.IC.Renderer.Draw(gOutCanvus, stroke, Root.FormCollection.IC.DefaultDrawingAttributes);
                     }
-                    UpdateFormDisplay(true, Root.ToolSelected == 0);
+                    UpdateFormDisplay(true, Root.ToolSelected == Tools.Hand);
                 }
             }
 
