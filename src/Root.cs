@@ -354,7 +354,9 @@ namespace gInk
 			if (FormDisplay != null || FormCollection != null)
 				return;
 
-			//Docked = false;
+            //Docked = false;
+            PointerMode = false; // we have to reset pointer mode when starting drawing;
+
             FormCollection = new FormCollection(this);
 			FormButtonHitter = new FormButtonHitter(this);
 			FormDisplay = new FormDisplay(this);  // FormDisplay is created at the end to ensure other objects are created.
