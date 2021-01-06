@@ -301,6 +301,16 @@ namespace gInk
 
                     }
                     /*else */
+                    if (st.ExtendedProperties.Contains(Root.IMAGE_GUID))
+                    {
+                        Image img = Root.FormCollection.ClipartsDlg.Images.Images[(int)(st.ExtendedProperties[Root.IMAGE_GUID].Data)];
+                        int X = (int)(st.ExtendedProperties[Root.IMAGE_X_GUID].Data);
+                        int Y = (int)(st.ExtendedProperties[Root.IMAGE_Y_GUID].Data);
+                        int W = (int)(st.ExtendedProperties[Root.IMAGE_W_GUID].Data);
+                        int H = (int)(st.ExtendedProperties[Root.IMAGE_H_GUID].Data);
+                        g.DrawImage(img, new Rectangle(X, Y, W, H));
+                    }
+                    /*else */
                     if (st.ExtendedProperties.Contains(Root.ISSTROKE_GUID))
                         Root.FormCollection.IC.Renderer.Draw(g, st);
 
@@ -479,7 +489,7 @@ namespace gInk
             {
                 if ((Root.ToolSelected == Tools.Line)|| (Root.ToolSelected == Tools.Poly))
                     DrawLineOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY);
-                else if (Root.ToolSelected == Tools.Rect)
+                else if ((Root.ToolSelected == Tools.Rect)|| (Root.ToolSelected == Tools.ClipArt))
                     DrawRectOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY);
                 else if (Root.ToolSelected == Tools.Oval)
                     DrawEllipseOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY);

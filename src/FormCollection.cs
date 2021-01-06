@@ -7,7 +7,6 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Threading;
-//using System.Windows.Input;
 using Microsoft.Ink;
 using System.Net.WebSockets;
 using System.Threading.Tasks;
@@ -99,6 +98,8 @@ namespace gInk
         public bool TextBold = false;
 
         private bool SetWindowInputRectFlag = false;
+
+        public ImageLister ClipartsDlg;
 
         // http://www.csharp411.com/hide-form-from-alttab/
         protected override CreateParams CreateParams
@@ -199,9 +200,12 @@ namespace gInk
         public FormCollection(Root root)
         {
             Root = root;
+
             //Console.WriteLine("A=" + (DateTime.Now.Ticks/1e7).ToString());
             InitializeComponent();
+             
             //Console.WriteLine("B=" + (DateTime.Now.Ticks/1e7).ToString());
+            ClipartsDlg = new ImageLister(Root);    
             Initializing = true;
             //loading default params
             TextFont = Root.TextFont;
@@ -256,6 +260,9 @@ namespace gInk
             btEdit.Height = (int)(gpButtons.Height * 0.48);
             btEdit.Width = btEdit.Height;
             btEdit.Top = (int)(gpButtons.Height * 0.52);
+            btClipArt.Height = (int)(gpButtons.Height * 0.48);
+            btClipArt.Width = btClipArt.Height;
+            btClipArt.Top = (int)(gpButtons.Height * 0.02);
 
 
             btEraser.Height = (int)(gpButtons.Height * 0.85);
@@ -351,6 +358,9 @@ namespace gInk
                 btEdit.Visible = true;
                 btEdit.Left = cumulatedleft;
                 cumulatedleft += (int)(btArrow.Width * 1.1);
+                btClipArt.Visible = true;
+                btClipArt.Left = cumulatedleft;
+                cumulatedleft += (int)(btClipArt.Width * 1.1);
             }
             else
             {
@@ -405,7 +415,7 @@ namespace gInk
             {
                 btPointer.Visible = false;
             }
-            cumulatedleft += (int)(btDock.Width * 1.5);
+            cumulatedleft += (int)(btDock.Width * 0.5);
             if (Root.PenWidthEnabled)
             {
                 btPenWidth.Visible = true;
@@ -698,7 +708,8 @@ namespace gInk
                 if (!Root.AltTabPointer)
                     return;
                 if (msg.WParam == IntPtr.Zero)
-                {   //Console.WriteLine("desactivating ");
+                {
+                    Console.WriteLine("desactivating "+ Root.PointerMode.ToString());
                     if (!Root.PointerMode)
                     {
                         //Console.WriteLine("process ");
@@ -850,6 +861,17 @@ namespace gInk
             st.DrawingAttributes.FitToCurve = false;
             setStrokeProperties(ref st, FilledSelected);
             Root.FormCollection.IC.Ink.Strokes.Add(st);
+            return st;
+        }
+
+        private Stroke AddImageStroke(int CursorX0, int CursorY0, int CursorX, int CursorY, int ImgIdx)
+        {
+            Stroke st = AddRectStroke(CursorX0, CursorY0, CursorX, CursorY, ClipartsDlg.ImageStampFilling);
+            st.ExtendedProperties.Add(Root.IMAGE_GUID, ImgIdx);
+            st.ExtendedProperties.Add(Root.IMAGE_X_GUID, CursorX0);
+            st.ExtendedProperties.Add(Root.IMAGE_Y_GUID, CursorY0);
+            st.ExtendedProperties.Add(Root.IMAGE_W_GUID, CursorX - CursorX0);
+            st.ExtendedProperties.Add(Root.IMAGE_H_GUID, CursorY - CursorY0);
             return st;
         }
 
@@ -1192,6 +1214,28 @@ namespace gInk
                     AddLineStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY);
                 else if ((Root.ToolSelected == Tools.Rect) && (Root.CursorX0 != Int32.MinValue))
                     AddRectStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY, Root.FilledSelected);
+                else if (Root.ToolSelected == Tools.ClipArt)
+                {
+                    int idx = ClipartsDlg.Images.Images.IndexOfKey(Root.ImageStamp);
+                    int w = ClipartsDlg.ImgSize[idx].X;
+                    int h = ClipartsDlg.ImgSize[idx].Y;
+                    if ((Root.CursorX0 == Int32.MinValue) || ((Root.CursorX0==Root.CursorX)&& (Root.CursorY0 == Root.CursorY)))
+                    {
+                        Root.CursorX0 = Root.CursorX;
+                        Root.CursorY0 = Root.CursorY;
+                        Root.CursorX = Root.CursorX0 + w;
+                        Root.CursorY = Root.CursorY0 + h;
+                    }
+                    else if (Math.Abs((double)(Root.CursorX - Root.CursorX0)/ (Root.CursorY - Root.CursorY0)) < Root.StampScaleRatio )
+                    {
+                        Root.CursorX = (int)(Root.CursorX0 + (double)(Root.CursorY - Root.CursorY0)/ h * w);
+                    }
+                    else if (Math.Abs((double)(Root.CursorY - Root.CursorY0) / (Root.CursorX - Root.CursorX0)) < Root.StampScaleRatio)
+                    {
+                        Root.CursorY = (int)(Root.CursorY0 + (double)(Root.CursorX - Root.CursorX0) / w * h);
+                    }
+                    AddImageStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY, idx);
+                }
                 else if ((Root.ToolSelected == Tools.Oval) && (Root.CursorX0 != Int32.MinValue))
                     AddEllipseStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY, Root.FilledSelected);
                 else if ((Root.ToolSelected == Tools.StartArrow) && (Root.CursorX0 != Int32.MinValue))
@@ -1619,6 +1663,7 @@ namespace gInk
             btNumb.BackgroundImage = getImgFromDiskOrRes("tool_numb", ImageExts);
             btText.BackgroundImage = getImgFromDiskOrRes("tool_txtL", ImageExts);
             btEdit.BackgroundImage = getImgFromDiskOrRes("tool_edit", ImageExts);
+            btClipArt.BackgroundImage = getImgFromDiskOrRes("tool_clipart", ImageExts);
 
             if (AltKeyPressed())
             {
@@ -1640,20 +1685,20 @@ namespace gInk
 
             Root.UponButtonsUpdate |= 0x2;
 
-            if (tool == Tools.Invalid )
+            if (tool == Tools.Invalid)
             {
                 Root.ToolSelected = Tools.Hand; // to prevent drawing
                 return;
             }
             else if (tool == Tools.Hand)
             {
-                if (Root.FilledSelected == Filling.Empty )
+                if (Root.FilledSelected == Filling.Empty)
                     btHand.BackgroundImage = getImgFromDiskOrRes("tool_hand_act", ImageExts);
-                else if (Root.FilledSelected == Filling.PenColorFilled )
+                else if (Root.FilledSelected == Filling.PenColorFilled)
                     btHand.BackgroundImage = getImgFromDiskOrRes("tool_hand_filledC", ImageExts);
-                else if (Root.FilledSelected == Filling.WhiteFilled )
+                else if (Root.FilledSelected == Filling.WhiteFilled)
                     btHand.BackgroundImage = getImgFromDiskOrRes("tool_hand_filledW", ImageExts);
-                else if (Root.FilledSelected == Filling.BlackFilled )
+                else if (Root.FilledSelected == Filling.BlackFilled)
                     btHand.BackgroundImage = getImgFromDiskOrRes("tool_hand_filledB", ImageExts);
                 EnterEraserMode(false);
             }
@@ -1667,7 +1712,7 @@ namespace gInk
                     filled = 0;
                     PolyLineLastX = Int32.MinValue; PolyLineLastY = Int32.MinValue;
                 }
-                else if ( (Root.ToolSelected == Tools.Poly && (Root.FilledSelected > Filling.BlackFilled )) || (Root.ToolSelected != Tools.Poly) )
+                else if ((Root.ToolSelected == Tools.Poly && (Root.FilledSelected > Filling.BlackFilled)) || (Root.ToolSelected != Tools.Poly))
                 {
                     tool = Tools.Line;
                     Root.FilledSelected = 0;
@@ -1677,7 +1722,7 @@ namespace gInk
                 {
                     tool = Tools.Poly;
                     PolyLineLastX = Int32.MinValue; PolyLineLastY = Int32.MinValue;
-                    if (Root.FilledSelected == Filling.PenColorFilled )
+                    if (Root.FilledSelected == Filling.PenColorFilled)
                         btLine.BackgroundImage = getImgFromDiskOrRes("tool_mlines_filledC", ImageExts);
                     else if (Root.FilledSelected == Filling.WhiteFilled)
                         btLine.BackgroundImage = getImgFromDiskOrRes("tool_mlines_filledW", ImageExts);
@@ -1697,6 +1742,10 @@ namespace gInk
                 else if (Root.FilledSelected == Filling.BlackFilled)
                     btRect.BackgroundImage = getImgFromDiskOrRes("tool_rect_filledB", ImageExts);
 
+            }
+            else if (tool == Tools.ClipArt)
+            {
+                btClipArt.BackgroundImage = getImgFromDiskOrRes("tool_clipart_act", ImageExts);
             }
             else if (tool == Tools.Oval)
             {
@@ -1726,7 +1775,9 @@ namespace gInk
                     btNumb.BackgroundImage = getImgFromDiskOrRes("tool_numb_act", ImageExts);
                 else if (Root.FilledSelected == Filling.PenColorFilled)
                 { // we use the state FilledColor to do the modification of the tag number
+                    //Console.WriteLine("avt setTag");
                     SetTagNumber();
+                    //Console.WriteLine("ap setTag");
                     btNumb.BackgroundImage = getImgFromDiskOrRes("tool_numb_act", ImageExts);
                 }
                 else if (Root.FilledSelected == Filling.WhiteFilled)
@@ -3279,7 +3330,20 @@ namespace gInk
                 }
                 else
                     i = Tools.Edit;
-            if(i>=Tools.Hand)
+            else if (((Button)sender).Name.Contains("ClipArt"))
+            {
+                tiSlide.Stop();
+                IC.Enabled = false;
+                ClipartsDlg.Left = gpButtons.Right - ClipartsDlg.Width - 1;
+                ClipartsDlg.Top = gpButtons.Top - ClipartsDlg.Height - 1;
+                i = -1;
+                if (ClipartsDlg.ShowDialog() == DialogResult.OK)
+                    i = Tools.ClipArt;
+                IC.Enabled = true;
+                tiSlide.Start();
+                if(i<0) return;
+            }
+            if (i>=Tools.Hand)
                 SelectPen(LastPenSelected);
             SelectTool(i);
         }

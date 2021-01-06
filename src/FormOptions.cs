@@ -706,6 +706,23 @@ namespace gInk
             Root.AltTabPointer = AltTabActivateCb.Checked;
         }
 
+        private void ClipartsSelBtn_Click(object sender, EventArgs e)
+        {
+            ImageLister dlg = new ImageLister(Root);
+            dlg.FromClpBtn.Visible = false;
+            dlg.InsertBtn.Text = Root.Local.ButtonOkText;
+            if(dlg.ShowDialog() == DialogResult.OK)
+            {
+                Root.ImageStampFilling = dlg.ImageStampFilling;
+                Root.StampFileNames.Clear();
+//                for(int i=0;i<dlg.Images.Images.Count;i++)
+                foreach(string st in dlg.Images.Images.Keys)
+                {
+                    Root.StampFileNames.Add(st);// dlg.Images.Images.Keys[i]);
+                }
+            }
+        }
+
         private void cbAllowHotkeyInPointer_CheckedChanged(object sender, EventArgs e)
 		{
 			Root.AllowHotkeyInPointerMode = cbAllowHotkeyInPointer.Checked;

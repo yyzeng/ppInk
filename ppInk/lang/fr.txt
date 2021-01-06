@@ -56,6 +56,13 @@ DlgTextLabel = "Texte"
 DlgTagCaption = "Numérotation"
 DlgTagLabel = "Prochain numéro"
 
+FormClipartsTitle = "ClipArts"
+ButtonInsertText = "&Insérer"
+ButtonFromClipBText = "&Du presse-papier"
+ButtonLoadImageText = "&Charge Image"
+ButtonDeleteText = "&Supprimer"
+ListFillingsText = "Pas de cadre;Vide;fond de couleur;fond blanc;fond noir"
+
 
 MenuEntryExit = "Quitter"
 MenuEntryOptions = "Options"

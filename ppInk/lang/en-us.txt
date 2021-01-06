@@ -57,6 +57,14 @@ DlgTextLabel = "Text Input"
 DlgTagCaption = "Tag Numbering"
 DlgTagLabel = "Enter Starting Number"
 
+FormClipartsTitle = "ClipArts"
+ButtonInsertText = "&Insert"
+ButtonFromClipBText = "&From Clipboard"
+ButtonLoadImageText = "&Load Image"
+ButtonDeleteText = "&Delete"
+ListFillingsText = "No Frame;Empty;Color filled;White filled;Black filled"
+
+
 MenuEntryExit = "Exit"
 MenuEntryOptions = "Options"
 MenuEntryAbout = "About"

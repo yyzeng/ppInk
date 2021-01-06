@@ -69,6 +69,9 @@ namespace gInk
             this.comboCanvasCursor = new System.Windows.Forms.ComboBox();
             this.VideoTabCtrl = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.ClipartsSelBtn = new System.Windows.Forms.Button();
+            this.AltTabActivateCb = new System.Windows.Forms.CheckBox();
+            this.ToolBarColorLbl = new System.Windows.Forms.Label();
             this.BoardBx = new System.Windows.Forms.GroupBox();
             this.BoardAtOpenCombo = new System.Windows.Forms.ComboBox();
             this.BoardCustColorLbl = new System.Windows.Forms.Label();
@@ -161,8 +164,6 @@ namespace gInk
             this.OptObsBcast = new System.Windows.Forms.RadioButton();
             this.OptObsRecord = new System.Windows.Forms.RadioButton();
             this.FontDlg = new System.Windows.Forms.FontDialog();
-            this.ToolBarColorLbl = new System.Windows.Forms.Label();
-            this.AltTabActivateCb = new System.Windows.Forms.CheckBox();
             this.VideoTabCtrl.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.BoardBx.SuspendLayout();
@@ -177,7 +178,7 @@ namespace gInk
             // cbEraserEnabled
             // 
             this.cbEraserEnabled.AutoSize = true;
-            this.cbEraserEnabled.Location = new System.Drawing.Point(174, 81);
+            this.cbEraserEnabled.Location = new System.Drawing.Point(133, 78);
             this.cbEraserEnabled.Name = "cbEraserEnabled";
             this.cbEraserEnabled.Size = new System.Drawing.Size(15, 14);
             this.cbEraserEnabled.TabIndex = 0;
@@ -187,7 +188,7 @@ namespace gInk
             // cbPointerEnabled
             // 
             this.cbPointerEnabled.AutoSize = true;
-            this.cbPointerEnabled.Location = new System.Drawing.Point(253, 81);
+            this.cbPointerEnabled.Location = new System.Drawing.Point(242, 78);
             this.cbPointerEnabled.Name = "cbPointerEnabled";
             this.cbPointerEnabled.Size = new System.Drawing.Size(15, 14);
             this.cbPointerEnabled.TabIndex = 0;
@@ -197,7 +198,7 @@ namespace gInk
             // cbSnapEnabled
             // 
             this.cbSnapEnabled.AutoSize = true;
-            this.cbSnapEnabled.Location = new System.Drawing.Point(380, 81);
+            this.cbSnapEnabled.Location = new System.Drawing.Point(336, 78);
             this.cbSnapEnabled.Name = "cbSnapEnabled";
             this.cbSnapEnabled.Size = new System.Drawing.Size(15, 14);
             this.cbSnapEnabled.TabIndex = 0;
@@ -207,7 +208,7 @@ namespace gInk
             // cbUndoEnabled
             // 
             this.cbUndoEnabled.AutoSize = true;
-            this.cbUndoEnabled.Location = new System.Drawing.Point(414, 81);
+            this.cbUndoEnabled.Location = new System.Drawing.Point(380, 79);
             this.cbUndoEnabled.Name = "cbUndoEnabled";
             this.cbUndoEnabled.Size = new System.Drawing.Size(15, 14);
             this.cbUndoEnabled.TabIndex = 0;
@@ -217,7 +218,7 @@ namespace gInk
             // cbClearEnabled
             // 
             this.cbClearEnabled.AutoSize = true;
-            this.cbClearEnabled.Location = new System.Drawing.Point(451, 81);
+            this.cbClearEnabled.Location = new System.Drawing.Point(414, 79);
             this.cbClearEnabled.Name = "cbClearEnabled";
             this.cbClearEnabled.Size = new System.Drawing.Size(15, 14);
             this.cbClearEnabled.TabIndex = 0;
@@ -227,7 +228,7 @@ namespace gInk
             // cbWidthEnabled
             // 
             this.cbWidthEnabled.AutoSize = true;
-            this.cbWidthEnabled.Location = new System.Drawing.Point(310, 81);
+            this.cbWidthEnabled.Location = new System.Drawing.Point(277, 78);
             this.cbWidthEnabled.Name = "cbWidthEnabled";
             this.cbWidthEnabled.Size = new System.Drawing.Size(15, 14);
             this.cbWidthEnabled.TabIndex = 0;
@@ -327,6 +328,7 @@ namespace gInk
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.tabPage1.Controls.Add(this.ClipartsSelBtn);
             this.tabPage1.Controls.Add(this.AltTabActivateCb);
             this.tabPage1.Controls.Add(this.ToolBarColorLbl);
             this.tabPage1.Controls.Add(this.BoardBx);
@@ -369,6 +371,36 @@ namespace gInk
             this.tabPage1.Size = new System.Drawing.Size(944, 483);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "General";
+            // 
+            // ClipartsSelBtn
+            // 
+            this.ClipartsSelBtn.Location = new System.Drawing.Point(79, 78);
+            this.ClipartsSelBtn.Name = "ClipartsSelBtn";
+            this.ClipartsSelBtn.Size = new System.Drawing.Size(48, 23);
+            this.ClipartsSelBtn.TabIndex = 38;
+            this.ClipartsSelBtn.Text = "cliparts";
+            this.ClipartsSelBtn.UseVisualStyleBackColor = true;
+            this.ClipartsSelBtn.Click += new System.EventHandler(this.ClipartsSelBtn_Click);
+            // 
+            // AltTabActivateCb
+            // 
+            this.AltTabActivateCb.AutoSize = true;
+            this.AltTabActivateCb.Location = new System.Drawing.Point(458, 312);
+            this.AltTabActivateCb.Name = "AltTabActivateCb";
+            this.AltTabActivateCb.Size = new System.Drawing.Size(230, 17);
+            this.AltTabActivateCb.TabIndex = 37;
+            this.AltTabActivateCb.Text = "Engage Pointer and Auto-Fold with Alt+Tab";
+            this.AltTabActivateCb.UseVisualStyleBackColor = true;
+            this.AltTabActivateCb.CheckedChanged += new System.EventHandler(this.AltTabActivateCb_CheckedChanged);
+            // 
+            // ToolBarColorLbl
+            // 
+            this.ToolBarColorLbl.AutoSize = true;
+            this.ToolBarColorLbl.Location = new System.Drawing.Point(8, 6);
+            this.ToolBarColorLbl.Name = "ToolBarColorLbl";
+            this.ToolBarColorLbl.Size = new System.Drawing.Size(209, 13);
+            this.ToolBarColorLbl.TabIndex = 36;
+            this.ToolBarColorLbl.Text = "Click on toolbar to select background color";
             // 
             // BoardBx
             // 
@@ -618,7 +650,7 @@ namespace gInk
             // cbToolsEnabled
             // 
             this.cbToolsEnabled.AutoSize = true;
-            this.cbToolsEnabled.Location = new System.Drawing.Point(71, 81);
+            this.cbToolsEnabled.Location = new System.Drawing.Point(47, 78);
             this.cbToolsEnabled.Name = "cbToolsEnabled";
             this.cbToolsEnabled.Size = new System.Drawing.Size(15, 14);
             this.cbToolsEnabled.TabIndex = 9;
@@ -659,7 +691,7 @@ namespace gInk
             // cbInkVisibleEnabled
             // 
             this.cbInkVisibleEnabled.AutoSize = true;
-            this.cbInkVisibleEnabled.Location = new System.Drawing.Point(344, 81);
+            this.cbInkVisibleEnabled.Location = new System.Drawing.Point(305, 78);
             this.cbInkVisibleEnabled.Name = "cbInkVisibleEnabled";
             this.cbInkVisibleEnabled.Size = new System.Drawing.Size(15, 14);
             this.cbInkVisibleEnabled.TabIndex = 0;
@@ -669,7 +701,7 @@ namespace gInk
             // cbPanEnabled
             // 
             this.cbPanEnabled.AutoSize = true;
-            this.cbPanEnabled.Location = new System.Drawing.Point(215, 81);
+            this.cbPanEnabled.Location = new System.Drawing.Point(164, 78);
             this.cbPanEnabled.Name = "cbPanEnabled";
             this.cbPanEnabled.Size = new System.Drawing.Size(15, 14);
             this.cbPanEnabled.TabIndex = 0;
@@ -1426,26 +1458,6 @@ namespace gInk
             // 
             this.FontDlg.FontMustExist = true;
             // 
-            // ToolBarColorLbl
-            // 
-            this.ToolBarColorLbl.AutoSize = true;
-            this.ToolBarColorLbl.Location = new System.Drawing.Point(8, 6);
-            this.ToolBarColorLbl.Name = "ToolBarColorLbl";
-            this.ToolBarColorLbl.Size = new System.Drawing.Size(209, 13);
-            this.ToolBarColorLbl.TabIndex = 36;
-            this.ToolBarColorLbl.Text = "Click on toolbar to select background color";
-            // 
-            // AltTabActivateCb
-            // 
-            this.AltTabActivateCb.AutoSize = true;
-            this.AltTabActivateCb.Location = new System.Drawing.Point(458, 312);
-            this.AltTabActivateCb.Name = "AltTabActivateCb";
-            this.AltTabActivateCb.Size = new System.Drawing.Size(230, 17);
-            this.AltTabActivateCb.TabIndex = 37;
-            this.AltTabActivateCb.Text = "Engage Pointer and Auto-Fold with Alt+Tab";
-            this.AltTabActivateCb.UseVisualStyleBackColor = true;
-            this.AltTabActivateCb.CheckedChanged += new System.EventHandler(this.AltTabActivateCb_CheckedChanged);
-            // 
             // FormOptions
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1592,5 +1604,6 @@ namespace gInk
         private System.Windows.Forms.Label lbHkClose;
         private System.Windows.Forms.Label ToolBarColorLbl;
         private System.Windows.Forms.CheckBox AltTabActivateCb;
+        private System.Windows.Forms.Button ClipartsSelBtn;
     }
 }

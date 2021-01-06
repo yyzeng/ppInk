@@ -59,6 +59,14 @@ namespace gInk
         public string DlgTagCaption = "Tag Numbering";
         public string DlgTagLabel = "Enter Starting Number";
 
+        public string FormClipartsTitle = "ClipArts";
+        public string ButtonInsertText = "&Insert";
+        public string ButtonFromClipBText = "&From Clipboard";
+        public string ButtonLoadImageText = "&Load Image";
+        public string ButtonDeleteText = "&Delete entry";
+        public string ListFillingsText = "No Frame;Empty;Color filled;White filled;Black filled";
+
+
         public string MenuEntryExit = "Exit";
 		public string MenuEntryOptions = "Options";
 		public string MenuEntryAbout = "About";

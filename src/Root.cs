@@ -12,6 +12,7 @@ using Microsoft.Ink;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Net.WebSockets;
+using System.Collections.Specialized;
 
 namespace gInk
 {
@@ -21,9 +22,10 @@ namespace gInk
         public const int Hand = 0; public const int Line = 1; public const int Rect = 2; public const int Oval = 3;
         public const int StartArrow = 4; public const int EndArrow = 5; public const int NumberTag = 6;
         public const int Edit = 7; public const int txtLeftAligned = 8; public const int txtRightAligned = 9;
-        public const int Move = 10; public const int Copy = 11; public const int Poly = 21;
+        public const int Move = 10; public const int Copy = 11; public const int Poly = 21; public const int ClipArt = 22;
     };
     public class Filling {
+        public const int NoFrame = -1;      // for Stamps
         public const int Empty = 0;
         public const int PenColorFilled = 1;
         public const int WhiteFilled = 2;
@@ -97,8 +99,13 @@ namespace gInk
         public static Guid ISFILLEDCOLOR_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 1);
         public static Guid ISFILLEDWHITE_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 2);
         public static Guid ISFILLEDBLACK_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 3);
-        public static Guid ISHIDDEN_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 4);
-
+        public static Guid IMAGE_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 4);
+        public static Guid IMAGE_X_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 5);
+        public static Guid IMAGE_Y_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 6);
+        public static Guid IMAGE_W_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 7);
+        public static Guid IMAGE_H_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 8);
+        public static Guid ISHIDDEN_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 10);
+            
         public static int MIN_MAGNETIC = 25;
         // options
         public bool[] PenEnabled = new bool[MaxPenCount];
@@ -231,6 +238,12 @@ namespace gInk
         public ClientWebSocket ObsWs;
         public Task ObsRecvTask;
         public CancellationTokenSource ObsCancel = new CancellationTokenSource();
+
+        public int StampSize = 128;
+        public StringCollection StampFileNames = new StringCollection();
+        public string ImageStamp = "";
+        public float StampScaleRatio = .1F;
+        public int ImageStampFilling = 0;
 
         public string ProgramFolder;
 
@@ -1032,14 +1045,34 @@ namespace gInk
                         case "FFMPEG_CMD":
                             FFMpegCmd = sPara;
                             break;
-    }
-}
+                        case "IMAGESTAMP_SIZE":
+                            if (int.TryParse(sPara, out tempi))
+                                StampSize = tempi;
+                            break;
+                        case "IMAGESTAMP_FILENAMES":
+                            if (sPara.Length == 0) break;
+                            string[] st = sPara.Replace('\\', '/').Trim(';').Split(';');
+                            foreach(string st1 in st)
+                            {
+                                string st2;
+                                //if (!Path.IsPathFullyQualified(st1))
+                                if (!Path.IsPathRooted(st1))
+                                    st2 = ProgramFolder + st1;
+                                else
+                                    st2 = st1;
+                                if (!StampFileNames.Contains(st1))
+                                    StampFileNames.Insert(StampFileNames.Count,st1);
+                            }
+                            break;
+                    }
+                }
 			}
 			fini.Close();
 		}
 
 		public void SaveOptions(string file)
 		{
+            bool StampFileNamesAlreadyFilled = false;
 			if (!File.Exists(file))
 				file = AppDomain.CurrentDomain.BaseDirectory + file;
 			if (!File.Exists(file))
@@ -1347,6 +1380,24 @@ namespace gInk
                             break;
                         case "FFMPEG_CMD":
                             sPara = FFMpegCmd;
+                            break;
+                        case "IMAGESTAMP_SIZE":
+                            sPara = StampSize.ToString();
+                            break;
+                        case "IMAGESTAMP_FILENAMES":
+                            if (!StampFileNamesAlreadyFilled)
+                            {
+                                sPara = "";
+                                foreach (string st1 in StampFileNames)
+                                    sPara += st1.Replace('\\','/') + ";";
+                                if (sPara.Length>1)
+                                    sPara = sPara.Remove(sPara.Length - 1, 1); // to suppress last ;
+                                else //if(sPara.Length <=1)
+                                    sPara = " ";
+                                StampFileNamesAlreadyFilled = true;
+                            }
+                            else
+                                sPara = " ";
                             break;
                     }
                 }

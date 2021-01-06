@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -77,6 +77,12 @@
     <Compile Include="CallForm.Designer.cs">
       <DependentUpon>CallForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="ImageLister.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ImageLister.Designer.cs">
+      <DependentUpon>ImageLister.cs</DependentUpon>
+    </Compile>
     <Compile Include="PenModifyDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -132,6 +138,9 @@
     <Compile Include="Root.cs" />
     <EmbeddedResource Include="CallForm.resx">
       <DependentUpon>CallForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ImageLister.resx">
+      <DependentUpon>ImageLister.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PenModifyDlg.resx">
       <DependentUpon>PenModifyDlg.cs</DependentUpon>
@@ -254,6 +263,8 @@
     <None Include="cellbackground.png" />
     <None Include="blackboard.png" />
     <None Include="eraser.ico" />
+    <None Include="clipart.png" />
+    <None Include="clipart_act.png" />
     <Content Include="Magnetic.png" />
     <Content Include="Magnetic_act.png" />
     <None Include="pan1_act.png" />
