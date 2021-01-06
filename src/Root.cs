@@ -354,7 +354,7 @@ namespace gInk
 			if (FormDisplay != null || FormCollection != null)
 				return;
 
-            //Docked = false;
+            Docked = false;
             PointerMode = false; // we have to reset pointer mode when starting drawing;
 
             FormCollection = new FormCollection(this);
