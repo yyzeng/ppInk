@@ -1,4 +1,4 @@
-#### Introduction
+ #### Introduction
 
 ppInk is an on-screen annotation software under Windows, forked from gInk.
 
@@ -59,7 +59,7 @@ The magnet activates some magnetic effect :
 -   Find a point on the drawing next to the cursor. For rectangles, magnetic
     effect is available to vertices, and also to the middle of sides.(also activated pressing Ctrl)
 -   The 8 points of the bounding rectangle of a text.(also activated pressing Ctrl)
--   On the line from the origin. The lines are horizontal,vertical and every 15°.(also activated pressing Shift)
+-   On the line from the origin. The lines are horizontal,vertical and every 15Â°.(also activated pressing Shift)
 The Magnetic distance can be adjusted in the options.
 If only Ctrl or Shift is depressed, the global magnetic effect is switched off to only take into account the magnetic of the pressed key.
 Hotkeys are availables for all tools,pens (configurable throught right click on icon next to clock)
