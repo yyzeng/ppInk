@@ -24,7 +24,7 @@ namespace gInk
             Root = rt;
 
             InitializeComponent();
-
+            AutoCloseCb.Checked = true;
             Text = Root.Local.FormClipartsTitle;
             InsertBtn.Text = Root.Local.ButtonInsertText;
             FromClpBtn.Text = Root.Local.ButtonFromClipBText;
@@ -33,8 +33,8 @@ namespace gInk
             FillingCombo.Items.Clear();
             FillingCombo.Items.AddRange(Root.Local.ListFillingsText.Split(';'));
             FillingCombo.Text = (string)FillingCombo.Items[Root.ImageStampFilling + 1];
-
-            for(int i=0;i<Root.StampFileNames.Count;i++)
+            AutoCloseCb.Text = Root.Local.CheckBoxAutoCloseText;
+            for (int i=0;i<Root.StampFileNames.Count;i++)
             {
                 ImageListViewer.Items.Add(new ListViewItem(Path.GetFileNameWithoutExtension(Root.StampFileNames[i]), Root.StampFileNames[i]));
                 Image img = Image.FromFile(Root.StampFileNames[i]);
@@ -146,7 +146,8 @@ namespace gInk
 
                 DialogResult = DialogResult.OK;
 
-                Close();
+                if(AutoCloseCb.Checked)
+                    Close();
             }
             catch
             {
@@ -157,6 +158,22 @@ namespace gInk
         private void CancelBtn_Click(object sender, EventArgs e)
         {
             Close();
+        }
+
+        private void ImageLister_Enter(object sender, EventArgs e)
+        {
+            return; if((Root.FormCollection != null) && (!Root.PointerMode))
+            {
+                Root.FormCollection.AllowInteractions(true);
+            }
+        }
+
+        private void ImageLister_Leave(object sender, EventArgs e)
+        {
+            return; if ((Root.FormCollection != null) && (!Root.PointerMode))
+            {
+                Root.FormCollection.AllowInteractions(false);
+            }
         }
     }
 }

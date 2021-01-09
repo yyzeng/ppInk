@@ -32,6 +32,7 @@ ButtonNameNumb = "Puce numérotée (pose | modifie numérotation)"
 ButtonNameText = "Texte (aligné gauche|droite)"
 ButtonNameEdit = "Edition (Texte|numéro)"
 ButtonNameMagn = "Effet aimanté"
+ButtonNameClipArt = "ClipArt"
 ButtonNameVideo = "Enregistrement Video"
 
 BoardTitle = "Effacer"
@@ -61,6 +62,7 @@ ButtonInsertText = "&Insérer"
 ButtonFromClipBText = "&Du presse-papier"
 ButtonLoadImageText = "&Charge Image"
 ButtonDeleteText = "&Supprimer"
+CheckBoxAutoCloseText =  "Fermeture\nAuto"
 ListFillingsText = "Pas de cadre;Vide;fond de couleur;fond blanc;fond noir"
 
 

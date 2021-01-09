@@ -37,6 +37,7 @@
             this.LoadImageBtn = new System.Windows.Forms.Button();
             this.DelBtn = new System.Windows.Forms.Button();
             this.FillingCombo = new System.Windows.Forms.ComboBox();
+            this.AutoCloseCb = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // ImageListViewer
@@ -123,11 +124,24 @@
             "Color Filled",
             "White Filled",
             "Black Filled"});
-            this.FillingCombo.Location = new System.Drawing.Point(511, 355);
+            this.FillingCombo.Location = new System.Drawing.Point(438, 353);
             this.FillingCombo.MaxDropDownItems = 5;
             this.FillingCombo.Name = "FillingCombo";
             this.FillingCombo.Size = new System.Drawing.Size(121, 21);
             this.FillingCombo.TabIndex = 7;
+            // 
+            // AutoCloseCb
+            // 
+            this.AutoCloseCb.AutoSize = true;
+            this.AutoCloseCb.Checked = true;
+            this.AutoCloseCb.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.AutoCloseCb.Location = new System.Drawing.Point(581, 353);
+            this.AutoCloseCb.Name = "AutoCloseCb";
+            this.AutoCloseCb.Size = new System.Drawing.Size(51, 30);
+            this.AutoCloseCb.TabIndex = 8;
+            this.AutoCloseCb.Text = "Auto\r\nclose";
+            this.AutoCloseCb.UseVisualStyleBackColor = true;
+            this.AutoCloseCb.Visible = false;
             // 
             // ImageLister
             // 
@@ -135,6 +149,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.CancelBtn;
             this.ClientSize = new System.Drawing.Size(800, 383);
+            this.Controls.Add(this.AutoCloseCb);
             this.Controls.Add(this.FillingCombo);
             this.Controls.Add(this.DelBtn);
             this.Controls.Add(this.LoadImageBtn);
@@ -149,7 +164,10 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Form1";
             this.TopMost = true;
+            this.Enter += new System.EventHandler(this.ImageLister_Enter);
+            this.Leave += new System.EventHandler(this.ImageLister_Leave);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -162,5 +180,6 @@
         public System.Windows.Forms.Button LoadImageBtn;
         public System.Windows.Forms.Button DelBtn;
         public System.Windows.Forms.ComboBox FillingCombo;
+        public System.Windows.Forms.CheckBox AutoCloseCb;
     }
 }

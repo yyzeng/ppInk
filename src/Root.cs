@@ -172,6 +172,7 @@ namespace gInk
         public Hotkey Hotkey_Edit = new Hotkey();
         public Hotkey Hotkey_Move = new Hotkey();
         public Hotkey Hotkey_Magnet = new Hotkey();
+        public Hotkey Hotkey_ClipArt = new Hotkey();
 
         public int ToolSelected = Tools.Hand;        // indicates which tool (Hand,Line,...) is currently selected
         public int FilledSelected = 0;      // indicates which filling (None, Selected color, ...) is currently select
@@ -836,8 +837,11 @@ namespace gInk
                         case "HOTKEY_MAGNET":
                             Hotkey_Magnet.Parse(sPara);
                             break;
+                        case "HOTKEY_CLIPART":
+                            Hotkey_ClipArt.Parse(sPara);
+                            break;
 
-						case "WHITE_TRAY_ICON":
+                        case "WHITE_TRAY_ICON":
 							if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
 								WhiteTrayIcon = true;
 							else
@@ -1049,6 +1053,10 @@ namespace gInk
                             if (int.TryParse(sPara, out tempi))
                                 StampSize = tempi;
                             break;
+                        case "IMAGESTAMP_FILLING":
+                            if (int.TryParse(sPara, out tempi))
+                                ImageStampFilling = tempi;
+                            break;
                         case "IMAGESTAMP_FILENAMES":
                             if (sPara.Length == 0) break;
                             string[] st = sPara.Replace('\\', '/').Trim(';').Split(';');
@@ -1225,6 +1233,9 @@ namespace gInk
                         case "HOTKEY_MAGNET":
                             sPara = Hotkey_Magnet.ToString();
                             break;
+                        case "HOTKEY_CLIPART":
+                            sPara = Hotkey_ClipArt.ToString();
+                            break;
 
                         case "WHITE_TRAY_ICON":
 							if (WhiteTrayIcon)
@@ -1384,12 +1395,15 @@ namespace gInk
                         case "IMAGESTAMP_SIZE":
                             sPara = StampSize.ToString();
                             break;
+                        case "IMAGESTAMP_FILLING":
+                            sPara = ImageStampFilling.ToString();
+                            break;
                         case "IMAGESTAMP_FILENAMES":
                             if (!StampFileNamesAlreadyFilled)
                             {
                                 sPara = "";
                                 foreach (string st1 in StampFileNames)
-                                    sPara += st1.Replace('\\','/') + ";";
+                                    sPara += MakeRelativePath(ProgramFolder + Path.DirectorySeparatorChar, st1).Replace('\\','/') + ";";
                                 if (sPara.Length>1)
                                     sPara = sPara.Remove(sPara.Length - 1, 1); // to suppress last ;
                                 else //if(sPara.Length <=1)
@@ -1491,7 +1505,28 @@ namespace gInk
             return Convert.ToInt32(pi / 0.037795280352161);
         }
 
-		[DllImport("user32.dll")]
+        public static String MakeRelativePath(String fromPath, String toPath)
+        {
+            if (String.IsNullOrEmpty(fromPath)) throw new ArgumentNullException("fromPath");
+            if (String.IsNullOrEmpty(toPath)) throw new ArgumentNullException("toPath");
+
+            Uri fromUri = new Uri(fromPath);
+            Uri toUri = new Uri(toPath);
+
+            if (fromUri.Scheme != toUri.Scheme) { return toPath; } // path can't be made relative.
+
+            Uri relativeUri = fromUri.MakeRelativeUri(toUri);
+            String relativePath = Uri.UnescapeDataString(relativeUri.ToString());
+
+            if (toUri.Scheme.Equals("file", StringComparison.InvariantCultureIgnoreCase))
+            {
+                relativePath = relativePath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+            }
+
+            return relativePath;
+        }
+
+        [DllImport("user32.dll")]
 		private static extern int RegisterHotKey(IntPtr hwnd, int id, int fsModifiers, int vk);
 		[DllImport("user32.dll")]
 		private static extern int UnregisterHotKey(IntPtr hwnd, int id);

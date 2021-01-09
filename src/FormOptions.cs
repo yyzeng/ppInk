@@ -197,6 +197,7 @@ namespace gInk
             HiToolText.Hotkey = Root.Hotkey_Text;
             hiToolEdit.Hotkey = Root.Hotkey_Edit;
             hiToolMagnet.Hotkey = Root.Hotkey_Magnet;
+            hiToolClipArt.Hotkey = Root.Hotkey_ClipArt;
 
             WsUrlTxt.Text = Root.ObsUrl;
             WsPwdTxt.Text = Root.ObsPwd;
@@ -277,6 +278,7 @@ namespace gInk
             this.lbHkText.Text = shortTxt(Root.Local.ButtonNameText);
             this.lbHkEdit.Text = shortTxt(Root.Local.ButtonNameEdit);
             this.lbHkMagn.Text = shortTxt(Root.Local.ButtonNameMagn);
+            this.lbHkClipart.Text = shortTxt(Root.Local.ButtonNameClipArt);
 
             this.lbGlobalHotkey.Text = Root.Local.OptionsHotkeysglobal;
             this.cbAllowHotkeyInPointer.Text = Root.Local.OptionsHotkeysEnableinpointer;
@@ -711,14 +713,16 @@ namespace gInk
             ImageLister dlg = new ImageLister(Root);
             dlg.FromClpBtn.Visible = false;
             dlg.InsertBtn.Text = Root.Local.ButtonOkText;
+            dlg.AutoCloseCb.Visible = false;
+
             if(dlg.ShowDialog() == DialogResult.OK)
             {
                 Root.ImageStampFilling = dlg.ImageStampFilling;
                 Root.StampFileNames.Clear();
 //                for(int i=0;i<dlg.Images.Images.Count;i++)
-                foreach(string st in dlg.Images.Images.Keys)
+                foreach(ListViewItem it in dlg.ImageListViewer.Items)
                 {
-                    Root.StampFileNames.Add(st);// dlg.Images.Images.Keys[i]);
+                    Root.StampFileNames.Add(it.ImageKey);// dlg.Images.Images.Keys[i]);
                 }
             }
         }

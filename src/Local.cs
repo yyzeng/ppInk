@@ -35,6 +35,7 @@ namespace gInk
         public string ButtonNameText = "Text (Left|Right aligned)";
         public string ButtonNameEdit = "Edit Text|chip";
         public string ButtonNameMagn = "Magnetic Effect";
+        public string ButtonNameClipArt = "ClipArt";
         public string ButtonNameVideo = "Video Record";
 
         public string BoardTitle = "Clean Desktop";
@@ -64,6 +65,7 @@ namespace gInk
         public string ButtonFromClipBText = "&From Clipboard";
         public string ButtonLoadImageText = "&Load Image";
         public string ButtonDeleteText = "&Delete entry";
+        public string CheckBoxAutoCloseText =  "Auto\nClose";
         public string ListFillingsText = "No Frame;Empty;Color filled;White filled;Black filled";
 
 

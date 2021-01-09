@@ -32,6 +32,7 @@ ButtonNameNumb = "Numbered chip (put | reset number)"
 ButtonNameText = "Text (Left|Right aligned)"
 ButtonNameEdit = "Edit Text|chip"
 ButtonNameMagn = "Magnetic Effect"
+ButtonNameClipArt = "ClipArt"
 ButtonNameVideo = "Video Record"
 
 BoardTitle = "Clean Desktop"
@@ -62,6 +63,7 @@ ButtonInsertText = "&Insert"
 ButtonFromClipBText = "&From Clipboard"
 ButtonLoadImageText = "&Load Image"
 ButtonDeleteText = "&Delete"
+CheckBoxAutoCloseText =  "Auto\nClose"
 ListFillingsText = "No Frame;Empty;Color filled;White filled;Black filled"
 
 
