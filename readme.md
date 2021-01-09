@@ -2,6 +2,8 @@
 
 ppInk is an on-screen annotation software under Windows, forked from gInk.
 
+![](screenshot1.png)
+
 ppInk introduces new features compared to gInk, greatly inspired by another
 screen annotation software Epic Pen, but even more easy to use. ppInk / gInk are
 made with the idea kept in mind that the interface should be simple and should
@@ -11,8 +13,10 @@ from pens to draw things instead of changing individual settings of color,
 transparency and tip width everytime. Each pen is a combination of these
 attributes and is configurable to your need.
 
-A set of drawing tools are introduced: Hand Writing, Line, Rectangular,
-Ellipsis, Arrow, Numbering Tag, Text Left/Right aligned
+A set of drawing tools are introduced: Hand Writing, Line (2 points and polyline), Rectangular,
+Ellipsis, Arrow, Numbering Tag, Text Left/Right aligned, cliparts
+
+![](screenshot2.png)
 
 In order to reduce the number of buttons, some buttons have multiple functions,
 selected my multiple click on those:
@@ -20,6 +24,9 @@ selected my multiple click on those:
 -   Hand / Rectangular / Ellipsis :  
     unfilled drawing -\> filled with pen color -\> filled with white -\> filled
     with black
+    
+-   Line:
+    2 points -\> polyline -\> pen color filled polygon -\> white filled polygon -\> black filled polygon
 
 -   Numbering :  
     transparent background -\> edit tag Number -\> white background -\> black background
@@ -33,18 +40,26 @@ selected my multiple click on those:
     Text left aligned -\> Text Right aligned
 
 -   Move:  
-    Move 1 drawing -\> Move all drawings.
+    Move 1 drawing -\> Copy 1 drawing -\> Move all drawings.
     
 -   Edit:
-    Short click : modify text/number tool (text and font)
+    Short click : modify text/number tool (text and font) *or* the color/pen width of a stroke
     Long click : edit default font (for the time of the session)
+
+-   Cliparts:
+    Open the dialog to select image and the background/frame. This list displayed of cliparts is initialized from the list defined 
+    in the options. you can overload adding images for the inking sessions from files or from the clipboard.
+    you can then stamp the images. you just click, the image will be stamped with the images original size. 
+    if you just draw a vertical or horizontal line, the image will be drawn with the drawn width/height respecting 
+    proportional size. else you can draw a box which will define the image size (non proportional). 
+    If you draw from bottom/right to up/left, the image will be stamped reversed.
 
 *Magnetic*
 The magnet activates some magnetic effect :
 -   Find a point on the drawing next to the cursor. For rectangles, magnetic
     effect is available to vertices, and also to the middle of sides.(also activated pressing Ctrl)
 -   The 8 points of the bounding rectangle of a text.(also activated pressing Ctrl)
--   On the line from the origin. The lines are horizontal,vertical and every 15Â°.(also activated pressing Shift)
+-   On the line from the origin. The lines are horizontal,vertical and every 15°.(also activated pressing Shift)
 The Magnetic distance can be adjusted in the options.
 If only Ctrl or Shift is depressed, the global magnetic effect is switched off to only take into account the magnetic of the pressed key.
 Hotkeys are availables for all tools,pens (configurable throught right click on icon next to clock)
@@ -91,12 +106,6 @@ Button Images can be customized putting Png files in the ppink exe folder. the n
 When the option is set in the options, switching application (with alt+tab) will engage pointer mode. Also, when pointer mode is activated (by any means, ie button click, alt+tab, global short cut), the toolbar is folded automatically, and when pressing undock button, alt+tab, or global shortcut,the inking mode is restored and the toolbar is unfolded.
 Note that you can still fold toolbar when drawing without engaging pointer mode with the dock button.
 
-
-#### Screen Shots
-
-![](screenshot1.png)
-
-screenshot
 
 #### Download
 
@@ -160,7 +169,7 @@ Click the exit button or press ESC to exit drawing.
     settings, Enable override high DPI scaling behavior scaling performed by:
     Application. (only after v1.0.9, which will be released soon)
 
--   There are a few hidden options you can tweak in config.ini that are not
+-   There is a very few hidden options you can tweak in config.ini that are not
     shown in the options window.
 
 #### How to contribute translation
@@ -181,3 +190,4 @@ Weizhi Nai \@ 2019
 ppInk
 https://github.com/pubpub-zz/ppInk
 Pubpub-ZZ \@ 2020
+

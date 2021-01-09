@@ -1,4 +1,10 @@
-p1.3 (In Progress)
+p1.4 (In Progress)
+=================
+---> alpha1
+* New : clipart tool added
+* Fix : toolbar color adjustable with transparency
+
+p1.3 (alpha3)
 =================
 ---> alpha3
 * New : Buttons and background color customisable
