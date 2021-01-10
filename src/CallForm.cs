@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -18,8 +18,8 @@ namespace gInk
         {
             InitializeComponent();
             Root = r;
-            if (File.Exists(Root.ProgramFolder + Path.DirectorySeparatorChar + "FloatingCall.png"))
-                BackgroundImage = new Bitmap(Root.ProgramFolder + Path.DirectorySeparatorChar + "FloatingCall.png");
+            if (File.Exists(Root.ProgramFolder + "FloatingCall.png"))
+                BackgroundImage = new Bitmap(Root.ProgramFolder + "FloatingCall.png");
         }
 
         private void _Click(object sender, EventArgs e)

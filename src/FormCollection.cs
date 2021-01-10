@@ -148,7 +148,7 @@ namespace gInk
             string[] exts = { ".cur", ".ani", ".ico" };
             foreach (string ext in exts)
             {
-                filename = Root.ProgramFolder + Path.DirectorySeparatorChar + name + ext;
+                filename = Root.ProgramFolder + name + ext;
                 if (File.Exists(filename))
                     return new System.Windows.Forms.Cursor(filename);
             }
@@ -167,7 +167,7 @@ namespace gInk
             }
             foreach (string ext in exts)
             {
-                filename = Root.ProgramFolder + Path.DirectorySeparatorChar + name + ext;
+                filename = Root.ProgramFolder + name + ext;
                 if (File.Exists(filename))
                     return new Bitmap(filename);
             }
@@ -979,7 +979,7 @@ namespace gInk
             return st;
         }
 
-        bool TextEdited = false;
+        bool TextEdited = false;    // used to prevent random toolbar closing when using esc in a dialog box
         private DialogResult ModifyTextInStroke(Stroke stk, string txt)
         {
             // required to access the dialog box
@@ -3343,6 +3343,7 @@ namespace gInk
             else if (((Button)sender).Name.Contains("ClipArt"))
             {
                 AllowInteractions(true);
+                TextEdited = true;
                 ClipartsDlg.Left = gpButtons.Right - ClipartsDlg.Width - 1;
                 ClipartsDlg.Top = gpButtons.Top - ClipartsDlg.Height - 1;
                 i = -1;

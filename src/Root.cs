@@ -270,6 +270,9 @@ namespace gInk
 
         public Root()
 		{
+            ProgramFolder = Path.GetDirectoryName(Path.GetFullPath(Environment.GetCommandLineArgs()[0])).Replace('\\','/');
+            if (ProgramFolder[ProgramFolder.Length - 1] != '/')
+                ProgramFolder += '/';
 			for (int p = 0; p < MaxPenCount; p++)
 				Hotkey_Pens[p] = new Hotkey();
 
@@ -284,7 +287,6 @@ namespace gInk
 			ReadOptions("pens.ini");
 			ReadOptions("config.ini");
 			ReadOptions("hotkeys.ini");
-            ProgramFolder = Path.GetDirectoryName(Path.GetFullPath(Environment.GetCommandLineArgs()[0]));
             
             Size size = SystemInformation.SmallIconSize;
 			trayIcon = new NotifyIcon();
@@ -1068,8 +1070,8 @@ namespace gInk
                                     st2 = ProgramFolder + st1;
                                 else
                                     st2 = st1;
-                                if (!StampFileNames.Contains(st1))
-                                    StampFileNames.Insert(StampFileNames.Count,st1);
+                                if (!StampFileNames.Contains(st2))
+                                    StampFileNames.Insert(StampFileNames.Count,st2);
                             }
                             break;
                     }
@@ -1403,7 +1405,7 @@ namespace gInk
                             {
                                 sPara = "";
                                 foreach (string st1 in StampFileNames)
-                                    sPara += MakeRelativePath(ProgramFolder + Path.DirectorySeparatorChar, st1).Replace('\\','/') + ";";
+                                    sPara += MakeRelativePath(ProgramFolder, st1).Replace('\\','/') + ";";
                                 if (sPara.Length>1)
                                     sPara = sPara.Remove(sPara.Length - 1, 1); // to suppress last ;
                                 else //if(sPara.Length <=1)
