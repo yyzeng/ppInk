@@ -235,6 +235,7 @@ namespace gInk
 			VideoTabCtrl.TabPages[1].Text = Root.Local.OptionsTabPens;
 			VideoTabCtrl.TabPages[2].Text = Root.Local.OptionsTabHotkeys;
             this.ToolBarColorLbl.Text = Root.Local.OptionsGeneralToolBarColorText;
+            this.ClipartsSelBtn.Text = shortTxt(Root.Local.ButtonNameClipArt);
             this.AltTabActivateCb.Text = Root.Local.OptionsGeneralAltTabActivateText;
             this.lblToolbarHeight.Text = Root.Local.OptionsGeneralToolbarHeight;
 			this.lbLanguage.Text = Root.Local.OptionsGeneralLanguage;
