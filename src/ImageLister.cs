@@ -27,9 +27,10 @@ namespace gInk
             AutoCloseCb.Checked = true;
             Text = Root.Local.FormClipartsTitle;
             InsertBtn.Text = Root.Local.ButtonInsertText;
+            CancelBtn.Text = Root.Local.ButtonCancelText;
             FromClpBtn.Text = Root.Local.ButtonFromClipBText;
             LoadImageBtn.Text = Root.Local.ButtonLoadImageText;
-            DelBtn.Text = Root.Local.ButtonDeleteText;
+            DelBtn.Text = Root.Local.ButtonDeleteText;        
             FillingCombo.Items.Clear();
             FillingCombo.Items.AddRange(Root.Local.ListFillingsText.Split(';'));
             FillingCombo.Text = (string)FillingCombo.Items[Root.ImageStampFilling + 1];
