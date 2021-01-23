@@ -163,18 +163,12 @@ namespace gInk
 
         private void ImageLister_Enter(object sender, EventArgs e)
         {
-            return; if((Root.FormCollection != null) && (!Root.PointerMode))
-            {
-                Root.FormCollection.AllowInteractions(true);
-            }
+            return; 
         }
 
         private void ImageLister_Leave(object sender, EventArgs e)
         {
-            return; if ((Root.FormCollection != null) && (!Root.PointerMode))
-            {
-                Root.FormCollection.AllowInteractions(false);
-            }
+            return; 
         }
     }
 }
