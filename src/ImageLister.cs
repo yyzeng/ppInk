@@ -16,9 +16,12 @@ namespace gInk
     public partial class ImageLister : Form
     {
         Root Root;
-        public Point[] ImgSize = new Point[100]; // I wanted to use the tag, but for an unknown reason it affects image display in dialogbox....
+        public Point[] ImgSizes = new Point[100]; // I wanted to use the tag, but for an unknown reason it affects image display in dialogbox....
         public int ImageStampFilling=-1;
-        
+        public string ImageStamp;
+        public int ImgSizeX = -1;
+        public int ImgSizeY = -1;
+
         public ImageLister(Root rt)
         {
             Root = rt;
@@ -42,8 +45,8 @@ namespace gInk
                 img.Tag = img.Width * 10000 + img.Height;
                 ImageListViewer.LargeImageList.Images.Add(Root.StampFileNames[i], img);
                 //ImgSize[ImageListViewer.LargeImageList.Images.IndexOfKey(Root.StampFileNames[i])] = new Point(img.Width,img.Height);
-                ImgSize[ImageListViewer.LargeImageList.Images.IndexOfKey(Root.StampFileNames[i])].X = img.Width;
-                ImgSize[ImageListViewer.LargeImageList.Images.IndexOfKey(Root.StampFileNames[i])].Y = img.Height;
+                ImgSizes[ImageListViewer.LargeImageList.Images.IndexOfKey(Root.StampFileNames[i])].X = img.Width;
+                ImgSizes[ImageListViewer.LargeImageList.Images.IndexOfKey(Root.StampFileNames[i])].Y = img.Height;
             }
             ImageListViewer.LargeImageList.ImageSize = new Size(Root.StampSize , Root.StampSize);
         }
@@ -98,15 +101,15 @@ namespace gInk
             string st = "ClipBoard"+ImageListViewer.Items.Count.ToString();
             ImageListViewer.Items.Add(new ListViewItem("Clipboard",st));
             ImageListViewer.LargeImageList.Images.Add(st,img);
-            ImgSize[ImageListViewer.LargeImageList.Images.IndexOfKey(st)].X = img.Width;
-            ImgSize[ImageListViewer.LargeImageList.Images.IndexOfKey(st)].Y = img.Height;
+            ImgSizes[ImageListViewer.LargeImageList.Images.IndexOfKey(st)].X = img.Width;
+            ImgSizes[ImageListViewer.LargeImageList.Images.IndexOfKey(st)].Y = img.Height;
         }
         
         private void LoadImageBtn_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
-                openFileDialog.InitialDirectory = Root.ProgramFolder;
+                openFileDialog.InitialDirectory = Global.ProgramFolder;
                 openFileDialog.Filter = "Images(*.png;*.bmp;*.jpg;*.jpeg;*.gif;*.ico)|*.png;*.bmp;*.jpg;*.jpeg;*.gif;*.ico|All files (*.*)|*.*";
                 openFileDialog.RestoreDirectory = true;
 
@@ -118,8 +121,8 @@ namespace gInk
                     ImageListViewer.Items.Add(new ListViewItem(Path.GetFileNameWithoutExtension(fn), fn));
                     Image img = Image.FromFile(fn);
                     ImageListViewer.LargeImageList.Images.Add(fn, img);
-                    ImgSize[ImageListViewer.LargeImageList.Images.IndexOfKey(fn)].X = img.Width;
-                    ImgSize[ImageListViewer.LargeImageList.Images.IndexOfKey(fn)].Y = img.Height;
+                    ImgSizes[ImageListViewer.LargeImageList.Images.IndexOfKey(fn)].X = img.Width;
+                    ImgSizes[ImageListViewer.LargeImageList.Images.IndexOfKey(fn)].Y = img.Height;
 
                 }
             }
@@ -142,11 +145,12 @@ namespace gInk
         {
             try
             {
-                Root.ImageStamp = ImageListViewer.SelectedItems[0].ImageKey;
+                ImageStamp = ImageListViewer.SelectedItems[0].ImageKey;
                 ImageStampFilling = Array.IndexOf(Root.Local.ListFillingsText.Split(';'), FillingCombo.Text) - 1;
-
+                ImgSizeX = ImgSizes[ImageListViewer.LargeImageList.Images.IndexOfKey(ImageStamp)].X;
+                ImgSizeY = ImgSizes[ImageListViewer.LargeImageList.Images.IndexOfKey(ImageStamp)].Y;
                 DialogResult = DialogResult.OK;
-
+                
                 if(AutoCloseCb.Checked)
                     Close();
             }

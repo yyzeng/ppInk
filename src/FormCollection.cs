@@ -100,6 +100,7 @@ namespace gInk
         private bool SetWindowInputRectFlag = false;
 
         public ImageLister ClipartsDlg;
+        private Object btClipSel;
 
         // http://www.csharp411.com/hide-form-from-alttab/
         protected override CreateParams CreateParams
@@ -289,6 +290,24 @@ namespace gInk
             btClipArt.Width = btClipArt.Height;
             btClipArt.Top = (int)(gpButtons.Height * 0.02);
 
+            btClip1.Height = (int)(gpButtons.Height * 0.48);
+            btClip1.Width = btClip1.Height;
+            btClip1.Top = (int)(gpButtons.Height * 0.52);
+            btClip1.BackgroundImage = getImgFromDiskOrRes(Root.ImageStamp1 , ImageExts);
+            btClip1.Tag = new ClipArtData { ImageStamp = Root.ImageStamp1, X= btClip1.BackgroundImage.Size.Width, Y = btClip1.BackgroundImage.Size.Height, Filling = Root.ImageStampFilling };
+            //
+            btClip2.Height = (int)(gpButtons.Height * 0.48);
+            btClip2.Width = btClip2.Height;
+            btClip2.Top = (int)(gpButtons.Height * 0.02);
+            btClip2.BackgroundImage = getImgFromDiskOrRes(Root.ImageStamp2, ImageExts);
+            btClip2.Tag = new ClipArtData { ImageStamp = Root.ImageStamp2, X = btClip2.BackgroundImage.Size.Width, Y = btClip2.BackgroundImage.Size.Height, Filling = Root.ImageStampFilling };
+            //
+            btClip3.Height = (int)(gpButtons.Height * 0.48);
+            btClip3.Width = btClip3.Height;
+            btClip3.Top = (int)(gpButtons.Height * 0.52);
+            btClip3.BackgroundImage = getImgFromDiskOrRes(Root.ImageStamp3, ImageExts);
+            btClip3.Tag = new ClipArtData { ImageStamp = Root.ImageStamp3, X = btClip3.BackgroundImage.Size.Width, Y = btClip3.BackgroundImage.Size.Height, Filling = Root.ImageStampFilling };
+
 
             btEraser.Height = (int)(gpButtons.Height * 0.85);
             btEraser.Width = btEraser.Height;
@@ -385,7 +404,14 @@ namespace gInk
                 cumulatedleft += (int)(btArrow.Width * 1.1);
                 btClipArt.Visible = true;
                 btClipArt.Left = cumulatedleft;
+                btClip1.Visible = true;
+                btClip1.Left = cumulatedleft;
                 cumulatedleft += (int)(btClipArt.Width * 1.1);
+                btClip2.Visible = true;
+                btClip2.Left = cumulatedleft;
+                btClip3.Visible = true;
+                btClip3.Left = cumulatedleft;
+                cumulatedleft += (int)(btClip3.Width * 1.1);
             }
             else
             {
@@ -590,7 +616,7 @@ namespace gInk
             IC.DefaultDrawingAttributes.AntiAliased = true;
             IC.DefaultDrawingAttributes.FitToCurve = true;
 
-            /*string icon_filename= Root.ProgramFolder + Path.DirectorySeparatorChar + "cursor";
+            /*string icon_filename= Global.ProgramFolder + Path.DirectorySeparatorChar + "cursor";
             if (File.Exists(icon_filename+".cur")) 
                 cursorred = MyNativeMethods.LoadCustomCursor(icon_filename+".cur");
             else if (File.Exists(icon_filename + ".ani"))
@@ -600,7 +626,7 @@ namespace gInk
             else
                 cursorred = new System.Windows.Forms.Cursor(gInk.Properties.Resources.cursorred.Handle);
 
-            icon_filename = Root.ProgramFolder + Path.DirectorySeparatorChar + "eraser";
+            icon_filename = Global.ProgramFolder + Path.DirectorySeparatorChar + "eraser";
             if (File.Exists(icon_filename + ".cur"))
                 cursorerase = MyNativeMethods.LoadCustomCursor(icon_filename + ".cur");
             else if (File.Exists(icon_filename + ".ani"))
@@ -677,6 +703,9 @@ namespace gInk
             this.toolTip.SetToolTip(this.btEdit, Root.Local.ButtonNameEdit + " (" + Root.Hotkey_Edit.ToString() + ")");
             this.toolTip.SetToolTip(this.btMagn, Root.Local.ButtonNameMagn + " (" + Root.Hotkey_Magnet.ToString() + ")");
             this.toolTip.SetToolTip(this.btClipArt, Root.Local.ButtonNameClipArt + " (" + Root.Hotkey_ClipArt.ToString() + ")");
+            this.toolTip.SetToolTip(this.btClip1, Root.Local.ButtonNameClipArt + "-1 (" + Root.Hotkey_ClipArt1.ToString() + ")");
+            this.toolTip.SetToolTip(this.btClip2, Root.Local.ButtonNameClipArt + "-2 (" + Root.Hotkey_ClipArt2.ToString() + ")");
+            this.toolTip.SetToolTip(this.btClip3, Root.Local.ButtonNameClipArt + "-3 (" + Root.Hotkey_ClipArt3.ToString() + ")");
 
             foreach (Control ct in gpButtons.Controls)
             {
@@ -895,7 +924,7 @@ namespace gInk
 
         private Stroke AddImageStroke(int CursorX0, int CursorY0, int CursorX, int CursorY, int ImgIdx)
         {
-            Stroke st = AddRectStroke(CursorX0, CursorY0, CursorX, CursorY, ClipartsDlg.ImageStampFilling);
+            Stroke st = AddRectStroke(CursorX0, CursorY0, CursorX, CursorY, Root.ImageStamp.Filling);
             st.ExtendedProperties.Add(Root.IMAGE_GUID, ImgIdx);
             st.ExtendedProperties.Add(Root.IMAGE_X_GUID, CursorX0);
             st.ExtendedProperties.Add(Root.IMAGE_Y_GUID, CursorY0);
@@ -1243,9 +1272,9 @@ namespace gInk
                     AddRectStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY, Root.FilledSelected);
                 else if (Root.ToolSelected == Tools.ClipArt)
                 {
-                    int idx = ClipartsDlg.Images.Images.IndexOfKey(Root.ImageStamp);
-                    int w = ClipartsDlg.ImgSize[idx].X;
-                    int h = ClipartsDlg.ImgSize[idx].Y;
+                    int idx = ClipartsDlg.Images.Images.IndexOfKey(Root.ImageStamp.ImageStamp);
+                    int w = Root.ImageStamp.X;
+                    int h = Root.ImageStamp.Y;
                     if ((Root.CursorX0 == Int32.MinValue) || ((Root.CursorX0 == Root.CursorX) && (Root.CursorY0 == Root.CursorY)))
                     {
                         Root.CursorX0 = Root.CursorX;
@@ -1698,6 +1727,11 @@ namespace gInk
             btText.BackgroundImage = getImgFromDiskOrRes("tool_txtL", ImageExts);
             btEdit.BackgroundImage = getImgFromDiskOrRes("tool_edit", ImageExts);
             btClipArt.BackgroundImage = getImgFromDiskOrRes("tool_clipart", ImageExts);
+
+            btClip1.FlatAppearance.BorderSize = btClipSel == btClip1.Tag ? 3 : 0;
+            btClip2.FlatAppearance.BorderSize = btClipSel == btClip2.Tag ? 3 : 0;
+            btClip3.FlatAppearance.BorderSize = btClipSel == btClip3.Tag ? 3 : 0;
+            btClipSel = null;
 
             if (AltKeyPressed())
             {
@@ -2223,6 +2257,9 @@ namespace gInk
         bool LastMoveStatus = false;
         bool LastMagnetStatus = false;
         bool LastClipArtStatus = false;
+        bool LastClipArt1Status = false;
+        bool LastClipArt2Status = false;
+        bool LastClipArt3Status = false;
 
         private void gpPenWidth_MouseDown(object sender, MouseEventArgs e)
         {
@@ -2690,6 +2727,29 @@ namespace gInk
                 }
                 LastClipArtStatus = pressed;
 
+                pressed = (GetKeyState(Root.Hotkey_ClipArt1.Key) & 0x8000) == 0x8000;
+                if (pressed && !LastClipArt1Status && Root.Hotkey_ClipArt1.ModifierMatch(control, alt, shift, win))
+                {
+                    MouseTimeDown = DateTime.Now;
+                    btTool_Click(btClip1, null);
+                }
+                LastClipArt1Status = pressed;
+
+                pressed = (GetKeyState(Root.Hotkey_ClipArt2.Key) & 0x8000) == 0x8000;
+                if (pressed && !LastClipArt2Status && Root.Hotkey_ClipArt2.ModifierMatch(control, alt, shift, win))
+                {
+                    MouseTimeDown = DateTime.Now;
+                    btTool_Click(btClip2, null);
+                }
+                LastClipArt2Status = pressed;
+
+                pressed = (GetKeyState(Root.Hotkey_ClipArt3.Key) & 0x8000) == 0x8000;
+                if (pressed && !LastClipArt3Status && Root.Hotkey_ClipArt3.ModifierMatch(control, alt, shift, win))
+                {
+                    MouseTimeDown = DateTime.Now;
+                    btTool_Click(btClip3, null);
+                }
+                LastClipArt3Status = pressed;
             }
 
             if (Root.Snapping < 0)
@@ -3425,9 +3485,45 @@ namespace gInk
                 ClipartsDlg.Top = gpButtons.Top - ClipartsDlg.Height - 1;
                 i = -1;
                 if (ClipartsDlg.ShowDialog() == DialogResult.OK)
+                {
                     i = Tools.ClipArt;
+                    Root.ImageStamp = new ClipArtData { ImageStamp = ClipartsDlg.ImageStamp, X = ClipartsDlg.ImgSizeX, Y = ClipartsDlg.ImgSizeY, Filling = ClipartsDlg.ImageStampFilling };
+                }
                 AllowInteractions(false);
                 if (i < 0) return;
+            }
+            else if (((Button)sender).Name.Contains("Clip"))    // i.e.Clip1/Clip2/Clip3
+            {
+                if (sender != null && tsp.TotalSeconds > Root.LongClickTime)
+                {
+                    AllowInteractions(true);
+                    TextEdited = true;
+                    ImageLister dlg = new ImageLister(Root);
+                    dlg.Left = gpButtons.Right - dlg.Width - 1;
+                    dlg.Top = gpButtons.Top - dlg.Height - 1;
+                    dlg.FromClpBtn.Visible = false;
+                    dlg.LoadImageBtn.Visible = false;
+                    dlg.DelBtn.Visible = false;
+                    i = -1;
+                    if (dlg.ShowDialog() == DialogResult.OK)
+                    {
+                        try
+                        {
+                            ((Button)sender).BackgroundImage = getImgFromDiskOrRes(dlg.ImageStamp, ImageExts);
+                            ((Button)sender).Tag = new ClipArtData { ImageStamp = dlg.ImageStamp, X = dlg.ImgSizeX, Y = dlg.ImgSizeY, Filling = dlg.ImageStampFilling };
+                            i = Tools.ClipArt;
+                        }
+                        catch
+                        { // case of failure : image from Clipboard but normally handled;
+                            MessageBox.Show("error when setting clipart shortcut");
+                        }
+                    }
+                    AllowInteractions(false);
+                    if (i < 0) return;
+                }
+                btClipSel = ((Button)sender).Tag;
+                Root.ImageStamp = (ClipArtData)btClipSel;
+                i = Tools.ClipArt;
             }
             if (i >= Tools.Hand)
                 SelectPen(LastPenSelected);

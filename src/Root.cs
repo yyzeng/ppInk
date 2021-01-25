@@ -16,6 +16,11 @@ using System.Collections.Specialized;
 
 namespace gInk
 {
+    public static class Global
+    {
+        public static string ProgramFolder = "";
+    }
+
     public class Tools
     {
         public const int Invalid = -1;
@@ -31,6 +36,14 @@ namespace gInk
         public const int WhiteFilled = 2;
         public const int BlackFilled = 3;
     }; // applicable to Hand,Rect,Oval
+
+    public class ClipArtData
+    {
+        public string ImageStamp;
+        public int X;
+        public int Y;
+        public int Filling;
+    };
 
     public enum VideoRecordMode {NoVideo=0 , OBSRec=1 , OBSBcst=2 , FfmpegRec=3 };
     public enum VideoRecInProgress { Stopped=0, Starting=1, Recording=2, Stopping = 3, Pausing=4, Paused=5, Resuming=6, Streaming = 7 };
@@ -173,6 +186,9 @@ namespace gInk
         public Hotkey Hotkey_Move = new Hotkey();
         public Hotkey Hotkey_Magnet = new Hotkey();
         public Hotkey Hotkey_ClipArt = new Hotkey();
+        public Hotkey Hotkey_ClipArt1 = new Hotkey();
+        public Hotkey Hotkey_ClipArt2 = new Hotkey();
+        public Hotkey Hotkey_ClipArt3 = new Hotkey();
 
         public int ToolSelected = Tools.Hand;        // indicates which tool (Hand,Line,...) is currently selected
         public int FilledSelected = 0;      // indicates which filling (None, Selected color, ...) is currently select
@@ -242,11 +258,14 @@ namespace gInk
 
         public int StampSize = 128;
         public StringCollection StampFileNames = new StringCollection();
-        public string ImageStamp = "";
+        public ClipArtData ImageStamp = new ClipArtData { ImageStamp = "", X = -1, Y = -1, Filling = (int)(Filling.NoFrame) };
         public float StampScaleRatio = .1F;
         public int ImageStampFilling = 0;
+        public string ImageStamp1 = "";
+        public string ImageStamp2 = "";
+        public string ImageStamp3 = "";
 
-        public string ProgramFolder;
+        //public string ProgramFolder;
 
         public string ExpandVarCmd(string cmd, int x, int y, int w, int h)
         {
@@ -270,9 +289,9 @@ namespace gInk
 
         public Root()
 		{
-            ProgramFolder = Path.GetDirectoryName(Path.GetFullPath(Environment.GetCommandLineArgs()[0])).Replace('\\','/');
-            if (ProgramFolder[ProgramFolder.Length - 1] != '/')
-                ProgramFolder += '/';
+            Global.ProgramFolder = Path.GetDirectoryName(Path.GetFullPath(Environment.GetCommandLineArgs()[0])).Replace('\\','/');
+            if (Global.ProgramFolder[Global.ProgramFolder.Length - 1] != '/')
+                Global.ProgramFolder += '/';
 			for (int p = 0; p < MaxPenCount; p++)
 				Hotkey_Pens[p] = new Hotkey();
 
@@ -842,6 +861,15 @@ namespace gInk
                         case "HOTKEY_CLIPART":
                             Hotkey_ClipArt.Parse(sPara);
                             break;
+                        case "HOTKEY_CLIPART1":
+                            Hotkey_ClipArt1.Parse(sPara);
+                            break;
+                        case "HOTKEY_CLIPART2":
+                            Hotkey_ClipArt2.Parse(sPara);
+                            break;
+                        case "HOTKEY_CLIPART3":
+                            Hotkey_ClipArt3.Parse(sPara);
+                            break;
 
                         case "WHITE_TRAY_ICON":
 							if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
@@ -1067,12 +1095,39 @@ namespace gInk
                                 string st2;
                                 //if (!Path.IsPathFullyQualified(st1))
                                 if (!Path.IsPathRooted(st1))
-                                    st2 = ProgramFolder + st1;
+                                    st2 = Global.ProgramFolder + st1;
                                 else
                                     st2 = st1;
                                 if (!StampFileNames.Contains(st2))
                                     StampFileNames.Insert(StampFileNames.Count,st2);
                             }
+                            break;
+                        case "IMAGESTAMP1":
+                            if (sPara.Length == 0)
+                                sPara="";
+                            else if (!Path.IsPathRooted(sPara))
+                                    sPara = Global.ProgramFolder + sPara;
+                            if (!StampFileNames.Contains(sPara))        // to ensure the files are within the stamfiles;
+                                StampFileNames.Insert(StampFileNames.Count, sPara);
+                            ImageStamp1 = sPara;
+                            break;
+                        case "IMAGESTAMP2":
+                            if (sPara.Length == 0)
+                                sPara = "";
+                            else if (!Path.IsPathRooted(sPara))
+                                sPara = Global.ProgramFolder + sPara;
+                            if (!StampFileNames.Contains(sPara))
+                                StampFileNames.Insert(StampFileNames.Count, sPara);
+                            ImageStamp2 = sPara;
+                            break;
+                        case "IMAGESTAMP3":
+                            if (sPara.Length == 0)
+                                sPara = "";
+                            else if (!Path.IsPathRooted(sPara))
+                                sPara = Global.ProgramFolder + sPara;
+                            if (!StampFileNames.Contains(sPara))
+                                StampFileNames.Insert(StampFileNames.Count, sPara);
+                            ImageStamp3 = sPara;
                             break;
                     }
                 }
@@ -1237,6 +1292,15 @@ namespace gInk
                             break;
                         case "HOTKEY_CLIPART":
                             sPara = Hotkey_ClipArt.ToString();
+                            break;
+                        case "HOTKEY_CLIPART1":
+                            sPara = Hotkey_ClipArt1.ToString();
+                            break;
+                        case "HOTKEY_CLIPART2":
+                            sPara = Hotkey_ClipArt2.ToString();
+                            break;
+                        case "HOTKEY_CLIPART3":
+                            sPara = Hotkey_ClipArt3.ToString();
                             break;
 
                         case "WHITE_TRAY_ICON":
@@ -1405,7 +1469,7 @@ namespace gInk
                             {
                                 sPara = "";
                                 foreach (string st1 in StampFileNames)
-                                    sPara += MakeRelativePath(ProgramFolder, st1).Replace('\\','/') + ";";
+                                    sPara += MakeRelativePath(Global.ProgramFolder, st1).Replace('\\','/') + ";";
                                 if (sPara.Length>1)
                                     sPara = sPara.Remove(sPara.Length - 1, 1); // to suppress last ;
                                 else //if(sPara.Length <=1)
@@ -1414,6 +1478,15 @@ namespace gInk
                             }
                             else
                                 sPara = " ";
+                            break;
+                        case "IMAGESTAMP1":
+                            sPara = MakeRelativePath(Global.ProgramFolder, ImageStamp1);
+                            break;
+                        case "IMAGESTAMP2":
+                            sPara = MakeRelativePath(Global.ProgramFolder, ImageStamp2);
+                            break;
+                        case "IMAGESTAMP3":
+                            sPara = MakeRelativePath(Global.ProgramFolder, ImageStamp3);
                             break;
                     }
                 }

@@ -34,7 +34,14 @@ namespace gInk
 		{
 			Root.UnsetHotkey();
             ToolbarDwg.BackColor = Color.FromArgb(Root.ToolbarBGColor[0], Root.ToolbarBGColor[1], Root.ToolbarBGColor[2], Root.ToolbarBGColor[3]);
-			if (Root.EraserEnabled)
+            Clip1Btn.BackColor = ToolbarDwg.BackColor;
+            Clip1Btn.BackgroundImage = FormCollection.getImgFromDiskOrRes(Root.ImageStamp1);
+            Clip2Btn.BackColor = ToolbarDwg.BackColor;
+            Clip2Btn.BackgroundImage = FormCollection.getImgFromDiskOrRes(Root.ImageStamp2);
+            Clip3Btn.BackColor = ToolbarDwg.BackColor;
+            Clip3Btn.BackgroundImage = FormCollection.getImgFromDiskOrRes(Root.ImageStamp3);
+
+            if (Root.EraserEnabled)
 				cbEraserEnabled.Checked = true;
 			if (Root.PointerEnabled)
 				cbPointerEnabled.Checked = true;
@@ -198,6 +205,9 @@ namespace gInk
             hiToolEdit.Hotkey = Root.Hotkey_Edit;
             hiToolMagnet.Hotkey = Root.Hotkey_Magnet;
             hiToolClipArt.Hotkey = Root.Hotkey_ClipArt;
+            hiToolClipArt1.Hotkey = Root.Hotkey_ClipArt1;
+            hiToolClipArt2.Hotkey = Root.Hotkey_ClipArt2;
+            hiToolClipArt3.Hotkey = Root.Hotkey_ClipArt3;
 
             WsUrlTxt.Text = Root.ObsUrl;
             WsPwdTxt.Text = Root.ObsPwd;
@@ -280,6 +290,9 @@ namespace gInk
             this.lbHkEdit.Text = shortTxt(Root.Local.ButtonNameEdit);
             this.lbHkMagn.Text = shortTxt(Root.Local.ButtonNameMagn);
             this.lbHkClipart.Text = shortTxt(Root.Local.ButtonNameClipArt);
+            this.lbHkClipart1.Text = shortTxt(Root.Local.ButtonNameClipArt) + " 1";
+            this.lbHkClipart2.Text = shortTxt(Root.Local.ButtonNameClipArt) + " 2";
+            this.lbHkClipart3.Text = shortTxt(Root.Local.ButtonNameClipArt) + " 3";
 
             this.lbGlobalHotkey.Text = Root.Local.OptionsHotkeysglobal;
             this.cbAllowHotkeyInPointer.Text = Root.Local.OptionsHotkeysEnableinpointer;
@@ -701,6 +714,9 @@ namespace gInk
                 Root.ToolbarBGColor[2] = at.Color.G;
                 Root.ToolbarBGColor[3] = at.Color.B;
                 ToolbarDwg.BackColor = Color.FromArgb(Root.ToolbarBGColor[0], at.Color);
+                Clip1Btn.BackColor = ToolbarDwg.BackColor;
+                Clip2Btn.BackColor = ToolbarDwg.BackColor;
+                Clip3Btn.BackColor = ToolbarDwg.BackColor;
             }
         }
 
@@ -725,6 +741,25 @@ namespace gInk
                 {
                     Root.StampFileNames.Add(it.ImageKey);// dlg.Images.Images.Keys[i]);
                 }
+            }
+        }
+
+        private void ClipBtn_Click(object sender, EventArgs e)
+        {
+            ImageLister dlg = new ImageLister(Root);
+            dlg.FromClpBtn.Visible = false;
+            dlg.LoadImageBtn.Visible = false;
+            dlg.DelBtn.Visible = false;
+            dlg.FillingCombo.Visible = false;
+            if(dlg.ShowDialog()==DialogResult.OK)
+            {
+                ((Button)sender).BackgroundImage = FormCollection.getImgFromDiskOrRes(dlg.ImageStamp);
+                if((string)(((Control)sender).Tag) == "1")
+                    Root.ImageStamp1 = dlg.ImageStamp;
+                else if ((string)(((Control)sender).Tag) == "2")
+                    Root.ImageStamp2 = dlg.ImageStamp;
+                else if ((string)(((Control)sender).Tag) == "3")
+                    Root.ImageStamp3 = dlg.ImageStamp;
             }
         }
 

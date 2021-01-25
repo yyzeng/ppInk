@@ -18,8 +18,8 @@ namespace gInk
         {
             InitializeComponent();
             Root = r;
-            if (File.Exists(Root.ProgramFolder + "FloatingCall.png"))
-                BackgroundImage = new Bitmap(Root.ProgramFolder + "FloatingCall.png");
+            if (File.Exists(Global.ProgramFolder + "FloatingCall.png"))
+                BackgroundImage = new Bitmap(Global.ProgramFolder + "FloatingCall.png");
         }
 
         private void _Click(object sender, EventArgs e)
