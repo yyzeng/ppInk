@@ -142,34 +142,59 @@ namespace gInk
             public static extern uint ResumeThread(IntPtr hThread);
         }
 
-        public System.Windows.Forms.Cursor getCursFromDiskOrRes(string name)
+        public static System.Windows.Forms.Cursor getCursFromDiskOrRes(string name,System.Windows.Forms.Cursor nocurs)
         {
             string filename;
             string[] exts = { ".cur", ".ani", ".ico" };
-            foreach (string ext in exts)
+            try
             {
-                filename = Root.ProgramFolder + name + ext;
-                if (File.Exists(filename))
-                    return new System.Windows.Forms.Cursor(filename);
+                foreach (string ext in exts)
+                {
+                    filename = Global.ProgramFolder + name + ext;
+                    if (File.Exists(filename))
+                        try
+                        {
+                            return new System.Windows.Forms.Cursor(filename);
+                        }
+                        catch (Exception e)
+                        {
+                            Program.WriteErrorLog(string.Format("File {0} found but can not be loaded:\n{1}\n", filename, e));
+                        }
+                }
+                return new System.Windows.Forms.Cursor(((System.Drawing.Icon)Properties.Resources.ResourceManager.GetObject(name)).Handle);
             }
-            //cursorred = new System.Windows.Forms.Cursor(gInk.Properties.Resources.cursor.Handle);
-            return new System.Windows.Forms.Cursor(((System.Drawing.Icon)Properties.Resources.ResourceManager.GetObject(name)).Handle);
+            catch
+            {
+                return nocurs;
+            }
         }
 
         string[] ImageExts = { ".png" };
 
-        public Bitmap getImgFromDiskOrRes(string name, string[] exts = null)
+        public static Bitmap getImgFromDiskOrRes(string name, string[] exts = null)
         {
             string filename;
-            if (exts == null)
+            if (Path.HasExtension(name))
+                exts = new string[] { "" };
+            else if (exts == null)
             {
-                exts = new string[] { ".png" };
+                exts = new string[] { ".png", ".jpg", ".jpeg" };
             }
             foreach (string ext in exts)
             {
-                filename = Root.ProgramFolder + name + ext;
+                if (Path.IsPathRooted(name))
+                    filename = name + ext;
+                else
+                    filename = Global.ProgramFolder + name + ext;
                 if (File.Exists(filename))
-                    return new Bitmap(filename);
+                    try
+                    {
+                        return new Bitmap(filename);
+                    }
+                    catch(Exception e)
+                    {
+                        Program.WriteErrorLog(string.Format("File {0} found but can not be loaded:{1} \n",filename,e));
+                    }
             }
             return new Bitmap((Bitmap)Properties.Resources.ResourceManager.GetObject(name));
         }
@@ -585,8 +610,11 @@ namespace gInk
             else
                 cursorerase = new System.Windows.Forms.Cursor(gInk.Properties.Resources.cursoreraser.Handle);
             */
-            cursorred = getCursFromDiskOrRes("cursorarrow");
-            cursorerase = getCursFromDiskOrRes("cursoreraser");
+
+            cursorred = getCursFromDiskOrRes("cursorarrow", System.Windows.Forms.Cursors.NoMove2D);
+            //Program.WriteErrorLog(string.Format("DEBUG : cursor arrow is it system ? {0}\n", cursorred== System.Windows.Forms.Cursors.NoMove2D));
+            cursorerase = getCursFromDiskOrRes("cursoreraser", System.Windows.Forms.Cursors.No);
+            //Program.WriteErrorLog(string.Format("DEBUG : cursor eraser is it system ? {0}\n", cursorred == System.Windows.Forms.Cursors.No));
 
             IC.Enabled = true;
 
@@ -1790,12 +1818,26 @@ namespace gInk
                     btNumb.BackgroundImage = getImgFromDiskOrRes("tool_numb_fillW", ImageExts);
                 else if (Root.FilledSelected == Filling.BlackFilled)
                     btNumb.BackgroundImage = getImgFromDiskOrRes("tool_numb_fillB", ImageExts);
+                try
+                {
                 IC.Cursor = cursorred;
+                }
+                catch
+                {
+                    IC.Cursor = getCursFromDiskOrRes("cursorarrow", System.Windows.Forms.Cursors.NoMove2D);
+                }
             }
             else if (tool == Tools.Edit)
             {
                 btEdit.BackgroundImage = getImgFromDiskOrRes("tool_edit_act");
-                IC.Cursor = cursorred;
+                try
+                {
+                    IC.Cursor = cursorred;
+                }
+                catch
+                {
+                    IC.Cursor = getCursFromDiskOrRes("cursorarrow", System.Windows.Forms.Cursors.NoMove2D);
+                }
             }
             else if ((tool == Tools.txtLeftAligned) || (tool == Tools.txtRightAligned))
             {
@@ -1809,19 +1851,40 @@ namespace gInk
                     btText.BackgroundImage = getImgFromDiskOrRes("tool_txtL_act", ImageExts);
                     tool = Tools.txtLeftAligned;
                 }
-                IC.Cursor = cursorred;
+                try
+                {
+                    IC.Cursor = cursorred;
+                }
+                catch
+                {
+                    IC.Cursor = getCursFromDiskOrRes("cursorarrow", System.Windows.Forms.Cursors.NoMove2D);
+                }
             }
             else if (tool == Tools.Move)
             {
                 //SelectPen(LastPenSelected);
                 btPan.BackgroundImage = getImgFromDiskOrRes("pan1_act", ImageExts);
-                IC.Cursor = cursorred;
+                try
+                {
+                    IC.Cursor = cursorred;
+                }
+                catch
+                {
+                    IC.Cursor = getCursFromDiskOrRes("cursorarrow", System.Windows.Forms.Cursors.NoMove2D);
+                }
             }
             else if (tool == Tools.Copy)
             {
                 //SelectPen(LastPenSelected);
                 btPan.BackgroundImage = getImgFromDiskOrRes("pan_copy", ImageExts);
-                IC.Cursor = cursorred;
+                try
+                {
+                    IC.Cursor = cursorred;
+                }
+                catch
+                {
+                    IC.Cursor = getCursFromDiskOrRes("cursorarrow", System.Windows.Forms.Cursors.NoMove2D);
+                }
             }
             Root.ToolSelected = tool;
         }
@@ -1904,7 +1967,7 @@ namespace gInk
                     }
                     catch
                     {
-                        cursorerase = getCursFromDiskOrRes("cursoreraser");
+                        cursorerase = getCursFromDiskOrRes("cursoreraser", System.Windows.Forms.Cursors.No);
                         //Console.WriteLine(e.Message);
                         continue;
                     }
@@ -1947,13 +2010,20 @@ namespace gInk
 				Root.UnPointer();
 				Root.PanMode = false;
 
-				if (Root.CanvasCursor == 0)
-				{
-					//cursorred = new System.Windows.Forms.Cursor(gInk.Properties.Resources.cursorred.Handle);
-					IC.Cursor = cursorred;
-				}
-				else if (Root.CanvasCursor == 1)
-					SetPenTipCursor();
+                if (Root.CanvasCursor == 0)
+                {
+                    //cursorred = new System.Windows.Forms.Cursor(gInk.Properties.Resources.cursorred.Handle);
+                    try
+                    {
+                        IC.Cursor = cursorred;
+                    }
+                    catch
+                    {
+                        IC.Cursor = getCursFromDiskOrRes("cursorarrow", System.Windows.Forms.Cursors.NoMove2D);
+                    }
+                }
+                else if (Root.CanvasCursor == 1)
+                    SetPenTipCursor();
                 // !!!!! TODO problem re-entrant
                 try
                 {
@@ -2436,7 +2506,14 @@ namespace gInk
             if ((AltKeyPressed() && !Root.FingerInAction) && tempArrowCursor is null)
             {
                 tempArrowCursor = IC.Cursor;
-                IC.Cursor = cursorred;
+                try
+                {
+                    IC.Cursor = cursorred;
+                }
+                catch
+                {
+                    IC.Cursor = getCursFromDiskOrRes("cursorarrow", System.Windows.Forms.Cursors.NoMove2D);
+                }
             }
             else if (!(tempArrowCursor is null) && !AltKeyPressed())
             {
@@ -3119,7 +3196,7 @@ namespace gInk
                         await frm.Root.ObsWs.CloseAsync(WebSocketCloseStatus.PolicyViolation, "Authentication failed", ct);
                         frm.Root.ObsWs = null;
                         frm.Root.ObsRecvTask = null;
-                        frm.btVideo.BackgroundImage = frm.getImgFromDiskOrRes("VidDead", frm.ImageExts);
+                        frm.btVideo.BackgroundImage = FormCollection.getImgFromDiskOrRes("VidDead", frm.ImageExts);
                     }
                 }
 
@@ -3158,7 +3235,7 @@ namespace gInk
                 frm.SetVidBgImage();
                 //Console.WriteLine(frm.btVideo.BackgroundImage.ToString()+" vidbg2 " + frm.Root.UponButtonsUpdate);
             }
-            frm.btVideo.BackgroundImage = frm.getImgFromDiskOrRes("VidDead", frm.ImageExts); // the recv task is dead so we put the cross;
+            frm.btVideo.BackgroundImage = FormCollection.getImgFromDiskOrRes("VidDead", frm.ImageExts); // the recv task is dead so we put the cross;
             //Console.WriteLine("endoft");
         }
 

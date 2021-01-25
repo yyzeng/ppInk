@@ -164,7 +164,7 @@ namespace gInk
 			return MessageBox.Show(errormsg, title, MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Stop);
 		}
 
-		private static void WriteErrorLog(string errormsg)
+		public static void WriteErrorLog(string errormsg)
 		{
 			try
 			{
