@@ -1018,11 +1018,12 @@ namespace gInk
             Point pt = new Point(CursorX0, CursorY0);
             //IC.Renderer.PixelToInkSpace(Root.FormDisplay.gOneStrokeCanvus, ref pt);
             IC.Renderer.PixelToInkSpace(IC.Handle, ref pt);
-            Point[] pts = new Point[1];
-            pts[0] = pt;
+            Point[] pts = new Point[9] { pt, pt, pt, pt, pt, pt, pt, pt,pt };
+
             Stroke st = Root.FormCollection.IC.Ink.CreateStroke(pts);
             st.DrawingAttributes = Root.FormCollection.IC.DefaultDrawingAttributes.Clone();
             st.DrawingAttributes.Width = 100; // no width to hide the point;
+            st.DrawingAttributes.FitToCurve = false;
             st.ExtendedProperties.Add(Root.TEXT_GUID, txt);
             st.ExtendedProperties.Add(Root.TEXTX_GUID, pt.X);
             st.ExtendedProperties.Add(Root.TEXTY_GUID, pt.Y);
@@ -1031,7 +1032,7 @@ namespace gInk
             st.ExtendedProperties.Add(Root.TEXTFONT_GUID, TextFont);
             st.ExtendedProperties.Add(Root.TEXTFONTSIZE_GUID, (float)TextSize);
             st.ExtendedProperties.Add(Root.TEXTFONTSTYLE_GUID, (TextItalic ? FontStyle.Italic : FontStyle.Regular) | (TextBold ? FontStyle.Bold : FontStyle.Regular));
-            setStrokeProperties(ref st, 0);
+            setStrokeProperties(ref st, Filling.NoFrame);
             Root.FormCollection.IC.Ink.Strokes.Add(st);
             return st;
         }
@@ -1387,6 +1388,23 @@ namespace gInk
                             (System.Drawing.FontStyle)(int)st.ExtendedProperties[Root.TEXTFONTSTYLE_GUID].Data), layoutSize, stf);
             st.ExtendedProperties.Add(Root.TEXTWIDTH_GUID, layoutSize.Width);
             st.ExtendedProperties.Add(Root.TEXTHEIGHT_GUID, layoutSize.Height);
+            if (!st.ExtendedProperties.Contains(Root.ISTAG_GUID))
+            {
+                Point pt = new Point((int)(st.ExtendedProperties[Root.TEXTX_GUID].Data), (int)(st.ExtendedProperties[Root.TEXTY_GUID].Data));
+                //IC.Renderer.PixelToInkSpace(IC.Handle, ref pt);
+                Point pt2 = new Point((int)layoutSize.Width,(int)layoutSize.Height);
+                IC.Renderer.PixelToInkSpace(IC.Handle, ref pt2);
+                if (stf.Alignment==StringAlignment.Near) //align Left
+                    st.SetPoints(new Point[] { pt, new Point((int)(pt.X+pt2.X / 2),pt.Y+0), new Point((int)(pt.X+pt2.X),pt.Y+0),
+                                               new Point((int)(pt.X+pt2.X),(int)(pt.Y+pt2.Y/2)),new Point((int)(pt.X+pt2.X),(int)(pt.Y+pt2.Y)),
+                                               new Point((int)(pt.X+pt2.X/2),(int)(pt.Y+pt2.Y)),new Point((int)(pt.X+0),(int)(pt.Y+pt2.Y)),
+                                               new Point((int)(pt.X+0),(int)(pt.Y+pt2.Y/2)),pt });
+                else //align right
+                    st.SetPoints(new Point[] { pt, new Point((int)(pt.X-pt2.X / 2),pt.Y+0), new Point((int)(pt.X-pt2.X),pt.Y+0),
+                                               new Point((int)(pt.X-pt2.X),(int)(pt.Y+pt2.Y/2)),new Point((int)(pt.X-pt2.X),(int)(pt.Y+pt2.Y)),
+                                               new Point((int)(pt.X-pt2.X/2),(int)(pt.Y+pt2.Y)),new Point((int)(pt.X-0),(int)(pt.Y+pt2.Y)),
+                                               new Point((int)(pt.X-0),(int)(pt.Y+pt2.Y/2)),pt });
+            }
         }
 
         private void SaveUndoStrokes()
