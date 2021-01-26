@@ -1521,7 +1521,23 @@ namespace gInk
         public Point LasteXY;
         private void IC_MouseMove(object sender, CancelMouseEventArgs e)
         {
-            if (e.Button == MouseButtons.None) return;
+            float pos;
+            Root.StrokeHovered = null;
+            if (e.Button == MouseButtons.None)
+                if (Root.EraserMode || Root.ToolSelected == Tools.Edit || Root.ToolSelected == Tools.Move || Root.ToolSelected == Tools.Copy)
+                {
+                    if (NearestStroke(new Point(e.X, e.Y), true, out Root.StrokeHovered, out pos,false) > Root.PixelToHiMetric(Root.MinMagneticRadius()))
+                    {
+                        Root.StrokeHovered = null;
+                        return;
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+                else
+                    return;
             //Console.WriteLine("Cursor {0},{1} - {2}", e.X, e.Y, e.Button);
             Root.CursorX = e.X;
             Root.CursorY = e.Y;

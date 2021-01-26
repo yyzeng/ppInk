@@ -210,6 +210,9 @@ namespace gInk
 		public bool InkVisible = true;
         public int MagneticRadius= MIN_MAGNETIC;        // Magnet Radius; <=0 means off;
         public int MinMagneticRadius() { return Math.Max(Math.Abs(MagneticRadius), MIN_MAGNETIC); }
+        public Stroke StrokeHovered;            // contains the "selection" for edit/move/copy/erase else is null
+        public Pen SelectionFramePen = new Pen(Color.Red, 1);
+
 
         public bool DefaultArrow_start = true;
 
@@ -290,6 +293,7 @@ namespace gInk
         public Root()
 		{
             Global.ProgramFolder = Path.GetDirectoryName(Path.GetFullPath(Environment.GetCommandLineArgs()[0])).Replace('\\','/');
+            SelectionFramePen.DashPattern = new float[]{4,4};       // dashed red line for selection drawing
             if (Global.ProgramFolder[Global.ProgramFolder.Length - 1] != '/')
                 Global.ProgramFolder += '/';
 			for (int p = 0; p < MaxPenCount; p++)

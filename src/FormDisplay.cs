@@ -266,6 +266,19 @@ namespace gInk
             {
                 foreach (Stroke st in Root.FormCollection.IC.Ink.Strokes)
                 {
+                    if ((Root.StrokeHovered != null)&&(st.Id == Root.StrokeHovered.Id))
+                    {
+                        Rectangle rect = st.GetBoundingBox();
+                        Point pt = rect.Location;
+                        Root.FormCollection.IC.Renderer.InkSpaceToPixel(gCanvus, ref pt);
+                        rect.Location = pt;
+                        pt.X = rect.Width;
+                        pt.Y = rect.Height;
+                        Root.FormCollection.IC.Renderer.InkSpaceToPixel(gCanvus, ref pt);
+                        rect.Width = pt.X;
+                        rect.Height = pt.Y;
+                        g.DrawRectangle(Root.SelectionFramePen, rect);
+                    }
                     if (st.ExtendedProperties.Contains(Root.ISHIDDEN_GUID))
                         continue;
                     //else //Should not be drawn as a stroke : for the moment only filled values.
@@ -604,7 +617,8 @@ namespace gInk
 
 		int stackmove = 0;
 		int Tick = 0;
-		//DateTime TickStartTime;
+        //DateTime TickStartTime;
+        bool SelectionDrawnPreviously=false;
 
 		private void timer1_Tick(object sender, EventArgs e)
 		{
@@ -690,9 +704,10 @@ namespace gInk
                 }
             }
 
-			else if (Root.FormCollection.IC.CollectingInk && Root.EraserMode == true)
-			{
-				ClearCanvus();
+			else if ((Root.FormCollection.IC.CollectingInk && Root.EraserMode == true) || Root.StrokeHovered != null || SelectionDrawnPreviously)
+            {
+                SelectionDrawnPreviously = Root.StrokeHovered != null; // to erase selection at the end
+                ClearCanvus();
 				DrawStrokes();
 				DrawButtons(false);
 				UpdateFormDisplay(true);
