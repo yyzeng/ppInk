@@ -57,6 +57,7 @@ DlgTextCaption = "Edit Text"
 DlgTextLabel = "Text Input"
 DlgTagCaption = "Tag Numbering"
 DlgTagLabel = "Enter Starting Number"
+TextFramingText = "Transparent background;Frame + Transparent background;White Background;Frame + White Background;Black Background;Frame + Black Background"
 
 FormClipartsTitle = "ClipArts"
 ButtonInsertText = "&Insert"

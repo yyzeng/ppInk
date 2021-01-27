@@ -242,6 +242,10 @@ namespace gInk
         public double ArrowLen = 0.0185 * System.Windows.SystemParameters.PrimaryScreenWidth; // == 1.85% of screen width
 
         public int TagNumbering = 1;
+        public int TagSize = 25;
+        public string TagFont = "";
+        public bool TagItalic = false;
+        public bool TagBold = false;
         public int TextSize = 25;
         public string TextFont = "Arial";
         public bool TextItalic = false;
@@ -310,6 +314,14 @@ namespace gInk
 			ReadOptions("pens.ini");
 			ReadOptions("config.ini");
 			ReadOptions("hotkeys.ini");
+
+            if(TagFont=="")     // if no options, we apply text parameters
+            {
+                TagFont = TextFont;
+                TagBold = TextBold;
+                TagItalic = TextItalic;
+                TagSize = TextSize;
+            }
             
             Size size = SystemInformation.SmallIconSize;
 			trayIcon = new NotifyIcon();
@@ -786,10 +798,10 @@ namespace gInk
 					float tempf = 0;
                     string[] tab;
                     switch (sName)
-					{
-						case "LANGUAGE_FILE":
-							ChangeLanguage(sPara);
-							break;
+                    {
+                        case "LANGUAGE_FILE":
+                            ChangeLanguage(sPara);
+                            break;
                         case "ALT_AS_TEMPORARY_COMMAND":
                             if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
                                 AltAsOneCommand = true;
@@ -797,32 +809,32 @@ namespace gInk
                                 AltAsOneCommand = false;
                             break;
                         case "HOTKEY_GLOBAL":
-							Hotkey_Global.Parse(sPara);
-							break;
-						case "HOTKEY_ERASER":
-							Hotkey_Eraser.Parse(sPara);
-							break;
-						case "HOTKEY_INKVISIBLE":
-							Hotkey_InkVisible.Parse(sPara);
-							break;
-						case "HOTKEY_POINTER":
-							Hotkey_Pointer.Parse(sPara);
-							break;
-						case "HOTKEY_PAN":
-							Hotkey_Pan.Parse(sPara);
-							break;
-						case "HOTKEY_UNDO":
-							Hotkey_Undo.Parse(sPara);
-							break;
-						case "HOTKEY_REDO":
-							Hotkey_Redo.Parse(sPara);
-							break;
-						case "HOTKEY_SNAPSHOT":
-							Hotkey_Snap.Parse(sPara);
-							break;
-						case "HOTKEY_CLEAR":
-							Hotkey_Clear.Parse(sPara);
-							break;
+                            Hotkey_Global.Parse(sPara);
+                            break;
+                        case "HOTKEY_ERASER":
+                            Hotkey_Eraser.Parse(sPara);
+                            break;
+                        case "HOTKEY_INKVISIBLE":
+                            Hotkey_InkVisible.Parse(sPara);
+                            break;
+                        case "HOTKEY_POINTER":
+                            Hotkey_Pointer.Parse(sPara);
+                            break;
+                        case "HOTKEY_PAN":
+                            Hotkey_Pan.Parse(sPara);
+                            break;
+                        case "HOTKEY_UNDO":
+                            Hotkey_Undo.Parse(sPara);
+                            break;
+                        case "HOTKEY_REDO":
+                            Hotkey_Redo.Parse(sPara);
+                            break;
+                        case "HOTKEY_SNAPSHOT":
+                            Hotkey_Snap.Parse(sPara);
+                            break;
+                        case "HOTKEY_CLEAR":
+                            Hotkey_Clear.Parse(sPara);
+                            break;
                         case "HOTKEY_VIDEOREC":
                             Hotkey_Video.Parse(sPara);
                             break;
@@ -876,11 +888,11 @@ namespace gInk
                             break;
 
                         case "WHITE_TRAY_ICON":
-							if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
-								WhiteTrayIcon = true;
-							else
-								WhiteTrayIcon = false;
-							break;
+                            if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
+                                WhiteTrayIcon = true;
+                            else
+                                WhiteTrayIcon = false;
+                            break;
                         case "HIDE_IN_ALTTAB":
                             if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
                                 globalRoot.HideInAltTab = true;
@@ -888,10 +900,10 @@ namespace gInk
                                 globalRoot.HideInAltTab = false;
                             break;
                         case "SNAPSHOT_PATH":
-							SnapshotBasePath = sPara;
-							if (!SnapshotBasePath.EndsWith("/") && !SnapshotBasePath.EndsWith("\\"))
-								SnapshotBasePath += "/";
-							break;
+                            SnapshotBasePath = sPara;
+                            if (!SnapshotBasePath.EndsWith("/") && !SnapshotBasePath.EndsWith("\\"))
+                                SnapshotBasePath += "/";
+                            break;
                         case "OPEN_INTO_SNAP":
                             if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "OFF")
                                 OpenIntoSnapMode = true;
@@ -905,33 +917,54 @@ namespace gInk
                         case "ARROW":           // angle in degrees, len in % of the screen width
                             tab = sPara.Split(',');
                             if (tab.Length != 2) break;
-                            if (float.TryParse(tab[0],NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out tempf))
+                            if (float.TryParse(tab[0], NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out tempf))
                                 ArrowAngle = tempf * Math.PI / 180;
                             if (float.TryParse(tab[1], NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out tempf))
                                 ArrowLen = tempf / 100.0 * System.Windows.SystemParameters.PrimaryScreenWidth;
                             break;
                         case "DEFAULT_ARROW":
-                            if (sPara.ToUpper() == "START" )
+                            if (sPara.ToUpper() == "START")
                                 DefaultArrow_start = true;
                             if (sPara.ToUpper() == "END")
                                 DefaultArrow_start = false;
                             break;
                         case "TEXT":           // Font(string),italique(boolean),Bold(boolean),size(float) of the text in % of the screen, also defines the size of the
-                            tab = sPara.Split(',');
-                            if (tab.Length != 4) break;
-                            TextFont = tab[0];
-                            string s = tab[1];
-                            if (s.ToUpper() == "FALSE" || s == "0" || s.ToUpper() == "OFF")
-                                TextItalic = false;
-                            else if (s.ToUpper() == "TRUE" || s == "1" || s.ToUpper() == "ON")
-                                TextItalic = true;
-                            s = tab[2];
-                            if (s.ToUpper() == "FALSE" || s == "0" || s.ToUpper() == "OFF")
-                                TextBold = false;
-                            else if (s.ToUpper() == "TRUE" || s == "1" || s.ToUpper() == "ON")
-                                TextBold = true;
-                            if (float.TryParse(tab[3], NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out tempf))
-                                TextSize = (int)(tempf / 100.0 * System.Windows.SystemParameters.PrimaryScreenWidth);
+                            {
+                                tab = sPara.Split(',');
+                                if (tab.Length != 4) break;
+                                TextFont = tab[0];
+                                string s = tab[1];
+                                if (s.ToUpper() == "FALSE" || s == "0" || s.ToUpper() == "OFF")
+                                    TextItalic = false;
+                                else if (s.ToUpper() == "TRUE" || s == "1" || s.ToUpper() == "ON")
+                                    TextItalic = true;
+                                s = tab[2];
+                                if (s.ToUpper() == "FALSE" || s == "0" || s.ToUpper() == "OFF")
+                                    TextBold = false;
+                                else if (s.ToUpper() == "TRUE" || s == "1" || s.ToUpper() == "ON")
+                                    TextBold = true;
+                                if (float.TryParse(tab[3], NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out tempf))
+                                    TextSize = (int)(tempf / 100.0 * System.Windows.SystemParameters.PrimaryScreenWidth);
+                            }
+                            break;
+                        case "NUMBERS":           // Font(string),italique(boolean),Bold(boolean),size(float) of the text in % of the screen, also defines the size of the
+                            {
+                                tab = sPara.Split(',');
+                                if (tab.Length != 4) break;
+                                TagFont = tab[0];
+                                string s = tab[1];
+                                if (s.ToUpper() == "FALSE" || s == "0" || s.ToUpper() == "OFF")
+                                    TagItalic = false;
+                                else if (s.ToUpper() == "TRUE" || s == "1" || s.ToUpper() == "ON")
+                                    TagItalic = true;
+                                s = tab[2];
+                                if (s.ToUpper() == "FALSE" || s == "0" || s.ToUpper() == "OFF")
+                                    TagBold = false;
+                                else if (s.ToUpper() == "TRUE" || s == "1" || s.ToUpper() == "ON")
+                                    TagBold = true;
+                                if (float.TryParse(tab[3], NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out tempf))
+                                    TagSize = (int)(tempf / 100.0 * System.Windows.SystemParameters.PrimaryScreenWidth);
+                            }
                             break;
                         case "MAGNET":
                             if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
@@ -1339,6 +1372,9 @@ namespace gInk
                             break;
                         case "TEXT":           // size of the tag in % of the screen
                             sPara = TextFont+","+(TextItalic?"True":"False")+","+ (TextBold ? "True" : "False")+","+(TextSize / System.Windows.SystemParameters.PrimaryScreenWidth *100.0).ToString(CultureInfo.InvariantCulture);
+                            break;
+                        case "NUMBERS":           // size of the tag in % of the screen
+                            sPara = TagFont + "," + (TagItalic ? "True" : "False") + "," + (TagBold ? "True" : "False") + "," + (TagSize / System.Windows.SystemParameters.PrimaryScreenWidth * 100.0).ToString(CultureInfo.InvariantCulture);
                             break;
                         case "MAGNET":
                             sPara = (MagneticRadius / System.Windows.SystemParameters.PrimaryScreenWidth * 100.0).ToString(CultureInfo.InvariantCulture);

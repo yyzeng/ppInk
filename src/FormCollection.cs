@@ -96,6 +96,10 @@ namespace gInk
         public string TextFont = "Arial";
         public bool TextItalic = false;
         public bool TextBold = false;
+        public int TagSize = 16;
+        public string TagFont = "Arial";
+        public bool TagItalic = false;
+        public bool TagBold = false;
 
         private bool SetWindowInputRectFlag = false;
 
@@ -238,6 +242,10 @@ namespace gInk
             TextBold = Root.TextBold;
             TextItalic = Root.TextItalic;
             TextSize = Root.TextSize;
+            TagFont = Root.TagFont;
+            TagBold = Root.TagBold;
+            TagItalic = Root.TagItalic;
+            TagSize = Root.TagSize;
 
             gpButtons.BackColor = Color.FromArgb(Root.ToolbarBGColor[0], Root.ToolbarBGColor[1], Root.ToolbarBGColor[2], Root.ToolbarBGColor[3]);
             gpPenWidth.BackColor = Color.FromArgb(Root.ToolbarBGColor[0], Root.ToolbarBGColor[1], Root.ToolbarBGColor[2], Root.ToolbarBGColor[3]);
@@ -995,7 +1003,7 @@ namespace gInk
         // arrow at starting point
         {
             // for the filling, filled color is not used but this state is used to note that we edit the tag number
-            Stroke st = AddEllipseStroke(CursorX0, CursorY0, (int)(CursorX0 + TextSize * 1.2), (int)(CursorY0 + TextSize * 1.2), Root.FilledSelected == Filling.PenColorFilled ? 0 : Root.FilledSelected);
+            Stroke st = AddEllipseStroke(CursorX0, CursorY0, (int)(CursorX0 + TagSize * 1.2), (int)(CursorY0 + TagSize * 1.2), Root.FilledSelected == Filling.PenColorFilled ? 0 : Root.FilledSelected);
             st.ExtendedProperties.Add(Root.ISSTROKE_GUID, true);
             Point pt = new Point(CursorX0, CursorY0);
             IC.Renderer.PixelToInkSpace(IC.Handle, ref pt);
@@ -1006,9 +1014,9 @@ namespace gInk
             //st.ExtendedProperties.Add(Root.TEXTFORMAT_GUID, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.WordBreak);
             st.ExtendedProperties.Add(Root.TEXTHALIGN_GUID, StringAlignment.Center);
             st.ExtendedProperties.Add(Root.TEXTVALIGN_GUID, StringAlignment.Center);
-            st.ExtendedProperties.Add(Root.TEXTFONT_GUID, TextFont);
-            st.ExtendedProperties.Add(Root.TEXTFONTSIZE_GUID, (float)TextSize);
-            st.ExtendedProperties.Add(Root.TEXTFONTSTYLE_GUID, (TextItalic ? FontStyle.Italic : FontStyle.Regular) | (TextBold ? FontStyle.Bold : FontStyle.Regular));
+            st.ExtendedProperties.Add(Root.TEXTFONT_GUID, TagFont);
+            st.ExtendedProperties.Add(Root.TEXTFONTSIZE_GUID, (float)TagSize);
+            st.ExtendedProperties.Add(Root.TEXTFONTSTYLE_GUID, (TagItalic ? FontStyle.Italic : FontStyle.Regular) | (TagBold ? FontStyle.Bold : FontStyle.Regular));
             return st;
         }
 
@@ -3449,6 +3457,19 @@ namespace gInk
             }
             AllowInteractions(false);
         }
+        private void TagFontBtn_Modify()
+        {
+            AllowInteractions(true);
+            FontDlg.Font = new Font(TagFont, (float)TagSize, (TagItalic ? FontStyle.Italic : FontStyle.Regular) | (TagBold ? FontStyle.Bold : FontStyle.Regular));
+            if (FontDlg.ShowDialog() == DialogResult.OK)
+            {
+                TagFont = FontDlg.Font.Name;
+                TagItalic = (FontDlg.Font.Style & FontStyle.Italic) != 0;
+                TagBold = (FontDlg.Font.Style & FontStyle.Bold) != 0;
+                TagSize = (int)FontDlg.Font.Size;
+            }
+            AllowInteractions(false);
+        }
 
         public void btTool_Click(object sender, EventArgs e)
         {
@@ -3493,11 +3514,13 @@ namespace gInk
             //               i = (Root.DefaultArrow_start ||Root.ToolSelected==5) ?4:5 ;
             else if (((Button)sender).Name.Contains("Numb"))
             {
-                /*if (Root.ToolSelected == 6) // if already selected, we open the index dialog
+                if (sender != null && tsp.TotalSeconds > Root.LongClickTime)
                 {
-                    SetTagNumber();
-                }*/
-                i = Tools.NumberTag;
+                    TagFontBtn_Modify();
+                    return;
+                }
+                else
+                    i = Tools.NumberTag;
             }
             else if (((Button)sender).Name.Contains("Text"))
                 i = Tools.txtLeftAligned;

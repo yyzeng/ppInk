@@ -259,8 +259,10 @@ namespace gInk
             this.ArrwGrp.Text = Root.Local.OptionsGeneralArrowHead;
             this.ArrHdAptLbl.Text = Root.Local.OptionsGeneralArrowHeadApt;
             this.ArrHdLenLbl.Text = Root.Local.OptionsGeneralArrowHeadLen;
-            this.DefTxtLbl.Text = Root.Local.OptionsGeneralDefaultTextLbl;
+            this.DefTxtLbl.Text = shortTxt(Root.Local.ButtonNameText) + " - " + Root.Local.OptionsGeneralDefaultTextLbl;
             this.DefaultFontBtn.Text = Root.Local.OptionsGeneralDefaultTextBtn;
+            this.DefTagLbl.Text = shortTxt(Root.Local.ButtonNameNumb)+" - "+Root.Local.OptionsGeneralDefaultTextLbl;
+            this.TagFontBtn.Text = Root.Local.OptionsGeneralDefaultTextBtn;
             this.DefArrStartCb.Text = Root.Local.OptionsGeneralDefaultArrHdBtn;
             this.MagnetLbl.Text = Root.Local.OptionsGeneralMagnetLbl;
             this.SaveConfigBtn.Text = Root.Local.OptionsGeneralSaveConfigToFile;
@@ -566,6 +568,20 @@ namespace gInk
                 Root.TextSize = (int)FontDlg.Font.Size;
             }
         }
+
+        private void TagFontBtn_Click(object sender, EventArgs e)
+        {
+            FontDlg.Font = new Font(Root.TagFont, (float)Root.TagSize,
+                                        (Root.TagItalic ? FontStyle.Italic : FontStyle.Regular) | (Root.TagBold ? FontStyle.Bold : FontStyle.Regular));
+            if (FontDlg.ShowDialog() == DialogResult.OK)
+            {
+                Root.TagFont = FontDlg.Font.Name;
+                Root.TagItalic = (FontDlg.Font.Style & FontStyle.Italic) != 0;
+                Root.TagBold = (FontDlg.Font.Style & FontStyle.Bold) != 0;
+                Root.TagSize = (int)FontDlg.Font.Size;
+            }
+        }
+
 
         private void ArrHdAperture_Validated(object sender, EventArgs e)
         {
