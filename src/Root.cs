@@ -428,12 +428,11 @@ namespace gInk
 		}
 		public void StopInk()
 		{
-			FormCollection.Close();
-			FormDisplay.Close();
-			FormButtonHitter.Close();
-			//FormCollection.Dispose();
-			//FormDisplay.Dispose();
-			GC.Collect();
+            try { FormCollection.Close(); } catch { }
+            try { FormDisplay.Close(); } catch { }
+			try { FormButtonHitter.Close(); } catch { }
+
+            GC.Collect();
 
             FormCollection = null;
             //  The FormCollection is destroyed, therefore all following calls to the form and its controls will not hit
@@ -443,8 +442,9 @@ namespace gInk
             ObsCancel = new CancellationTokenSource();
 
             FormDisplay = null;
+            FormButtonHitter = null;
 
-			if (UponBalloonSnap)
+            if (UponBalloonSnap)
 			{
 				ShowBalloonSnapshot();
 				UponBalloonSnap = false;
