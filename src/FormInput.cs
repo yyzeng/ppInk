@@ -14,14 +14,23 @@ namespace gInk
     {
         Microsoft.Ink.Stroke stroke;
         Root Root;
+        string Saved_Txt;
+        Font Saved_Font;
+        DrawingAttributes Saved_Da;
+        bool Saved_Frame;
+        bool Saved_White;
+        bool Saved_Black;
+
+
         public FormInput(string caption,string label, string txt, bool ML, gInk.Root rt = null, Microsoft.Ink.Stroke stk = null)
         {
             InitializeComponent();
-
+            
             // local
             this.btOK.Text = rt.Local.ButtonOkText;
             this.btCancel.Text = rt.Local.ButtonCancelText;
             this.FontBtn.Text = rt.Local.ButtonFontText;
+            boxingCb.Items.AddRange(rt.Local.TextFramingText.Split(';'));
 
             Text = caption;
             captionLbl.Text = label;
@@ -40,14 +49,30 @@ namespace gInk
             Root = rt;
             stroke = stk;
             if (stroke == null)
+            {
                 FontBtn.Visible = false;
+                boxingCb.Visible = false;
+            }
             else
             {
                 FontBtn.Visible = true;
                 ColorBtn.Visible = true;
+                boxingCb.Visible = true;// !stk.ExtendedProperties.Contains(Root.ISTAG_GUID);
+
                 FontDlg.Font = new Font((string)stk.ExtendedProperties[Root.TEXTFONT_GUID].Data, (float)stk.ExtendedProperties[Root.TEXTFONTSIZE_GUID].Data,
                                         (System.Drawing.FontStyle)stk.ExtendedProperties[Root.TEXTFONTSTYLE_GUID].Data);
                 InputML.TextChanged += new System.EventHandler(this.InputML_TextChanged);
+                int i = (stk.ExtendedProperties.Contains(Root.ISSTROKE_GUID) ? 1 : 0) +
+                        (stk.ExtendedProperties.Contains(Root.ISFILLEDWHITE_GUID) ? 2 : 0) +
+                        (stk.ExtendedProperties.Contains(Root.ISFILLEDBLACK_GUID) ? 4 : 0);
+                boxingCb.Text = boxingCb.Items[i].ToString();
+
+                Saved_Txt = InputML.Text;
+                Saved_Da = stk.DrawingAttributes.Clone();
+                Saved_Font = (Font)FontDlg.Font.Clone();
+                Saved_Frame = stk.ExtendedProperties.Contains(Root.ISSTROKE_GUID);
+                Saved_White = stk.ExtendedProperties.Contains(Root.ISFILLEDWHITE_GUID);
+                Saved_Black = stk.ExtendedProperties.Contains(Root.ISFILLEDBLACK_GUID);
             }
         }
 
@@ -84,7 +109,7 @@ namespace gInk
         {
             PenModifyDlg dlg = new PenModifyDlg(Root);
             DrawingAttributes da = stroke.DrawingAttributes.Clone();
-            dlg.hideWidth();
+            //dlg.hideWidth();
             if (dlg.ModifyPen(ref da))
             {
                 stroke.DrawingAttributes = da;
@@ -100,6 +125,8 @@ namespace gInk
             if (t.Length == 0) t = " ";
             stroke.ExtendedProperties.Remove(Root.TEXT_GUID);
             stroke.ExtendedProperties.Add(Root.TEXT_GUID, t);
+            if(!stroke.ExtendedProperties.Contains(Root.ISTAG_GUID))
+                Root.FormCollection.ComputeTextBoxSize(ref stroke);
             Root.FormDisplay.ClearCanvus();
             Root.FormDisplay.DrawStrokes();
             Root.FormDisplay.UpdateFormDisplay(true);
@@ -113,6 +140,67 @@ namespace gInk
                 e.Handled = true;
             }
 
+        }
+
+        private void btCancel_Click(object sender, EventArgs e)
+        {
+            if(stroke != null )
+            {
+                InputML.Text = Saved_Txt;
+                stroke.ExtendedProperties.Add(Root.TEXTFONT_GUID, Saved_Font.Name);
+                stroke.ExtendedProperties.Add(Root.TEXTFONTSIZE_GUID, Saved_Font.Size);
+                stroke.ExtendedProperties.Add(Root.TEXTFONTSTYLE_GUID, Saved_Font.Style);
+                Root.FormCollection.ComputeTextBoxSize(ref stroke);
+                stroke.DrawingAttributes = Saved_Da;
+                if (Saved_Frame)
+                    stroke.ExtendedProperties.Add(Root.ISSTROKE_GUID, true);
+                else
+                    try { stroke.ExtendedProperties.Remove(Root.ISSTROKE_GUID); } catch { }
+
+                if (Saved_Black)
+                {
+                    try { stroke.ExtendedProperties.Remove(Root.ISFILLEDWHITE_GUID); } catch { }
+                    stroke.ExtendedProperties.Add(Root.ISFILLEDBLACK_GUID, true);
+                }
+                else if (Saved_White)
+                {
+                    try { stroke.ExtendedProperties.Remove(Root.ISFILLEDBLACK_GUID); } catch { }
+                stroke.ExtendedProperties.Add(Root.ISFILLEDWHITE_GUID, true);
+                }
+                else
+                {
+                    try { stroke.ExtendedProperties.Remove(Root.ISFILLEDBLACK_GUID); } catch { }
+                    try { stroke.ExtendedProperties.Remove(Root.ISFILLEDWHITE_GUID); } catch { }
+                }
+            }
+        }
+
+        private void boxingCb_TextChanged(object sender, EventArgs e)
+        {
+            int i = boxingCb.Items.IndexOf(boxingCb.Text);
+            if ((i&1)!=0)
+                stroke.ExtendedProperties.Add(Root.ISSTROKE_GUID, true);
+            else
+                try { stroke.ExtendedProperties.Remove(Root.ISSTROKE_GUID); } catch { }
+
+            if ((i & 4) != 0)
+            {
+                try { stroke.ExtendedProperties.Remove(Root.ISFILLEDWHITE_GUID); } catch { }
+                stroke.ExtendedProperties.Add(Root.ISFILLEDBLACK_GUID, true);
+            }
+            else if ((i & 2) != 0)
+            {
+                try { stroke.ExtendedProperties.Remove(Root.ISFILLEDBLACK_GUID); } catch { }
+                stroke.ExtendedProperties.Add(Root.ISFILLEDWHITE_GUID, true);
+            }
+            else
+            {
+                try { stroke.ExtendedProperties.Remove(Root.ISFILLEDBLACK_GUID); } catch { }
+                try { stroke.ExtendedProperties.Remove(Root.ISFILLEDWHITE_GUID); } catch { }
+            }
+            Root.FormDisplay.ClearCanvus();
+            Root.FormDisplay.DrawStrokes();
+            Root.FormDisplay.UpdateFormDisplay(true);
         }
     }
 }

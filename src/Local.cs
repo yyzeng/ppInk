@@ -59,7 +59,7 @@ namespace gInk
         public string DlgTextLabel = "Text Input";
         public string DlgTagCaption = "Tag Numbering";
         public string DlgTagLabel = "Enter Starting Number";
-
+        public string TextFramingText = "Transparent background;Frame + Transparent background;White Background;Frame + White Background;Black Background;Frame + Black Background";
         public string FormClipartsTitle = "ClipArts";
         public string ButtonInsertText = "&Insert";
         public string ButtonFromClipBText = "&From Clipboard";

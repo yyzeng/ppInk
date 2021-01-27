@@ -1058,9 +1058,7 @@ namespace gInk
                 inp.Top = ((int)(scr.Bounds.Top + scr.Bounds.Bottom - inp.Height) / 2);//System.Windows.SystemParameters.PrimaryScreenHeight)-inp.Height) / 2;
                 inp.Left = ((int)(scr.Bounds.Left + scr.Bounds.Right - inp.Width) / 2);// System.Windows.SystemParameters.PrimaryScreenWidth) - inp.Width) / 2;
             }
-            DialogResult ret = inp.ShowDialog();
-            if (ret == DialogResult.Cancel)
-                stk.ExtendedProperties.Add(Root.TEXT_GUID, txt);
+            DialogResult ret = inp.ShowDialog();  // cancellation process is within the cancel button
             TextEdited = true;
             AllowInteractions(false);
             //ToUnThrough();
@@ -1377,7 +1375,7 @@ namespace gInk
             Root.CursorY0 = Int32.MinValue;
         }
 
-        private void ComputeTextBoxSize(ref Stroke st)
+        public void ComputeTextBoxSize(ref Stroke st)
         {
             System.Drawing.StringFormat stf = new System.Drawing.StringFormat(System.Drawing.StringFormatFlags.NoClip);
             stf.Alignment = (System.Drawing.StringAlignment)(st.ExtendedProperties[Root.TEXTHALIGN_GUID].Data);
