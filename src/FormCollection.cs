@@ -2606,18 +2606,39 @@ namespace gInk
                 bool shift = ((short)(GetKeyState(VK_LSHIFT) | GetKeyState(VK_RSHIFT)) & 0x8000) == 0x8000;
                 bool win = ((short)(GetKeyState(VK_LWIN) | GetKeyState(VK_RWIN)) & 0x8000) == 0x8000;
 
-                for (int p = 0; p < Root.MaxPenCount; p++)
-                {
-                    pressed = (GetKeyState(Root.Hotkey_Pens[p].Key) & 0x8000) == 0x8000;
+                if(Root.Hotkey_Pens[0].ConflictWith(Root.Hotkey_Pens[1] ))
+                { // same hotkey for pen 0 and pen 1 : we have to rotate through pens
+                    pressed = (GetKeyState(Root.Hotkey_Pens[0].Key) & 0x8000) == 0x8000;
+                    if (pressed && !LastPenStatus[0] && Root.Hotkey_Pens[0].ModifierMatch(control, alt, shift, win))
+                    {
+                        int p = LastPenSelected+1;
+                        if (p >= Root.MaxPenCount)
+                            p = 0;
+                        while (!Root.PenEnabled[p])
+                        {
+                            p += 1;
+                            if (p >= Root.MaxPenCount)
+                                p= 0;
+                        }
+                        SelectPen(p);
+                    }
+                    LastPenStatus[0] = pressed;
+                }
+                else
+                { // standard behavior
+                    for (int p = 0; p < Root.MaxPenCount; p++)
+                    {
+                        pressed = (GetKeyState(Root.Hotkey_Pens[p].Key) & 0x8000) == 0x8000;
                     if (pressed && !LastPenStatus[p] && Root.Hotkey_Pens[p].ModifierMatch(control, alt, shift, win))
                     {
                         SelectPen(p);
+                        }
+                        LastPenStatus[p] = pressed;
                     }
-					LastPenStatus[p] = pressed;
-				}
+                }
 
-				pressed = (GetKeyState(Root.Hotkey_Eraser.Key) & 0x8000) == 0x8000;
-				if (pressed && !LastEraserStatus && Root.Hotkey_Eraser.ModifierMatch(control, alt, shift, win))
+                pressed = (GetKeyState(Root.Hotkey_Eraser.Key) & 0x8000) == 0x8000;
+                if (pressed && !LastEraserStatus && Root.Hotkey_Eraser.ModifierMatch(control, alt, shift, win))
 				{
 					SelectPen(-1);
 				}
