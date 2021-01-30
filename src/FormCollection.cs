@@ -2419,6 +2419,13 @@ namespace gInk
         {
             Initializing = false;
 
+            if(Root.FFmpegProcess!=null && Root.FFmpegProcess.HasExited)
+            {
+                Root.VideoRecInProgress = VideoRecInProgress.Stopped;
+                btVideo.BackgroundImage = getImgFromDiskOrRes("VidStop", ImageExts);
+                Root.UponButtonsUpdate |= 0x2;
+            }
+
             if (SetWindowInputRectFlag) // alternative to prevent some error when trying to call this function from WM_ACTIVATE event handler
                 IC.SetWindowInputRectangle(new Rectangle(0, 0, this.Width, this.Height));
             SetWindowInputRectFlag = false;
@@ -3241,21 +3248,21 @@ namespace gInk
 
             rect.X = (int)(rect.X * ScreenScalingFactor);
             rect.Y = (int)(rect.Y * ScreenScalingFactor);
-            rect.Width = (int)(rect.Width * ScreenScalingFactor);
-            rect.Height = (int)(rect.Height * ScreenScalingFactor);
+            rect.Width = (int)(rect.Width * ScreenScalingFactor / 2) * 2;
+            rect.Height = (int)(rect.Height * ScreenScalingFactor / 2) * 2;
 
             Root.FFmpegProcess = new Process();
             string[] cmdArgs = Root.ExpandVarCmd(Root.FFMpegCmd, rect.X, rect.Y, rect.Width, rect.Height).Split(new char[] { ' ' }, 2);
-            //Console.WriteLine(string.Format("%s %s", cmdArgs[0], cmdArgs[1]));
+            Console.WriteLine(cmdArgs[0]+" "+cmdArgs[1]);
 
             Root.FFmpegProcess.StartInfo.FileName = cmdArgs[0];
             Root.FFmpegProcess.StartInfo.Arguments = cmdArgs[1];
 
             Root.FFmpegProcess.StartInfo.UseShellExecute = false;
             Root.FFmpegProcess.StartInfo.CreateNoWindow = true;
+            Root.FFmpegProcess.StartInfo.RedirectStandardInput  = true;
             Root.FFmpegProcess.StartInfo.RedirectStandardOutput = true;
             Root.FFmpegProcess.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
-
             Root.FFmpegProcess.Start();
             IntPtr ptr = Root.FFmpegProcess.MainWindowHandle;
             ShowWindow(ptr.ToInt32(), 2);
@@ -3376,7 +3383,9 @@ namespace gInk
         {
             if (Root.VideoRecordMode == VideoRecordMode.FfmpegRec)
             {
-                Root.FFmpegProcess.Kill();
+                Root.FFmpegProcess.StandardInput.WriteLine("q");    // to stop properly stops correctly file
+                Thread.Sleep(250);
+                try { Root.FFmpegProcess.Kill(); } catch { };
                 Root.VideoRecInProgress = VideoRecInProgress.Stopped;
                 btVideo.BackgroundImage = getImgFromDiskOrRes("VidStop", ImageExts);
                 Root.UponButtonsUpdate |= 0x2;
