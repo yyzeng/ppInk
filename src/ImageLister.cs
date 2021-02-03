@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -21,6 +21,7 @@ namespace gInk
         public string ImageStamp;
         public int ImgSizeX = -1;
         public int ImgSizeY = -1;
+        public Dictionary<string,Image> Originals = new Dictionary<string, Image>();
 
         public ImageLister(Root rt)
         {
@@ -44,9 +45,11 @@ namespace gInk
                 Image img = Image.FromFile(Root.StampFileNames[i]);
                 img.Tag = img.Width * 10000 + img.Height;
                 ImageListViewer.LargeImageList.Images.Add(Root.StampFileNames[i], img);
+                int j = ImageListViewer.LargeImageList.Images.IndexOfKey(Root.StampFileNames[i]);
+                Originals.Add(Root.StampFileNames[i],(Image)(img.Clone()));
                 //ImgSize[ImageListViewer.LargeImageList.Images.IndexOfKey(Root.StampFileNames[i])] = new Point(img.Width,img.Height);
-                ImgSizes[ImageListViewer.LargeImageList.Images.IndexOfKey(Root.StampFileNames[i])].X = img.Width;
-                ImgSizes[ImageListViewer.LargeImageList.Images.IndexOfKey(Root.StampFileNames[i])].Y = img.Height;
+                ImgSizes[j].X = img.Width;
+                ImgSizes[j].Y = img.Height;
             }
             ImageListViewer.LargeImageList.ImageSize = new Size(Root.StampSize , Root.StampSize);
         }
@@ -101,8 +104,10 @@ namespace gInk
             string st = "ClipBoard"+ImageListViewer.Items.Count.ToString();
             ImageListViewer.Items.Add(new ListViewItem("Clipboard",st));
             ImageListViewer.LargeImageList.Images.Add(st,img);
-            ImgSizes[ImageListViewer.LargeImageList.Images.IndexOfKey(st)].X = img.Width;
-            ImgSizes[ImageListViewer.LargeImageList.Images.IndexOfKey(st)].Y = img.Height;
+            int j = ImageListViewer.LargeImageList.Images.IndexOfKey(st);
+            Originals.Add(st, (Image)(img.Clone())); 
+            ImgSizes[j].X = img.Width;
+            ImgSizes[j].Y = img.Height;
         }
         
         private void LoadImageBtn_Click(object sender, EventArgs e)
@@ -121,8 +126,10 @@ namespace gInk
                     ImageListViewer.Items.Add(new ListViewItem(Path.GetFileNameWithoutExtension(fn), fn));
                     Image img = Image.FromFile(fn);
                     ImageListViewer.LargeImageList.Images.Add(fn, img);
-                    ImgSizes[ImageListViewer.LargeImageList.Images.IndexOfKey(fn)].X = img.Width;
-                    ImgSizes[ImageListViewer.LargeImageList.Images.IndexOfKey(fn)].Y = img.Height;
+                    int j = ImageListViewer.LargeImageList.Images.IndexOfKey(fn);
+                    Originals.Add(fn, (Image)(img.Clone()));
+                    ImgSizes[j].X = img.Width;
+                    ImgSizes[j].Y = img.Height;
 
                 }
             }

@@ -958,10 +958,10 @@ namespace gInk
             return st;
         }
 
-        private Stroke AddImageStroke(int CursorX0, int CursorY0, int CursorX, int CursorY, int ImgIdx)
+        private Stroke AddImageStroke(int CursorX0, int CursorY0, int CursorX, int CursorY, string fn,int ImgIdx)
         {
             Stroke st = AddRectStroke(CursorX0, CursorY0, CursorX, CursorY, Root.ImageStamp.Filling);
-            st.ExtendedProperties.Add(Root.IMAGE_GUID, ImgIdx);
+            st.ExtendedProperties.Add(Root.IMAGE_GUID, fn);
             st.ExtendedProperties.Add(Root.IMAGE_X_GUID, CursorX0);
             st.ExtendedProperties.Add(Root.IMAGE_Y_GUID, CursorY0);
             st.ExtendedProperties.Add(Root.IMAGE_W_GUID, CursorX - CursorX0);
@@ -1327,7 +1327,7 @@ namespace gInk
                         Console.WriteLine("ratio 1 = " + ((double)(Root.CursorY - Root.CursorY0) / (Root.CursorX - Root.CursorX0)).ToString());
                         Root.CursorY = (int)(Root.CursorY0 + (double)(Root.CursorX - Root.CursorX0) / w * h);
                     }
-                    AddImageStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY, idx);
+                    AddImageStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY, Root.ImageStamp.ImageStamp,idx);
                 }
                 else if ((Root.ToolSelected == Tools.Oval) && (Root.CursorX0 != Int32.MinValue))
                     AddEllipseStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY, Root.FilledSelected);

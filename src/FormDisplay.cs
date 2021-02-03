@@ -316,7 +316,16 @@ namespace gInk
                     /*else */
                     if (st.ExtendedProperties.Contains(Root.IMAGE_GUID))
                     {
-                        Image img = Root.FormCollection.ClipartsDlg.Images.Images[(int)(st.ExtendedProperties[Root.IMAGE_GUID].Data)];
+                        //Image img = Root.FormCollection.ClipartsDlg.Images.Images[(int)(st.ExtendedProperties[Root.IMAGE_GUID].Data)];
+                        Image img;
+                        try
+                        {
+                            img = Root.FormCollection.ClipartsDlg.Originals[(string)(st.ExtendedProperties[Root.IMAGE_GUID].Data)];
+                        }
+                        catch
+                        {
+                            img = gInk.Properties.Resources.unknown;
+                        }
                         int X = (int)(st.ExtendedProperties[Root.IMAGE_X_GUID].Data);
                         int Y = (int)(st.ExtendedProperties[Root.IMAGE_Y_GUID].Data);
                         int W = (int)(st.ExtendedProperties[Root.IMAGE_W_GUID].Data);
