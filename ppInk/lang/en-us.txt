@@ -34,6 +34,10 @@ ButtonNameEdit = "Edit Text|chip"
 ButtonNameMagn = "Magnetic Effect"
 ButtonNameClipArt = "ClipArt"
 ButtonNameVideo = "Video Record"
+SaveStroke = "Save Strokes"
+LoadStroke = "Load Strokes"
+
+StrokeFileExists = "{0} Already Exists\nDo you want to override it?"
 
 BoardTitle = "Clean Desktop"
 BoardText = "Erase all drawings and fill it with..."

@@ -37,6 +37,10 @@ namespace gInk
         public string ButtonNameMagn = "Magnetic Effect";
         public string ButtonNameClipArt = "ClipArt";
         public string ButtonNameVideo = "Video Record";
+        public string SaveStroke = "Save Strokes";
+        public string LoadStroke = "Load Strokes";
+
+        public string StrokeFileExists = "{0} Already Exists\nDo you want to override it?";
 
         public string BoardTitle = "Clean Desktop";
         public string BoardText = "Erase all drawings and fill it with...";

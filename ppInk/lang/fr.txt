@@ -34,6 +34,10 @@ ButtonNameEdit = "Edition (Texte|numéro)"
 ButtonNameMagn = "Effet aimanté"
 ButtonNameClipArt = "ClipArt"
 ButtonNameVideo = "Enregistrement Video"
+SaveStroke = "Sauver Dessins"
+LoadStroke = "Charger Dessins"
+
+StrokeFileExists = "{0} Existe\nVoulez-vous le remplacer?"
 
 BoardTitle = "Effacer"
 BoardText = "Efface tous les dessins et rempli le fond avec..."

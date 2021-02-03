@@ -66,6 +66,7 @@ namespace gInk
 				cbAllowDragging.Checked = true;
 			if (Root.AllowHotkeyInPointerMode)
 				cbAllowHotkeyInPointer.Checked = true;
+            cbLoadSaveEnabled.Checked = Root.LoadSaveEnabled;
 
             AltTabActivateCb.Checked = Root.AltTabPointer;
 
@@ -777,6 +778,11 @@ namespace gInk
                 else if ((string)(((Control)sender).Tag) == "3")
                     Root.ImageStamp3 = dlg.ImageStamp;
             }
+        }
+
+        private void cbLoadSaveEnabled_CheckedChanged(object sender, EventArgs e)
+        {
+            Root.LoadSaveEnabled = cbLoadSaveEnabled.Checked;
         }
 
         private void cbAllowHotkeyInPointer_CheckedChanged(object sender, EventArgs e)

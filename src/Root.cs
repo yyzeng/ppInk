@@ -131,6 +131,7 @@ namespace gInk
         public bool SnapEnabled = true;
         public bool UndoEnabled = true;
         public bool ClearEnabled = true;
+        public bool LoadSaveEnabled = true;
         public bool PanEnabled = true;
         public bool InkVisibleEnabled = true;
         public DrawingAttributes[] PenAttr = new DrawingAttributes[MaxPenCount];
@@ -440,7 +441,7 @@ namespace gInk
 		}
 		public void StopInk()
 		{
-            try { FormCollection.Close(); } catch { }
+            try { FormCollection.Close();  } catch { }
             try { FormDisplay.Close(); } catch { }
 			try { FormButtonHitter.Close(); } catch { }
 
@@ -1028,7 +1029,11 @@ namespace gInk
 							if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
 								PanEnabled = false;
 							break;
-						case "INKVISIBLE_ICON":
+                        case "LOADSAVE_ICON":
+                            if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
+                                LoadSaveEnabled = false;
+                            break;
+                        case "INKVISIBLE_ICON":
 							if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
 								InkVisibleEnabled = false;
 							break;
@@ -1435,13 +1440,19 @@ namespace gInk
 							else
 								sPara = "False";
 							break;
-						case "PAN_ICON":
-							if (PanEnabled)
-								sPara = "True";
-							else
-								sPara = "False";
-							break;
-						case "INKVISIBLE_ICON":
+                        case "PAN_ICON":
+                            if (PanEnabled)
+                                sPara = "True";
+                            else
+                                sPara = "False";
+                            break;
+                        case "LOADSAVE_ICON":
+                            if (LoadSaveEnabled)
+                                sPara = "True";
+                            else
+                                sPara = "False";
+                            break;
+                        case "INKVISIBLE_ICON":
 							if (PanEnabled)
 								sPara = "True";
 							else

@@ -106,6 +106,8 @@ namespace gInk
         public ImageLister ClipartsDlg;
         private Object btClipSel;
 
+        public string SaveStrokeFile="";
+
         // http://www.csharp411.com/hide-form-from-alttab/
         protected override CreateParams CreateParams
         {
@@ -263,6 +265,14 @@ namespace gInk
             btClear.Height = (int)(gpButtons.Height * 0.85);
             btClear.Width = btClear.Height;
             btClear.Top = (int)(gpButtons.Height * 0.08);
+
+            btSave.Height = (int)(gpButtons.Height * 0.48);
+            btSave.Width = btSave.Height;
+            btSave.Top = (int)(gpButtons.Height * 0.02);
+            btLoad.Height = (int)(gpButtons.Height * 0.48);
+            btLoad.Width = btLoad.Height;
+            btLoad.Top = (int)(gpButtons.Height * 0.52);
+
             btVideo.Height = (int)(gpButtons.Height * 0.85);
             btVideo.Width = btVideo.Height;
             btVideo.Top = (int)(gpButtons.Height * 0.08);
@@ -527,6 +537,21 @@ namespace gInk
             {
                 btClear.Visible = false;
             }
+
+            if (Root.LoadSaveEnabled)
+            {
+                btSave.Visible = true;
+                btSave.Left = cumulatedleft;
+                btLoad.Visible = true;
+                btLoad.Left = cumulatedleft;
+                cumulatedleft += (int)(btSave.Width * 1.1);
+            }
+            else
+            {
+                btSave.Visible = false;
+                btLoad.Visible = false;
+            }
+
             if (Root.VideoRecordMode > 0)
             {
                 btVideo.Visible = true;
@@ -546,12 +571,13 @@ namespace gInk
                     //Task.Run(() => SendInWs(Root.ObsWs, "GetRecordingStatus", new CancellationToken()));
                     Task.Run(() => SendInWs(Root.ObsWs, "GetStreamingStatus", new CancellationToken()));
                 }
-                cumulatedleft += (int)(btClear.Width * 1.1);
+                cumulatedleft += (int)(btVideo.Width * 1.1);
             }
             else
             {
                 btVideo.Visible = false;
             }
+
             cumulatedleft += (int)(btDock.Width * .4);
             btStop.Left = cumulatedleft;
             gpButtons.Width = (int)(btStop.Right + btDock.Width * .05);
@@ -654,7 +680,9 @@ namespace gInk
 
             //Graphics g;
             btStop.BackgroundImage = getImgFromDiskOrRes("exit", ImageExts);
-            //btClear.Image = image_clear;
+            btClear.BackgroundImage = getImgFromDiskOrRes("garbage", ImageExts);
+            btLoad.BackgroundImage = getImgFromDiskOrRes("open", ImageExts);
+            btSave.BackgroundImage = getImgFromDiskOrRes("save", ImageExts);
             btUndo.BackgroundImage = getImgFromDiskOrRes("undo", ImageExts);
             image_eraser_act = getImgFromDiskOrRes("eraser_act", ImageExts);
             image_eraser = getImgFromDiskOrRes("eraser", ImageExts);
@@ -2122,12 +2150,13 @@ namespace gInk
 				Root.LastPen = pen;
 		}
 
-		public void RetreatAndExit()
-		{
-			ToThrough();
-			Root.ClearInk();
-			SaveUndoStrokes();
-			//Root.SaveOptions("config.ini");
+        public void RetreatAndExit()
+        {
+            ToThrough();
+             SaveStrokes(Path.GetFullPath(Environment.ExpandEnvironmentVariables(Root.SnapshotBasePath + "AutoSave.strokes.txt")));
+            Root.ClearInk();
+            SaveUndoStrokes();
+            //Root.SaveOptions("config.ini");
 			Root.gpPenWidthVisible = false;
 
 			LastTickTime = DateTime.Now;
@@ -3503,7 +3532,7 @@ namespace gInk
 
         public void btTool_Click(object sender, EventArgs e)
         {
-            btClear.RightToLeft = RightToLeft.No;
+            //btClear.RightToLeft = RightToLeft.No;
             longClickTimer.Stop(); // for an unkown reason the mouse arrives later
             if (sender is ContextMenu)
             {
@@ -3721,6 +3750,274 @@ namespace gInk
                     tiSlide.Start();
                 }
             }
+        }
+
+        public void SaveStrokes(string fn= "ppinkSav.txt")
+        {
+            string outp = "";
+            int l;
+            Point p;
+            DrawingAttributes da;
+            using (FileStream fileout = File.Create(fn, 10, FileOptions.Asynchronous))
+            {
+                void writeUtf(string st)
+                {
+                    byte[] by = Encoding.UTF8.GetBytes(st);
+                    fileout.Write(by, 0, by.Length);
+                }
+                writeUtf("# ppInk Stroke restoration\n");
+                writeUtf("# gOneStrokeCanvus : ");
+                writeUtf("# "+Root.FormDisplay.gOneStrokeCanvus.DpiX.ToString()+"; "+ Root.FormDisplay.gOneStrokeCanvus.DpiY.ToString()+"/"+
+                         Root.FormDisplay.gOneStrokeCanvus.PageScale.ToString()+"-"+ Root.FormDisplay.gOneStrokeCanvus.PageUnit.ToString()+"/"+
+                         Root.FormDisplay.gOneStrokeCanvus.RenderingOrigin.ToString()+"\n");
+                Point pt;
+                pt = new Point(0, 0);
+                IC.Renderer.PixelToInkSpace(Root.FormDisplay.gOneStrokeCanvus,ref pt);
+                writeUtf("#P2IS 0,0 -> " + pt.ToString() + "\n");
+
+                pt = new Point(1920, 1080);
+                IC.Renderer.PixelToInkSpace(Root.FormDisplay.gOneStrokeCanvus, ref pt);
+                writeUtf("#P2IS 1920,1080 -> " + pt.ToString() + "\n");
+                
+                pt = new Point(0, 0);
+                IC.Renderer.InkSpaceToPixel(Root.FormDisplay.gOneStrokeCanvus, ref pt);
+                writeUtf("#IS2P 0,0 -> " + pt.ToString() + "\n");
+
+                pt = new Point(10000, 20000);
+                IC.Renderer.InkSpaceToPixel(Root.FormDisplay.gOneStrokeCanvus, ref pt);
+                writeUtf("#IS2P 10000,20000 -> " + pt.ToString() + "\n");
+
+                pt = new Point(20000, 10000);
+                IC.Renderer.InkSpaceToPixel(Root.FormDisplay.gOneStrokeCanvus, ref pt);
+                writeUtf("#IS2P 20000,10000 -> " + pt.ToString() + "\n");
+
+                System.Windows.Forms.Control II = FromHandle(IC.Handle);
+                writeUtf("# IC.Handle : ");
+
+                pt = new Point(0, 0);
+                IC.Renderer.PixelToInkSpace(IC.Handle, ref pt);
+                writeUtf("#P2IS 0,0 -> " + pt.ToString() + "\n");
+
+                pt = new Point(1920, 1080);
+                IC.Renderer.PixelToInkSpace(IC.Handle, ref pt);
+                writeUtf("#P2IS 1920,1080 -> " + pt.ToString() + "\n");
+
+                pt = new Point(0, 0);
+                IC.Renderer.InkSpaceToPixel(IC.Handle, ref pt);
+                writeUtf("#IS2P 0,0 -> " + pt.ToString() + "\n");
+
+                pt = new Point(10000, 20000);
+                IC.Renderer.InkSpaceToPixel(IC.Handle, ref pt);
+                writeUtf("#IS2P 10000,20000 -> " + pt.ToString() + "\n");
+
+                pt = new Point(20000, 10000);
+                IC.Renderer.InkSpaceToPixel(IC.Handle, ref pt);
+                writeUtf("#IS2P 20000,10000 -> " + pt.ToString() + "\n");
+
+                foreach (Stroke st in Root.FormCollection.IC.Ink.Strokes)
+                {
+                    l = st.GetPoints().Length;
+                    writeUtf("ID = " + st.Id.ToString() + " {\npts " + l.ToString() + " = ");
+                    outp = "";
+                    for (int i = 0; i < l; i++)
+                    {
+                        p = st.GetPoint(i);
+                        outp += p.X + "," + p.Y + ";";
+                    }
+                    writeUtf(outp + "\n");
+                    da = st.DrawingAttributes;
+                    writeUtf("DA = " + da.Color.ToString() + " T=" + da.Transparency + (da.FitToCurve ? ", Fit, W=" : ", NotFit, W=") + da.Width.ToString() + "\n");
+                    //outp = "ExtProp " + st.ExtendedProperties.Count.ToString() + " = ";
+                    outp = "";
+                    foreach (ExtendedProperty pr in st.ExtendedProperties)
+                    {
+                        //outp += pr.Id.ToString() + " (" + pr.Data.GetType() + ") :" + Encoding.UTF8.GetString(Encoding.Default.GetBytes(pr.Data.ToString())).Replace('\n','\r') + "\n";
+                        outp += pr.Id.ToString() + "%" + pr.Data.GetType() + ":" + pr.Data.ToString().Replace("\r", "").Replace('\n', '\a') + "\n";
+                    }
+                    outp += "}\n";
+                    writeUtf(outp);
+                }
+            }
+        }
+
+        public void LoadStrokes(string fn = "ppinkSav.txt")
+        {
+            using (StreamReader fileout = new StreamReader(fn, System.Text.Encoding.UTF8))
+            {
+                int j, l;
+                Stroke stk=null;
+                string st;
+                    
+                st = fileout.ReadLine();
+                if (!st.StartsWith("# ppInk"))
+                    return;
+                do
+                {
+                    st = fileout.ReadLine();
+                }
+                while (st.StartsWith("#"));
+                while (st !=null && st.StartsWith("ID"))
+                {
+                    do
+                    {
+                        st = fileout.ReadLine();
+                    }
+                    while (st.StartsWith("#"));
+                    if (!st.StartsWith("pts"))
+                        return;
+                    j = st.IndexOf("=");
+                    l = int.Parse(st.Substring(3, j - 3).Trim());
+                    Point[] pts = new Point[l];
+                    string[] sts = st.Substring(j+1).TrimStart().Split(';');
+
+                    for(int i = 0; i < l; i++)
+                    {
+                        string[] st3 = sts[i].Split(',');
+                        pts[i].X = int.Parse(st3[0]);
+                        pts[i].Y = int.Parse(st3[1]);
+                    }
+                    stk = IC.Ink.CreateStroke(pts);
+                    do
+                    {
+                        st = fileout.ReadLine();
+                    }
+                    while (st.StartsWith("#"));
+                    if (!st.StartsWith("DA"))
+                        return;
+                    j = st.IndexOf("R=")+2;
+                    l = st.IndexOf(",", j);
+                    int R = int.Parse(st.Substring(j, l - j));
+                    j = st.IndexOf("G=") + 2;
+                    l = st.IndexOf(",", j);
+                    int G = int.Parse(st.Substring(j, l - j));
+                    j = st.IndexOf("B=") + 2;
+                    l = st.IndexOf("]", j);
+                    int B = int.Parse(st.Substring(j, l - j));
+                    stk.DrawingAttributes.Color = Color.FromArgb(R, G, B);
+                    j = st.IndexOf("T=") + 2;
+                    l = st.IndexOf(",", j);
+                    stk.DrawingAttributes.Transparency = byte.Parse(st.Substring(j, l - j));
+                    stk.DrawingAttributes.FitToCurve = !st.Contains("NotFit");
+                    j = st.IndexOf("W=") + 2;
+                    l = st.Length;
+                    do
+                    {
+                        st = fileout.ReadLine();
+                    }
+                    while (st.StartsWith("#"));
+                    Guid guid;
+                    while(st != "}")
+                    {
+                        j = st.IndexOf('%');
+                        guid = new Guid(st.Substring(0, j));
+                        j++;
+                        l = st.IndexOf(':', j);
+                        string st1 = st.Substring(j, l-j);
+                        string st2 = st.Substring(l + 1);
+                        object obj=null;
+                        if(st.Contains("Int"))
+                            obj = int.Parse(st2);
+                        else if (st.Contains("Bool"))
+                            obj = bool.Parse(st2);
+                        else if (st.Contains("Single"))
+                            obj = float.Parse(st2);
+                        else if (st.Contains("String"))
+                            obj = st2.Replace('\a','\n');
+                        stk.ExtendedProperties.Add(guid, obj);
+                        do
+                        {
+                            st = fileout.ReadLine();
+                        }
+                        while (st.StartsWith("#"));
+                    }
+                    IC.Ink.Strokes.Add(stk);
+                    do
+                    {
+                        st = fileout.ReadLine();
+                    }
+                    while (st!=null && st.StartsWith("#"));
+                }
+            }
+        }
+
+        private void btLoad_Click(object sender, EventArgs e)
+        {
+            longClickTimer.Stop(); // for an unkown reason the mouse arrives later
+            if (sender is ContextMenu)
+            {
+                sender = (sender as ContextMenu).SourceControl;
+                MouseTimeDown = DateTime.FromBinary(0);
+            }
+            if (ToolbarMoved)
+            {
+                ToolbarMoved = false;
+                return;
+            }
+            if (sender != null && (DateTime.Now - MouseTimeDown).TotalSeconds > Root.LongClickTime)
+            {
+                if (SaveStrokeFile == "")
+                    SaveStrokeFile = Path.GetFullPath(Environment.ExpandEnvironmentVariables(Root.SnapshotBasePath));
+                using (OpenFileDialog openFileDialog = new OpenFileDialog())
+                {
+                    openFileDialog.InitialDirectory = Path.GetDirectoryName(SaveStrokeFile);
+                    openFileDialog.Filter = "strokes files(*.strokes.txt)|*.strokes.txt|All files (*.*)|*.*";
+                    openFileDialog.FilterIndex = 1;
+                    AllowInteractions(true);
+                    DialogResult rst = openFileDialog.ShowDialog();
+                    AllowInteractions(false);
+                    if ( rst == DialogResult.OK)
+                        SaveStrokeFile = openFileDialog.FileName;
+                    else
+                        return;
+                }
+            }
+            if (SaveStrokeFile == "")
+                LoadStrokes(Path.GetFullPath(Environment.ExpandEnvironmentVariables(Root.SnapshotBasePath + "AutoSave.strokes.txt")));
+            else
+                LoadStrokes(SaveStrokeFile);
+            Root.UponAllDrawingUpdate = true;
+        }
+
+        private void btSave_Click(object sender, EventArgs e)
+        {
+            longClickTimer.Stop(); // for an unkown reason the mouse arrives later
+            if (sender is ContextMenu)
+            {
+                sender = (sender as ContextMenu).SourceControl;
+                MouseTimeDown = DateTime.FromBinary(0);
+            }
+            if (ToolbarMoved)
+            {
+                ToolbarMoved = false;
+                return;
+            }
+            do
+            {
+                if ((sender != null &&  (DateTime.Now - MouseTimeDown).TotalSeconds > Root.LongClickTime)|| SaveStrokeFile == "")
+                {
+                    string sav = SaveStrokeFile;
+                    if (SaveStrokeFile == "")
+                        SaveStrokeFile = Path.GetFullPath(Environment.ExpandEnvironmentVariables(Root.SnapshotBasePath));
+                    using (SaveFileDialog FileDialog = new SaveFileDialog())
+                    {
+                        FileDialog.InitialDirectory = Path.GetDirectoryName(SaveStrokeFile);
+                        FileDialog.Filter = "strokes files(*.strokes.txt)|*.strokes.txt|All files (*.*)|*.*";
+                        FileDialog.FilterIndex = 1;
+                        AllowInteractions(true);
+                        DialogResult rst = FileDialog.ShowDialog();
+                        AllowInteractions(false);
+                        if ( rst == DialogResult.OK)
+                            SaveStrokeFile = FileDialog.FileName;
+                        else
+                        {
+                            SaveStrokeFile = sav;
+                            return;
+                        }
+                    }
+                }
+            }
+            while (!(!File.Exists(SaveStrokeFile) || MessageBox.Show(string.Format(Root.Local.StrokeFileExists, SaveStrokeFile), Root.Local.SaveStroke, MessageBoxButtons.OKCancel) == DialogResult.OK));
+            SaveStrokes(SaveStrokeFile);
         }
 
 

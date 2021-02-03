@@ -29,7 +29,6 @@ namespace gInk
 		private void InitializeComponent()
 		{
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormOptions));
             gInk.Hotkey hotkey1 = new gInk.Hotkey();
             gInk.Hotkey hotkey2 = new gInk.Hotkey();
             gInk.Hotkey hotkey3 = new gInk.Hotkey();
@@ -55,6 +54,7 @@ namespace gInk
             gInk.Hotkey hotkey23 = new gInk.Hotkey();
             gInk.Hotkey hotkey24 = new gInk.Hotkey();
             gInk.Hotkey hotkey25 = new gInk.Hotkey();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormOptions));
             this.cbEraserEnabled = new System.Windows.Forms.CheckBox();
             this.cbPointerEnabled = new System.Windows.Forms.CheckBox();
             this.cbSnapEnabled = new System.Windows.Forms.CheckBox();
@@ -73,6 +73,8 @@ namespace gInk
             this.comboCanvasCursor = new System.Windows.Forms.ComboBox();
             this.VideoTabCtrl = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.DefTagLbl = new System.Windows.Forms.Label();
+            this.TagFontBtn = new System.Windows.Forms.Button();
             this.Clip3Btn = new System.Windows.Forms.Button();
             this.Clip2Btn = new System.Windows.Forms.Button();
             this.Clip1Btn = new System.Windows.Forms.Button();
@@ -140,22 +142,6 @@ namespace gInk
             this.lbHkUndo = new System.Windows.Forms.Label();
             this.lbHkEraser = new System.Windows.Forms.Label();
             this.lbGlobalHotkey = new System.Windows.Forms.Label();
-            this.VideoTab = new System.Windows.Forms.TabPage();
-            this.LblFfmpegNote = new System.Windows.Forms.Label();
-            this.FfmpegCmdTxt = new System.Windows.Forms.TextBox();
-            this.LblFfmpegCmd = new System.Windows.Forms.Label();
-            this.WsPwdTxt = new System.Windows.Forms.TextBox();
-            this.LblWsPwd = new System.Windows.Forms.Label();
-            this.OptNoVideo = new System.Windows.Forms.RadioButton();
-            this.LblObsNote = new System.Windows.Forms.Label();
-            this.WsUrlTxt = new System.Windows.Forms.TextBox();
-            this.LblWsUrl = new System.Windows.Forms.Label();
-            this.OptFfmpeg = new System.Windows.Forms.RadioButton();
-            this.OptObsBcast = new System.Windows.Forms.RadioButton();
-            this.OptObsRecord = new System.Windows.Forms.RadioButton();
-            this.FontDlg = new System.Windows.Forms.FontDialog();
-            this.DefTagLbl = new System.Windows.Forms.Label();
-            this.TagFontBtn = new System.Windows.Forms.Button();
             this.hiToolClipArt3 = new gInk.HotkeyInputBox();
             this.hiToolClipArt2 = new gInk.HotkeyInputBox();
             this.hiToolClipArt1 = new gInk.HotkeyInputBox();
@@ -181,6 +167,21 @@ namespace gInk
             this.hiUndo = new gInk.HotkeyInputBox();
             this.hiEraser = new gInk.HotkeyInputBox();
             this.hiGlobal = new gInk.HotkeyInputBox();
+            this.VideoTab = new System.Windows.Forms.TabPage();
+            this.LblFfmpegNote = new System.Windows.Forms.Label();
+            this.FfmpegCmdTxt = new System.Windows.Forms.TextBox();
+            this.LblFfmpegCmd = new System.Windows.Forms.Label();
+            this.WsPwdTxt = new System.Windows.Forms.TextBox();
+            this.LblWsPwd = new System.Windows.Forms.Label();
+            this.OptNoVideo = new System.Windows.Forms.RadioButton();
+            this.LblObsNote = new System.Windows.Forms.Label();
+            this.WsUrlTxt = new System.Windows.Forms.TextBox();
+            this.LblWsUrl = new System.Windows.Forms.Label();
+            this.OptFfmpeg = new System.Windows.Forms.RadioButton();
+            this.OptObsBcast = new System.Windows.Forms.RadioButton();
+            this.OptObsRecord = new System.Windows.Forms.RadioButton();
+            this.FontDlg = new System.Windows.Forms.FontDialog();
+            this.cbLoadSaveEnabled = new System.Windows.Forms.CheckBox();
             this.VideoTabCtrl.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.BoardBx.SuspendLayout();
@@ -205,7 +206,7 @@ namespace gInk
             // cbPointerEnabled
             // 
             this.cbPointerEnabled.AutoSize = true;
-            this.cbPointerEnabled.Location = new System.Drawing.Point(263, 78);
+            this.cbPointerEnabled.Location = new System.Drawing.Point(272, 82);
             this.cbPointerEnabled.Name = "cbPointerEnabled";
             this.cbPointerEnabled.Size = new System.Drawing.Size(15, 14);
             this.cbPointerEnabled.TabIndex = 0;
@@ -215,7 +216,7 @@ namespace gInk
             // cbSnapEnabled
             // 
             this.cbSnapEnabled.AutoSize = true;
-            this.cbSnapEnabled.Location = new System.Drawing.Point(380, 82);
+            this.cbSnapEnabled.Location = new System.Drawing.Point(362, 82);
             this.cbSnapEnabled.Name = "cbSnapEnabled";
             this.cbSnapEnabled.Size = new System.Drawing.Size(15, 14);
             this.cbSnapEnabled.TabIndex = 0;
@@ -225,7 +226,7 @@ namespace gInk
             // cbUndoEnabled
             // 
             this.cbUndoEnabled.AutoSize = true;
-            this.cbUndoEnabled.Location = new System.Drawing.Point(421, 82);
+            this.cbUndoEnabled.Location = new System.Drawing.Point(401, 82);
             this.cbUndoEnabled.Name = "cbUndoEnabled";
             this.cbUndoEnabled.Size = new System.Drawing.Size(15, 14);
             this.cbUndoEnabled.TabIndex = 0;
@@ -235,7 +236,7 @@ namespace gInk
             // cbClearEnabled
             // 
             this.cbClearEnabled.AutoSize = true;
-            this.cbClearEnabled.Location = new System.Drawing.Point(458, 82);
+            this.cbClearEnabled.Location = new System.Drawing.Point(436, 82);
             this.cbClearEnabled.Name = "cbClearEnabled";
             this.cbClearEnabled.Size = new System.Drawing.Size(15, 14);
             this.cbClearEnabled.TabIndex = 0;
@@ -245,7 +246,7 @@ namespace gInk
             // cbWidthEnabled
             // 
             this.cbWidthEnabled.AutoSize = true;
-            this.cbWidthEnabled.Location = new System.Drawing.Point(305, 81);
+            this.cbWidthEnabled.Location = new System.Drawing.Point(293, 82);
             this.cbWidthEnabled.Name = "cbWidthEnabled";
             this.cbWidthEnabled.Size = new System.Drawing.Size(15, 14);
             this.cbWidthEnabled.TabIndex = 0;
@@ -345,6 +346,7 @@ namespace gInk
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.tabPage1.Controls.Add(this.cbLoadSaveEnabled);
             this.tabPage1.Controls.Add(this.DefTagLbl);
             this.tabPage1.Controls.Add(this.TagFontBtn);
             this.tabPage1.Controls.Add(this.Clip3Btn);
@@ -393,6 +395,25 @@ namespace gInk
             this.tabPage1.Size = new System.Drawing.Size(944, 483);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "General";
+            // 
+            // DefTagLbl
+            // 
+            this.DefTagLbl.AutoSize = true;
+            this.DefTagLbl.Location = new System.Drawing.Point(455, 276);
+            this.DefTagLbl.Name = "DefTagLbl";
+            this.DefTagLbl.Size = new System.Drawing.Size(65, 13);
+            this.DefTagLbl.TabIndex = 43;
+            this.DefTagLbl.Text = "Default Text";
+            // 
+            // TagFontBtn
+            // 
+            this.TagFontBtn.Location = new System.Drawing.Point(646, 271);
+            this.TagFontBtn.Name = "TagFontBtn";
+            this.TagFontBtn.Size = new System.Drawing.Size(111, 23);
+            this.TagFontBtn.TabIndex = 42;
+            this.TagFontBtn.Text = "Select &Font && Size";
+            this.TagFontBtn.UseVisualStyleBackColor = true;
+            this.TagFontBtn.Click += new System.EventHandler(this.TagFontBtn_Click);
             // 
             // Clip3Btn
             // 
@@ -757,7 +778,7 @@ namespace gInk
             // cbInkVisibleEnabled
             // 
             this.cbInkVisibleEnabled.AutoSize = true;
-            this.cbInkVisibleEnabled.Location = new System.Drawing.Point(344, 82);
+            this.cbInkVisibleEnabled.Location = new System.Drawing.Point(327, 82);
             this.cbInkVisibleEnabled.Name = "cbInkVisibleEnabled";
             this.cbInkVisibleEnabled.Size = new System.Drawing.Size(15, 14);
             this.cbInkVisibleEnabled.TabIndex = 0;
@@ -1125,175 +1146,6 @@ namespace gInk
             this.lbGlobalHotkey.TabIndex = 4;
             this.lbGlobalHotkey.Text = "Global hotkey (start drawing, switch between mouse pointer and drawing)";
             // 
-            // VideoTab
-            // 
-            this.VideoTab.Controls.Add(this.LblFfmpegNote);
-            this.VideoTab.Controls.Add(this.FfmpegCmdTxt);
-            this.VideoTab.Controls.Add(this.LblFfmpegCmd);
-            this.VideoTab.Controls.Add(this.WsPwdTxt);
-            this.VideoTab.Controls.Add(this.LblWsPwd);
-            this.VideoTab.Controls.Add(this.OptNoVideo);
-            this.VideoTab.Controls.Add(this.LblObsNote);
-            this.VideoTab.Controls.Add(this.WsUrlTxt);
-            this.VideoTab.Controls.Add(this.LblWsUrl);
-            this.VideoTab.Controls.Add(this.OptFfmpeg);
-            this.VideoTab.Controls.Add(this.OptObsBcast);
-            this.VideoTab.Controls.Add(this.OptObsRecord);
-            this.VideoTab.Location = new System.Drawing.Point(4, 22);
-            this.VideoTab.Name = "VideoTab";
-            this.VideoTab.Padding = new System.Windows.Forms.Padding(3);
-            this.VideoTab.Size = new System.Drawing.Size(944, 483);
-            this.VideoTab.TabIndex = 3;
-            this.VideoTab.Text = "Video";
-            this.VideoTab.UseVisualStyleBackColor = true;
-            // 
-            // LblFfmpegNote
-            // 
-            this.LblFfmpegNote.AutoSize = true;
-            this.LblFfmpegNote.Location = new System.Drawing.Point(87, 322);
-            this.LblFfmpegNote.Name = "LblFfmpegNote";
-            this.LblFfmpegNote.Size = new System.Drawing.Size(416, 117);
-            this.LblFfmpegNote.TabIndex = 12;
-            this.LblFfmpegNote.Text = resources.GetString("LblFfmpegNote.Text");
-            // 
-            // FfmpegCmdTxt
-            // 
-            this.FfmpegCmdTxt.Location = new System.Drawing.Point(193, 278);
-            this.FfmpegCmdTxt.Name = "FfmpegCmdTxt";
-            this.FfmpegCmdTxt.Size = new System.Drawing.Size(514, 20);
-            this.FfmpegCmdTxt.TabIndex = 11;
-            this.FfmpegCmdTxt.TextChanged += new System.EventHandler(this.FfmpegCmdTxt_TextChanged);
-            // 
-            // LblFfmpegCmd
-            // 
-            this.LblFfmpegCmd.AutoSize = true;
-            this.LblFfmpegCmd.Location = new System.Drawing.Point(87, 281);
-            this.LblFfmpegCmd.Name = "LblFfmpegCmd";
-            this.LblFfmpegCmd.Size = new System.Drawing.Size(77, 13);
-            this.LblFfmpegCmd.TabIndex = 10;
-            this.LblFfmpegCmd.Text = "Command Line";
-            // 
-            // WsPwdTxt
-            // 
-            this.WsPwdTxt.Location = new System.Drawing.Point(193, 138);
-            this.WsPwdTxt.Name = "WsPwdTxt";
-            this.WsPwdTxt.Size = new System.Drawing.Size(100, 20);
-            this.WsPwdTxt.TabIndex = 9;
-            this.WsPwdTxt.TextChanged += new System.EventHandler(this.WsPwdTxt_TextChanged);
-            // 
-            // LblWsPwd
-            // 
-            this.LblWsPwd.AutoSize = true;
-            this.LblWsPwd.Location = new System.Drawing.Point(87, 141);
-            this.LblWsPwd.Name = "LblWsPwd";
-            this.LblWsPwd.Size = new System.Drawing.Size(53, 13);
-            this.LblWsPwd.TabIndex = 8;
-            this.LblWsPwd.Text = "Password";
-            // 
-            // OptNoVideo
-            // 
-            this.OptNoVideo.AutoSize = true;
-            this.OptNoVideo.Checked = true;
-            this.OptNoVideo.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.OptNoVideo.Location = new System.Drawing.Point(61, 17);
-            this.OptNoVideo.Name = "OptNoVideo";
-            this.OptNoVideo.Size = new System.Drawing.Size(139, 17);
-            this.OptNoVideo.TabIndex = 7;
-            this.OptNoVideo.TabStop = true;
-            this.OptNoVideo.Tag = "0";
-            this.OptNoVideo.Text = "No Video Recording";
-            this.OptNoVideo.UseVisualStyleBackColor = true;
-            this.OptNoVideo.CheckedChanged += new System.EventHandler(this.VideoOption_Changed);
-            // 
-            // LblObsNote
-            // 
-            this.LblObsNote.AutoSize = true;
-            this.LblObsNote.Location = new System.Drawing.Point(58, 173);
-            this.LblObsNote.Name = "LblObsNote";
-            this.LblObsNote.Size = new System.Drawing.Size(431, 26);
-            this.LblObsNote.TabIndex = 6;
-            this.LblObsNote.Text = "Note : OBS should be started before starting record\r\n            OBS should be in" +
-    "stalled with Websocket plugin,with port and password configured";
-            // 
-            // WsUrlTxt
-            // 
-            this.WsUrlTxt.Location = new System.Drawing.Point(193, 112);
-            this.WsUrlTxt.Name = "WsUrlTxt";
-            this.WsUrlTxt.Size = new System.Drawing.Size(70, 20);
-            this.WsUrlTxt.TabIndex = 5;
-            this.WsUrlTxt.TextChanged += new System.EventHandler(this.WsUrlTxt_TextChanged);
-            // 
-            // LblWsUrl
-            // 
-            this.LblWsUrl.AutoSize = true;
-            this.LblWsUrl.Location = new System.Drawing.Point(87, 115);
-            this.LblWsUrl.Name = "LblWsUrl";
-            this.LblWsUrl.Size = new System.Drawing.Size(89, 13);
-            this.LblWsUrl.TabIndex = 3;
-            this.LblWsUrl.Text = "WebSocket URL";
-            // 
-            // OptFfmpeg
-            // 
-            this.OptFfmpeg.AutoSize = true;
-            this.OptFfmpeg.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.OptFfmpeg.Location = new System.Drawing.Point(61, 241);
-            this.OptFfmpeg.Name = "OptFfmpeg";
-            this.OptFfmpeg.Size = new System.Drawing.Size(131, 17);
-            this.OptFfmpeg.TabIndex = 2;
-            this.OptFfmpeg.Tag = "3";
-            this.OptFfmpeg.Text = "FFmpeg Recording";
-            this.OptFfmpeg.UseVisualStyleBackColor = true;
-            this.OptFfmpeg.CheckedChanged += new System.EventHandler(this.VideoOption_Changed);
-            // 
-            // OptObsBcast
-            // 
-            this.OptObsBcast.AutoSize = true;
-            this.OptObsBcast.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.OptObsBcast.Location = new System.Drawing.Point(61, 76);
-            this.OptObsBcast.Name = "OptObsBcast";
-            this.OptObsBcast.Size = new System.Drawing.Size(128, 17);
-            this.OptObsBcast.TabIndex = 1;
-            this.OptObsBcast.Tag = "2";
-            this.OptObsBcast.Text = "OBS Broadcasting";
-            this.OptObsBcast.UseVisualStyleBackColor = true;
-            this.OptObsBcast.CheckedChanged += new System.EventHandler(this.VideoOption_Changed);
-            // 
-            // OptObsRecord
-            // 
-            this.OptObsRecord.AutoSize = true;
-            this.OptObsRecord.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.OptObsRecord.Location = new System.Drawing.Point(61, 53);
-            this.OptObsRecord.Name = "OptObsRecord";
-            this.OptObsRecord.Size = new System.Drawing.Size(112, 17);
-            this.OptObsRecord.TabIndex = 0;
-            this.OptObsRecord.Tag = "1";
-            this.OptObsRecord.Text = "OBS Recording";
-            this.OptObsRecord.UseVisualStyleBackColor = true;
-            this.OptObsRecord.CheckedChanged += new System.EventHandler(this.VideoOption_Changed);
-            // 
-            // FontDlg
-            // 
-            this.FontDlg.FontMustExist = true;
-            // 
-            // DefTagLbl
-            // 
-            this.DefTagLbl.AutoSize = true;
-            this.DefTagLbl.Location = new System.Drawing.Point(455, 276);
-            this.DefTagLbl.Name = "DefTagLbl";
-            this.DefTagLbl.Size = new System.Drawing.Size(65, 13);
-            this.DefTagLbl.TabIndex = 43;
-            this.DefTagLbl.Text = "Default Text";
-            // 
-            // TagFontBtn
-            // 
-            this.TagFontBtn.Location = new System.Drawing.Point(646, 271);
-            this.TagFontBtn.Name = "TagFontBtn";
-            this.TagFontBtn.Size = new System.Drawing.Size(111, 23);
-            this.TagFontBtn.TabIndex = 42;
-            this.TagFontBtn.Text = "Select &Font && Size";
-            this.TagFontBtn.UseVisualStyleBackColor = true;
-            this.TagFontBtn.Click += new System.EventHandler(this.TagFontBtn_Click);
-            // 
             // hiToolClipArt3
             // 
             this.hiToolClipArt3.BackColor = System.Drawing.Color.White;
@@ -1643,6 +1495,166 @@ namespace gInk
             this.hiGlobal.Text = "None";
             this.hiGlobal.OnHotkeyChanged += new System.EventHandler(this.hi_OnHotkeyChanged);
             // 
+            // VideoTab
+            // 
+            this.VideoTab.Controls.Add(this.LblFfmpegNote);
+            this.VideoTab.Controls.Add(this.FfmpegCmdTxt);
+            this.VideoTab.Controls.Add(this.LblFfmpegCmd);
+            this.VideoTab.Controls.Add(this.WsPwdTxt);
+            this.VideoTab.Controls.Add(this.LblWsPwd);
+            this.VideoTab.Controls.Add(this.OptNoVideo);
+            this.VideoTab.Controls.Add(this.LblObsNote);
+            this.VideoTab.Controls.Add(this.WsUrlTxt);
+            this.VideoTab.Controls.Add(this.LblWsUrl);
+            this.VideoTab.Controls.Add(this.OptFfmpeg);
+            this.VideoTab.Controls.Add(this.OptObsBcast);
+            this.VideoTab.Controls.Add(this.OptObsRecord);
+            this.VideoTab.Location = new System.Drawing.Point(4, 22);
+            this.VideoTab.Name = "VideoTab";
+            this.VideoTab.Padding = new System.Windows.Forms.Padding(3);
+            this.VideoTab.Size = new System.Drawing.Size(944, 483);
+            this.VideoTab.TabIndex = 3;
+            this.VideoTab.Text = "Video";
+            this.VideoTab.UseVisualStyleBackColor = true;
+            // 
+            // LblFfmpegNote
+            // 
+            this.LblFfmpegNote.AutoSize = true;
+            this.LblFfmpegNote.Location = new System.Drawing.Point(87, 322);
+            this.LblFfmpegNote.Name = "LblFfmpegNote";
+            this.LblFfmpegNote.Size = new System.Drawing.Size(416, 117);
+            this.LblFfmpegNote.TabIndex = 12;
+            this.LblFfmpegNote.Text = resources.GetString("LblFfmpegNote.Text");
+            // 
+            // FfmpegCmdTxt
+            // 
+            this.FfmpegCmdTxt.Location = new System.Drawing.Point(193, 278);
+            this.FfmpegCmdTxt.Name = "FfmpegCmdTxt";
+            this.FfmpegCmdTxt.Size = new System.Drawing.Size(514, 20);
+            this.FfmpegCmdTxt.TabIndex = 11;
+            this.FfmpegCmdTxt.TextChanged += new System.EventHandler(this.FfmpegCmdTxt_TextChanged);
+            // 
+            // LblFfmpegCmd
+            // 
+            this.LblFfmpegCmd.AutoSize = true;
+            this.LblFfmpegCmd.Location = new System.Drawing.Point(87, 281);
+            this.LblFfmpegCmd.Name = "LblFfmpegCmd";
+            this.LblFfmpegCmd.Size = new System.Drawing.Size(77, 13);
+            this.LblFfmpegCmd.TabIndex = 10;
+            this.LblFfmpegCmd.Text = "Command Line";
+            // 
+            // WsPwdTxt
+            // 
+            this.WsPwdTxt.Location = new System.Drawing.Point(193, 138);
+            this.WsPwdTxt.Name = "WsPwdTxt";
+            this.WsPwdTxt.Size = new System.Drawing.Size(100, 20);
+            this.WsPwdTxt.TabIndex = 9;
+            this.WsPwdTxt.TextChanged += new System.EventHandler(this.WsPwdTxt_TextChanged);
+            // 
+            // LblWsPwd
+            // 
+            this.LblWsPwd.AutoSize = true;
+            this.LblWsPwd.Location = new System.Drawing.Point(87, 141);
+            this.LblWsPwd.Name = "LblWsPwd";
+            this.LblWsPwd.Size = new System.Drawing.Size(53, 13);
+            this.LblWsPwd.TabIndex = 8;
+            this.LblWsPwd.Text = "Password";
+            // 
+            // OptNoVideo
+            // 
+            this.OptNoVideo.AutoSize = true;
+            this.OptNoVideo.Checked = true;
+            this.OptNoVideo.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.OptNoVideo.Location = new System.Drawing.Point(61, 17);
+            this.OptNoVideo.Name = "OptNoVideo";
+            this.OptNoVideo.Size = new System.Drawing.Size(139, 17);
+            this.OptNoVideo.TabIndex = 7;
+            this.OptNoVideo.TabStop = true;
+            this.OptNoVideo.Tag = "0";
+            this.OptNoVideo.Text = "No Video Recording";
+            this.OptNoVideo.UseVisualStyleBackColor = true;
+            this.OptNoVideo.CheckedChanged += new System.EventHandler(this.VideoOption_Changed);
+            // 
+            // LblObsNote
+            // 
+            this.LblObsNote.AutoSize = true;
+            this.LblObsNote.Location = new System.Drawing.Point(58, 173);
+            this.LblObsNote.Name = "LblObsNote";
+            this.LblObsNote.Size = new System.Drawing.Size(431, 26);
+            this.LblObsNote.TabIndex = 6;
+            this.LblObsNote.Text = "Note : OBS should be started before starting record\r\n            OBS should be in" +
+    "stalled with Websocket plugin,with port and password configured";
+            // 
+            // WsUrlTxt
+            // 
+            this.WsUrlTxt.Location = new System.Drawing.Point(193, 112);
+            this.WsUrlTxt.Name = "WsUrlTxt";
+            this.WsUrlTxt.Size = new System.Drawing.Size(70, 20);
+            this.WsUrlTxt.TabIndex = 5;
+            this.WsUrlTxt.TextChanged += new System.EventHandler(this.WsUrlTxt_TextChanged);
+            // 
+            // LblWsUrl
+            // 
+            this.LblWsUrl.AutoSize = true;
+            this.LblWsUrl.Location = new System.Drawing.Point(87, 115);
+            this.LblWsUrl.Name = "LblWsUrl";
+            this.LblWsUrl.Size = new System.Drawing.Size(89, 13);
+            this.LblWsUrl.TabIndex = 3;
+            this.LblWsUrl.Text = "WebSocket URL";
+            // 
+            // OptFfmpeg
+            // 
+            this.OptFfmpeg.AutoSize = true;
+            this.OptFfmpeg.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.OptFfmpeg.Location = new System.Drawing.Point(61, 241);
+            this.OptFfmpeg.Name = "OptFfmpeg";
+            this.OptFfmpeg.Size = new System.Drawing.Size(131, 17);
+            this.OptFfmpeg.TabIndex = 2;
+            this.OptFfmpeg.Tag = "3";
+            this.OptFfmpeg.Text = "FFmpeg Recording";
+            this.OptFfmpeg.UseVisualStyleBackColor = true;
+            this.OptFfmpeg.CheckedChanged += new System.EventHandler(this.VideoOption_Changed);
+            // 
+            // OptObsBcast
+            // 
+            this.OptObsBcast.AutoSize = true;
+            this.OptObsBcast.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.OptObsBcast.Location = new System.Drawing.Point(61, 76);
+            this.OptObsBcast.Name = "OptObsBcast";
+            this.OptObsBcast.Size = new System.Drawing.Size(128, 17);
+            this.OptObsBcast.TabIndex = 1;
+            this.OptObsBcast.Tag = "2";
+            this.OptObsBcast.Text = "OBS Broadcasting";
+            this.OptObsBcast.UseVisualStyleBackColor = true;
+            this.OptObsBcast.CheckedChanged += new System.EventHandler(this.VideoOption_Changed);
+            // 
+            // OptObsRecord
+            // 
+            this.OptObsRecord.AutoSize = true;
+            this.OptObsRecord.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.OptObsRecord.Location = new System.Drawing.Point(61, 53);
+            this.OptObsRecord.Name = "OptObsRecord";
+            this.OptObsRecord.Size = new System.Drawing.Size(112, 17);
+            this.OptObsRecord.TabIndex = 0;
+            this.OptObsRecord.Tag = "1";
+            this.OptObsRecord.Text = "OBS Recording";
+            this.OptObsRecord.UseVisualStyleBackColor = true;
+            this.OptObsRecord.CheckedChanged += new System.EventHandler(this.VideoOption_Changed);
+            // 
+            // FontDlg
+            // 
+            this.FontDlg.FontMustExist = true;
+            // 
+            // cbLoadSaveEnabled
+            // 
+            this.cbLoadSaveEnabled.AutoSize = true;
+            this.cbLoadSaveEnabled.Location = new System.Drawing.Point(467, 82);
+            this.cbLoadSaveEnabled.Name = "cbLoadSaveEnabled";
+            this.cbLoadSaveEnabled.Size = new System.Drawing.Size(15, 14);
+            this.cbLoadSaveEnabled.TabIndex = 44;
+            this.cbLoadSaveEnabled.UseVisualStyleBackColor = true;
+            this.cbLoadSaveEnabled.CheckedChanged += new System.EventHandler(this.cbLoadSaveEnabled_CheckedChanged);
+            // 
             // FormOptions
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1803,5 +1815,6 @@ namespace gInk
         private HotkeyInputBox hiToolClipArt1;
         private System.Windows.Forms.Label DefTagLbl;
         private System.Windows.Forms.Button TagFontBtn;
+        private System.Windows.Forms.CheckBox cbLoadSaveEnabled;
     }
 }

@@ -30,6 +30,11 @@ namespace gInk
 		{
             this.components = new System.ComponentModel.Container();
             this.gpButtons = new System.Windows.Forms.Panel();
+            this.btSave = new System.Windows.Forms.Button();
+            this.btLoad = new System.Windows.Forms.Button();
+            this.btClip3 = new System.Windows.Forms.Button();
+            this.btClip2 = new System.Windows.Forms.Button();
+            this.btClip1 = new System.Windows.Forms.Button();
             this.btClipArt = new System.Windows.Forms.Button();
             this.btStop = new System.Windows.Forms.Button();
             this.btVideo = new System.Windows.Forms.Button();
@@ -57,9 +62,6 @@ namespace gInk
             this.pboxPenWidthIndicator = new System.Windows.Forms.PictureBox();
             this.longClickTimer = new System.Windows.Forms.Timer(this.components);
             this.FontDlg = new System.Windows.Forms.FontDialog();
-            this.btClip1 = new System.Windows.Forms.Button();
-            this.btClip2 = new System.Windows.Forms.Button();
-            this.btClip3 = new System.Windows.Forms.Button();
             this.gpButtons.SuspendLayout();
             this.gpPenWidth.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pboxPenWidthIndicator)).BeginInit();
@@ -68,6 +70,8 @@ namespace gInk
             // gpButtons
             // 
             this.gpButtons.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.gpButtons.Controls.Add(this.btSave);
+            this.gpButtons.Controls.Add(this.btLoad);
             this.gpButtons.Controls.Add(this.btClip3);
             this.gpButtons.Controls.Add(this.btClip2);
             this.gpButtons.Controls.Add(this.btClip1);
@@ -95,11 +99,124 @@ namespace gInk
             this.gpButtons.Location = new System.Drawing.Point(24, 48);
             this.gpButtons.Margin = new System.Windows.Forms.Padding(2);
             this.gpButtons.Name = "gpButtons";
-            this.gpButtons.Size = new System.Drawing.Size(1288, 53);
+            this.gpButtons.Size = new System.Drawing.Size(1343, 53);
             this.gpButtons.TabIndex = 3;
             this.gpButtons.MouseDown += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseDown);
             this.gpButtons.MouseMove += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseMove);
             this.gpButtons.MouseUp += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseUp);
+            // 
+            // btSave
+            // 
+            this.btSave.BackColor = System.Drawing.Color.Transparent;
+            this.btSave.BackgroundImage = global::gInk.Properties.Resources.save;
+            this.btSave.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btSave.FlatAppearance.BorderSize = 0;
+            this.btSave.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.btSave.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.btSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btSave.ForeColor = System.Drawing.Color.Transparent;
+            this.btSave.Location = new System.Drawing.Point(88, 4);
+            this.btSave.Margin = new System.Windows.Forms.Padding(2);
+            this.btSave.Name = "btSave";
+            this.btSave.Size = new System.Drawing.Size(46, 46);
+            this.btSave.TabIndex = 11;
+            this.toolTip.SetToolTip(this.btSave, "Eraser");
+            this.btSave.UseVisualStyleBackColor = true;
+            this.btSave.Click += new System.EventHandler(this.btSave_Click);
+            this.btSave.MouseDown += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseDown);
+            this.btSave.MouseMove += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseMove);
+            this.btSave.MouseUp += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseUp);
+            // 
+            // btLoad
+            // 
+            this.btLoad.BackColor = System.Drawing.Color.Transparent;
+            this.btLoad.BackgroundImage = global::gInk.Properties.Resources.open;
+            this.btLoad.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btLoad.FlatAppearance.BorderSize = 0;
+            this.btLoad.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.btLoad.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.btLoad.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btLoad.ForeColor = System.Drawing.Color.Transparent;
+            this.btLoad.Location = new System.Drawing.Point(38, 4);
+            this.btLoad.Margin = new System.Windows.Forms.Padding(2);
+            this.btLoad.Name = "btLoad";
+            this.btLoad.Size = new System.Drawing.Size(46, 46);
+            this.btLoad.TabIndex = 10;
+            this.toolTip.SetToolTip(this.btLoad, "Eraser");
+            this.btLoad.UseVisualStyleBackColor = true;
+            this.btLoad.Click += new System.EventHandler(this.btLoad_Click);
+            this.btLoad.MouseDown += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseDown);
+            this.btLoad.MouseMove += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseMove);
+            this.btLoad.MouseUp += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseUp);
+            // 
+            // btClip3
+            // 
+            this.btClip3.BackColor = System.Drawing.Color.Transparent;
+            this.btClip3.BackgroundImage = global::gInk.Properties.Resources.tool_clipart;
+            this.btClip3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btClip3.FlatAppearance.BorderColor = System.Drawing.Color.Orange;
+            this.btClip3.FlatAppearance.BorderSize = 3;
+            this.btClip3.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.btClip3.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.btClip3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btClip3.ForeColor = System.Drawing.Color.Transparent;
+            this.btClip3.Location = new System.Drawing.Point(864, 2);
+            this.btClip3.Margin = new System.Windows.Forms.Padding(2);
+            this.btClip3.Name = "btClip3";
+            this.btClip3.Size = new System.Drawing.Size(44, 49);
+            this.btClip3.TabIndex = 9;
+            this.toolTip.SetToolTip(this.btClip3, "Hand Drawing");
+            this.btClip3.UseVisualStyleBackColor = true;
+            this.btClip3.Click += new System.EventHandler(this.btTool_Click);
+            this.btClip3.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pboxPenWidthIndicator_MouseDown);
+            this.btClip3.MouseMove += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseMove);
+            this.btClip3.MouseUp += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseUp);
+            // 
+            // btClip2
+            // 
+            this.btClip2.BackColor = System.Drawing.Color.Transparent;
+            this.btClip2.BackgroundImage = global::gInk.Properties.Resources.tool_clipart;
+            this.btClip2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btClip2.FlatAppearance.BorderColor = System.Drawing.Color.Orange;
+            this.btClip2.FlatAppearance.BorderSize = 3;
+            this.btClip2.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.btClip2.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.btClip2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btClip2.ForeColor = System.Drawing.Color.Transparent;
+            this.btClip2.Location = new System.Drawing.Point(817, 2);
+            this.btClip2.Margin = new System.Windows.Forms.Padding(2);
+            this.btClip2.Name = "btClip2";
+            this.btClip2.Size = new System.Drawing.Size(43, 49);
+            this.btClip2.TabIndex = 8;
+            this.toolTip.SetToolTip(this.btClip2, "Hand Drawing");
+            this.btClip2.UseVisualStyleBackColor = true;
+            this.btClip2.Click += new System.EventHandler(this.btTool_Click);
+            this.btClip2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseDown);
+            this.btClip2.MouseMove += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseMove);
+            this.btClip2.MouseUp += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseUp);
+            // 
+            // btClip1
+            // 
+            this.btClip1.BackColor = System.Drawing.Color.Transparent;
+            this.btClip1.BackgroundImage = global::gInk.Properties.Resources.tool_clipart;
+            this.btClip1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btClip1.FlatAppearance.BorderColor = System.Drawing.Color.Orange;
+            this.btClip1.FlatAppearance.BorderSize = 3;
+            this.btClip1.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.btClip1.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.btClip1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btClip1.ForeColor = System.Drawing.Color.Transparent;
+            this.btClip1.Location = new System.Drawing.Point(767, 2);
+            this.btClip1.Margin = new System.Windows.Forms.Padding(2);
+            this.btClip1.Name = "btClip1";
+            this.btClip1.Size = new System.Drawing.Size(46, 49);
+            this.btClip1.TabIndex = 7;
+            this.toolTip.SetToolTip(this.btClip1, "Hand Drawing");
+            this.btClip1.UseVisualStyleBackColor = true;
+            this.btClip1.Click += new System.EventHandler(this.btTool_Click);
+            this.btClip1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseDown);
+            this.btClip1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseMove);
+            this.btClip1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseUp);
             // 
             // btClipArt
             // 
@@ -589,75 +706,6 @@ namespace gInk
             // 
             this.FontDlg.FontMustExist = true;
             // 
-            // btClip1
-            // 
-            this.btClip1.BackColor = System.Drawing.Color.Transparent;
-            this.btClip1.BackgroundImage = global::gInk.Properties.Resources.tool_clipart;
-            this.btClip1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btClip1.FlatAppearance.BorderColor = System.Drawing.Color.Orange;
-            this.btClip1.FlatAppearance.BorderSize = 3;
-            this.btClip1.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
-            this.btClip1.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
-            this.btClip1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btClip1.ForeColor = System.Drawing.Color.Transparent;
-            this.btClip1.Location = new System.Drawing.Point(767, 2);
-            this.btClip1.Margin = new System.Windows.Forms.Padding(2);
-            this.btClip1.Name = "btClip1";
-            this.btClip1.Size = new System.Drawing.Size(46, 49);
-            this.btClip1.TabIndex = 7;
-            this.toolTip.SetToolTip(this.btClip1, "Hand Drawing");
-            this.btClip1.UseVisualStyleBackColor = true;
-            this.btClip1.Click += new System.EventHandler(this.btTool_Click);
-            this.btClip1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.gpPenWidth_MouseDown);
-            this.btClip1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseMove);
-            this.btClip1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseUp);
-            // 
-            // btClip2
-            // 
-            this.btClip2.BackColor = System.Drawing.Color.Transparent;
-            this.btClip2.BackgroundImage = global::gInk.Properties.Resources.tool_clipart;
-            this.btClip2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btClip2.FlatAppearance.BorderColor = System.Drawing.Color.Orange;
-            this.btClip2.FlatAppearance.BorderSize = 3;
-            this.btClip2.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
-            this.btClip2.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
-            this.btClip2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btClip2.ForeColor = System.Drawing.Color.Transparent;
-            this.btClip2.Location = new System.Drawing.Point(817, 2);
-            this.btClip2.Margin = new System.Windows.Forms.Padding(2);
-            this.btClip2.Name = "btClip2";
-            this.btClip2.Size = new System.Drawing.Size(43, 49);
-            this.btClip2.TabIndex = 8;
-            this.toolTip.SetToolTip(this.btClip2, "Hand Drawing");
-            this.btClip2.UseVisualStyleBackColor = true;
-            this.btClip2.Click += new System.EventHandler(this.btTool_Click);
-            this.btClip2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseDown);
-            this.btClip2.MouseMove += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseMove);
-            this.btClip2.MouseUp += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseUp);
-            // 
-            // btClip3
-            // 
-            this.btClip3.BackColor = System.Drawing.Color.Transparent;
-            this.btClip3.BackgroundImage = global::gInk.Properties.Resources.tool_clipart;
-            this.btClip3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btClip3.FlatAppearance.BorderColor = System.Drawing.Color.Orange;
-            this.btClip3.FlatAppearance.BorderSize = 3;
-            this.btClip3.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
-            this.btClip3.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
-            this.btClip3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btClip3.ForeColor = System.Drawing.Color.Transparent;
-            this.btClip3.Location = new System.Drawing.Point(864, 2);
-            this.btClip3.Margin = new System.Windows.Forms.Padding(2);
-            this.btClip3.Name = "btClip3";
-            this.btClip3.Size = new System.Drawing.Size(44, 49);
-            this.btClip3.TabIndex = 9;
-            this.toolTip.SetToolTip(this.btClip3, "Hand Drawing");
-            this.btClip3.UseVisualStyleBackColor = true;
-            this.btClip3.Click += new System.EventHandler(this.btTool_Click);
-            this.btClip3.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pboxPenWidthIndicator_MouseDown);
-            this.btClip3.MouseMove += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseMove);
-            this.btClip3.MouseUp += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseUp);
-            // 
             // FormCollection
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -717,6 +765,8 @@ namespace gInk
         public System.Windows.Forms.Button btClip1;
         public System.Windows.Forms.Button btClip3;
         public System.Windows.Forms.Button btClip2;
+        public System.Windows.Forms.Button btLoad;
+        public System.Windows.Forms.Button btSave;
     }
 }
 

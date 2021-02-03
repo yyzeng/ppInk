@@ -145,6 +145,12 @@
   <data name="draw" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\draw.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="VidBroadcast" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\VidBroadcast.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="blackboard" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\blackboard.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="dock" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\dock.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -154,17 +160,23 @@
   <data name="tool_numb" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\tool_numb.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="tool_mlines_filledB" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\tool_mlines_filledB.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="tool_line" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\tool_line.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="tool_oval" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\tool_oval.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="pencil_act" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\pencil_act.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="tool_mlines_filledC" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\tool_mlines_filledC.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="tool_rect_filledB" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\tool_rect_filledB.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="tool_enAr_act" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\tool_enAr_act.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="tool_hand" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\tool_hand.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -172,11 +184,11 @@
   <data name="highlighter_act" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\highlighter_act.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="cursorarrow" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\cursorred.ico;System.Drawing.Icon, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="exit" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\exit.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="LpenS_bg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\LpenS_bg.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="tool_numb_fillC" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\tool_numb_fillC.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -187,20 +199,38 @@
   <data name="tool_hand_filledB" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\tool_hand_filledB.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="tool_clipart" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\clipart.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="tool_hand_act" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\tool_hand_act.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="VidUnk" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\VidUnk.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="pan" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\pan.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="tool_enAr" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\tool_enAr.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="VidDead" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\VidDead.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="tool_clipart_act" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\clipart_act.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="tool_hand_filledW" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\tool_hand_filledW.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="LpenS_col" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\LpenS_col.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="tool_line_act" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\tool_line_act.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="tool_numb_act" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\tool_numb_act.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="penS_col" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\penS_col.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="tool_txtR_act" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\tool_txtR_act.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -232,6 +262,9 @@
   <data name="tool_txtL_act" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\tool_txtL_act.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="penS_bg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\penS_bg.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="tool_stAr_act" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\tool_StAr_act.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -250,8 +283,14 @@
   <data name="undo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\undo.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="cursoreraser" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\eraser.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="tool_oval_filledB" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\tool_oval_filledB.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="cellbackground" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\cellbackground.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="cursorsnap" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\cursorsnap.ico;System.Drawing.Icon, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -271,14 +310,38 @@
   <data name="tool_oval_act" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\tool_oval_act.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Lpen_bg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Lpen_bg.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="eraser" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\eraser.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="pan_copy" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\pan_copy.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="VidPause" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\VidPause.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="cursorarrow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\cursorred.ico;System.Drawing.Icon, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="tool_oval_filledW" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\tool_oval_filledW.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="tool_hand_act" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\tool_hand_act.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="pen_bg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\pen_bg.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Lpen_col" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Lpen_col.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="VidStop" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\VidStop.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="tool_mlines" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\tool_mlines.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="tool_numb_act" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\tool_numb_act.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="dockback" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\dockback.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -292,6 +355,9 @@
   <data name="pencil" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\pencil1.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="tool_mlines_filledW" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\tool_mlines_filledW.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="tool_rect_filledC" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\tool_rect_filledC.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -304,85 +370,25 @@
   <data name="tool_txtR" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\tool_txtR.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="tool_enAr_act" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\tool_enAr_act.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="pencil_act" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\pencil_act.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="DblHeadArrowVert" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\DblHeadArrowVert.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="penwidthpanel" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\penwidthpanel.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="cellbackground" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\cellbackground.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="blackboard" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\blackboard.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="VidBroadcast" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\VidBroadcast.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="VidPause" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\VidPause.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="VidRecord" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\VidRecord.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="VidStop" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\VidStop.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="VidDead" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\VidDead.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="VidUnk" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\VidUnk.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="cursoreraser" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\eraser.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="penS_bg" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\penS_bg.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="penS_col" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\penS_col.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="pen_bg" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\pen_bg.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="pen_col" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\pen_col.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="LpenS_bg" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\LpenS_bg.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="penwidthpanel" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\penwidthpanel.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="LpenS_col" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\LpenS_col.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="open" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Open.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Lpen_bg" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Lpen_bg.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Lpen_col" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Lpen_col.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="pan_copy" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\pan_copy.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="tool_mlines" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\tool_mlines.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="tool_mlines_filledB" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\tool_mlines_filledB.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="tool_mlines_filledC" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\tool_mlines_filledC.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="tool_mlines_filledW" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\tool_mlines_filledW.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="tool_clipart" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\clipart.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="tool_clipart_act" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\clipart_act.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="save" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\save.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>
