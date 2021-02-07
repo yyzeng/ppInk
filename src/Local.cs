@@ -41,6 +41,7 @@ namespace gInk
         public string LoadStroke = "Load Strokes";
 
         public string StrokeFileExists = "{0} Already Exists\nDo you want to override it?";
+        public string FileCanNotWrite = "{0}\ncan not be written.";
 
         public string BoardTitle = "Clean Desktop";
         public string BoardText = "Erase all drawings and fill it with...";

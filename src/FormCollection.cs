@@ -2153,7 +2153,19 @@ namespace gInk
         public void RetreatAndExit()
         {
             ToThrough();
-             SaveStrokes(Path.GetFullPath(Environment.ExpandEnvironmentVariables(Root.SnapshotBasePath + "AutoSave.strokes.txt")));
+            try
+            {
+                string st = Path.GetFullPath(Environment.ExpandEnvironmentVariables(Root.SnapshotBasePath));
+                if (!System.IO.Directory.Exists(st))
+                    System.IO.Directory.CreateDirectory(st);
+                SaveStrokes(st+ "AutoSave.strokes.txt");
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(string.Format(Root.Local.FileCanNotWrite, Environment.ExpandEnvironmentVariables(Root.SnapshotBasePath + "AutoSave.strokes.txt")));
+                string errorMsg = "Silent exception logged \r\n:"+ex.Message + "\r\n\r\nStack Trace:\r\n" + ex.StackTrace + "\r\n\r\n";
+                Program.WriteErrorLog(errorMsg);
+            }
             Root.ClearInk();
             SaveUndoStrokes();
             //Root.SaveOptions("config.ini");
@@ -3825,6 +3837,9 @@ namespace gInk
                         outp += p.X + "," + p.Y + ";";
                     }
                     writeUtf(outp + "\n");
+                    Rectangle r=st.GetBoundingBox();
+                    outp = "# boxed in " + r.Location.ToString() + " - " + r.Size.ToString()+"\n";
+                    writeUtf(outp);
                     da = st.DrawingAttributes;
                     writeUtf("DA = " + da.Color.ToString() + " T=" + da.Transparency + (da.FitToCurve ? ", Fit, W=" : ", NotFit, W=") + da.Width.ToString() + "\n");
                     //outp = "ExtProp " + st.ExtendedProperties.Count.ToString() + " = ";
@@ -3855,7 +3870,7 @@ namespace gInk
                 {
                     st = fileout.ReadLine();
                 }
-                while (st.StartsWith("#"));
+                while (st !=null && st.StartsWith("#"));
                 while (st !=null && st.StartsWith("ID"))
                 {
                     do
@@ -4017,7 +4032,16 @@ namespace gInk
                 }
             }
             while (!(!File.Exists(SaveStrokeFile) || MessageBox.Show(string.Format(Root.Local.StrokeFileExists, SaveStrokeFile), Root.Local.SaveStroke, MessageBoxButtons.OKCancel) == DialogResult.OK));
-            SaveStrokes(SaveStrokeFile);
+            try
+            {
+                SaveStrokes(SaveStrokeFile);
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(SaveStrokeFile);
+                string errorMsg = "Silent exception logged \r\n:"+ex.Message + "\r\n\r\nStack Trace:\r\n" + ex.StackTrace + "\r\n\r\n";
+                Program.WriteErrorLog(errorMsg);
+            };
         }
 
 

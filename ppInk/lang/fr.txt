@@ -38,6 +38,7 @@ SaveStroke = "Sauver Dessins"
 LoadStroke = "Charger Dessins"
 
 StrokeFileExists = "{0} Existe\nVoulez-vous le remplacer?"
+FileCanNotWrite = "impossible d'écrire\n{0}"
 
 BoardTitle = "Effacer"
 BoardText = "Efface tous les dessins et rempli le fond avec..."
