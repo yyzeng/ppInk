@@ -28,14 +28,25 @@ namespace gInk
         public const int StartArrow = 4; public const int EndArrow = 5; public const int NumberTag = 6;
         public const int Edit = 7; public const int txtLeftAligned = 8; public const int txtRightAligned = 9;
         public const int Move = 10; public const int Copy = 11; public const int Poly = 21; public const int ClipArt = 22;
-    };
+    }
     public class Filling {
         public const int NoFrame = -1;      // for Stamps
         public const int Empty = 0;
         public const int PenColorFilled = 1;
         public const int WhiteFilled = 2;
         public const int BlackFilled = 3;
-    }; // applicable to Hand,Rect,Oval
+    } // applicable to Hand,Rect,Oval
+
+    public class Orientation{
+        public const int min = 0;
+        public const int toLeft = 0;    // original
+        public const int toRight = 1;
+        public const int Horizontal = 1;
+        public const int Vertical = 2;
+        public const int toUp = 2;
+        public const int toDown = 3;
+        public const int max = 3;
+    }
 
     public class ClipArtData
     {
@@ -121,6 +132,7 @@ namespace gInk
             
         public static int MIN_MAGNETIC = 25;
         // options
+        public int ToolbarOrientation = Orientation.toLeft;
         public bool[] PenEnabled = new bool[MaxPenCount];
         public bool ToolsEnabled = true;
         public bool EraserEnabled = true;
@@ -577,8 +589,14 @@ namespace gInk
 
 			Docked = true;
 			gpPenWidthVisible = false;
-			FormCollection.btDock.BackgroundImage = gInk.Properties.Resources.dockback;
-			FormCollection.ButtonsEntering = -1;
+            switch(ToolbarOrientation)
+            {
+                case Orientation.toLeft: FormCollection.btDock.BackgroundImage = gInk.Properties.Resources.dockback; break;
+                case Orientation.toRight: FormCollection.btDock.BackgroundImage = gInk.Properties.Resources.dock; break;
+                case Orientation.toUp: FormCollection.btDock.BackgroundImage = gInk.Properties.Resources.dockbackV ; break;
+                case Orientation.toDown: FormCollection.btDock.BackgroundImage = gInk.Properties.Resources.dockV; break;
+            }
+            FormCollection.ButtonsEntering = -1;
 			UponButtonsUpdate |= 0x2;
 		}
 
@@ -588,7 +606,13 @@ namespace gInk
 				return;
 
 			Docked = false;
-			FormCollection.btDock.BackgroundImage = gInk.Properties.Resources.dock;
+            switch (ToolbarOrientation)
+            {
+                case Orientation.toLeft: FormCollection.btDock.BackgroundImage = gInk.Properties.Resources.dock; break;
+                case Orientation.toRight: FormCollection.btDock.BackgroundImage = gInk.Properties.Resources.dockback; break;
+                case Orientation.toUp: FormCollection.btDock.BackgroundImage = gInk.Properties.Resources.dockV; break;
+                case Orientation.toDown: FormCollection.btDock.BackgroundImage = gInk.Properties.Resources.dockbackV; break;
+            }
 			FormCollection.ButtonsEntering = 1;
 			UponButtonsUpdate |= 0x2;
 		}
@@ -1171,6 +1195,16 @@ namespace gInk
                                 StampFileNames.Insert(StampFileNames.Count, sPara);
                             ImageStamp3 = sPara;
                             break;
+                        case "TOOLBAR_DIRECTION":
+                            if (sPara.ToUpper() == "LEFT")
+                                ToolbarOrientation = Orientation.toLeft;
+                            if (sPara.ToUpper() == "RIGHT")
+                                ToolbarOrientation = Orientation.toRight;
+                            if (sPara.ToUpper() == "UP")
+                                ToolbarOrientation = Orientation.toUp;
+                            if (sPara.ToUpper() == "DOWN")
+                                ToolbarOrientation = Orientation.toDown;
+                            break;
                     }
                 }
 			}
@@ -1538,6 +1572,16 @@ namespace gInk
                             break;
                         case "IMAGESTAMP3":
                             sPara = MakeRelativePath(Global.ProgramFolder, ImageStamp3);
+                            break;
+                        case "TOOLBAR_DIRECTION":
+                            if (ToolbarOrientation == Orientation.toLeft)
+                                sPara = "Left";
+                            if (ToolbarOrientation == Orientation.toRight)
+                                sPara = "Right";
+                            if (ToolbarOrientation == Orientation.toUp)
+                                sPara = "Up";
+                            if (ToolbarOrientation == Orientation.toDown)
+                                sPara = "Down";
                             break;
                     }
                 }

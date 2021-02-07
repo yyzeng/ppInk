@@ -47,6 +47,13 @@ namespace gInk
             private static extern IntPtr LoadCursorFromFile(string path);
         }
 
+        // Button/Tooblar
+        const double NormSizePercent = 0.85;
+        const double SmallSizePercent = 0.44;
+        const double TopPercent = 0.06;
+        const double SmallButtonNext =0.44;
+        const double InterButtonGap = NormSizePercent*.05;
+
         // hotkeys
         const int VK_LCONTROL = 0xA2;
         const int VK_RCONTROL = 0xA3;
@@ -77,9 +84,10 @@ namespace gInk
         public DateTime MouseTimeDown;
         public object MouseDownButtonObject;
         public int ButtonsEntering = 0;  // -1 = exiting
-		public int gpButtonsLeft, gpButtonsTop, gpButtonsWidth, gpButtonsHeight; // the default location, fixed
+        public int gpButtonsLeft, gpButtonsTop, gpButtonsWidth, gpButtonsHeight; // the default location, fixed
+        public Size VisibleToolbar = new Size();
 
-		public bool gpPenWidth_MouseOn = false;
+        public bool gpPenWidth_MouseOn = false;
 
         public int PrimaryLeft, PrimaryTop;
 
@@ -206,6 +214,44 @@ namespace gInk
             return new Bitmap((Bitmap)Properties.Resources.ResourceManager.GetObject(name));
         }
 
+        private void SetButtonPosition(Button previous, Button current, int spacing)
+        {
+            if (Root.ToolbarOrientation == Orientation.toLeft)
+            {
+                current.Left = previous.Left + previous.Width + spacing;
+                current.Top = previous.Top;
+            }
+            else if (Root.ToolbarOrientation == Orientation.toRight)
+            {
+                current.Left = previous.Left - spacing - current.Width;
+                current.Top = previous.Top;
+            }
+            else if (Root.ToolbarOrientation == Orientation.toDown)
+            {
+                current.Left = previous.Left;
+                current.Top = previous.Top  - spacing - current.Height;
+            }
+            else if (Root.ToolbarOrientation == Orientation.toUp)
+            {
+                current.Left = previous.Left;
+                current.Top = previous.Top + previous.Height + spacing;
+            }
+        }
+
+        private void SetSmallButtonNext(Button previous, Button current, int incr)
+        {
+            if (Root.ToolbarOrientation <= Orientation.Horizontal)
+            {
+                current.Left = previous.Left;
+                current.Top = previous.Top + incr;
+            }
+            else 
+            {
+                current.Left = previous.Left + incr;
+                current.Top = previous.Top;
+            }
+        }
+
         public Bitmap buildPenIcon(Color col, int transparency, Boolean Sel)
         {
             Bitmap fg, img;
@@ -253,183 +299,183 @@ namespace gInk
             gpPenWidth.BackColor = Color.FromArgb(Root.ToolbarBGColor[0], Root.ToolbarBGColor[1], Root.ToolbarBGColor[2], Root.ToolbarBGColor[3]);
 
             longClickTimer.Interval = (int)(Root.LongClickTime * 1000 + 100);
-            if (Root.MagneticRadius > 0)
-                this.btMagn.BackgroundImage = getImgFromDiskOrRes("Magnetic_act", ImageExts);
-            else
-                this.btMagn.BackgroundImage = getImgFromDiskOrRes("Magnetic", ImageExts);
 
             PrimaryLeft = Screen.PrimaryScreen.Bounds.Left - SystemInformation.VirtualScreen.Left;
             PrimaryTop = Screen.PrimaryScreen.Bounds.Top - SystemInformation.VirtualScreen.Top;
 
-            gpButtons.Height = (int)(Screen.PrimaryScreen.Bounds.Height * Root.ToolbarHeight);
-            btClear.Height = (int)(gpButtons.Height * 0.85);
-            btClear.Width = btClear.Height;
-            btClear.Top = (int)(gpButtons.Height * 0.08);
+            this.Left = SystemInformation.VirtualScreen.Left;
+            this.Top = SystemInformation.VirtualScreen.Top;
+            this.Width = SystemInformation.VirtualScreen.Width;
+            this.Height = SystemInformation.VirtualScreen.Height - 2;
+            this.DoubleBuffered = true;
 
-            btSave.Height = (int)(gpButtons.Height * 0.48);
-            btSave.Width = btSave.Height;
-            btSave.Top = (int)(gpButtons.Height * 0.02);
-            btLoad.Height = (int)(gpButtons.Height * 0.48);
-            btLoad.Width = btLoad.Height;
-            btLoad.Top = (int)(gpButtons.Height * 0.52);
+            int nbPen = 0;
+            for (int b = 0; b < Root.MaxPenCount; b++)
+                if (Root.PenEnabled[b])
+                    nbPen++;
 
-            btVideo.Height = (int)(gpButtons.Height * 0.85);
-            btVideo.Width = btVideo.Height;
-            btVideo.Top = (int)(gpButtons.Height * 0.08);
-            btDock.Height = (int)(gpButtons.Height * 0.85);
-            btDock.Width = btDock.Height / 2;
-            btDock.Top = (int)(gpButtons.Height * 0.08);
+            // set dimensions and positions 
+            int dim = (int)Math.Round(Screen.PrimaryScreen.Bounds.Height * Root.ToolbarHeight);
+            int dim1 = (int)(dim * NormSizePercent);
+            int dim1s = (int)(dim * SmallSizePercent);
+            int dim2 = (int)(dim * TopPercent);
+            int dim2s = (int)(dim * SmallButtonNext);
+            int dim3 = (int)(dim * InterButtonGap);
+            int dim4 = dim1 + dim3;
+            int dim4s = dim1s + dim3;
+            /*            const double NormSizePercent = 0.85;
+            const double SmallSizePercent = 0.44;
+            const double TopPercent = 0.06;
+            const double SmallButtonNext = 0.44;
+            const double InterButtonGap = NormSizePercent * .05;
+            */
+            if (Root.ToolbarOrientation<=Orientation.Horizontal)
+            {
+                gpButtons.Height = dim;
+                gpButtons.Width = (int)((dim1 *.5 + dim3) +(nbPen * dim4 + (Root.ToolsEnabled ? (6*dim4s +dim4) : 0) + (Root.EraserEnabled ? dim4 : 0) + (Root.PanEnabled ? dim4 : 0) + (Root.PointerEnabled ? dim4 : 0)
+                                                                         + (Root.PenWidthEnabled ? dim4 : 0) + (Root.InkVisibleEnabled ? dim4 : 0) + (Root.SnapEnabled ? dim4 : 0)
+                                                                         + (Root.UndoEnabled ? dim4 : 0) + (Root.ClearEnabled ? dim4 : 0) + (Root.LoadSaveEnabled ? dim4s : 0)
+                                                                         + dim1 ));
+            }
+            else //Vertical
+            {
+                gpButtons.Width = dim;
+                gpButtons.Height = (int)((dim1 * .5 + dim3) + (nbPen * dim4 + (Root.ToolsEnabled ? (6 * dim4s + dim4) : 0) + (Root.EraserEnabled ? dim4 : 0) + (Root.PanEnabled ? dim4 : 0) + (Root.PointerEnabled ? dim4 : 0)
+                                                                            + (Root.PenWidthEnabled ? dim4 : 0) + (Root.InkVisibleEnabled ? dim4 : 0) + (Root.SnapEnabled ? dim4 : 0)
+                                                                            + (Root.UndoEnabled ? dim4 : 0) + (Root.ClearEnabled ? dim4 : 0) + (Root.LoadSaveEnabled ? dim4s : 0)
+                                                                            + dim1));
+            }
 
-            btHand.Height = (int)(gpButtons.Height * 0.48);
-            btHand.Width = btHand.Height;
-            btHand.Top = (int)(gpButtons.Height * 0.02);
-            btLine.Height = (int)(gpButtons.Height * 0.48);
-            btLine.Width = btLine.Height;
-            btLine.Top = (int)(gpButtons.Height * 0.52);
-            btRect.Height = (int)(gpButtons.Height * 0.48);
-            btRect.Width = btRect.Height;
-            btRect.Top = (int)(gpButtons.Height * 0.02);
-            btOval.Height = (int)(gpButtons.Height * 0.48);
-            btOval.Width = btOval.Height;
-            btOval.Top = (int)(gpButtons.Height * 0.52);
-            btArrow.Height = (int)(gpButtons.Height * 0.48);
-            btArrow.Width = btArrow.Height;
-            btArrow.Top = (int)(gpButtons.Height * 0.02);
-            btNumb.Height = (int)(gpButtons.Height * 0.48);
-            btNumb.Width = btNumb.Height;
-            btNumb.Top = (int)(gpButtons.Height * 0.52);
-            btText.Height = (int)(gpButtons.Height * 0.48);
-            btText.Width = btText.Height;
-            btText.Top = (int)(gpButtons.Height * 0.02);
-            btEdit.Height = (int)(gpButtons.Height * 0.48);
-            btEdit.Width = btEdit.Height;
-            btEdit.Top = (int)(gpButtons.Height * 0.52);
-            btClipArt.Height = (int)(gpButtons.Height * 0.48);
-            btClipArt.Width = btClipArt.Height;
-            btClipArt.Top = (int)(gpButtons.Height * 0.02);
-
-            btClip1.Height = (int)(gpButtons.Height * 0.48);
-            btClip1.Width = btClip1.Height;
-            btClip1.Top = (int)(gpButtons.Height * 0.52);
-            btClip1.BackgroundImage = getImgFromDiskOrRes(Root.ImageStamp1 , ImageExts);
-            btClip1.Tag = new ClipArtData { ImageStamp = Root.ImageStamp1, X= btClip1.BackgroundImage.Size.Width, Y = btClip1.BackgroundImage.Size.Height, Filling = Root.ImageStampFilling };
             //
-            btClip2.Height = (int)(gpButtons.Height * 0.48);
-            btClip2.Width = btClip2.Height;
-            btClip2.Top = (int)(gpButtons.Height * 0.02);
-            btClip2.BackgroundImage = getImgFromDiskOrRes(Root.ImageStamp2, ImageExts);
-            btClip2.Tag = new ClipArtData { ImageStamp = Root.ImageStamp2, X = btClip2.BackgroundImage.Size.Width, Y = btClip2.BackgroundImage.Size.Height, Filling = Root.ImageStampFilling };
-            //
-            btClip3.Height = (int)(gpButtons.Height * 0.48);
-            btClip3.Width = btClip3.Height;
-            btClip3.Top = (int)(gpButtons.Height * 0.52);
-            btClip3.BackgroundImage = getImgFromDiskOrRes(Root.ImageStamp3, ImageExts);
-            btClip3.Tag = new ClipArtData { ImageStamp = Root.ImageStamp3, X = btClip3.BackgroundImage.Size.Width, Y = btClip3.BackgroundImage.Size.Height, Filling = Root.ImageStampFilling };
 
+            if (Root.ToolbarOrientation == Orientation.toLeft)
+            {
+                btDock.Height = dim1;
+                btDock.Width = dim1 / 2;
+                btDock.BackgroundImage = getImgFromDiskOrRes(Root.Docked?"dockback":"dock");
+                btDock.Top = dim2;
+                btDock.Left = 0;
+            }
+            else if (Root.ToolbarOrientation == Orientation.toRight)
+            {
+                btDock.Height = dim1;
+                btDock.Width = dim1 / 2;
+                btDock.BackgroundImage = getImgFromDiskOrRes(!Root.Docked ? "dockback" : "dock");
+                btDock.Top = dim2;
+                btDock.Left = gpButtons.Width-btDock.Width;
+            }
+            else if (Root.ToolbarOrientation == Orientation.toDown)
+            {
+                btDock.Width = dim1;
+                btDock.Height = dim1 / 2;
+                btDock.BackgroundImage = getImgFromDiskOrRes(!Root.Docked ? "dockbackV" : "dockV");
+                btDock.Top = gpButtons.Height - btDock.Height;
+                btDock.Left = dim2;
+            }
+            else if (Root.ToolbarOrientation == Orientation.toUp)
+            {
+                btDock.Width = dim1;
+                btDock.Height = dim1 / 2;
+                btDock.BackgroundImage = getImgFromDiskOrRes(Root.Docked ? "dockbackV" : "dockV");
+                btDock.Top = 0;
+                btDock.Left = dim2;
+            }
 
-            btEraser.Height = (int)(gpButtons.Height * 0.85);
-            btEraser.Width = btEraser.Height;
-            btEraser.Top = (int)(gpButtons.Height * 0.08);
-            btInkVisible.Height = (int)(gpButtons.Height * 0.85);
-            btInkVisible.Width = btInkVisible.Height;
-            btInkVisible.Top = (int)(gpButtons.Height * 0.08);
-            btPan.Height = (int)(gpButtons.Height * 0.85);
-            btPan.Width = btPan.Height;
-            btPan.Top = (int)(gpButtons.Height * 0.08);
-            btMagn.Height = (int)(gpButtons.Height * 0.85);
-            btMagn.Width = btMagn.Height;
-            btMagn.Top = (int)(gpButtons.Height * 0.08);
-            btPointer.Height = (int)(gpButtons.Height * 0.85);
-            btPointer.Width = btPointer.Height;
-            btPointer.Top = (int)(gpButtons.Height * 0.08);
-            btSnap.Height = (int)(gpButtons.Height * 0.85);
-            btSnap.Width = btSnap.Height;
-            btSnap.Top = (int)(gpButtons.Height * 0.08);
-            btStop.Height = (int)(gpButtons.Height * 0.85);
-            btStop.Width = btStop.Height;
-            btStop.Top = (int)(gpButtons.Height * 0.08);
-            btUndo.Height = (int)(gpButtons.Height * 0.85);
-            btUndo.Width = btUndo.Height;
-            btUndo.Top = (int)(gpButtons.Height * 0.08);
-
+            Button prev = btDock;
             btPen = new Button[Root.MaxPenCount];
+            image_pen = new Bitmap[Root.MaxPenCount];
+            image_pen_act = new Bitmap[Root.MaxPenCount];
 
-            int cumulatedleft = (int)(btDock.Width * 1.5);
             for (int b = 0; b < Root.MaxPenCount; b++)
             {
                 btPen[b] = new Button();
                 btPen[b].Name = string.Format("pen{0}", b);
-                btPen[b].Width = (int)(gpButtons.Height * 0.85);
-                btPen[b].Height = (int)(gpButtons.Height * 0.85);
-                btPen[b].Top = (int)(gpButtons.Height * 0.08);
-                //btPen[b].FlatAppearance.BorderColor = System.Drawing.Color.WhiteSmoke;
-                btPen[b].FlatAppearance.BorderSize = 0;
-                btPen[b].FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent; // System.Drawing.Color.FromArgb(250, 50, 50);
-                btPen[b].FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-                //btPen[b].ForeColor = System.Drawing.Color.Transparent;
-                //btPen[b].Name = "btPen" + b.ToString();
-                //btPen[b].UseVisualStyleBackColor = false;
-                
-                btPen[b].ContextMenu = new ContextMenu();
-                btPen[b].ContextMenu.Popup += new System.EventHandler(this.btColor_Click);
-                btPen[b].Click += new System.EventHandler(this.btColor_Click);
+                image_pen[b] = new Bitmap(btPen[b].Width, btPen[b].Height);
+                image_pen_act[b] = new Bitmap(btPen[b].Width, btPen[b].Height);
+                PreparePenImages(Root.PenAttr[b].Transparency, ref image_pen[b], ref image_pen_act[b]);
 
-                btPen[b].BackColor = System.Drawing.Color.Transparent;
-                btPen[b].BackgroundImageLayout = ImageLayout.Stretch;
-                //btPen[b].BackColor = Root.PenAttr[b].Color;
-                //btPen[b].FlatAppearance.MouseDownBackColor = Root.PenAttr[b].Color;
-                //btPen[b].FlatAppearance.MouseOverBackColor = Root.PenAttr[b].Color;
-                this.toolTip.SetToolTip(this.btPen[b], Root.Local.ButtonNamePen[b] + " (" + Root.Hotkey_Pens[b].ToString() + ")");
-
-                btPen[b].MouseDown += gpButtons_MouseDown;
-                btPen[b].MouseMove += gpButtons_MouseMove;
-                btPen[b].MouseUp += gpButtons_MouseUp;
-
-                gpButtons.Controls.Add(btPen[b]);
                 if (Root.PenEnabled[b])
                 {
+                    btPen[b].Width = dim1;
+                    btPen[b].Height = dim1;
+
+                    SetButtonPosition(prev, btPen[b], dim3);
+                    //btPen[b].Top = (int)(gpButtons.Height * 0.08);
+                    btPen[b].FlatAppearance.BorderSize = 0;
+                    btPen[b].FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+                    btPen[b].FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+
+                    btPen[b].ContextMenu = new ContextMenu();
+                    btPen[b].ContextMenu.Popup += new System.EventHandler(this.btColor_Click);
+                    btPen[b].Click += new System.EventHandler(this.btColor_Click);
+
+                    btPen[b].BackColor = System.Drawing.Color.Transparent;
+                    btPen[b].BackgroundImageLayout = ImageLayout.Stretch;
+                    this.toolTip.SetToolTip(this.btPen[b], Root.Local.ButtonNamePen[b] + " (" + Root.Hotkey_Pens[b].ToString() + ")");
+
+                    btPen[b].MouseDown += gpButtons_MouseDown;
+                    btPen[b].MouseMove += gpButtons_MouseMove;
+                    btPen[b].MouseUp += gpButtons_MouseUp;
+
                     btPen[b].Visible = true;
-                    btPen[b].Left = cumulatedleft;
-                    cumulatedleft += (int)(btPen[b].Width * 1.1);
+                    gpButtons.Controls.Add(btPen[b]);
+                    prev = btPen[b];
                 }
                 else
-                {
                     btPen[b].Visible = false;
-                }
             }
-            cumulatedleft += (int)(btDock.Width * 0.2);
-            if (Root.ToolsEnabled)
+
+            if(root.ToolsEnabled)
             {
-                btHand.Visible = true;
-                btLine.Visible = true;
-                btHand.Left = cumulatedleft;
-                btLine.Left = cumulatedleft;
-                cumulatedleft += (int)(btHand.Width * 1.1);
-                btRect.Visible = true;
-                btOval.Visible = true;
-                btRect.Left = cumulatedleft;
-                btOval.Left = cumulatedleft;
-                cumulatedleft += (int)(btRect.Width * 1.1);
-                btArrow.Visible = true;
-                btArrow.Left = cumulatedleft;
-                btNumb.Visible = true;
-                btNumb.Left = cumulatedleft;
-                cumulatedleft += (int)(btArrow.Width * 1.1);
-                btText.Visible = true;
-                btText.Left = cumulatedleft;
-                btEdit.Visible = true;
-                btEdit.Left = cumulatedleft;
-                cumulatedleft += (int)(btArrow.Width * 1.1);
-                btClipArt.Visible = true;
-                btClipArt.Left = cumulatedleft;
-                btClip1.Visible = true;
-                btClip1.Left = cumulatedleft;
-                cumulatedleft += (int)(btClipArt.Width * 1.1);
-                btClip2.Visible = true;
-                btClip2.Left = cumulatedleft;
-                btClip3.Visible = true;
-                btClip3.Left = cumulatedleft;
-                cumulatedleft += (int)(btClip3.Width * 1.1);
+                // background images loaded/applied in SelectTool
+                btHand.Height = dim1s;
+                btHand.Width = dim1s;
+                SetButtonPosition(prev, btHand, dim3);
+                btLine.Height = dim1s;
+                btLine.Width = dim1s;
+                SetSmallButtonNext(btHand, btLine, dim2s);
+
+                btRect.Height = dim1s;
+                btRect.Width = dim1s;
+                SetButtonPosition(btHand, btRect, dim3);
+                btOval.Height = dim1s;
+                btOval.Width = dim1s;
+                SetSmallButtonNext(btRect, btOval, dim2s);
+
+                btArrow.Height = dim1s;
+                btArrow.Width = dim1s;
+                SetButtonPosition(btRect, btArrow, dim3);
+                btNumb.Height = dim1s;
+                btNumb.Width = dim1s;
+                SetSmallButtonNext(btArrow, btNumb, dim2s);
+
+                btText.Height = dim1s;
+                btText.Width = dim1s;
+                SetButtonPosition(btArrow, btText, dim3);
+                btEdit.Height = dim1s;
+                btEdit.Width = dim1s;
+                SetSmallButtonNext(btText, btEdit, dim2s);
+
+                btClipArt.Height = dim1s;
+                btClipArt.Width = dim1s;
+                SetButtonPosition(btText, btClipArt, dim3);
+                btClip1.Height = dim1s;
+                btClip1.Width = dim1s;
+                SetSmallButtonNext(btClipArt, btClip1, dim2s);
+                btClip1.BackgroundImage = getImgFromDiskOrRes(Root.ImageStamp1, ImageExts);
+                btClip1.Tag = new ClipArtData { ImageStamp = Root.ImageStamp1, X = btClip1.BackgroundImage.Size.Width, Y = btClip1.BackgroundImage.Size.Height, Filling = Root.ImageStampFilling };
+
+                btClip2.Height = dim1s;
+                btClip2.Width = dim1s;
+                SetButtonPosition(btClipArt, btClip2, dim3);
+                btClip2.BackgroundImage = getImgFromDiskOrRes(Root.ImageStamp2, ImageExts);
+                btClip2.Tag = new ClipArtData { ImageStamp = Root.ImageStamp2, X = btClip2.BackgroundImage.Size.Width, Y = btClip2.BackgroundImage.Size.Height, Filling = Root.ImageStampFilling };
+                btClip3.Height = dim1s;
+                btClip3.Width = dim1s;
+                SetSmallButtonNext(btClip2, btClip3, dim2s);
+                btClip3.BackgroundImage = getImgFromDiskOrRes(Root.ImageStamp3, ImageExts);
+                btClip3.Tag = new ClipArtData { ImageStamp = Root.ImageStamp3, X = btClip3.BackgroundImage.Size.Width, Y = btClip3.BackgroundImage.Size.Height, Filling = Root.ImageStampFilling };
+                prev = btClip2;
             }
             else
             {
@@ -441,110 +487,127 @@ namespace gInk
                 btNumb.Visible = false;
                 btText.Visible = false;
                 btEdit.Visible = false;
+                btClipArt.Visible = false;
+                btClip1.Visible = false;
+                btClip2.Visible = false;
+                btClip3.Visible = false;
             }
 
-            cumulatedleft += (int)(btDock.Width * 0.5);
-            if (Root.EraserEnabled)
+            if (root.EraserEnabled)
             {
-                btEraser.Visible = true;
-                btEraser.Left = cumulatedleft;
-                cumulatedleft += (int)(btEraser.Width * 1.1);
+                btEraser.Height = dim1;
+                btEraser.Width = dim1;
+                image_eraser_act = getImgFromDiskOrRes("eraser_act", ImageExts);
+                image_eraser = getImgFromDiskOrRes("eraser", ImageExts);
+                btEraser.BackgroundImage = image_eraser;
+                SetButtonPosition(prev, btEraser, dim3);
+                prev = btEraser;
             }
             else
-            {
                 btEraser.Visible = false;
-            }
-            if (Root.PanEnabled)
-            {
-                btPan.Visible = true;
-                btPan.Left = cumulatedleft;
-                cumulatedleft += (int)(btPan.Width * 1.1);
-            }
-            else
-            {
-                btPan.Visible = false;
-            }
-            if (Root.ToolsEnabled)
-            {
-                btMagn.Visible = true;
-                btMagn.Left = cumulatedleft;
-                cumulatedleft += (int)(btMagn.Width * 1.1);
-            }
-            else
-            {
-                btMagn.Visible = false;
-            }
-            if (Root.PointerEnabled)
-            {
-                btPointer.Visible = true;
-                btPointer.Left = cumulatedleft;
-                cumulatedleft += (int)(btPointer.Width * 1.1);
-            }
-            else
-            {
-                btPointer.Visible = false;
-            }
-            cumulatedleft += (int)(btDock.Width * 0.5);
-            if (Root.PenWidthEnabled)
-            {
-                btPenWidth.Visible = true;
-                btPenWidth.Height = (int)(gpButtons.Height * 0.85);
-                //btDock.Width = btDock.Height;
-                btPenWidth.Left = cumulatedleft;
-                cumulatedleft += (int)(btPenWidth.Width * 1.1);
-            }
-            else
-            {
-                btPenWidth.Visible = false;
-            }
-            if (Root.InkVisibleEnabled)
-            {
-                btInkVisible.Visible = true;
-                btInkVisible.Left = cumulatedleft;
-                cumulatedleft += (int)(btInkVisible.Width * 1.1);
-            }
-            else
-            {
-                btInkVisible.Visible = false;
-            }
-            if (Root.SnapEnabled)
-            {
-                btSnap.Visible = true;
-                btSnap.Left = cumulatedleft;
-                cumulatedleft += (int)(btSnap.Width * 1.1);
-            }
-            else
-            {
-                btSnap.Visible = false;
-            }
-            if (Root.UndoEnabled)
-            {
-                btUndo.Visible = true;
-                btUndo.Left = cumulatedleft;
-                cumulatedleft += (int)(btUndo.Width * 1.1);
-            }
-            else
-            {
-                btUndo.Visible = false;
-            }
-            if (Root.ClearEnabled)
-            {
-                btClear.Visible = true;
-                btClear.Left = cumulatedleft;
-                cumulatedleft += (int)(btClear.Width * 1.1);
-            }
-            else
-            {
-                btClear.Visible = false;
-            }
 
-            if (Root.LoadSaveEnabled)
+            if (root.PanEnabled)
             {
-                btSave.Visible = true;
-                btSave.Left = cumulatedleft;
-                btLoad.Visible = true;
-                btLoad.Left = cumulatedleft;
-                cumulatedleft += (int)(btSave.Width * 1.1);
+                btPan.Height = dim1;
+                btPan.Width = dim1;
+                btPan.BackgroundImage = getImgFromDiskOrRes("pan", ImageExts);
+                SetButtonPosition(prev, btPan, dim3);
+                prev = btPan;
+            }
+            else
+                btPan.Visible = false;
+
+            if (root.ToolsEnabled)
+            {
+                btMagn.Height = dim1;
+                btMagn.Width = dim1;
+                this.btMagn.BackgroundImage = getImgFromDiskOrRes((Root.MagneticRadius > 0) ? "Magnetic_act" : "Magnetic", ImageExts);
+                SetButtonPosition(prev, btMagn, dim3);
+                prev = btMagn;
+            }
+            else
+                btMagn.Visible = false;
+
+            if (root.PointerEnabled)
+            {
+                btPointer.Height = dim1;
+                btPointer.Width = dim1;
+                image_pointer = getImgFromDiskOrRes("pointer", ImageExts);
+                image_pointer_act = getImgFromDiskOrRes("pointer_act", ImageExts);
+                SetButtonPosition(prev, btPointer, dim3);
+                prev = btPointer;
+            }
+            else
+                btPointer.Visible = false;
+
+            if (root.PenWidthEnabled)
+            {
+                btPenWidth.Height = dim1;
+                btPenWidth.Width = dim1;
+                btPenWidth.BackgroundImage = getImgFromDiskOrRes("penwidth", ImageExts);
+                SetButtonPosition(prev, btPenWidth, dim3);
+                prev = btPenWidth;
+            }
+            else
+                btPenWidth.Visible = false;
+
+            if (root.InkVisibleEnabled)
+            {
+                btInkVisible.Height = dim1;
+                btInkVisible.Width = dim1;
+                image_visible_not = getImgFromDiskOrRes("visible_not", ImageExts);
+                image_visible = getImgFromDiskOrRes("visible", ImageExts);
+                btInkVisible.BackgroundImage = image_visible;
+                SetButtonPosition(prev, btInkVisible, dim3);
+                prev = btInkVisible;
+            }
+            else
+                btInkVisible.Visible = false;
+
+            if (root.SnapEnabled)
+            {
+                btSnap.Height = dim1;
+                btSnap.Width = dim1;
+                btSnap.BackgroundImage = getImgFromDiskOrRes("snap", ImageExts); ;
+                SetButtonPosition(prev, btSnap, dim3);
+                prev = btSnap;
+            }
+            else
+                btSnap.Visible = false;
+
+            if (root.UndoEnabled)
+            {
+                btUndo.Height = dim1;
+                btUndo.Width = dim1;
+                btUndo.BackgroundImage = getImgFromDiskOrRes("undo", ImageExts);
+                SetButtonPosition(prev, btUndo, dim3);
+                prev = btUndo;
+            }
+            else
+                btUndo.Visible = false;
+
+            if (root.ClearEnabled)
+            {
+                btClear.Height = dim1;
+                btClear.Width = dim1;
+                btClear.BackgroundImage = getImgFromDiskOrRes("garbage", ImageExts);
+                SetButtonPosition(prev, btClear, dim3);
+                prev = btClear;
+            }
+            else
+                btClear.Visible = false;
+
+            if (root.LoadSaveEnabled)
+            {
+                btSave.Height = dim1s;
+                btSave.Width = dim1s;
+                btSave.BackgroundImage = getImgFromDiskOrRes("save", ImageExts);
+                SetButtonPosition(prev, btSave, dim3);
+                btLoad.Height = dim1s;
+                btLoad.Width = dim1s;
+                btLoad.BackgroundImage = getImgFromDiskOrRes("open", ImageExts);
+                SetSmallButtonNext(btSave, btLoad, dim2s);
+                prev = btSave;
             }
             else
             {
@@ -552,10 +615,11 @@ namespace gInk
                 btLoad.Visible = false;
             }
 
-            if (Root.VideoRecordMode > 0)
+            if (root.VideoRecordMode != VideoRecordMode.NoVideo)
             {
-                btVideo.Visible = true;
-                btVideo.Left = cumulatedleft;
+                btVideo.Height = dim1;
+                btVideo.Width = dim1;
+                SetButtonPosition(prev, btVideo, dim3);
                 SetVidBgImage();
                 if (Root.VideoRecordMode == VideoRecordMode.OBSBcst || Root.VideoRecordMode == VideoRecordMode.OBSRec)
                 {
@@ -571,61 +635,91 @@ namespace gInk
                     //Task.Run(() => SendInWs(Root.ObsWs, "GetRecordingStatus", new CancellationToken()));
                     Task.Run(() => SendInWs(Root.ObsWs, "GetStreamingStatus", new CancellationToken()));
                 }
-                cumulatedleft += (int)(btVideo.Width * 1.1);
             }
             else
-            {
                 btVideo.Visible = false;
-            }
 
-            cumulatedleft += (int)(btDock.Width * .4);
-            btStop.Left = cumulatedleft;
-            gpButtons.Width = (int)(btStop.Right + btDock.Width * .05);
-
-
-            this.Left = SystemInformation.VirtualScreen.Left;
-            this.Top = SystemInformation.VirtualScreen.Top;
-            //int targetbottom = 0;
-            //foreach (Screen screen in Screen.AllScreens)
-            //{
-            //	if (screen.WorkingArea.Bottom > targetbottom)
-            //		targetbottom = screen.WorkingArea.Bottom;
-            //}
-            //int virwidth = SystemInformation.VirtualScreen.Width;
-            //this.Width = virwidth;
-            //this.Height = targetbottom - this.Top;
-            this.Width = SystemInformation.VirtualScreen.Width;
-            this.Height = SystemInformation.VirtualScreen.Height - 2;
-            this.DoubleBuffered = true;
+            btStop.Height = dim1;
+            btStop.Width = dim1;
+            btStop.BackgroundImage = getImgFromDiskOrRes("exit", ImageExts);
+            SetButtonPosition(prev, btStop, dim3);
 
             gpButtonsWidth = gpButtons.Width;
             gpButtonsHeight = gpButtons.Height;
-            if (true || Root.AllowDraggingToolbar)
+            VisibleToolbar.Width = gpButtonsWidth;
+            VisibleToolbar.Height = gpButtonsHeight;
+            gpButtonsLeft = Root.gpButtonsLeft;
+            gpButtonsTop = Root.gpButtonsTop;
+            if (((true || Root.AllowDraggingToolbar) && (
+                  !(IsInsideVisibleScreen(gpButtonsLeft, gpButtonsTop) &&
+                  IsInsideVisibleScreen(gpButtonsLeft + gpButtonsWidth, gpButtonsTop) &&
+                  IsInsideVisibleScreen(gpButtonsLeft, gpButtonsTop + gpButtonsHeight) &&
+                  IsInsideVisibleScreen(gpButtonsLeft + gpButtonsWidth, gpButtonsTop + gpButtonsHeight))
+                  ||
+                  (gpButtonsLeft == 0 && gpButtonsTop == 0)))
+                || (!Root.AllowDraggingToolbar))
             {
-                gpButtonsLeft = Root.gpButtonsLeft;
-                gpButtonsTop = Root.gpButtonsTop;
-                if
-                (
-                    !(IsInsideVisibleScreen(gpButtonsLeft, gpButtonsTop) &&
-                    IsInsideVisibleScreen(gpButtonsLeft + gpButtonsWidth, gpButtonsTop) &&
-                    IsInsideVisibleScreen(gpButtonsLeft, gpButtonsTop + gpButtonsHeight) &&
-                    IsInsideVisibleScreen(gpButtonsLeft + gpButtonsWidth, gpButtonsTop + gpButtonsHeight))
-                    ||
-                    (gpButtonsLeft == 0 && gpButtonsTop == 0)
-                )
+                switch (Root.ToolbarOrientation)
                 {
-                    gpButtonsLeft = Screen.PrimaryScreen.WorkingArea.Right - gpButtons.Width + PrimaryLeft;
-                    gpButtonsTop = Screen.PrimaryScreen.WorkingArea.Bottom - gpButtons.Height - 15 + PrimaryTop;
+                    case Orientation.toLeft:
+                        gpButtonsLeft = Screen.PrimaryScreen.WorkingArea.Right - gpButtons.Width + PrimaryLeft;
+                        gpButtonsTop = Screen.PrimaryScreen.WorkingArea.Bottom - gpButtons.Height - 15 + PrimaryTop;
+                        gpButtons.Left = gpButtonsLeft + gpButtons.Width;
+                        gpButtons.Top = gpButtonsTop;
+                        VisibleToolbar.Width = 0;
+                        break;
+                    case Orientation.toRight:
+                        gpButtonsLeft = Screen.PrimaryScreen.WorkingArea.Left + PrimaryLeft;
+                        gpButtonsTop = Screen.PrimaryScreen.WorkingArea.Bottom - gpButtons.Height - 15 + PrimaryTop;
+                        gpButtons.Left = gpButtonsLeft;
+                        gpButtons.Top = gpButtonsTop;
+                        VisibleToolbar.Width = 0;
+                        break;
+                    case Orientation.toUp:
+                        gpButtonsLeft = Screen.PrimaryScreen.WorkingArea.Right - gpButtons.Width - 15 + PrimaryLeft;
+                        gpButtonsTop = Screen.PrimaryScreen.WorkingArea.Bottom - gpButtons.Height + PrimaryTop;
+                        gpButtons.Left = gpButtonsLeft;
+                        gpButtons.Top = gpButtonsTop + gpButtons.Height;
+                        VisibleToolbar.Height = 0;
+                        break;
+                    case Orientation.toDown:
+                        gpButtonsLeft = Screen.PrimaryScreen.WorkingArea.Right - gpButtons.Width - 15 + PrimaryLeft;
+                        gpButtonsTop = Screen.PrimaryScreen.WorkingArea.Top + PrimaryTop;
+                        gpButtons.Left = gpButtonsLeft;
+                        gpButtons.Top = gpButtonsTop;
+                        VisibleToolbar.Height = 0;
+                        break;
                 }
+                Root.gpButtonsLeft = gpButtonsLeft;
+                Root.gpButtonsTop = gpButtonsTop;
             }
             else
             {
-                gpButtonsLeft = Screen.PrimaryScreen.WorkingArea.Right - gpButtons.Width + PrimaryLeft;
-                gpButtonsTop = Screen.PrimaryScreen.WorkingArea.Bottom - gpButtons.Height - 15 + PrimaryTop;
-            }
+                switch (Root.ToolbarOrientation)
+                {
+                    case Orientation.toLeft:
+                        gpButtons.Left = gpButtonsLeft + gpButtonsWidth;
+                        gpButtons.Top = gpButtonsTop;
+                        VisibleToolbar.Width = 0;
+                        break;
+                    case Orientation.toRight:
+                        gpButtons.Left = gpButtonsLeft;
+                        gpButtons.Top = gpButtonsTop;
+                        VisibleToolbar.Width = 0;
+                        break;
+                    case Orientation.toUp:
+                        gpButtons.Left = gpButtonsLeft + gpButtonsHeight;
+                        gpButtons.Top = gpButtonsTop;
+                        VisibleToolbar.Height = 0;
+                        break;
+                    case Orientation.toDown:
+                        gpButtons.Left = gpButtonsLeft;
+                        gpButtons.Top = gpButtonsTop;
+                        VisibleToolbar.Height = 0;
+                        break;
+                }
 
-            gpButtons.Left = gpButtonsLeft + gpButtons.Width;
-            gpButtons.Top = gpButtonsTop;
+            }
             gpPenWidth.Left = gpButtonsLeft + btPenWidth.Left - gpPenWidth.Width / 2 + btPenWidth.Width / 2;
             gpPenWidth.Top = gpButtonsTop - gpPenWidth.Height - 10;
 
@@ -650,67 +744,10 @@ namespace gInk
             IC.DefaultDrawingAttributes.AntiAliased = true;
             IC.DefaultDrawingAttributes.FitToCurve = true;
 
-            /*string icon_filename= Global.ProgramFolder + Path.DirectorySeparatorChar + "cursor";
-            if (File.Exists(icon_filename+".cur")) 
-                cursorred = MyNativeMethods.LoadCustomCursor(icon_filename+".cur");
-            else if (File.Exists(icon_filename + ".ani"))
-                cursorred = MyNativeMethods.LoadCustomCursor(icon_filename + ".ani");
-            else if (File.Exists(icon_filename + ".ico"))
-                cursorred = new System.Windows.Forms.Cursor(icon_filename+".ico");
-            else
-                cursorred = new System.Windows.Forms.Cursor(gInk.Properties.Resources.cursorred.Handle);
-
-            icon_filename = Global.ProgramFolder + Path.DirectorySeparatorChar + "eraser";
-            if (File.Exists(icon_filename + ".cur"))
-                cursorerase = MyNativeMethods.LoadCustomCursor(icon_filename + ".cur");
-            else if (File.Exists(icon_filename + ".ani"))
-                cursorerase = MyNativeMethods.LoadCustomCursor(icon_filename + ".ani");
-            else if (File.Exists(icon_filename + ".ico"))
-                cursorerase = new System.Windows.Forms.Cursor(icon_filename + ".ico");
-            else
-                cursorerase = new System.Windows.Forms.Cursor(gInk.Properties.Resources.cursoreraser.Handle);
-            */
-
             cursorred = getCursFromDiskOrRes("cursorarrow", System.Windows.Forms.Cursors.NoMove2D);
-            //Program.WriteErrorLog(string.Format("DEBUG : cursor arrow is it system ? {0}\n", cursorred== System.Windows.Forms.Cursors.NoMove2D));
             cursorerase = getCursFromDiskOrRes("cursoreraser", System.Windows.Forms.Cursors.No);
-            //Program.WriteErrorLog(string.Format("DEBUG : cursor eraser is it system ? {0}\n", cursorred == System.Windows.Forms.Cursors.No));
 
             IC.Enabled = true;
-
-            //Graphics g;
-            btStop.BackgroundImage = getImgFromDiskOrRes("exit", ImageExts);
-            btClear.BackgroundImage = getImgFromDiskOrRes("garbage", ImageExts);
-            btLoad.BackgroundImage = getImgFromDiskOrRes("open", ImageExts);
-            btSave.BackgroundImage = getImgFromDiskOrRes("save", ImageExts);
-            btUndo.BackgroundImage = getImgFromDiskOrRes("undo", ImageExts);
-            image_eraser_act = getImgFromDiskOrRes("eraser_act", ImageExts);
-            image_eraser = getImgFromDiskOrRes("eraser", ImageExts);
-            btEraser.BackgroundImage = image_eraser;
-
-            image_visible_not = getImgFromDiskOrRes("visible_not", ImageExts);
-            image_visible = getImgFromDiskOrRes("visible", ImageExts);
-            btInkVisible.BackgroundImage = image_visible;
-            btSnap.BackgroundImage = getImgFromDiskOrRes("snap", ImageExts); ;
-
-            btPenWidth.BackgroundImage = getImgFromDiskOrRes("penwidth", ImageExts); 
-            if (Root.Docked)
-                btDock.BackgroundImage = getImgFromDiskOrRes("dockback", ImageExts);
-            else
-                btDock.BackgroundImage = getImgFromDiskOrRes("dock", ImageExts);
-
-            image_pointer = getImgFromDiskOrRes("pointer", ImageExts);
-            image_pointer_act = getImgFromDiskOrRes("pointer_act", ImageExts);
-
-            image_pen = new Bitmap[Root.MaxPenCount];
-            image_pen_act = new Bitmap[Root.MaxPenCount];
-            for (int b = 0; b < Root.MaxPenCount; b++)
-            {
-                image_pen[b] = new Bitmap(btPen[b].Width, btPen[b].Height);
-                image_pen_act[b] = new Bitmap(btPen[b].Width, btPen[b].Height);
-
-                PreparePenImages(Root.PenAttr[b].Transparency, ref image_pen[b], ref image_pen_act[b]);
-            }
 
             LastTickTime = DateTime.Parse("1987-01-01");
             tiSlide.Enabled = true;
@@ -803,7 +840,7 @@ namespace gInk
                     return;
                 if (msg.WParam == IntPtr.Zero)
                 {
-                    Console.WriteLine("desactivating " + Root.PointerMode.ToString());
+                    //Console.WriteLine("desactivating " + Root.PointerMode.ToString());
                     if (!Root.PointerMode)
                     {
                         //Console.WriteLine("process ");
@@ -1319,12 +1356,12 @@ namespace gInk
                     }
                     else if (Math.Abs((double)(Root.CursorX - Root.CursorX0) / (Root.CursorY - Root.CursorY0)) < Root.StampScaleRatio)
                     {
-                        Console.WriteLine("ratio 2 = " + ((double)(Root.CursorX - Root.CursorX0) / (Root.CursorY - Root.CursorY0)).ToString());
+                        //Console.WriteLine("ratio 2 = " + ((double)(Root.CursorX - Root.CursorX0) / (Root.CursorY - Root.CursorY0)).ToString());
                         Root.CursorX = (int)(Root.CursorX0 + (double)(Root.CursorY - Root.CursorY0) / h * w);
                     }
                     else if (Math.Abs((double)(Root.CursorY - Root.CursorY0) / (Root.CursorX - Root.CursorX0)) < Root.StampScaleRatio)
                     {
-                        Console.WriteLine("ratio 1 = " + ((double)(Root.CursorY - Root.CursorY0) / (Root.CursorX - Root.CursorX0)).ToString());
+                        //Console.WriteLine("ratio 1 = " + ((double)(Root.CursorY - Root.CursorY0) / (Root.CursorX - Root.CursorX0)).ToString());
                         Root.CursorY = (int)(Root.CursorY0 + (double)(Root.CursorX - Root.CursorX0) / w * h);
                     }
                     AddImageStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY, Root.ImageStamp.ImageStamp,idx);
@@ -2187,13 +2224,11 @@ namespace gInk
 			if (!Root.Docked)
 			{
 				Root.Dock();
-			}
-			else
-			{
-                //Console.WriteLine("--------- undocking --------------- "+DateTime.Now.ToString());
+            }
+            else
+            {
                 if (Root.PointerMode)
                 {
-                    //Console.WriteLine("undockPointer");
                     btPointer_Click(null, null);
                     Root.UponButtonsUpdate |= 0x7;
                 }
@@ -2472,89 +2507,154 @@ namespace gInk
             SetWindowInputRectFlag = false;
             // ignore the first tick
             if (LastTickTime.Year == 1987)
-			{
-				LastTickTime = DateTime.Now;
-				return;
-			}
-
-			int aimedleft = gpButtonsLeft;
-			if (ButtonsEntering == -9)
-			{
-				aimedleft = gpButtonsLeft + gpButtonsWidth;
-			}
-			else if (ButtonsEntering < 0)
-			{
-				if (Root.Snapping > 0)
-					aimedleft = gpButtonsLeft + gpButtonsWidth + 0;
-				else if (Root.Docked)
-					aimedleft = gpButtonsLeft + gpButtonsWidth - btDock.Right;
-			}
-			else if (ButtonsEntering > 0)
-			{
-				if (Root.Docked)
-					aimedleft = gpButtonsLeft + gpButtonsWidth - btDock.Right;
-				else
-					aimedleft = gpButtonsLeft;
-			}
-			else if (ButtonsEntering == 0)
-			{
-				aimedleft = gpButtons.Left; // stay at current location
+            {
+                //Console.WriteLine("AA=" + (DateTime.Now.Ticks / 1e7).ToString());
+                LastTickTime = DateTime.Now;
+                return;
             }
 
-            if (gpButtons.Left > aimedleft)
-			{
-				float dleft = gpButtons.Left - aimedleft;
-				dleft /= 70;
-				if (dleft > 8) dleft = 8;
-				dleft *= (float)(DateTime.Now - LastTickTime).TotalMilliseconds;
-				if (dleft > 120) dleft = 230;
-				if (dleft < 1) dleft = 1;
-				gpButtons.Left -= (int)dleft;
-				LastTickTime = DateTime.Now;
-				if (gpButtons.Left < aimedleft)
-				{
-					gpButtons.Left = aimedleft;
-				}
-				gpButtons.Width = Math.Max(gpButtonsWidth - (gpButtons.Left - gpButtonsLeft), btDock.Width);
-				Root.UponButtonsUpdate |= 0x1;
-			}
-			else if (gpButtons.Left < aimedleft)
-			{
-				float dleft = aimedleft - gpButtons.Left;
-				dleft /= 70;
-				if (dleft > 8) dleft = 8;
-				// fast exiting when not docked
-				if (ButtonsEntering == -9 && !Root.Docked)
-					dleft = 8;
-				dleft *= (float)(DateTime.Now - LastTickTime).TotalMilliseconds;
-				if (dleft > 120) dleft = 120;
-				if (dleft < 1) dleft = 1;
-				// fast exiting when docked
-				if (ButtonsEntering == -9 && dleft == 1)
-					dleft = 2;
-				gpButtons.Left += (int)dleft;
-				LastTickTime = DateTime.Now;
-				if (gpButtons.Left > aimedleft)
-				{
-					gpButtons.Left = aimedleft;
-				}
-				gpButtons.Width = Math.Max(gpButtonsWidth - (gpButtons.Left - gpButtonsLeft), btDock.Width);
-				Root.UponButtonsUpdate |= 0x1;
-				Root.UponButtonsUpdate |= 0x4;
-			}
+            Size AimedSize = new Size(gpButtonsWidth,gpButtonsHeight);
+            Point AimedPos = new Point(gpButtonsLeft, gpButtonsTop);
+            if (ButtonsEntering == 0)                  // do nothing
+            {
+                AimedPos.X = gpButtons.Left; // stay at current location
+                AimedPos.Y = gpButtons.Top; // stay at current location
+                AimedSize.Width = VisibleToolbar.Width;            
+                AimedSize.Height = VisibleToolbar.Height;
+            }
+            else if (ButtonsEntering == -9)              // Full Folding is requested
+            {
+                switch(Root.ToolbarOrientation)
+                { 
+                    case Orientation.toLeft:
+                        AimedPos.X = gpButtonsLeft + gpButtonsWidth;
+                        AimedSize.Width = 0;
+                        break;
+                    case Orientation.toRight:
+                        AimedPos.X = gpButtonsLeft;
+                        AimedSize.Width = 0;
+                        break;
+                    case Orientation.toUp:
+                        AimedPos.Y = gpButtonsTop+gpButtonsHeight ;
+                        AimedSize.Height = 0;
+                        break;
+                    case Orientation.toDown:
+                        AimedPos.Y = gpButtonsTop;
+                        AimedSize.Height = 0;
+                        break;
+                }
+            }
+            else if (ButtonsEntering < 0)               // folding
+            {
+                int d = 0;
+                if (Root.Snapping > 0)                  // if folding for snapping, final should be fully closed
+                    d = Math.Max(gpButtonsWidth, gpButtonsHeight) - 0;
+                else if (Root.Docked)                   // else final position should show only dock button
+                    d = Math.Max(gpButtonsWidth,gpButtonsHeight) - Math.Min(btDock.Width, btDock.Height);
+                else                                    // folding with undock is meaningless as security we consider unfolded position for security
+                    d = 0;
+                switch (Root.ToolbarOrientation)
+                {
+                    case Orientation.toLeft:
+                        AimedPos.X = gpButtonsLeft + d;
+                        AimedSize.Width = gpButtonsWidth - d;
+                        break;
+                    case Orientation.toRight:
+                        AimedPos.X = gpButtonsLeft;
+                        AimedSize.Width = gpButtonsWidth - d;
+                        break;
+                    case Orientation.toUp:
+                        AimedPos.Y = gpButtonsTop + d;
+                        AimedSize.Height = gpButtonsHeight - d;
+                        break;
+                    case Orientation.toDown:
+                        AimedPos.Y = gpButtonsTop;
+                        AimedSize.Height = gpButtonsHeight - d;
+                        break;
+                }
+            }
+            else if (ButtonsEntering > 0)       //unfolding
+            {
+                int d = 0;
+                if (Root.Docked)                //unfolding (eg from snapping mode) to docked position
+                    d = Math.Max(gpButtonsWidth, gpButtonsHeight) - Math.Min(btDock.Width, btDock.Height);
+                else                           //unfolding to show all toolbar
+                    d = 0;
+                switch (Root.ToolbarOrientation)
+                {
+                    case Orientation.toLeft:
+                        AimedPos.X = gpButtonsLeft + d;
+                        AimedSize.Width = Root.Docked? btDock.Width: gpButtonsWidth;
+                        break;
+                    case Orientation.toRight:
+                        AimedPos.X = gpButtonsLeft;
+                        AimedSize.Width = Root.Docked ? btDock.Width : gpButtonsWidth;
+                        break;
+                    case Orientation.toUp:
+                        AimedPos.Y = gpButtonsTop + d;
+                        AimedSize.Height = Root.Docked ? btDock.Height : gpButtonsHeight;
+                        break;
+                    case Orientation.toDown:
+                        AimedPos.Y = gpButtonsTop;
+                        AimedSize.Height = Root.Docked ? btDock.Height : gpButtonsHeight;
+                        break;
+                }
+            }
 
-			if (ButtonsEntering == -9 && gpButtons.Left == aimedleft)
-			{
-				tiSlide.Enabled = false;
-				Root.StopInk();
-				return;
-			}
-			else if (ButtonsEntering != 0) // we need redrawing for both fold and unfold
-			{
-				Root.UponAllDrawingUpdate = true;
-				Root.UponButtonsUpdate = 0;
-			}
-            if ((gpButtons.Left == aimedleft) && (ButtonsEntering != 0))
+            /*Console.WriteLine(gpButtons.Left.ToString() +" "+ AimedPos.X.ToString() + " /  " + gpButtons.Top.ToString() + " " + AimedPos.Y.ToString() + " / " 
+                    + gpButtons.Width.ToString() + " " + VisibleToolbar.Width.ToString() + " " + AimedSize.Width.ToString() + " - "
+                    + gpButtons.Height.ToString() + " " + VisibleToolbar.Height.ToString() + " " + AimedSize.Height.ToString()  
+                    + " = " + ButtonsEntering.ToString());
+            */
+            if ((gpButtons.Left != AimedPos.X) || (gpButtons.Top != AimedPos.Y) || (VisibleToolbar.Width != AimedSize.Width) || (VisibleToolbar.Height != AimedSize.Height))
+            {
+                int d;
+                d = (int)(.5 * (AimedPos.X - gpButtons.Left));
+                if (Math.Abs(d) < (5*.5))
+                    gpButtons.Left = AimedPos.X;
+                else
+                    gpButtons.Left += d;
+
+                d = (int)(.5 * (AimedPos.Y - gpButtons.Top));
+                if (Math.Abs(d) < (5 * .5))
+                    gpButtons.Top = AimedPos.Y;
+                else
+                    gpButtons.Top += d;
+
+                //d = (int)(gpButtons.Width * .9 + AimedSize.Width * .1)
+                if (Root.ToolbarOrientation == Orientation.toRight)
+                    if (Math.Abs(VisibleToolbar.Width - AimedSize.Width) < 5)
+                        VisibleToolbar.Width = AimedSize.Width;
+                    else
+                        VisibleToolbar.Width = (int)(VisibleToolbar.Width * .5 + AimedSize.Width * .5);
+                else
+                    VisibleToolbar.Width = gpButtonsWidth - Math.Abs(gpButtons.Left - gpButtonsLeft);// Math.Max(gpButtonsWidth - Math.Abs(gpButtons.Left - gpButtonsLeft), btDock.Width);
+
+                if (Root.ToolbarOrientation == Orientation.toDown)
+                    if (Math.Abs(VisibleToolbar.Height - AimedSize.Height) < 5)
+                        VisibleToolbar.Height = AimedSize.Height;
+                    else
+                        VisibleToolbar.Height = (int)(VisibleToolbar.Height * .5 + AimedSize.Height * .5);
+                else
+                    VisibleToolbar.Height = gpButtonsHeight - Math.Abs(gpButtons.Top - gpButtonsTop);// Math.Max(gpButtonsHeight - Math.Abs(gpButtons.Top - gpButtonsTop), btDock.Height);
+
+                Root.UponAllDrawingUpdate = true;
+                Root.UponButtonsUpdate |= 0x1;
+                Root.UponButtonsUpdate |= 0x4;
+            }
+            else if (ButtonsEntering == -9 ) // and Left=X&&Top==Y
+            {
+                tiSlide.Enabled = false;
+                Root.StopInk();
+                return;
+            }
+            /*else if (ButtonsEntering != 0) // we need redrawing for both fold and unfold
+            {
+                Root.UponAllDrawingUpdate = true;
+                Root.UponButtonsUpdate = 0;
+            }
+            */
+            else if (ButtonsEntering != 0)
             {
                 // add a background if required at opening but not when snapping is in progress
                 if (Root.Snapping == 0)
@@ -2571,8 +2671,8 @@ namespace gInk
                     }
                 }
                 Root.UponButtonsUpdate |= 2;
-                //Console.WriteLine("----------- zzzzzzzzzzzzzz    -------------"+DateTime.Now.ToString());
                 ButtonsEntering = 0;
+                Console.WriteLine("AB=" + (DateTime.Now.Ticks / 1e7).ToString());
             }
 
 

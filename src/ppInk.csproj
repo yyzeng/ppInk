@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -267,6 +267,8 @@
     <None Include="eraser.ico" />
     <None Include="clipart.png" />
     <None Include="clipart_act.png" />
+    <None Include="dockbackV.png" />
+    <None Include="dockV.png" />
     <Content Include="Magnetic.png" />
     <Content Include="Magnetic_act.png" />
     <None Include="pan1_act.png" />
@@ -281,6 +283,10 @@
     <None Include="pan_copy.png" />
     <None Include="Open.png" />
     <None Include="save.png" />
+    <None Include="toolbar2Down.png" />
+    <None Include="toolbar2Left.png" />
+    <None Include="toolbar2Right.png" />
+    <None Include="toolbar2Up.png" />
     <Content Include="tool_edit.png" />
     <Content Include="tool_edit_act.png" />
     <Content Include="tool_enAr.png" />
