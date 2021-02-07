@@ -38,6 +38,7 @@ SaveStroke = "Save Strokes"
 LoadStroke = "Load Strokes"
 
 StrokeFileExists = "{0} Already Exists\nDo you want to override it?"
+FileCanNotWrite = "{0}\ncan not be written."
 
 BoardTitle = "Clean Desktop"
 BoardText = "Erase all drawings and fill it with..."
