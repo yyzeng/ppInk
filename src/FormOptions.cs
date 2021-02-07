@@ -24,7 +24,10 @@ namespace gInk
 		Label[] lbHotkeyPens = new Label[10];
 		HotkeyInputBox[] hiPens = new HotkeyInputBox[10];
 
-		public FormOptions(Root root)
+        Bitmap[] ToolBarOrientationIcons = { gInk.Properties.Resources.toolbar2Left, gInk.Properties.Resources.toolbar2Right,
+                                             gInk.Properties.Resources.toolbar2Up, gInk.Properties.Resources.toolbar2Down };
+
+        public FormOptions(Root root)
 		{
 			Root = root;
 			InitializeComponent();
@@ -32,8 +35,9 @@ namespace gInk
 
 		private void FormOptions_Load(object sender, EventArgs e)
 		{
-			Root.UnsetHotkey();
+            Root.UnsetHotkey();
             ToolbarDwg.BackColor = Color.FromArgb(Root.ToolbarBGColor[0], Root.ToolbarBGColor[1], Root.ToolbarBGColor[2], Root.ToolbarBGColor[3]);
+            ToolbarOrientationBtn.BackgroundImage = ToolBarOrientationIcons[Root.ToolbarOrientation];
             Clip1Btn.BackColor = ToolbarDwg.BackColor;
             Clip1Btn.BackgroundImage = FormCollection.getImgFromDiskOrRes(Root.ImageStamp1);
             Clip2Btn.BackColor = ToolbarDwg.BackColor;
@@ -783,6 +787,14 @@ namespace gInk
         private void cbLoadSaveEnabled_CheckedChanged(object sender, EventArgs e)
         {
             Root.LoadSaveEnabled = cbLoadSaveEnabled.Checked;
+        }
+
+        private void ToolbarOrientationBtn_Click(object sender, EventArgs e)
+        {
+            Root.ToolbarOrientation += 1;
+            if (Root.ToolbarOrientation > Orientation.max)
+                Root.ToolbarOrientation = Orientation.min;
+            ToolbarOrientationBtn.BackgroundImage = ToolBarOrientationIcons[Root.ToolbarOrientation];
         }
 
         private void cbAllowHotkeyInPointer_CheckedChanged(object sender, EventArgs e)

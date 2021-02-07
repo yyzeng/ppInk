@@ -118,8 +118,8 @@ namespace gInk
             //this.DoubleBuffered = true;
 
             int gpheight = (int)(Screen.PrimaryScreen.Bounds.Height * Root.ToolbarHeight);
-			gpButtonsImage = new Bitmap(2400, gpheight, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-			gpPenWidthImage = new Bitmap(200, gpheight, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+			gpButtonsImage = new Bitmap(2000, 2000, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+			gpPenWidthImage = new Bitmap(200, 200, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 			TransparentBrush = new SolidBrush(Color.Transparent);
 			SemiTransparentBrush = new SolidBrush(Color.FromArgb(120, 255, 255, 255));
 
@@ -166,7 +166,11 @@ namespace gInk
 			gCanvus.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
 		}
 
-		public void DrawButtons(bool redrawbuttons, bool exiting = false)
+        public void DrawButtons(bool redrawbuttons = true, bool exiting = false)
+        {
+            DrawButtons(gCanvus, redrawbuttons, exiting);
+        }
+            public void DrawButtons(Graphics g, bool redrawbuttons=true, bool exiting = false)
 		{
 			if (Root.AlwaysHideToolbar)
 				return;
@@ -187,62 +191,26 @@ namespace gInk
 				drawwidth = gpbl + fullwidth - left;
 
             if (redrawbuttons)
-                Root.FormCollection.gpButtons.DrawToBitmap(gpButtonsImage, new Rectangle(0, 0, width, height));
+                Root.FormCollection.gpButtons.DrawToBitmap(gpButtonsImage, new Rectangle(0, 0, Root.FormCollection.gpButtonsWidth, Root.FormCollection.gpButtonsHeight));
+
             if (exiting)
 			{
 				int clearleft = Math.Max(left - 120, gpbl);
 				//gCanvus.FillRectangle(TransparentBrush, clearleft, top, fullwidth * 2, height);
-				gCanvus.FillRectangle(TransparentBrush, clearleft, top, drawwidth, height);
-			}
-            gCanvus.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
-            gCanvus.FillRectangle(TransparentBrush, left, top, drawwidth, height);
-            gCanvus.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
-            gCanvus.DrawImage(gpButtonsImage, new Rectangle(left, top, drawwidth, height), 0, 0, drawwidth, height, GraphicsUnit.Pixel,iaToolBarTransparency);
-
-			if (Root.gpPenWidthVisible)
-			{
-				top = Root.FormCollection.gpPenWidth.Top;
-				height = Root.FormCollection.gpPenWidth.Height;
-				left = Root.FormCollection.gpPenWidth.Left;
-				width = Root.FormCollection.gpPenWidth.Width;
-				if (redrawbuttons)
-					Root.FormCollection.gpPenWidth.DrawToBitmap(gpPenWidthImage, new Rectangle(0, 0, width, height));
-
-                gCanvus.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
-                gCanvus.FillRectangle(TransparentBrush, left, top, width, height);
-                gCanvus.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
-                gCanvus.DrawImage(gpPenWidthImage, new Rectangle(left, top, width, height), 0, 0, width, height, GraphicsUnit.Pixel, iaToolBarTransparency);
-			}
-		}
-		public void DrawButtons(Graphics g, bool redrawbuttons, bool exiting = false)
-		{
-			int top, height, left, width;
-			int fullwidth;
-			int gpbl;
-			int drawwidth;
-
-			top = Root.FormCollection.gpButtons.Top;
-			height = Root.FormCollection.gpButtons.Height;
-			left = Root.FormCollection.gpButtons.Left;
-			width = Root.FormCollection.gpButtons.Width;
-			fullwidth = Root.FormCollection.gpButtonsWidth;
-			drawwidth = width;
-			gpbl = Root.FormCollection.gpButtonsLeft;
-			if (left + width > gpbl + fullwidth)
-				drawwidth = gpbl + fullwidth - left;
-
-			if (redrawbuttons)
-				Root.FormCollection.gpButtons.DrawToBitmap(gpButtonsImage, new Rectangle(0, 0, width, height));
-
-			if (exiting)
-			{
-				int clearleft = Math.Max(left - 120, gpbl);
-				//g.FillRectangle(TransparentBrush, clearleft, top, width + 80, height);
 				g.FillRectangle(TransparentBrush, clearleft, top, drawwidth, height);
 			}
-			g.DrawImage(gpButtonsImage, left, top);
+            g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
+            g.FillRectangle(TransparentBrush, left, top, drawwidth, height);
+            g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
+            //gCanvus.DrawImage(gpButtonsImage, new Rectangle(left, top, drawwidth, height), 0, 0, drawwidth, height, GraphicsUnit.Pixel,iaToolBarTransparency);
+            if (Root.ToolbarOrientation == Orientation.toLeft || Root.ToolbarOrientation == Orientation.toUp)
+                g.DrawImage(gpButtonsImage, new Rectangle(left, top, drawwidth, height), 0, 0, drawwidth, height, GraphicsUnit.Pixel, iaToolBarTransparency);
+            else
+                g.DrawImage(gpButtonsImage, new Rectangle(left, top, Root.FormCollection.VisibleToolbar.Width, Root.FormCollection.VisibleToolbar.Height),
+                                    Root.FormCollection.gpButtonsWidth- Root.FormCollection.VisibleToolbar.Width, Root.FormCollection.gpButtonsHeight - Root.FormCollection.VisibleToolbar.Height,
+                                    Root.FormCollection.VisibleToolbar.Width, Root.FormCollection.VisibleToolbar.Height, GraphicsUnit.Pixel, iaToolBarTransparency);
 
-			if (Root.gpPenWidthVisible)
+            if (Root.gpPenWidthVisible)
 			{
 				top = Root.FormCollection.gpPenWidth.Top;
 				height = Root.FormCollection.gpPenWidth.Height;
@@ -251,7 +219,10 @@ namespace gInk
 				if (redrawbuttons)
 					Root.FormCollection.gpPenWidth.DrawToBitmap(gpPenWidthImage, new Rectangle(0, 0, width, height));
 
-				g.DrawImage(gpPenWidthImage, left, top);
+                g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
+                g.FillRectangle(TransparentBrush, left, top, width, height);
+                g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
+                g.DrawImage(gpPenWidthImage, new Rectangle(left, top, width, height), 0, 0, width, height, GraphicsUnit.Pixel, iaToolBarTransparency);
 			}
 		}
 
