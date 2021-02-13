@@ -948,6 +948,8 @@ namespace gInk
                 st.ExtendedProperties.Add(Root.ISFILLEDWHITE_GUID, true);
             else if (FilledSelected == Filling.BlackFilled)
                 st.ExtendedProperties.Add(Root.ISFILLEDBLACK_GUID, true);
+            try { st.ExtendedProperties.Add(Root.FADING_PEN, DateTime.Now.AddSeconds((float)(st.DrawingAttributes.ExtendedProperties[Root.FADING_PEN].Data)).Ticks); } catch { };
+
         }
 
         private Stroke AddEllipseStroke(int CursorX0, int CursorY0, int CursorX, int CursorY, int FilledSelected)
@@ -1323,6 +1325,7 @@ namespace gInk
         {
             movedStroke = null; // reset the moving object
             try { if (e.Stroke.ExtendedProperties.Contains(Root.ISSTROKE_GUID)) e.Stroke.ExtendedProperties.Remove(Root.ISSTROKE_GUID); } catch { } // the ISSTROKE set for drawin
+            try { e.Stroke.ExtendedProperties.Add(Root.FADING_PEN, DateTime.Now.AddSeconds((float)(e.Stroke.DrawingAttributes.ExtendedProperties[Root.FADING_PEN].Data)).Ticks); } catch { };
             if (Root.ToolSelected == Tools.Hand)
             {
                 Stroke st = e.Stroke;// IC.Ink.Strokes[IC.Ink.Strokes.Count-1];
@@ -2511,6 +2514,25 @@ namespace gInk
                 //Console.WriteLine("AA=" + (DateTime.Now.Ticks / 1e7).ToString());
                 LastTickTime = DateTime.Now;
                 return;
+            }
+
+            for(int i=IC.Ink.Strokes.Count-1; i>=0;i--)
+            {
+                Stroke st = IC.Ink.Strokes[i];
+                if (st.ExtendedProperties.Contains(Root.FADING_PEN))
+                {
+                    Int64 j = (Int64)(st.ExtendedProperties[Root.FADING_PEN].Data);
+                    if(DateTime.Now.Ticks>j)
+                    {
+                        if(st.DrawingAttributes.Transparency == 255)
+                            IC.Ink.Strokes.RemoveAt(i);
+                        else if (st.DrawingAttributes.Transparency > 245)
+                            st.DrawingAttributes.Transparency = 255;
+                        else
+                            st.DrawingAttributes.Transparency += 10;
+                        Root.UponAllDrawingUpdate = true;
+                    }
+                }
             }
 
             Size AimedSize = new Size(gpButtonsWidth,gpButtonsHeight);

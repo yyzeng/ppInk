@@ -40,6 +40,7 @@
             this.OkBtn = new System.Windows.Forms.Button();
             this.colorEditorManager = new Cyotek.Windows.Forms.ColorEditorManager();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.FadingCB = new System.Windows.Forms.CheckBox();
             this.previewPanel.SuspendLayout();
             this.gpPenWidth.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pboxPenWidthIndicator)).BeginInit();
@@ -134,7 +135,7 @@
             // CancelBtn
             // 
             this.CancelBtn.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.CancelBtn.Location = new System.Drawing.Point(472, 332);
+            this.CancelBtn.Location = new System.Drawing.Point(472, 344);
             this.CancelBtn.Name = "CancelBtn";
             this.CancelBtn.Size = new System.Drawing.Size(75, 23);
             this.CancelBtn.TabIndex = 28;
@@ -144,7 +145,7 @@
             // OkBtn
             // 
             this.OkBtn.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.OkBtn.Location = new System.Drawing.Point(352, 332);
+            this.OkBtn.Location = new System.Drawing.Point(352, 344);
             this.OkBtn.Name = "OkBtn";
             this.OkBtn.Size = new System.Drawing.Size(75, 24);
             this.OkBtn.TabIndex = 29;
@@ -169,6 +170,16 @@
             this.pictureBox1.TabIndex = 31;
             this.pictureBox1.TabStop = false;
             // 
+            // FadingCB
+            // 
+            this.FadingCB.AutoSize = true;
+            this.FadingCB.Location = new System.Drawing.Point(347, 321);
+            this.FadingCB.Name = "FadingCB";
+            this.FadingCB.Size = new System.Drawing.Size(58, 17);
+            this.FadingCB.TabIndex = 32;
+            this.FadingCB.Text = "Fading";
+            this.FadingCB.UseVisualStyleBackColor = true;
+            // 
             // PenModifyDlg
             // 
             this.AcceptButton = this.OkBtn;
@@ -176,6 +187,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.CancelBtn;
             this.ClientSize = new System.Drawing.Size(591, 379);
+            this.Controls.Add(this.FadingCB);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.OkBtn);
             this.Controls.Add(this.CancelBtn);
@@ -212,5 +224,6 @@
         public Cyotek.Windows.Forms.ColorEditorManager colorEditorManager;
         public Cyotek.Windows.Forms.ColorEditor colorEditor;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.CheckBox FadingCB;
     }
 }

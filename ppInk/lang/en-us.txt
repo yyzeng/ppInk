@@ -110,6 +110,7 @@ OptionsPensHighlighter = "Highlighter"
 OptionsPensThin = "Thin"
 OptionsPensNormal = "Normal"
 OptionsPensThick = "Thick"
+OptionsPensFading = "Fading (after...sec)"
 OptionsPensWidthAtSelection = "Apply Width on Pen Selection\n(even with width selector)"
 
 OptionsHotKeyAltAsOneCommand = "Process Alt as Temporary Command (Alt will be ignored in hotkeys)"

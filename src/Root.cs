@@ -129,7 +129,9 @@ namespace gInk
         public static Guid IMAGE_W_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 7);
         public static Guid IMAGE_H_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 8);
         public static Guid ISHIDDEN_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 10);
-            
+
+        public static Guid FADING_PEN = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 3, 1);
+
         public static int MIN_MAGNETIC = 25;
         // options
         public int ToolbarOrientation = Orientation.toLeft;
@@ -284,6 +286,8 @@ namespace gInk
         public string ImageStamp1 = "";
         public string ImageStamp2 = "";
         public string ImageStamp3 = "";
+
+        public float TimeBeforeFading = 5.0F;     //5s default
 
         //public string ProgramFolder;
 
@@ -809,9 +813,21 @@ namespace gInk
 								{
 									PenAttr[penid].Width = penc;
 								}
-							}
+                            }
+                            if (sName.EndsWith("_FADING"))
+                            {
+                                float k;
+                                if (sPara.ToUpper() == "Y") 
+                                     k = TimeBeforeFading;
+                                if (sPara.ToUpper() == "N")
+                                    k = -1;
+                                else if (!float.TryParse(sPara, out k))
+                                    k = TimeBeforeFading;
+                                if(k>0)
+                                    PenAttr[penid].ExtendedProperties.Add(FADING_PEN, k);
+                            }
 
-							if (sName.EndsWith("_HOTKEY"))
+                            if (sName.EndsWith("_HOTKEY"))
 							{
 								Hotkey_Pens[penid].Parse(sPara);
 							}
@@ -1077,7 +1093,7 @@ namespace gInk
 							if (int.TryParse(sPara, out tempi))
 								gpButtonsTop = tempi;
 							break;
-						case "TOOLBAR_HEIGHT":
+                        case "TOOLBAR_HEIGHT":
 							if (float.TryParse(sPara, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out tempf))
 								ToolbarHeight = tempf;
 							break;
@@ -1205,6 +1221,10 @@ namespace gInk
                             if (sPara.ToUpper() == "DOWN")
                                 ToolbarOrientation = Orientation.toDown;
                             break;
+                        case "FADING_TIME":
+                            if (float.TryParse(sPara, out tempf))
+                                TimeBeforeFading = tempf;
+                            break;
                     }
                 }
 			}
@@ -1281,7 +1301,21 @@ namespace gInk
 							{
 								sPara = ((int)PenAttr[penid].Width).ToString();
 							}
-							else if (sName.EndsWith("_HOTKEY"))
+                            else if (sName.EndsWith("_FADING"))
+                            {
+                                if (PenAttr[penid].ExtendedProperties.Contains(FADING_PEN))
+                                {
+                                    float f = (float)(PenAttr[penid].ExtendedProperties[FADING_PEN].Data);
+                                    if (f == TimeBeforeFading)
+                                        sPara = "Y";
+                                    else
+                                        sPara = f.ToString();
+
+                                }
+                                else
+                                    sPara = "N";
+                            }
+                            else if (sName.EndsWith("_HOTKEY"))
 							{
 								sPara = Hotkey_Pens[penid].ToString();
 							}
@@ -1582,6 +1616,9 @@ namespace gInk
                                 sPara = "Up";
                             if (ToolbarOrientation == Orientation.toDown)
                                 sPara = "Down";
+                            break;
+                        case "FADING_TIME":
+                            sPara = TimeBeforeFading.ToString();
                             break;
                     }
                 }

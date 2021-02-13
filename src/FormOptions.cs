@@ -19,7 +19,8 @@ namespace gInk
 		PictureBox[] pboxPens = new PictureBox[10];
 		ComboBox[] comboPensAlpha = new ComboBox[10];
 		ComboBox[] comboPensWidth = new ComboBox[10];
-		Label lbcbPens, lbpboxPens, lbcomboPensAlpha, lbcomboPensWidth;
+        CheckBox[] comboPensFading = new CheckBox[10];
+        Label lbcbPens, lbpboxPens, lbcomboPensAlpha, lbcomboPensWidth, lbcomboPensFading;
 
 		Label[] lbHotkeyPens = new Label[10];
 		HotkeyInputBox[] hiPens = new HotkeyInputBox[10];
@@ -96,28 +97,34 @@ namespace gInk
 			lbcbPens.Left = (int)(this.Width / 500.0 * 25);
 			lbcbPens.Width = 100;
 			lbcbPens.Top = 15;
-			
 			tabPage2.Controls.Add(lbcbPens);
-			lbpboxPens = new Label();
-			lbpboxPens.Left = (int)(this.Width / 500.0 * 140);
+
+            lbpboxPens = new Label();
+			lbpboxPens.Left = (int)(this.Width / 500.0 * 125);
 			lbpboxPens.Width = 60;
-			lbpboxPens.Top = 15;
-			
+			lbpboxPens.Top = 15;			
 			tabPage2.Controls.Add(lbpboxPens);
+
 			lbcomboPensAlpha = new Label();
-			lbcomboPensAlpha.Left = (int)(this.Width / 500.0 * 200);
+			lbcomboPensAlpha.Left = (int)(this.Width / 500.0 * 185);
 			lbcomboPensAlpha.Width = 100;
-			lbcomboPensAlpha.Top = 15;
-			
+			lbcomboPensAlpha.Top = 15;			
 			tabPage2.Controls.Add(lbcomboPensAlpha);
+
 			lbcomboPensWidth = new Label();
-			lbcomboPensWidth.Left = (int)(this.Width / 500.0 * 325);
+			lbcomboPensWidth.Left = (int)(this.Width / 500.0 * 275);
 			lbcomboPensWidth.Width = 100;
-			lbcomboPensWidth.Top = 15;
-			
+			lbcomboPensWidth.Top = 15;			
 			tabPage2.Controls.Add(lbcomboPensWidth);
 
-			for (int p = 0; p < Root.MaxPenCount; p++)
+            lbcomboPensFading = new Label();
+            lbcomboPensFading.Left = (int)(this.Width / 500.0 * 375);
+            lbcomboPensFading.Width = 100;
+            lbcomboPensFading.Top = 15;
+            lbcomboPensFading.AutoSize = true;
+            tabPage2.Controls.Add(lbcomboPensFading);
+
+            for (int p = 0; p < Root.MaxPenCount; p++)
 			{
 				int top = p * (int)(this.Height * 0.075) + (int)(this.Height * 0.09);
 				lbPens[p] = new Label();
@@ -134,7 +141,7 @@ namespace gInk
 				cbPens[p].CheckedChanged += cbPens_CheckedChanged;
 
 				pboxPens[p] = new PictureBox();
-				pboxPens[p].Left = (int)(this.Width / 500.0 * 145);
+				pboxPens[p].Left = (int)(this.Width / 500.0 * 130);
 				pboxPens[p].Top = top;
 				pboxPens[p].Width = 15;
 				pboxPens[p].Height = 15;
@@ -143,28 +150,39 @@ namespace gInk
 
 				comboPensAlpha[p] = new ComboBox();
 				
-				comboPensAlpha[p].Left = (int)(this.Width / 500.0 * 205);
+				comboPensAlpha[p].Left = (int)(this.Width / 500.0 * 180);
 				comboPensAlpha[p].Top = top - 2;
-				comboPensAlpha[p].Width = 100;
+				comboPensAlpha[p].Width = 80;
 				comboPensAlpha[p].Text = (255 - Root.PenAttr[p].Transparency).ToString();
 				comboPensAlpha[p].TextChanged += comboPensAlpha_TextChanged;
 
 				comboPensWidth[p] = new ComboBox();
 				
-				comboPensWidth[p].Left = (int)(this.Width / 500.0 * 330);
+				comboPensWidth[p].Left = (int)(this.Width / 500.0 * 270);
 				comboPensWidth[p].Top = top - 2;
-				comboPensWidth[p].Width = 100;
+				comboPensWidth[p].Width = 80;
 				comboPensWidth[p].Text = ((int)Root.PenAttr[p].Width).ToString();
 				comboPensWidth[p].TextChanged += comboPensWidth_TextChanged;
 
-				tabPage2.Controls.Add(lbPens[p]);
+                comboPensFading[p] = new CheckBox();
+
+                comboPensFading[p].Left = (int)(this.Width / 500.0 * 380);
+                comboPensFading[p].Top = top - 2;
+                comboPensFading[p].Width = 20;
+                comboPensFading[p].Checked = Root.PenAttr[p].ExtendedProperties.Contains(Root.FADING_PEN);
+                comboPensFading[p].CheckedChanged += comboPensFading_Changed;
+
+                tabPage2.Controls.Add(lbPens[p]);
 				tabPage2.Controls.Add(cbPens[p]);
 				tabPage2.Controls.Add(pboxPens[p]);
 				tabPage2.Controls.Add(comboPensAlpha[p]);
 				tabPage2.Controls.Add(comboPensWidth[p]);
-			}
+                tabPage2.Controls.Add(comboPensFading[p]);
+            }
 
-			cbAllowHotkeyInPointer.Top = (int)(this.Height * 0.18);
+            FadingTimeEd.Text = Root.TimeBeforeFading.ToString();
+
+            cbAllowHotkeyInPointer.Top = (int)(this.Height * 0.18);
 
 			for (int p = 0; p < Root.MaxPenCount; p++)
 			{
@@ -343,6 +361,7 @@ namespace gInk
 				lbpboxPens.Text = Root.Local.OptionsPensColor;
 				lbcomboPensAlpha.Text = Root.Local.OptionsPensAlpha;
 				lbcomboPensWidth.Text = Root.Local.OptionsPensWidth;
+                lbcomboPensFading.Text = Root.Local.OptionsPensFading;
 			}
             WidthAtPenSelCb.Text = Root.Local.OptionsPensWidthAtSelection;
 
@@ -394,7 +413,24 @@ namespace gInk
 				}
 		}
 
-		private void pboxPens_Click(object sender, EventArgs e)
+        private void comboPensFading_Changed(object sender, EventArgs e)
+        {
+            for (int p = 0; p < Root.MaxPenCount; p++)
+                if ((CheckBox)sender == comboPensFading[p])
+                {
+                    if (((CheckBox)sender).Checked)
+                    {
+                        Root.PenAttr[p].ExtendedProperties.Add(Root.FADING_PEN, Root.TimeBeforeFading);
+                    }
+                    else
+                    {
+                        try{ Root.PenAttr[p].ExtendedProperties.Remove(Root.FADING_PEN); }catch { };
+                    }
+                }
+        }
+
+
+        private void pboxPens_Click(object sender, EventArgs e)
 		{
 			for (int p = 0; p < Root.MaxPenCount; p++)
 				if ((PictureBox)sender == pboxPens[p])
@@ -405,6 +441,7 @@ namespace gInk
                         (sender as PictureBox).BackColor = Color.FromArgb(255, Root.PenAttr[p].Color);
                         comboPensAlpha[p].Text = string.Format("{0}", Root.PenAttr[p].Transparency);
                         comboPensWidth[p].Text = string.Format("{0}", Root.PenAttr[p].Width);
+                        comboPensFading[p].Checked = Root.PenAttr[p].ExtendedProperties.Contains(Root.FADING_PEN);
                     }
 				}
 		}
@@ -795,6 +832,23 @@ namespace gInk
             if (Root.ToolbarOrientation > Orientation.max)
                 Root.ToolbarOrientation = Orientation.min;
             ToolbarOrientationBtn.BackgroundImage = ToolBarOrientationIcons[Root.ToolbarOrientation];
+        }
+
+        private void FadingTimeEd_Validating(object sender, CancelEventArgs e)
+        {
+            float f = -1;
+            TextBox tb = (TextBox)sender;
+            if (float.TryParse(tb.Text, out f) && f > 0)
+            {
+                Root.TimeBeforeFading = f;
+                tb.BackColor = SystemColors.Window;
+                e.Cancel = false;
+            }
+            else
+            {
+                tb.BackColor = Color.Orange;
+                e.Cancel = true;
+            }
         }
 
         private void cbAllowHotkeyInPointer_CheckedChanged(object sender, EventArgs e)

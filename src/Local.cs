@@ -112,6 +112,7 @@ namespace gInk
 		public string OptionsPensWidth = "Width";
 		public string OptionsPensPencil = "Pencil";
 		public string OptionsPensHighlighter = "Highlighter";
+        public string OptionsPensFading = "Fading (after...sec)";
         public string OptionsPensWidthAtSelection = "Apply Width on Pen Selection\n(even with width selector)";
 
         public string OptionsPensThin = "Thin";

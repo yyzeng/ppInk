@@ -109,6 +109,7 @@ OptionsPensHighlighter = "Surligneur"
 OptionsPensThin = "Fin"
 OptionsPensNormal = "Normal"
 OptionsPensThick = "Épais"
+OptionsPensFading = "Effacement\n         (apres...sec)"
 OptionsPensWidthAtSelection = "Modifie La largeur à la sélection\n(Même avec L'outils largeur de stylo)"
 
 OptionsHotKeyAltAsOneCommand = "Alt utilisé comme commande temporaire (Alt sera ignoré dans les raccourcis)"

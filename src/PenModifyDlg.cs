@@ -11,8 +11,10 @@ namespace gInk
 {
     public partial class PenModifyDlg : Form
     {
-        public PenModifyDlg(Root Root)
+        Root Root;
+        public PenModifyDlg(Root root)
         {
+            Root = root;
             InitializeComponent();
             OkBtn.Text = Root.Local.ButtonOkText;
             CancelBtn.Text = Root.Local.ButtonCancelText;
@@ -48,11 +50,16 @@ namespace gInk
         {
             setColor(pen.Transparency, pen.Color);
             setWidth(pen.Width);
+            FadingCB.Checked = pen.ExtendedProperties.Contains(Root.FADING_PEN);
             if (ShowDialog() == DialogResult.OK)
             {
                 pen.Color = getColor();
                 pen.Transparency = (byte)getAlpha();
                 pen.Width = getWidth();
+                if (FadingCB.Checked)
+                    pen.ExtendedProperties.Add(Root.FADING_PEN, Root.TimeBeforeFading);
+                else
+                    try { pen.ExtendedProperties.Remove(Root.FADING_PEN); } catch { };
                 return true;
             }
             else
