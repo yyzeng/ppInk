@@ -835,7 +835,7 @@ namespace gInk
                 return;
             }
             //Console.WriteLine("activating " + (Root.PointerMode ? "pointer" : "not") + (Root.FormButtonHitter.Visible ? "visible" : "not")+ Root.FormButtonHitter.Width.ToString());
-            if (Root.FormButtonHitter.Visible && Root.FormButtonHitter.Width < 100)
+            if (Root.FormButtonHitter.Visible && (Math.Min(Root.FormButtonHitter.Width, Root.FormButtonHitter.Height)<=Math.Min(Root.FormCollection.btDock.Width, Root.FormCollection.btDock.Height)*1.5))
             {
                 //Console.WriteLine("process ");
                 SelectPen(LastPenSelected);
