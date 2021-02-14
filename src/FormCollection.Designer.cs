@@ -30,6 +30,7 @@ namespace gInk
 		{
             this.components = new System.ComponentModel.Container();
             this.gpButtons = new System.Windows.Forms.Panel();
+            this.btZoom = new System.Windows.Forms.Button();
             this.btSave = new System.Windows.Forms.Button();
             this.btLoad = new System.Windows.Forms.Button();
             this.btClip3 = new System.Windows.Forms.Button();
@@ -70,6 +71,7 @@ namespace gInk
             // gpButtons
             // 
             this.gpButtons.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.gpButtons.Controls.Add(this.btZoom);
             this.gpButtons.Controls.Add(this.btSave);
             this.gpButtons.Controls.Add(this.btLoad);
             this.gpButtons.Controls.Add(this.btClip3);
@@ -104,6 +106,25 @@ namespace gInk
             this.gpButtons.MouseDown += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseDown);
             this.gpButtons.MouseMove += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseMove);
             this.gpButtons.MouseUp += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseUp);
+            // 
+            // btZoom
+            // 
+            this.btZoom.BackColor = System.Drawing.Color.Transparent;
+            this.btZoom.BackgroundImage = global::gInk.Properties.Resources.Zoom;
+            this.btZoom.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btZoom.FlatAppearance.BorderSize = 0;
+            this.btZoom.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.btZoom.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.btZoom.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btZoom.ForeColor = System.Drawing.Color.Transparent;
+            this.btZoom.Location = new System.Drawing.Point(920, 3);
+            this.btZoom.Margin = new System.Windows.Forms.Padding(2);
+            this.btZoom.Name = "btZoom";
+            this.btZoom.Size = new System.Drawing.Size(46, 46);
+            this.btZoom.TabIndex = 12;
+            this.toolTip.SetToolTip(this.btZoom, "Zoom");
+            this.btZoom.UseVisualStyleBackColor = true;
+            this.btZoom.Click += new System.EventHandler(this.ZoomBtn_Click);
             // 
             // btSave
             // 
@@ -248,7 +269,7 @@ namespace gInk
             this.btStop.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
             this.btStop.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btStop.ForeColor = System.Drawing.Color.Transparent;
-            this.btStop.Location = new System.Drawing.Point(1234, 5);
+            this.btStop.Location = new System.Drawing.Point(1270, 4);
             this.btStop.Margin = new System.Windows.Forms.Padding(2);
             this.btStop.Name = "btStop";
             this.btStop.Size = new System.Drawing.Size(46, 46);
@@ -287,7 +308,7 @@ namespace gInk
             this.btInkVisible.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
             this.btInkVisible.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
             this.btInkVisible.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btInkVisible.Location = new System.Drawing.Point(1184, 5);
+            this.btInkVisible.Location = new System.Drawing.Point(1220, 4);
             this.btInkVisible.Margin = new System.Windows.Forms.Padding(2);
             this.btInkVisible.Name = "btInkVisible";
             this.btInkVisible.Size = new System.Drawing.Size(46, 46);
@@ -308,7 +329,7 @@ namespace gInk
             this.btPan.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
             this.btPan.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
             this.btPan.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btPan.Location = new System.Drawing.Point(1134, 5);
+            this.btPan.Location = new System.Drawing.Point(1170, 4);
             this.btPan.Margin = new System.Windows.Forms.Padding(2);
             this.btPan.Name = "btPan";
             this.btPan.Size = new System.Drawing.Size(46, 46);
@@ -589,7 +610,7 @@ namespace gInk
             this.btSnap.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
             this.btSnap.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
             this.btSnap.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btSnap.Location = new System.Drawing.Point(984, 7);
+            this.btSnap.Location = new System.Drawing.Point(1020, 4);
             this.btSnap.Margin = new System.Windows.Forms.Padding(2);
             this.btSnap.Name = "btSnap";
             this.btSnap.Size = new System.Drawing.Size(46, 46);
@@ -611,7 +632,7 @@ namespace gInk
             this.btPointer.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
             this.btPointer.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btPointer.ForeColor = System.Drawing.Color.Transparent;
-            this.btPointer.Location = new System.Drawing.Point(934, 5);
+            this.btPointer.Location = new System.Drawing.Point(970, 4);
             this.btPointer.Margin = new System.Windows.Forms.Padding(2);
             this.btPointer.Name = "btPointer";
             this.btPointer.Size = new System.Drawing.Size(46, 46);
@@ -632,7 +653,7 @@ namespace gInk
             this.btClear.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
             this.btClear.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
             this.btClear.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btClear.Location = new System.Drawing.Point(1084, 4);
+            this.btClear.Location = new System.Drawing.Point(1120, 3);
             this.btClear.Margin = new System.Windows.Forms.Padding(2);
             this.btClear.Name = "btClear";
             this.btClear.Size = new System.Drawing.Size(46, 46);
@@ -654,7 +675,7 @@ namespace gInk
             this.btUndo.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
             this.btUndo.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
             this.btUndo.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btUndo.Location = new System.Drawing.Point(1034, 5);
+            this.btUndo.Location = new System.Drawing.Point(1070, 4);
             this.btUndo.Margin = new System.Windows.Forms.Padding(2);
             this.btUndo.Name = "btUndo";
             this.btUndo.Size = new System.Drawing.Size(46, 46);
@@ -767,6 +788,7 @@ namespace gInk
         public System.Windows.Forms.Button btClip2;
         public System.Windows.Forms.Button btLoad;
         public System.Windows.Forms.Button btSave;
+        public System.Windows.Forms.Button btZoom;
     }
 }
 

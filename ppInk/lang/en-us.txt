@@ -36,9 +36,15 @@ ButtonNameClipArt = "ClipArt"
 ButtonNameVideo = "Video Record"
 SaveStroke = "Save Strokes"
 LoadStroke = "Load Strokes"
+ButtonNameZoom = "Zoom"
 
 StrokeFileExists = "{0} Already Exists\nDo you want to override it?"
 FileCanNotWrite = "{0}\ncan not be written."
+
+OptionsZoomDim = "Dim."
+OptionsZoomScale = "Scale"
+OptionsZoomContinous = "Continous"
+
 
 BoardTitle = "Clean Desktop"
 BoardText = "Erase all drawings and fill it with..."

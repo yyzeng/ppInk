@@ -204,6 +204,7 @@ namespace gInk
         public Hotkey Hotkey_ClipArt1 = new Hotkey();
         public Hotkey Hotkey_ClipArt2 = new Hotkey();
         public Hotkey Hotkey_ClipArt3 = new Hotkey();
+        public Hotkey Hotkey_Zoom = new Hotkey();
 
         public int ToolSelected = Tools.Hand;        // indicates which tool (Hand,Line,...) is currently selected
         public int FilledSelected = 0;      // indicates which filling (None, Selected color, ...) is currently select
@@ -288,6 +289,11 @@ namespace gInk
         public string ImageStamp3 = "";
 
         public float TimeBeforeFading = 5.0F;     //5s default
+
+        public int ZoomWidth = 100;
+        public int ZoomHeight = 100;
+        public float ZoomScale = 3.0F;
+        public bool ZoomContinous = false;
 
         //public string ProgramFolder;
 
@@ -927,6 +933,9 @@ namespace gInk
                         case "HOTKEY_CLIPART3":
                             Hotkey_ClipArt3.Parse(sPara);
                             break;
+                        case "HOTKEY_ZOOM":
+                            Hotkey_Zoom.Parse(sPara);
+                            break;
 
                         case "WHITE_TRAY_ICON":
                             if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
@@ -1225,6 +1234,19 @@ namespace gInk
                             if (float.TryParse(sPara, out tempf))
                                 TimeBeforeFading = tempf;
                             break;
+                        case "ZOOM":     // Width;Height;scale(f);Continuous(Y/N)
+                            if (sPara.Length == 0) break;
+                            try
+                            {
+                                string[] stt = sPara.Split(';');
+                                Int32.TryParse(stt[0], out ZoomWidth);
+                                Int32.TryParse(stt[1], out ZoomHeight);
+                                float.TryParse(stt[2], NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out ZoomScale);
+                                if (stt[3].ToUpper() == "TRUE" || stt[3] == "1" || stt[3].ToUpper() == "ON" || stt[3].ToUpper() == "Y")
+                                    ZoomContinous = true;
+                            }
+                            catch { }
+                            break;
                     }
                 }
 			}
@@ -1411,6 +1433,9 @@ namespace gInk
                             break;
                         case "HOTKEY_CLIPART3":
                             sPara = Hotkey_ClipArt3.ToString();
+                            break;
+                        case "HOTKEY_ZOOM":
+                            sPara = Hotkey_Zoom.ToString();
                             break;
 
                         case "WHITE_TRAY_ICON":
@@ -1619,6 +1644,9 @@ namespace gInk
                             break;
                         case "FADING_TIME":
                             sPara = TimeBeforeFading.ToString();
+                            break;
+                        case "ZOOM":     // Width;Height;scale(f);Continuous(Y/N)
+                            sPara = ZoomWidth.ToString() + ";" + ZoomHeight.ToString() + ";" + ZoomScale.ToString() + ";" + (ZoomContinous ? "Y" : "N");
                             break;
                     }
                 }

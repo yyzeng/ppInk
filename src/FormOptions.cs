@@ -91,6 +91,12 @@ namespace gInk
             ArrHdLength.Text = (Root.ArrowLen / System.Windows.SystemParameters.PrimaryScreenWidth *100.0).ToString("#0.0000",CultureInfo.InvariantCulture);
             Magnet_TB.Text = (Root.MagneticRadius / System.Windows.SystemParameters.PrimaryScreenWidth * 100.0).ToString("#0.0000", CultureInfo.InvariantCulture);
             DefArrStartCb.Checked = Root.DefaultArrow_start;
+
+            ZoomWidthEd.Text = Root.ZoomWidth.ToString();
+            ZoomHeightEd.Text = Root.ZoomHeight.ToString();
+            ZoomScaleEd.Text = Root.ZoomScale.ToString();
+            ZoomContinousCb.Checked = Root.ZoomContinous;
+
             lbNote.ForeColor = Color.Black;
 
 			lbcbPens = new Label();
@@ -231,6 +237,7 @@ namespace gInk
             hiToolClipArt1.Hotkey = Root.Hotkey_ClipArt1;
             hiToolClipArt2.Hotkey = Root.Hotkey_ClipArt2;
             hiToolClipArt3.Hotkey = Root.Hotkey_ClipArt3;
+            hiZoom.Hotkey = Root.Hotkey_Zoom;
 
             WsUrlTxt.Text = Root.ObsUrl;
             WsPwdTxt.Text = Root.ObsPwd;
@@ -291,6 +298,11 @@ namespace gInk
             this.SaveConfigBtn.Text = Root.Local.OptionsGeneralSaveConfigToFile;
 			this.lbNote.Text = Root.Local.OptionsGeneralNotePenwidth;
 
+            this.ZoomBox.Text = Root.Local.ButtonNameZoom;
+            this.ZoomDimLbl.Text = Root.Local.OptionsZoomDim;
+            this.ZoomScaleLbl.Text = Root.Local.OptionsZoomScale;
+            this.ZoomContinousCb.Text = Root.Local.OptionsZoomContinous;
+
             this.AltAsOneCommandCb.Text = Root.Local.OptionsHotKeyAltAsOneCommand;
 			this.lbHkClear.Text = shortTxt(Root.Local.ButtonNameClear);
             this.lbHkVideo.Text = shortTxt(Root.Local.ButtonNameVideo);
@@ -318,6 +330,7 @@ namespace gInk
             this.lbHkClipart1.Text = shortTxt(Root.Local.ButtonNameClipArt) + " 1";
             this.lbHkClipart2.Text = shortTxt(Root.Local.ButtonNameClipArt) + " 2";
             this.lbHkClipart3.Text = shortTxt(Root.Local.ButtonNameClipArt) + " 3";
+            this.lbHkZoom.Text = shortTxt(Root.Local.ButtonNameZoom);
 
             this.lbGlobalHotkey.Text = Root.Local.OptionsHotkeysglobal;
             this.cbAllowHotkeyInPointer.Text = Root.Local.OptionsHotkeysEnableinpointer;

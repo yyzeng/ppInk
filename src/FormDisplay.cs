@@ -203,12 +203,13 @@ namespace gInk
             g.FillRectangle(TransparentBrush, left, top, drawwidth, height);
             g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
             //gCanvus.DrawImage(gpButtonsImage, new Rectangle(left, top, drawwidth, height), 0, 0, drawwidth, height, GraphicsUnit.Pixel,iaToolBarTransparency);
+            Size s = Root.FormCollection.VisibleToolbar;
             if (Root.ToolbarOrientation == Orientation.toLeft || Root.ToolbarOrientation == Orientation.toUp)
                 g.DrawImage(gpButtonsImage, new Rectangle(left, top, drawwidth, height), 0, 0, drawwidth, height, GraphicsUnit.Pixel, iaToolBarTransparency);
             else
-                g.DrawImage(gpButtonsImage, new Rectangle(left, top, Root.FormCollection.VisibleToolbar.Width, Root.FormCollection.VisibleToolbar.Height),
-                                    Root.FormCollection.gpButtonsWidth- Root.FormCollection.VisibleToolbar.Width, Root.FormCollection.gpButtonsHeight - Root.FormCollection.VisibleToolbar.Height,
-                                    Root.FormCollection.VisibleToolbar.Width, Root.FormCollection.VisibleToolbar.Height, GraphicsUnit.Pixel, iaToolBarTransparency);
+                g.DrawImage(gpButtonsImage, new Rectangle(left, top, s.Width, s.Height),
+                                    Root.FormCollection.gpButtonsWidth- s.Width, Root.FormCollection.gpButtonsHeight - s.Height,
+                                    s.Width, s.Height, GraphicsUnit.Pixel, iaToolBarTransparency);
 
             if (Root.gpPenWidthVisible)
 			{

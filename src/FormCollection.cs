@@ -114,6 +114,11 @@ namespace gInk
         public ImageLister ClipartsDlg;
         private Object btClipSel;
 
+        private ZoomForm ZoomForm = new ZoomForm();
+        private Bitmap ZoomImage;
+        int ZoomFormRePosX;
+        int ZoomFormRePosY;
+
         public string SaveStrokeFile="";
 
         // http://www.csharp411.com/hide-form-from-alttab/
@@ -281,7 +286,13 @@ namespace gInk
 
             //Console.WriteLine("A=" + (DateTime.Now.Ticks/1e7).ToString());
             InitializeComponent();
-             
+            ZoomImage = new Bitmap(Root.ZoomWidth, Root.ZoomHeight);
+            ZoomForm.BackgroundImage = ZoomImage;   // the image will be automatically scaled by stretch setup;
+            ZoomFormRePosX = ZoomImage.Width / 2;
+            ZoomFormRePosY = ZoomImage.Height / 2;
+            ZoomForm.Width = (int)(Root.ZoomWidth*Root.ZoomScale);
+            ZoomForm.Height = (int)(Root.ZoomHeight*Root.ZoomScale);
+
             //Console.WriteLine("B=" + (DateTime.Now.Ticks/1e7).ToString());
             ClipartsDlg = new ImageLister(Root);    
             Initializing = true;
@@ -332,7 +343,7 @@ namespace gInk
             if (Root.ToolbarOrientation<=Orientation.Horizontal)
             {
                 gpButtons.Height = dim;
-                gpButtons.Width = (int)((dim1 *.5 + dim3) +(nbPen * dim4 + (Root.ToolsEnabled ? (6*dim4s +dim4) : 0) + (Root.EraserEnabled ? dim4 : 0) + (Root.PanEnabled ? dim4 : 0) + (Root.PointerEnabled ? dim4 : 0)
+                gpButtons.Width = (int)((dim1 *.5 + dim3) +(nbPen * dim4 + (Root.ToolsEnabled ? (6*dim4s +dim4s) : 0) + (Root.EraserEnabled ? dim4 : 0) + (Root.PanEnabled ? dim4 : 0) + (Root.PointerEnabled ? dim4 : 0)
                                                                          + (Root.PenWidthEnabled ? dim4 : 0) + (Root.InkVisibleEnabled ? dim4 : 0) + (Root.SnapEnabled ? dim4 : 0)
                                                                          + (Root.UndoEnabled ? dim4 : 0) + (Root.ClearEnabled ? dim4 : 0) + (Root.LoadSaveEnabled ? dim4s : 0)
                                                                          + dim1 ));
@@ -340,7 +351,7 @@ namespace gInk
             else //Vertical
             {
                 gpButtons.Width = dim;
-                gpButtons.Height = (int)((dim1 * .5 + dim3) + (nbPen * dim4 + (Root.ToolsEnabled ? (6 * dim4s + dim4) : 0) + (Root.EraserEnabled ? dim4 : 0) + (Root.PanEnabled ? dim4 : 0) + (Root.PointerEnabled ? dim4 : 0)
+                gpButtons.Height = (int)((dim1 * .5 + dim3) + (nbPen * dim4 + (Root.ToolsEnabled ? (6 * dim4s + dim4s) : 0) + (Root.EraserEnabled ? dim4 : 0) + (Root.PanEnabled ? dim4 : 0) + (Root.PointerEnabled ? dim4 : 0)
                                                                             + (Root.PenWidthEnabled ? dim4 : 0) + (Root.InkVisibleEnabled ? dim4 : 0) + (Root.SnapEnabled ? dim4 : 0)
                                                                             + (Root.UndoEnabled ? dim4 : 0) + (Root.ClearEnabled ? dim4 : 0) + (Root.LoadSaveEnabled ? dim4s : 0)
                                                                             + dim1));
@@ -519,11 +530,15 @@ namespace gInk
 
             if (root.ToolsEnabled)
             {
-                btMagn.Height = dim1;
-                btMagn.Width = dim1;
+                btMagn.Height = dim1s;
+                btMagn.Width = dim1s;
                 this.btMagn.BackgroundImage = getImgFromDiskOrRes((Root.MagneticRadius > 0) ? "Magnetic_act" : "Magnetic", ImageExts);
                 SetButtonPosition(prev, btMagn, dim3);
                 prev = btMagn;
+                btZoom.Height = dim1s;
+                btZoom.Width = dim1s;
+                btZoom.BackgroundImage = getImgFromDiskOrRes("Zoom", ImageExts);
+                SetSmallButtonNext(btMagn, btZoom, dim2s);
             }
             else
                 btMagn.Visible = false;
@@ -775,6 +790,7 @@ namespace gInk
             this.toolTip.SetToolTip(this.btText, Root.Local.ButtonNameText + " (" + Root.Hotkey_Text.ToString() + ")");
             this.toolTip.SetToolTip(this.btEdit, Root.Local.ButtonNameEdit + " (" + Root.Hotkey_Edit.ToString() + ")");
             this.toolTip.SetToolTip(this.btMagn, Root.Local.ButtonNameMagn + " (" + Root.Hotkey_Magnet.ToString() + ")");
+            this.toolTip.SetToolTip(this.btZoom, Root.Local.ButtonNameZoom + " (" + Root.Hotkey_Zoom.ToString() + ")");
             this.toolTip.SetToolTip(this.btClipArt, Root.Local.ButtonNameClipArt + " (" + Root.Hotkey_ClipArt.ToString() + ")");
             this.toolTip.SetToolTip(this.btClip1, Root.Local.ButtonNameClipArt + "-1 (" + Root.Hotkey_ClipArt1.ToString() + ")");
             this.toolTip.SetToolTip(this.btClip2, Root.Local.ButtonNameClipArt + "-2 (" + Root.Hotkey_ClipArt2.ToString() + ")");
@@ -880,9 +896,16 @@ namespace gInk
 
         private void IC_MouseWheel(object sender, CancelMouseEventArgs e)
         {
+            if(ZoomForm.Visible && ((GetKeyState(VK_LCONTROL) | GetKeyState(VK_RCONTROL)) & 0x8000)!=0)
+            {
+                int t = Math.Sign(e.Delta);
+                ZoomForm.Height += t*(int)(10.0F* Root.ZoomHeight/Root.ZoomWidth);
+                ZoomForm.Width += t*10;
+                return;
+            }
             Root.GlobalPenWidth += Root.PixelToHiMetric(e.Delta > 0 ? 2 : -2);
             if (Root.GlobalPenWidth < 1)
-                Root.GlobalPenWidth = 1; 
+                Root.GlobalPenWidth = 1;
             /*if (Root.GlobalPenWidth > 120)
                 Root.GlobalPenWidth = 120;
             */
@@ -1615,6 +1638,7 @@ namespace gInk
         {
             float pos;
             Root.StrokeHovered = null;
+
             if (e.Button == MouseButtons.None)
                 if (Root.EraserMode || Root.ToolSelected == Tools.Edit || Root.ToolSelected == Tools.Move || Root.ToolSelected == Tools.Copy)
                 {
@@ -2193,6 +2217,8 @@ namespace gInk
         public void RetreatAndExit()
         {
             ToThrough();
+            if (ZoomForm.Visible)
+                ZoomBtn_Click(btZoom, null);
             try
             {
                 string st = Path.GetFullPath(Environment.ExpandEnvironmentVariables(Root.SnapshotBasePath));
@@ -2294,11 +2320,14 @@ namespace gInk
 			if (ToolbarMoved)
 			{
 				ToolbarMoved = false;
-				return;
-			}
+                return;
+            }
 
-			if (Root.Snapping > 0)
-				return;
+            if (ZoomForm.Visible)
+                ZoomBtn_Click(btZoom, null);
+
+            if (Root.Snapping > 0)
+                return;
             PolyLineLastX = Int32.MinValue; PolyLineLastY = Int32.MinValue; PolyLineInProgress = null;
             cursorsnap = new System.Windows.Forms.Cursor(gInk.Properties.Resources.cursorsnap.Handle);
 			this.Cursor = cursorsnap;
@@ -2375,6 +2404,7 @@ namespace gInk
         bool LastEditStatus = false;
         bool LastMoveStatus = false;
         bool LastMagnetStatus = false;
+        bool LastZoomStatus = false;
         bool LastClipArtStatus = false;
         bool LastClipArt1Status = false;
         bool LastClipArt2Status = false;
@@ -2494,11 +2524,72 @@ namespace gInk
 		}
 
         short LastESCStatus = 0;
-		private void tiSlide_Tick(object sender, EventArgs e)
+        int ZoomX = -1;
+        int ZoomY = -1;        
+
+        void RecomputeZoomPos(int ZoomX, int ZoomY, ref int ZoomFormRePosX, ref int ZoomFormRePosY)
+        { int d0, d1;
+            Point p = new Point(ZoomX, ZoomY);
+            Screen scr = Screen.FromPoint(p);
+            if(ZoomX < (scr.Bounds.Left + scr.Bounds.Right) / 2)
+            {
+                d0 = ZoomX + ZoomFormRePosX-scr.Bounds.Left;
+                d1 = d0 + ZoomForm.Width;
+            }
+            else
+            {
+                d0 = ZoomX + ZoomFormRePosX - scr.Bounds.Right;
+                d1 = d0 + ZoomForm.Width;
+            }
+            if(Math.Sign(d0*d1)<0)
+            {
+                if (ZoomFormRePosX > 0)
+                    ZoomFormRePosX = - ZoomImage.Width / 2 - ZoomForm.Width;
+                else
+                    ZoomFormRePosX = ZoomImage.Width / 2;
+            }
+
+            if (ZoomY < (scr.Bounds.Top + scr.Bounds.Bottom) / 2)
+            {
+                d0 = ZoomY + ZoomFormRePosY - scr.Bounds.Top;
+                d1 = d0 + ZoomForm.Height;
+            }
+            else
+            {
+                d0 = ZoomY + ZoomFormRePosY - scr.Bounds.Bottom;
+                d1 = d0 + ZoomForm.Height;
+            }
+            if (Math.Sign(d0 * d1) < 0)
+            {
+                if (ZoomFormRePosY > 0)
+                    ZoomFormRePosY = -ZoomImage.Height / 2 - ZoomForm.Height;
+                else
+                    ZoomFormRePosY = ZoomImage.Height / 2;
+            }
+        }
+
+
+        private void tiSlide_Tick(object sender, EventArgs e)
         {
             Initializing = false;
 
-            if(Root.FFmpegProcess!=null && Root.FFmpegProcess.HasExited)
+            if (ZoomForm.Visible && (Root.ZoomContinous||MousePosition.X != ZoomX || MousePosition.Y != ZoomY))
+            {
+                ZoomX = MousePosition.X;
+                ZoomY = MousePosition.Y;
+                RecomputeZoomPos(ZoomX, ZoomY, ref ZoomFormRePosX, ref ZoomFormRePosY);
+                ZoomForm.Top = MousePosition.Y + ZoomFormRePosY;
+                ZoomForm.Left = MousePosition.X + ZoomFormRePosX;
+
+                using (Graphics g = Graphics.FromImage(ZoomImage))
+                {
+                    Point p = new Point(MousePosition.X - ZoomImage.Width / 2, MousePosition.Y - ZoomImage.Height / 2);
+                    Size sz = new Size(ZoomImage.Width, ZoomImage.Height);
+                    g.CopyFromScreen(p, Point.Empty, sz);
+                    ZoomForm.Refresh();
+                }
+            }
+            if (Root.FFmpegProcess!=null && Root.FFmpegProcess.HasExited)
             {
                 Root.VideoRecInProgress = VideoRecInProgress.Stopped;
                 btVideo.BackgroundImage = getImgFromDiskOrRes("VidStop", ImageExts);
@@ -2950,6 +3041,13 @@ namespace gInk
                     btMagn_Click(null, null);
                 }
                 LastMagnetStatus = pressed;
+
+                pressed = (GetKeyState(Root.Hotkey_Zoom.Key) & 0x8000) == 0x8000;
+                if (pressed && !LastZoomStatus && Root.Hotkey_Zoom.ModifierMatch(control, alt, shift, win))
+                {
+                    ZoomBtn_Click(null, null);
+                }
+                LastZoomStatus = pressed;
 
                 pressed = (GetKeyState(Root.Hotkey_ClipArt.Key) & 0x8000) == 0x8000;
                 if (pressed && !LastClipArtStatus && Root.Hotkey_ClipArt.ModifierMatch(control, alt, shift, win))
@@ -3828,10 +3926,33 @@ namespace gInk
             Root.UponButtonsUpdate |= 0x2;
         }
 
-		short LastF4Status = 0;
-		private void FormCollection_FormClosing(object sender, FormClosingEventArgs e)
-		{
-			// check if F4 key is pressed and we assume it's Alt+F4
+        short LastF4Status = 0;
+
+        private void ZoomBtn_Click(object sender, EventArgs e)
+        {
+            if (ToolbarMoved)
+            {
+                ToolbarMoved = false;
+                return;
+            }
+            if (ZoomForm.Visible)
+            {
+                ZoomForm.Hide();
+                btZoom.BackgroundImage = getImgFromDiskOrRes("Zoom");
+            }
+            else
+            {
+                ZoomForm.Width = (int)(Root.ZoomWidth * Root.ZoomScale);
+                ZoomForm.Height = (int)(Root.ZoomHeight * Root.ZoomScale);
+                ZoomForm.Show();
+                btZoom.BackgroundImage = getImgFromDiskOrRes("Zoom_act");
+            }
+            Root.UponButtonsUpdate |= 0x2;
+        }
+
+        private void FormCollection_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            // check if F4 key is pressed and we assume it's Alt+F4
 			short retVal = GetKeyState(0x73);
 			if ((retVal & 0x8000) == 0x8000 && (LastF4Status & 0x8000) == 0x0000)
 			{

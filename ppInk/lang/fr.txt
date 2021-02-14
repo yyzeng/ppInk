@@ -36,9 +36,15 @@ ButtonNameClipArt = "ClipArt"
 ButtonNameVideo = "Enregistrement Video"
 SaveStroke = "Sauver Dessins"
 LoadStroke = "Charger Dessins"
+ButtonNameZoom = "Zoom"
 
 StrokeFileExists = "{0} Existe\nVoulez-vous le remplacer?"
 FileCanNotWrite = "impossible d'écrire\n{0}"
+
+OptionsZoomDim = "Dim."
+OptionsZoomScale = "Facteur"
+OptionsZoomContinous = "Continue"
+
 
 BoardTitle = "Effacer"
 BoardText = "Efface tous les dessins et rempli le fond avec..."

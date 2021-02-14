@@ -39,6 +39,7 @@ namespace gInk
         public string ButtonNameVideo = "Video Record";
         public string SaveStroke = "Save Strokes";
         public string LoadStroke = "Load Strokes";
+        public string ButtonNameZoom = "Zoom";
 
         public string StrokeFileExists = "{0} Already Exists\nDo you want to override it?";
         public string FileCanNotWrite = "{0}\ncan not be written.";
@@ -55,6 +56,10 @@ namespace gInk
         public string BoardCustColorModifyTitle="Board Customed color";
         public string OptionsGeneralBoardAtOpenLbl="Background at toolbar opening";
         public string OptionsGeneralBoardCustColorLbl="Customed Background color";
+
+        public string OptionsZoomDim = "Dim.";
+        public string OptionsZoomScale = "Scale";
+        public string OptionsZoomContinous = "Continous";
 
 
         public string ButtonOkText = "&OK";
