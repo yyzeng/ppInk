@@ -115,7 +115,7 @@ namespace gInk
         private Object btClipSel;
 
         private ZoomForm ZoomForm = new ZoomForm();
-        private Bitmap ZoomImage;
+        private Bitmap ZoomImage,ZoomImage2;
         int ZoomFormRePosX;
         int ZoomFormRePosY;
 
@@ -287,7 +287,10 @@ namespace gInk
             //Console.WriteLine("A=" + (DateTime.Now.Ticks/1e7).ToString());
             InitializeComponent();
             ZoomImage = new Bitmap(Root.ZoomWidth, Root.ZoomHeight);
-            ZoomForm.BackgroundImage = ZoomImage;   // the image will be automatically scaled by stretch setup;
+            ZoomImage2 = new Bitmap(Root.ZoomWidth, Root.ZoomHeight);
+            //ZoomForm.BackgroundImage = ZoomImage;   // the image will be automatically scaled by stretch setup;
+            ZoomForm.pictureBox1.BackgroundImage = ZoomImage;
+            ZoomForm.pictureBox2.BackgroundImage = ZoomImage2;
             ZoomFormRePosX = ZoomImage.Width / 2;
             ZoomFormRePosY = ZoomImage.Height / 2;
             ZoomForm.Width = (int)(Root.ZoomWidth*Root.ZoomScale);
@@ -2581,12 +2584,27 @@ namespace gInk
                 ZoomForm.Top = MousePosition.Y + ZoomFormRePosY;
                 ZoomForm.Left = MousePosition.X + ZoomFormRePosX;
 
-                using (Graphics g = Graphics.FromImage(ZoomImage))
+                Bitmap img;              
+                img = (ZoomForm.pictureBox1.Visible) ? ZoomImage2 : ZoomImage;
+
+                using (Graphics g = Graphics.FromImage(img))
                 {
                     Point p = new Point(MousePosition.X - ZoomImage.Width / 2, MousePosition.Y - ZoomImage.Height / 2);
                     Size sz = new Size(ZoomImage.Width, ZoomImage.Height);
                     g.CopyFromScreen(p, Point.Empty, sz);
-                    ZoomForm.Refresh();
+                    if(ZoomForm.pictureBox1.Visible)
+                    {
+                        ZoomForm.pictureBox1.Visible = false;
+                        ZoomForm.pictureBox2.Visible = true;
+                        ZoomForm.pictureBox2.Refresh();
+                    }
+                    else
+                    {
+                        ZoomForm.pictureBox1.Visible = true;
+                        ZoomForm.pictureBox2.Visible = false;
+                        ZoomForm.pictureBox1.Refresh();
+                    }
+                    //ZoomForm.Refresh();
                 }
             }
             if (Root.FFmpegProcess!=null && Root.FFmpegProcess.HasExited)

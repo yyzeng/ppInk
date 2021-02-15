@@ -1411,6 +1411,7 @@ namespace gInk
             this.ZoomContinousCb.TabIndex = 4;
             this.ZoomContinousCb.Text = "Continous";
             this.ZoomContinousCb.UseVisualStyleBackColor = true;
+            this.ZoomContinousCb.Visible = false;
             this.ZoomContinousCb.CheckedChanged += new System.EventHandler(this.ZoomContinousCb_CheckedChanged);
             // 
             // ZoomDimLbl
