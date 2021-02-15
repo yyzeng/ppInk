@@ -864,6 +864,35 @@ namespace gInk
             }
         }
 
+        private void ZoomWidthEd_Validating(object sender, CancelEventArgs e)
+        {
+            if (Int32.TryParse(ZoomWidthEd.Text, out Root.ZoomWidth))
+                ZoomWidthEd.BackColor = SystemColors.Window;
+            else
+                ZoomWidthEd.BackColor = Color.Orange;
+        }
+
+        private void ZoomHeightEd_Validating(object sender, CancelEventArgs e)
+        {
+            if (Int32.TryParse(ZoomHeightEd.Text, out Root.ZoomHeight))
+                ZoomHeightEd.BackColor = SystemColors.Window;
+            else
+                ZoomHeightEd.BackColor = Color.Orange;
+        }
+
+        private void ZoomScaleEd_Validating(object sender, CancelEventArgs e)
+        {
+            if (float.TryParse(ZoomScaleEd.Text, out Root.ZoomScale))
+                ZoomScaleEd.BackColor = SystemColors.Window;
+            else
+                ZoomScaleEd.BackColor = Color.Orange;
+        }
+
+        private void ZoomContinousCb_CheckedChanged(object sender, EventArgs e)
+        {
+            Root.ZoomContinous = ZoomContinousCb.Checked;
+        }
+
         private void cbAllowHotkeyInPointer_CheckedChanged(object sender, EventArgs e)
 		{
 			Root.AllowHotkeyInPointerMode = cbAllowHotkeyInPointer.Checked;
