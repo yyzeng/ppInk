@@ -1915,7 +1915,7 @@ namespace gInk
                     filled = 0;
                     PolyLineLastX = Int32.MinValue; PolyLineLastY = Int32.MinValue;
                 }
-                else if ((Root.ToolSelected == Tools.Poly && (Root.FilledSelected > Filling.BlackFilled)) || (Root.ToolSelected != Tools.Poly))
+                else if ((Root.ToolSelected == Tools.Poly && (Root.FilledSelected ==Filling.Empty || Root.FilledSelected > Filling.BlackFilled)) || (Root.ToolSelected != Tools.Poly))
                 {
                     tool = Tools.Line;
                     Root.FilledSelected = 0;
