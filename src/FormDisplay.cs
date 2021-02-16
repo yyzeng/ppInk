@@ -298,10 +298,15 @@ namespace gInk
                         {
                             img = gInk.Properties.Resources.unknown;
                         }
-                        int X = (int)(st.ExtendedProperties[Root.IMAGE_X_GUID].Data);
-                        int Y = (int)(st.ExtendedProperties[Root.IMAGE_Y_GUID].Data);
-                        int W = (int)(st.ExtendedProperties[Root.IMAGE_W_GUID].Data);
-                        int H = (int)(st.ExtendedProperties[Root.IMAGE_H_GUID].Data);
+                        Rectangle r = st.GetBoundingBox();
+                        Point p1 = new Point(r.Location.X, r.Location.Y);
+                        Point p2 = new Point(r.Location.X+r.Size.Width, r.Location.Y+r.Size.Height);
+                        Root.FormCollection.IC.Renderer.InkSpaceToPixel(gOneStrokeCanvus, ref p1);
+                        Root.FormCollection.IC.Renderer.InkSpaceToPixel(gOneStrokeCanvus, ref p2);
+                        int X = p1.X; //(int)(st.ExtendedProperties[Root.IMAGE_X_GUID].Data);
+                        int Y = p1.Y; //(int)(st.ExtendedProperties[Root.IMAGE_Y_GUID].Data);
+                        int W = p2.X - p1.X;// (int)(st.ExtendedProperties[Root.IMAGE_W_GUID].Data);
+                        int H = p2.Y - p1.Y;//(int)(st.ExtendedProperties[Root.IMAGE_H_GUID].Data);
                         g.DrawImage(img, new Rectangle(X, Y, W, H));
                     }
                     /*else */
@@ -446,13 +451,14 @@ namespace gInk
                                         Root.HiMetricToPixel(Root.FormCollection.IC.DefaultDrawingAttributes.Width)),
                                     CursorX0, CursorY0 , CursorX, CursorY);
         }
-        public void DrawRectOnGraphic(Graphics g, int CursorX0, int CursorY0, int CursorX, int CursorY)
+        public void DrawRectOnGraphic(Graphics g, int CursorX0, int CursorY0, int CursorX, int CursorY,DrawingAttributes dr=null)
         {
             int dX = Math.Abs(CursorX - CursorX0);
             int dY = Math.Abs(CursorY - CursorY0);
-
-            gOutCanvus.DrawRectangle(new Pen(Color.FromArgb(255 - Root.FormCollection.IC.DefaultDrawingAttributes.Transparency, Root.FormCollection.IC.DefaultDrawingAttributes.Color),
-                                        Root.HiMetricToPixel(Root.FormCollection.IC.DefaultDrawingAttributes.Width)),
+            if (dr == null)
+                dr = Root.FormCollection.IC.DefaultDrawingAttributes;
+            gOutCanvus.DrawRectangle(new Pen(Color.FromArgb(255 - dr.Transparency, dr.Color),
+                                        Root.HiMetricToPixel(dr.Width)),
                                         Math.Min(CursorX0,CursorX), Math.Min(CursorY0, CursorY), dX, dY);
         }
         public void DrawEllipseOnGraphic(Graphics g, int CursorX0, int CursorY0, int CursorX, int CursorY)
@@ -481,7 +487,9 @@ namespace gInk
         {
             if ((CursorX0 != int.MinValue) || (CursorY0 != int.MinValue))
             {
-                if ((Root.ToolSelected == Tools.Line)|| (Root.ToolSelected == Tools.Poly))
+                if (Root.FormCollection.ZoomCapturing)
+                    DrawRectOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY,Root.FormCollection.IC.Ink.Strokes[Root.FormCollection.IC.Ink.Strokes.Count-1].DrawingAttributes);
+                else if((Root.ToolSelected == Tools.Line)|| (Root.ToolSelected == Tools.Poly))
                     DrawLineOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY);
                 else if ((Root.ToolSelected == Tools.Rect)|| (Root.ToolSelected == Tools.ClipArt))
                     DrawRectOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY);
@@ -601,7 +609,7 @@ namespace gInk
         //DateTime TickStartTime;
         bool SelectionDrawnPreviously=false;
 
-		private void timer1_Tick(object sender, EventArgs e)
+		public void timer1_Tick(object sender, EventArgs e)
 		{
             if (Root.FormCollection is null)
                 return; // the initialisation is not yet completed. we wait for
@@ -676,12 +684,12 @@ namespace gInk
 				if (Root.FormCollection.IC.Ink.Strokes.Count > 0)
 				{
 					Stroke stroke = Root.FormCollection.IC.Ink.Strokes[Root.FormCollection.IC.Ink.Strokes.Count - 1];
-					if ((!stroke.Deleted) && (Root.ToolSelected == Tools.Hand))
+					if ((!stroke.Deleted) && (!Root.FormCollection.ZoomCapturing)&&(Root.ToolSelected == Tools.Hand))
                     {
                         BitBlt(OutcanvusDc, 0, 0, this.Width, this.Height, canvusDc, 0, 0, 0x00CC0020);
                         Root.FormCollection.IC.Renderer.Draw(gOutCanvus, stroke, Root.FormCollection.IC.DefaultDrawingAttributes);
                     }
-                    UpdateFormDisplay(true, Root.ToolSelected == Tools.Hand);
+                    UpdateFormDisplay(true, Root.ToolSelected == Tools.Hand && (!Root.FormCollection.ZoomCapturing));
                 }
             }
 

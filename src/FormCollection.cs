@@ -118,6 +118,7 @@ namespace gInk
         private Bitmap ZoomImage,ZoomImage2;
         int ZoomFormRePosX;
         int ZoomFormRePosY;
+        string ZoomSaveStroke;
 
         public string SaveStrokeFile="";
 
@@ -295,6 +296,7 @@ namespace gInk
             ZoomFormRePosY = ZoomImage.Height / 2;
             ZoomForm.Width = (int)(Root.ZoomWidth*Root.ZoomScale);
             ZoomForm.Height = (int)(Root.ZoomHeight*Root.ZoomScale);
+            ZoomSaveStroke = Path.GetFullPath(Environment.ExpandEnvironmentVariables("%temp%/ZoomSave.strokes.txt")).Replace('\\','/');
 
             //Console.WriteLine("B=" + (DateTime.Now.Ticks/1e7).ToString());
             ClipartsDlg = new ImageLister(Root);    
@@ -798,6 +800,8 @@ namespace gInk
             this.toolTip.SetToolTip(this.btClip1, Root.Local.ButtonNameClipArt + "-1 (" + Root.Hotkey_ClipArt1.ToString() + ")");
             this.toolTip.SetToolTip(this.btClip2, Root.Local.ButtonNameClipArt + "-2 (" + Root.Hotkey_ClipArt2.ToString() + ")");
             this.toolTip.SetToolTip(this.btClip3, Root.Local.ButtonNameClipArt + "-3 (" + Root.Hotkey_ClipArt3.ToString() + ")");
+            this.toolTip.SetToolTip(this.btSave, String.Format(Root.Local.SaveStroke,""));
+            this.toolTip.SetToolTip(this.btLoad, String.Format(Root.Local.LoadStroke,""));
 
             foreach (Control ct in gpButtons.Controls)
             {
@@ -1016,6 +1020,8 @@ namespace gInk
             IC.Renderer.PixelToInkSpace(Root.FormDisplay.gOneStrokeCanvus, ref pts);
             Stroke st = Root.FormCollection.IC.Ink.CreateStroke(pts);
             st.DrawingAttributes = Root.FormCollection.IC.DefaultDrawingAttributes.Clone();
+            if(FilledSelected==Filling.NoFrame)
+                st.DrawingAttributes.Transparency = 255;
             st.DrawingAttributes.AntiAliased = true;
             st.DrawingAttributes.FitToCurve = false;
             setStrokeProperties(ref st, FilledSelected);
@@ -1023,9 +1029,11 @@ namespace gInk
             return st;
         }
 
-        private Stroke AddImageStroke(int CursorX0, int CursorY0, int CursorX, int CursorY, string fn,int ImgIdx)
+        private Stroke AddImageStroke(int CursorX0, int CursorY0, int CursorX, int CursorY, string fn,int Filling=-10)
         {
-            Stroke st = AddRectStroke(CursorX0, CursorY0, CursorX, CursorY, Root.ImageStamp.Filling);
+            if (Filling == -10)
+                Filling = Root.ImageStamp.Filling;
+            Stroke st = AddRectStroke(CursorX0, CursorY0, CursorX, CursorY, Filling);
             st.ExtendedProperties.Add(Root.IMAGE_GUID, fn);
             st.ExtendedProperties.Add(Root.IMAGE_X_GUID, CursorX0);
             st.ExtendedProperties.Add(Root.IMAGE_Y_GUID, CursorY0);
@@ -1352,7 +1360,38 @@ namespace gInk
             movedStroke = null; // reset the moving object
             try { if (e.Stroke.ExtendedProperties.Contains(Root.ISSTROKE_GUID)) e.Stroke.ExtendedProperties.Remove(Root.ISSTROKE_GUID); } catch { } // the ISSTROKE set for drawin
             try { e.Stroke.ExtendedProperties.Add(Root.FADING_PEN, DateTime.Now.AddSeconds((float)(e.Stroke.DrawingAttributes.ExtendedProperties[Root.FADING_PEN].Data)).Ticks); } catch { };
-            if (Root.ToolSelected == Tools.Hand)
+            if (ZoomCapturing)
+            {
+                IC.Ink.DeleteStroke(e.Stroke); // the stroke that was just inserted has to be replaced.
+                /* //trying to prevent capturing the rectangle but is not working
+                Root.UponAllDrawingUpdate = true;
+                Root.FormDisplay.timer1_Tick(null, null);
+                Root.FormDisplay.Update();
+                */
+                if (Root.CursorX0 != Int32.MinValue)
+                {
+                    ZoomCapturing = false;
+                    ZoomCaptured = true;
+                }
+                else
+                    return;
+                SaveStrokes(ZoomSaveStroke);
+                Bitmap capt = new Bitmap(Math.Abs(Root.CursorX0- Root.CursorX), Math.Abs(Root.CursorY0 - Root.CursorY));
+                using (Graphics g = Graphics.FromImage(capt))
+                {
+                    Point p = new Point(Math.Min(Root.CursorX0,Root.CursorX), Math.Min(Root.CursorY0, Root.CursorY));
+                    Size sz = new Size(capt.Width, capt.Height);
+                    g.CopyFromScreen(p, Point.Empty, sz);
+                    try { ClipartsDlg.Originals.Remove("_ZoomClip"); } catch { }
+                    ClipartsDlg.Originals.Add("_ZoomClip", capt);
+                    IC.Ink.Strokes.Clear();
+                    Screen scr = Screen.FromPoint(MousePosition);
+                    Stroke st=AddImageStroke(scr.Bounds.Left, scr.Bounds.Top, scr.Bounds.Right, scr.Bounds.Bottom, "_ZoomClip", Filling.NoFrame );                    
+                }
+
+                return;
+            }
+            else if (Root.ToolSelected == Tools.Hand)
             {
                 Stroke st = e.Stroke;// IC.Ink.Strokes[IC.Ink.Strokes.Count-1];
                 setStrokeProperties(ref st, Root.FilledSelected);
@@ -1367,13 +1406,14 @@ namespace gInk
                     Root.CursorY = p.Y;
                 }
                 IC.Ink.DeleteStroke(e.Stroke); // the stroke that was just inserted has to be replaced.
+
                 if ((Root.ToolSelected == Tools.Line) && (Root.CursorX0 != Int32.MinValue))
                     AddLineStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY);
                 else if ((Root.ToolSelected == Tools.Rect) && (Root.CursorX0 != Int32.MinValue))
                     AddRectStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY, Root.FilledSelected);
                 else if (Root.ToolSelected == Tools.ClipArt)
                 {
-                    int idx = ClipartsDlg.Images.Images.IndexOfKey(Root.ImageStamp.ImageStamp);
+                    //int idx = ClipartsDlg.Images.Images.IndexOfKey(Root.ImageStamp.ImageStamp);
                     int w = Root.ImageStamp.X;
                     int h = Root.ImageStamp.Y;
                     if ((Root.CursorX0 == Int32.MinValue) || ((Root.CursorX0 == Root.CursorX) && (Root.CursorY0 == Root.CursorY)))
@@ -1393,7 +1433,7 @@ namespace gInk
                         //Console.WriteLine("ratio 1 = " + ((double)(Root.CursorY - Root.CursorY0) / (Root.CursorX - Root.CursorX0)).ToString());
                         Root.CursorY = (int)(Root.CursorY0 + (double)(Root.CursorX - Root.CursorX0) / w * h);
                     }
-                    AddImageStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY, Root.ImageStamp.ImageStamp,idx);
+                    AddImageStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY, Root.ImageStamp.ImageStamp);
                 }
                 else if ((Root.ToolSelected == Tools.Oval) && (Root.CursorX0 != Int32.MinValue))
                     AddEllipseStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY, Root.FilledSelected);
@@ -1467,10 +1507,11 @@ namespace gInk
                 }
             }
             SaveUndoStrokes();
-            Root.FormDisplay.ClearCanvus();
+            Root.UponAllDrawingUpdate = true;
+            /*Root.FormDisplay.ClearCanvus();
             Root.FormDisplay.DrawStrokes();
             Root.FormDisplay.DrawButtons(true);
-            Root.FormDisplay.UpdateFormDisplay(true);
+            Root.FormDisplay.UpdateFormDisplay(true);*/
 
             // reset the CursorX0/Y0 : this seems to introduce a wrong interim drawing
             Root.CursorX0 = Int32.MinValue;
@@ -1529,9 +1570,19 @@ namespace gInk
         }
         Stroke movedStroke = null;
 
-		private void IC_CursorDown(object sender, InkCollectorCursorDownEventArgs e)
-		{
-            if (Root.ToolSelected == Tools.Hand)
+        float ZoomScreenRatio;
+        private void IC_CursorDown(object sender, InkCollectorCursorDownEventArgs e)
+        {
+            if (ZoomCapturing)
+            {                
+                Screen scr = Screen.FromPoint(MousePosition);
+                ZoomScreenRatio = (float)(scr.Bounds.Width) / scr.Bounds.Height;
+                e.Stroke.ExtendedProperties.Add(Root.ISHIDDEN_GUID, true); // we set the ISTROKE_GUID in order to draw the inprogress as a line
+                e.Stroke.DrawingAttributes.Color = Color.Purple;
+                e.Stroke.DrawingAttributes.Transparency  = 0;
+                e.Stroke.DrawingAttributes.Width = Root.PixelToHiMetric(1);
+            }
+            else if (Root.ToolSelected == Tools.Hand) 
                 e.Stroke.ExtendedProperties.Add(Root.ISSTROKE_GUID, true); // we set the ISTROKE_GUID in order to draw the inprogress as a line
             else
                 e.Stroke.ExtendedProperties.Add(Root.ISHIDDEN_GUID, true); // we set the ISTROKE_GUID in order to draw the inprogress as a line
@@ -1660,7 +1711,12 @@ namespace gInk
             //Console.WriteLine("Cursor {0},{1} - {2}", e.X, e.Y, e.Button);
             Root.CursorX = e.X;
             Root.CursorY = e.Y;
-            MagneticEffect(Root.CursorX0, Root.CursorY0, ref Root.CursorX, ref Root.CursorY, Root.ToolSelected > Tools.Hand && Root.MagneticRadius > 0);
+            if (ZoomCapturing)
+            {
+                Root.CursorY = (int)(Root.CursorY0 + (Root.CursorX - Root.CursorX0) / ZoomScreenRatio*Math.Sign(Root.CursorY-Root.CursorY0)*Math.Sign(Root.CursorX - Root.CursorX0));
+            }
+            else
+                MagneticEffect(Root.CursorX0, Root.CursorY0, ref Root.CursorX, ref Root.CursorY, Root.ToolSelected > Tools.Hand && Root.MagneticRadius > 0);
 
             if (LasteXY.X == 0 && LasteXY.Y == 0)
             {
@@ -3946,6 +4002,8 @@ namespace gInk
 
         short LastF4Status = 0;
 
+        public bool ZoomCapturing=false;
+        public bool ZoomCaptured=false;
         private void ZoomBtn_Click(object sender, EventArgs e)
         {
             if (ToolbarMoved)
@@ -3956,6 +4014,20 @@ namespace gInk
             if (ZoomForm.Visible)
             {
                 ZoomForm.Hide();
+                ZoomCapturing = true;
+                btZoom.BackgroundImage = getImgFromDiskOrRes("ZoomWin_act");
+            }
+            else if ( ZoomCapturing || ZoomCaptured)
+            {
+                if (ZoomCaptured)
+                {
+                    IC.Ink.DeleteStrokes();
+                    LoadStrokes(ZoomSaveStroke);
+                    Root.UponAllDrawingUpdate = true;
+                    Root.FormDisplay.timer1_Tick(null, null);
+                }
+                ZoomCapturing = false;
+                ZoomCaptured = false;
                 btZoom.BackgroundImage = getImgFromDiskOrRes("Zoom");
             }
             else
