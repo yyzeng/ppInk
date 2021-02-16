@@ -4174,8 +4174,7 @@ namespace gInk
                     outp = "# boxed in " + r.Location.ToString() + " - " + r.Size.ToString()+"\n";
                     writeUtf(outp);
                     da = st.DrawingAttributes;
-                    writeUtf("DA = " + da.Color.ToString() + " T=" + da.Transparency + (da.FitToCurve ? ", Fit, W=" : ", NotFit, W=") + da.Width.ToString() + "\n");
-                    //outp = "ExtProp " + st.ExtendedProperties.Count.ToString() + " = ";
+                    writeUtf("DA = Color [A=255, R=" + da.Color.R.ToString() + ", G=" + da.Color.G.ToString() + ", B=" + da.Color.B.ToString() + "] T=" + da.Transparency + (da.FitToCurve ? ", Fit, W=" : ", NotFit, W=") + da.Width.ToString() + "\n");
                     outp = "";
                     foreach (ExtendedProperty pr in st.ExtendedProperties)
                     {
@@ -4248,6 +4247,7 @@ namespace gInk
                     stk.DrawingAttributes.FitToCurve = !st.Contains("NotFit");
                     j = st.IndexOf("W=") + 2;
                     l = st.Length;
+                    stk.DrawingAttributes.Width = Int32.Parse(st.Substring(j, l - j));
                     do
                     {
                         st = fileout.ReadLine();
@@ -4314,7 +4314,11 @@ namespace gInk
                     DialogResult rst = openFileDialog.ShowDialog();
                     AllowInteractions(false);
                     if ( rst == DialogResult.OK)
+                    {
                         SaveStrokeFile = openFileDialog.FileName;
+                        toolTip.SetToolTip(this.btLoad, String.Format(Root.Local.LoadStroke, Path.GetFileName(SaveStrokeFile).Replace(".stroke.txt","")));
+                        toolTip.SetToolTip(this.btSave, String.Format(Root.Local.SaveStroke, Path.GetFileName(SaveStrokeFile).Replace(".stroke.txt", "")));
+                    }
                     else
                         return;
                 }
@@ -4354,8 +4358,12 @@ namespace gInk
                         AllowInteractions(true);
                         DialogResult rst = FileDialog.ShowDialog();
                         AllowInteractions(false);
-                        if ( rst == DialogResult.OK)
+                        if (rst == DialogResult.OK)
+                        {
                             SaveStrokeFile = FileDialog.FileName;
+                            toolTip.SetToolTip(this.btLoad, String.Format(Root.Local.LoadStroke, Path.GetFileName(SaveStrokeFile).Replace(".stroke.txt", "")));
+                            toolTip.SetToolTip(this.btSave, String.Format(Root.Local.SaveStroke, Path.GetFileName(SaveStrokeFile).Replace(".stroke.txt", "")));
+                        }
                         else
                         {
                             SaveStrokeFile = sav;
