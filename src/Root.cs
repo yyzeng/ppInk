@@ -294,6 +294,7 @@ namespace gInk
         public int ZoomHeight = 100;
         public float ZoomScale = 3.0F;
         public bool ZoomContinous = false;
+        public int ZoomEnabled = 3;
 
         //public string ProgramFolder;
 
@@ -1094,7 +1095,11 @@ namespace gInk
 							if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
 								AllowHotkeyInPointerMode = false;
 							break;
-						case "TOOLBAR_LEFT":
+                        case "ZOOM_ICON":
+                            if (int.TryParse(sPara, out tempi)&& tempi>=0 && tempi<=3)
+                                ZoomEnabled  = tempi;
+                            break;
+                        case "TOOLBAR_LEFT":
 							if (int.TryParse(sPara, out tempi))
 								gpButtonsLeft = tempi;
 							break;
@@ -1544,6 +1549,9 @@ namespace gInk
                                 sPara = "True";
                             else
                                 sPara = "False";
+                            break;
+                        case "ZOOM_ICON":
+                            sPara = ZoomEnabled.ToString();
                             break;
                         case "INKVISIBLE_ICON":
 							if (PanEnabled)

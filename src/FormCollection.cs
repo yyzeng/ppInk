@@ -540,13 +540,19 @@ namespace gInk
                 this.btMagn.BackgroundImage = getImgFromDiskOrRes((Root.MagneticRadius > 0) ? "Magnetic_act" : "Magnetic", ImageExts);
                 SetButtonPosition(prev, btMagn, dim3);
                 prev = btMagn;
+            }
+            else
+                btMagn.Visible = false;
+
+            if (root.ZoomEnabled>0)
+            {
                 btZoom.Height = dim1s;
                 btZoom.Width = dim1s;
                 btZoom.BackgroundImage = getImgFromDiskOrRes("Zoom", ImageExts);
                 SetSmallButtonNext(btMagn, btZoom, dim2s);
             }
             else
-                btMagn.Visible = false;
+                btZoom.Visible=false;
 
             if (root.PointerEnabled)
             {
@@ -4014,8 +4020,15 @@ namespace gInk
             if (ZoomForm.Visible)
             {
                 ZoomForm.Hide();
-                ZoomCapturing = true;
-                btZoom.BackgroundImage = getImgFromDiskOrRes("ZoomWin_act");
+                if ((Root.ZoomEnabled & 2) != 0)
+                {
+                    ZoomCapturing = true;
+                    btZoom.BackgroundImage = getImgFromDiskOrRes("ZoomWin_act");
+                }
+                else
+                {
+                    btZoom.BackgroundImage = getImgFromDiskOrRes("Zoom");
+                }
             }
             else if ( ZoomCapturing || ZoomCaptured)
             {
@@ -4032,10 +4045,18 @@ namespace gInk
             }
             else
             {
-                ZoomForm.Width = (int)(Root.ZoomWidth * Root.ZoomScale);
-                ZoomForm.Height = (int)(Root.ZoomHeight * Root.ZoomScale);
-                ZoomForm.Show();
-                btZoom.BackgroundImage = getImgFromDiskOrRes("Zoom_act");
+                if((Root.ZoomEnabled & 1)!=0)
+                {
+                    ZoomForm.Width = (int)(Root.ZoomWidth * Root.ZoomScale);
+                    ZoomForm.Height = (int)(Root.ZoomHeight * Root.ZoomScale);
+                    ZoomForm.Show();
+                    btZoom.BackgroundImage = getImgFromDiskOrRes("Zoom_act");
+                }
+                else // if((Root.ZoomEnabled & 2)!=0)
+                {
+                    ZoomCapturing = true;
+                    btZoom.BackgroundImage = getImgFromDiskOrRes("ZoomWin_act");
+                }
             }
             Root.UponButtonsUpdate |= 0x2;
         }

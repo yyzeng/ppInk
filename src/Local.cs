@@ -57,6 +57,8 @@ namespace gInk
         public string OptionsGeneralBoardAtOpenLbl="Background at toolbar opening";
         public string OptionsGeneralBoardCustColorLbl="Customed Background color";
 
+        public string OptionsZoomEnabled = "0 - No Zoom\n1 - Magnifier\n2 - Frozen Area\n3 - Both";
+
         public string OptionsZoomDim = "Dim.";
         public string OptionsZoomScale = "Scale";
         public string OptionsZoomContinous = "Continous";

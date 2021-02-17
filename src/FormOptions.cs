@@ -92,6 +92,7 @@ namespace gInk
             Magnet_TB.Text = (Root.MagneticRadius / System.Windows.SystemParameters.PrimaryScreenWidth * 100.0).ToString("#0.0000", CultureInfo.InvariantCulture);
             DefArrStartCb.Checked = Root.DefaultArrow_start;
 
+            ZoomEnabledCb.SelectedIndex = Root.ZoomEnabled;
             ZoomWidthEd.Text = Root.ZoomWidth.ToString();
             ZoomHeightEd.Text = Root.ZoomHeight.ToString();
             ZoomScaleEd.Text = Root.ZoomScale.ToString();
@@ -298,6 +299,11 @@ namespace gInk
             this.SaveConfigBtn.Text = Root.Local.OptionsGeneralSaveConfigToFile;
 			this.lbNote.Text = Root.Local.OptionsGeneralNotePenwidth;
 
+            {
+                int i = 0;
+                foreach(string st in Root.Local.OptionsZoomEnabled.Split('\n'))
+                    this.ZoomEnabledCb.Items[i++]=st;
+            }
             this.ZoomBox.Text = Root.Local.ButtonNameZoom;
             this.ZoomDimLbl.Text = Root.Local.OptionsZoomDim;
             this.ZoomScaleLbl.Text = Root.Local.OptionsZoomScale;
@@ -891,6 +897,11 @@ namespace gInk
         private void ZoomContinousCb_CheckedChanged(object sender, EventArgs e)
         {
             Root.ZoomContinous = ZoomContinousCb.Checked;
+        }
+
+        private void ZoomEnabledCb_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Root.ZoomEnabled = ZoomEnabledCb.SelectedIndex;
         }
 
         private void cbAllowHotkeyInPointer_CheckedChanged(object sender, EventArgs e)
