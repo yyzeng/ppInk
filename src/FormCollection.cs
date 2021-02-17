@@ -2850,7 +2850,7 @@ namespace gInk
             else if (ButtonsEntering != 0)
             {
                 // add a background if required at opening but not when snapping is in progress
-                if (Root.Snapping == 0)
+                if ((Root.Snapping == 0)&&(IC.Ink.Strokes.Count == 0))
                 {
                     if ((Root.BoardAtOpening == 1) || (Root.BoardAtOpening == 4 && Root.BoardSelected == 1)) // White
                         AddBackGround(255, 255, 255, 255);
@@ -3330,8 +3330,7 @@ namespace gInk
 
         private Stroke AddBackGround(int A, int B, int C, int D)
         {
-            Stroke stk = AddRectStroke(SystemInformation.VirtualScreen.Left, SystemInformation.VirtualScreen.Top,
-                                      SystemInformation.VirtualScreen.Right, SystemInformation.VirtualScreen.Bottom, 1);
+            Stroke stk = AddRectStroke(0,0,Width ,Height , Filling.PenColorFilled);
             stk.DrawingAttributes.Transparency = (byte)(255 - A);
             stk.DrawingAttributes.Color = Color.FromArgb(A, B, C, D);
             SaveUndoStrokes();
