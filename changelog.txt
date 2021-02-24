@@ -1,4 +1,19 @@
-p1.4 (In Progress)
+p1.5 (in progress)
+=================
+---> beta1
+* new icone but you can still deploy your own
+* new : add zoom capability : both dynamic magnifier and freezed to full screen.
+* new : fading color(stroke dissapear after some time)
+* new : toolbar orientation can be configured
+* new : add save/restore strokes 
+* new : implement keyboard shortcut for pen selection in rotation 
+* Enh: distinguish Tag and Text default Font
+* New : Add frame/background to Text & Numbering
+* New : add selection highlighting for edit/move/copy/erase
+* New : add direct access cliparts buttons
+* Upg : improve W7 compatibility
+
+p1.4 (alpha1)
 =================
 ---> alpha1
 * New : clipart tool added

@@ -4,7 +4,7 @@ ppInk is an on-screen annotation software under Windows, forked from gInk.
 
 ![](screenshot1.png)
 
-ppInk introduces new features compared to gInk, greatly inspired by another
+ppInk introduces many new features compared to gInk, greatly inspired by another
 screen annotation software Epic Pen, but even more easy to use. ppInk / gInk are
 made with the idea kept in mind that the interface should be simple and should
 not distract attention of both the presenter and the audience when used for
@@ -13,13 +13,15 @@ from pens to draw things instead of changing individual settings of color,
 transparency and tip width everytime. Each pen is a combination of these
 attributes and is configurable to your need.
 
+I want his tool to be usable through mouse but also throug touchscreen or graphic tablet. 
+
 A set of drawing tools are introduced: Hand Writing, Line (2 points and polyline), Rectangular,
 Ellipsis, Arrow, Numbering Tag, Text Left/Right aligned, cliparts
 
 ![](screenshot2.png)
 
 In order to reduce the number of buttons, some buttons have multiple functions,
-selected my multiple click on those:
+selected my multiple click on those or some through long or right click:
 
 -   Hand / Rectangular / Ellipsis :  
     unfilled drawing -\> filled with pen color -\> filled with white -\> filled
@@ -53,16 +55,32 @@ selected my multiple click on those:
     if you just draw a vertical or horizontal line, the image will be drawn with the drawn width/height respecting 
     proportional size. else you can draw a box which will define the image size (non proportional). 
     If you draw from bottom/right to up/left, the image will be stamped reversed.
+    
+    3 preset cliparts are also available: they can be configured in the option dialogbox, or for the time of the session through a right or long
+    click on the selected button.
 
 *Magnetic*
 The magnet activates some magnetic effect :
 -   Find a point on the drawing next to the cursor. For rectangles, magnetic
     effect is available to vertices, and also to the middle of sides.(also activated pressing Ctrl)
 -   The 8 points of the bounding rectangle of a text.(also activated pressing Ctrl)
--   On the line from the origin. The lines are horizontal,vertical and every 15Â°.(also activated pressing Shift)
+-   On the line from the origin. The lines are horizontal,vertical and every 15°.(also activated pressing Shift)
 The Magnetic distance can be adjusted in the options.
 If only Ctrl or Shift is depressed, the global magnetic effect is switched off to only take into account the magnetic of the pressed key.
 Hotkeys are availables for all tools,pens (configurable throught right click on icon next to clock)
+
+*Move one -> Move All(pan) -> Copy one*
+ You can move one stroke when clicking first time on the button. The stroke to be moved/copied will be surrounded by a rectangle to identify it.
+
+*Zoom*
+Two zoom can be activated (multiple clicks on the zoom buttom). the first one offers a standard dynamic window following the cursor. with the second one, you select the area that you want to enlarge. this area will be frozen and then full displayed on the screen. You can then carry on drawing on this new enlarged background image. a new click will end working on this image and will show back the screen and will restore the previously drawn strokes.
+
+*Save / Load*
+through those two buttons, you will be able to store(in a text format) the current strokes. Load redraw the saved strokes onto the existing drawing.
+- Save button  : a long click(or first short click) is a sort of "save as" : it open the dialog box and will allow you to select the filename. the following short clicks will overwrite the strokes into the previously named file.
+note that a backup is done when inking is ended/quit.
+
+Load button : a long click(or first short click) is a sort of "load as" : it open the dialog box and will allow you to select the filename. the following short clicks will load the strokes from the previously named file. at first click the file loaded is the autosave(from latest session).
 
 *Alt+ shortcut for temporary commands:*
 When this option is activated (yes by default), when Alt is pressed and hold, the tool/pen/mode is temporary selected, left when alt is released
@@ -84,6 +102,9 @@ Long click : Delete all drawings and select background surface color (white/blac
 In options you will be able to select a default mode at opening , and customed color
 advice : the created rectangle can be deleted using the erasor next to the border of the screen.
 
+*Fading color*
+When defining a color, you can check Fading : in this case the stroke drawn will dissapear after the defined time(adjustable in options dialogbox/pen tab)
+
 *cursor files:*
 You can configure you own cursor file, saving it as cursor.ico in your exe folder (click position and size are loaded from the file). In the same you can save an image as FloatingCall.png to define the calling form image(in this case the width and transparency are in the Window_POS parameter in config.ini
 *mouse wheel:*
@@ -101,6 +122,9 @@ ppInk has now some capability to do some video recording. tuning is available in
 You add arrow.ani/cur/ico and eraser.ani/cur/ico to put your own cursors. if you use ico file the cursor is down with the file sized ( you can then put a bigger or smaller image)
 toolbar Background Color can be changed in the options. currently a draw hickup make the background color incorrect during opening. transparency is currenly ignored
 Button Images can be customized putting Png files in the ppink exe folder. the name to be used are the same as the one from the src folder.
+
+*Toolbar orientation*
+You can now select how the toolbar will be deployed : to left/ to right or vertically to top/ to bottom
 
 *Alt+Tab engaging Pointer*
 When the option is set in the options, switching application (with alt+tab) will engage pointer mode. Also, when pointer mode is activated (by any means, ie button click, alt+tab, global short cut), the toolbar is folded automatically, and when pressing undock button, alt+tab, or global shortcut,the inking mode is restored and the toolbar is unfolded.
@@ -158,6 +182,10 @@ Click the exit button or press ESC to exit drawing.
 
 -   Video recording
 
+-   Load/Save stroke
+
+-   Zoom (2 versions)
+
 #### Tips
 
 -   There is a known issue for multiple displays of unmatched DPI settings
@@ -190,4 +218,5 @@ Weizhi Nai \@ 2019
 ppInk
 https://github.com/pubpub-zz/ppInk
 Pubpub-ZZ \@ 2020
+
 
