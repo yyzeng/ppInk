@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,7 +25,24 @@ namespace gInk
                 return false;
 		}
 
-		public override string ToString()
+        public override string ToString()
+        {
+            if (Key > 0)
+            {
+                string str = "";
+                if (Control) str += LocalSt.KeyNames[0x00020000] + " + ";
+                if (Alt) str += LocalSt.KeyNames[0x00040000] + " + ";
+                if (Shift) str += LocalSt.KeyNames[0x00010000] + " + ";
+                if (Win) str += LocalSt.KeyNames[0x5B] +" + ";
+                str += LocalSt.KeyNames[Key];
+                return str;
+            }
+            else
+            {
+                return LocalSt.KeyNames[0];
+            }
+        }
+        public string ToStringInvariant()
 		{
 			if (Key > 0)
 			{

@@ -341,6 +341,12 @@ namespace gInk
             this.lbGlobalHotkey.Text = Root.Local.OptionsHotkeysglobal;
             this.cbAllowHotkeyInPointer.Text = Root.Local.OptionsHotkeysEnableinpointer;
 
+            foreach(Control ct in this.tabPage3.Controls)
+            {
+                if (ct.GetType() == typeof(HotkeyInputBox))
+                    ((HotkeyInputBox)ct).UpdateText();
+            }
+
 			this.comboCanvasCursor.Items[0] = Root.Local.OptionsGeneralCanvascursorArrow;
 			this.comboCanvasCursor.Items[1] = Root.Local.OptionsGeneralCanvascursorPentip;
 

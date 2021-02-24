@@ -1344,7 +1344,7 @@ namespace gInk
                             }
                             else if (sName.EndsWith("_HOTKEY"))
 							{
-								sPara = Hotkey_Pens[penid].ToString();
+								sPara = Hotkey_Pens[penid].ToStringInvariant();
 							}
 						}
 
@@ -1362,85 +1362,85 @@ namespace gInk
 							sPara = Local.CurrentLanguageFile;
 							break;
 						case "HOTKEY_GLOBAL":
-							sPara = Hotkey_Global.ToString();
+							sPara = Hotkey_Global.ToStringInvariant();
 							break;
 						case "HOTKEY_ERASER":
-							sPara = Hotkey_Eraser.ToString();
+							sPara = Hotkey_Eraser.ToStringInvariant();
 							break;
 						case "HOTKEY_INKVISIBLE":
-							sPara = Hotkey_InkVisible.ToString();
+							sPara = Hotkey_InkVisible.ToStringInvariant();
 							break;
 						case "HOTKEY_POINTER":
-							sPara = Hotkey_Pointer.ToString();
+							sPara = Hotkey_Pointer.ToStringInvariant();
 							break;
 						case "HOTKEY_PAN":
-							sPara = Hotkey_Pan.ToString();
+							sPara = Hotkey_Pan.ToStringInvariant();
 							break;
 						case "HOTKEY_UNDO":
-							sPara = Hotkey_Undo.ToString();
+							sPara = Hotkey_Undo.ToStringInvariant();
 							break;
 						case "HOTKEY_REDO":
-							sPara = Hotkey_Redo.ToString();
+							sPara = Hotkey_Redo.ToStringInvariant();
 							break;
 						case "HOTKEY_SNAPSHOT":
-							sPara = Hotkey_Snap.ToString();
+							sPara = Hotkey_Snap.ToStringInvariant();
 							break;
 						case "HOTKEY_CLEAR":
-							sPara = Hotkey_Clear.ToString();
+							sPara = Hotkey_Clear.ToStringInvariant();
 							break;
                         case "HOTKEY_VIDEOREC":
-                            sPara = Hotkey_Video.ToString();
+                            sPara = Hotkey_Video.ToStringInvariant();
                             break;
                         case "HOTKEY_DOCKUNDOCK":
-                            sPara = Hotkey_DockUndock.ToString();
+                            sPara = Hotkey_DockUndock.ToStringInvariant();
                             break;
                         case "HOTKEY_CLOSE":
-                            sPara = Hotkey_Close.ToString();
+                            sPara = Hotkey_Close.ToStringInvariant();
                             break;
                         case "HOTKEY_HAND":
-                            sPara = Hotkey_Hand.ToString();
+                            sPara = Hotkey_Hand.ToStringInvariant();
                             break;
                         case "HOTKEY_LINE":
-                            sPara = Hotkey_Line.ToString();
+                            sPara = Hotkey_Line.ToStringInvariant();
                             break;
                         case "HOTKEY_RECT":
-                            sPara = Hotkey_Rect.ToString();
+                            sPara = Hotkey_Rect.ToStringInvariant();
                             break;
                         case "HOTKEY_OVAL":
-                            sPara = Hotkey_Oval.ToString();
+                            sPara = Hotkey_Oval.ToStringInvariant();
                             break;
                         case "HOTKEY_ARROW":
-                            sPara = Hotkey_Arrow.ToString();
+                            sPara = Hotkey_Arrow.ToStringInvariant();
                             break;
                         case "HOTKEY_TEXT":
-                            sPara = Hotkey_Text.ToString();
+                            sPara = Hotkey_Text.ToStringInvariant();
                             break;
                         case "HOTKEY_NUMBCHIP":
-                            sPara = Hotkey_Numb.ToString();
+                            sPara = Hotkey_Numb.ToStringInvariant();
                             break;
                         case "HOTKEY_EDIT":
-                            sPara = Hotkey_Edit.ToString();
+                            sPara = Hotkey_Edit.ToStringInvariant();
                             break;
                         case "HOTKEY_MOVE":
-                            sPara = Hotkey_Move.ToString();
+                            sPara = Hotkey_Move.ToStringInvariant();
                             break;
                         case "HOTKEY_MAGNET":
-                            sPara = Hotkey_Magnet.ToString();
+                            sPara = Hotkey_Magnet.ToStringInvariant();
                             break;
                         case "HOTKEY_CLIPART":
-                            sPara = Hotkey_ClipArt.ToString();
+                            sPara = Hotkey_ClipArt.ToStringInvariant();
                             break;
                         case "HOTKEY_CLIPART1":
-                            sPara = Hotkey_ClipArt1.ToString();
+                            sPara = Hotkey_ClipArt1.ToStringInvariant();
                             break;
                         case "HOTKEY_CLIPART2":
-                            sPara = Hotkey_ClipArt2.ToString();
+                            sPara = Hotkey_ClipArt2.ToStringInvariant();
                             break;
                         case "HOTKEY_CLIPART3":
-                            sPara = Hotkey_ClipArt3.ToString();
+                            sPara = Hotkey_ClipArt3.ToStringInvariant();
                             break;
                         case "HOTKEY_ZOOM":
-                            sPara = Hotkey_Zoom.ToString();
+                            sPara = Hotkey_Zoom.ToStringInvariant();
                             break;
 
                         case "WHITE_TRAY_ICON":

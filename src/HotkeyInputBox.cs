@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -57,7 +57,7 @@ namespace gInk
 			Width = 150;
 		}
 
-		protected void UpdateText()
+		public void UpdateText()
 		{
             Text = Hotkey.ToString();
 		}
@@ -84,23 +84,23 @@ namespace gInk
             bool deleting = pressedKey == Keys.Delete || pressedKey == Keys.Back;
             if (deleting)
 			{
-				Text = "None";
+				Text = LocalSt.KeyNames[0];
 			}
 			else
 			{
 				Text = "";
 				if ((modifierKeys & Keys.Control) > 0)
-					Text += "Ctrl + ";
-				if ((modifierKeys & Keys.Alt) > 0)
-					Text += "Alt + ";
-				if ((modifierKeys & Keys.Shift) > 0)
-					Text += "Shift + ";
-				if ((modifierKeys & Keys.LWin) > 0 || (modifierKeys & Keys.RWin) > 0)
-					Text += "Win + ";
+					Text += LocalSt.KeyNames[0x00020000] + " + ";
+                if ((modifierKeys & Keys.Alt) > 0)
+					Text += LocalSt.KeyNames[0x00040000] + " + ";
+                if ((modifierKeys & Keys.Shift) > 0)
+					Text += LocalSt.KeyNames[0x00010000] + " + ";
+                if ((modifierKeys & Keys.LWin) > 0 || (modifierKeys & Keys.RWin) > 0)
+					Text += LocalSt.KeyNames[0x5B] + " + ";
 
-				if (Hotkey.IsValidKey(pressedKey))
+                if (Hotkey.IsValidKey(pressedKey))
                 {
-                        Text += pressedKey.ToString();
+                        Text += LocalSt.KeyNames[(int)pressedKey];
                 }
 			}
 
@@ -143,20 +143,22 @@ namespace gInk
 			Keys pressedKey = e.KeyData ^ modifierKeys;
 
 			if (modifierKeys != Keys.None && !HotkeyJustSet)
-			{
-				Text = "";
-				if ((modifierKeys & Keys.Control) > 0)
-					Text += "Ctrl + ";
-				if ((modifierKeys & Keys.Alt) > 0)
-					Text += "Alt + ";
-				if ((modifierKeys & Keys.Shift) > 0)
-					Text += "Shift + ";
-				if ((modifierKeys & Keys.LWin) > 0 || (modifierKeys & Keys.RWin) > 0)
-					Text += "Win + ";
+            {
+                Text = "";
+                if ((modifierKeys & Keys.Control) > 0)
+                    Text += LocalSt.KeyNames[0x00020000] + " + ";
+                if ((modifierKeys & Keys.Alt) > 0)
+                    Text += LocalSt.KeyNames[0x00040000] + " + ";
+                if ((modifierKeys & Keys.Shift) > 0)
+                    Text += LocalSt.KeyNames[0x00010000] + " + ";
+                if ((modifierKeys & Keys.LWin) > 0 || (modifierKeys & Keys.RWin) > 0)
+                    Text += LocalSt.KeyNames[0x5B] + " + ";
 
-				if (Hotkey.IsValidKey(pressedKey))
-					Text += pressedKey.ToString();
-			}
+                if (Hotkey.IsValidKey(pressedKey))
+                {
+                    Text += LocalSt.KeyNames[(int)pressedKey];
+                }
+            }
 
 			if (modifierKeys == Keys.None)
 			{
