@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -142,7 +142,7 @@ namespace gInk
 			Keys modifierKeys = e.Modifiers;
 			Keys pressedKey = e.KeyData ^ modifierKeys;
 
-			if (modifierKeys != Keys.None && !HotkeyJustSet)
+            if (modifierKeys != Keys.None && !HotkeyJustSet)
             {
                 Text = "";
                 if ((modifierKeys & Keys.Control) > 0)

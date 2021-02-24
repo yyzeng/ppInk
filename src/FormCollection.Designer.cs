@@ -29,6 +29,7 @@ namespace gInk
 		private void InitializeComponent()
 		{
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormCollection));
             this.gpButtons = new System.Windows.Forms.Panel();
             this.btZoom = new System.Windows.Forms.Button();
             this.btSave = new System.Windows.Forms.Button();
@@ -737,6 +738,7 @@ namespace gInk
             this.Controls.Add(this.gpButtons);
             this.ForeColor = System.Drawing.Color.Transparent;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(2);
             this.MaximizeBox = false;
             this.MinimizeBox = false;

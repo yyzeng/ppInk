@@ -271,7 +271,7 @@ namespace gInk
                 if (i < 0) i = sin.Length;
                 return sin.Substring(0, i);
             }
-			this.Text = Root.Local.MenuEntryOptions + " - gInk";
+			this.Text = Root.Local.MenuEntryOptions + " - ppInk";
 			VideoTabCtrl.TabPages[0].Text = Root.Local.OptionsTabGeneral;
 			VideoTabCtrl.TabPages[1].Text = Root.Local.OptionsTabPens;
 			VideoTabCtrl.TabPages[2].Text = Root.Local.OptionsTabHotkeys;

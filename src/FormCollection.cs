@@ -2696,7 +2696,10 @@ namespace gInk
                     if(DateTime.Now.Ticks>j)
                     {
                         if(st.DrawingAttributes.Transparency == 255)
-                            IC.Ink.Strokes.RemoveAt(i);
+                        {
+                            //IC.Ink.Strokes.RemoveAt(i);
+                            IC.Ink.DeleteStroke(IC.Ink.Strokes[i]);
+                        }
                         else if (st.DrawingAttributes.Transparency > 245)
                             st.DrawingAttributes.Transparency = 255;
                         else

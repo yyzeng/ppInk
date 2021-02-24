@@ -1822,6 +1822,7 @@ namespace gInk
             this.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.ClientSize = new System.Drawing.Size(773, 508);
             this.Controls.Add(this.VideoTabCtrl);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "FormOptions";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
