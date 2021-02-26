@@ -868,6 +868,11 @@ namespace gInk
                 Root.TimeBeforeFading = f;
                 tb.BackColor = SystemColors.Window;
                 e.Cancel = false;
+                for (int i=0;i<Root.MaxPenCount;i++)
+                {
+                    if(Root.PenAttr[i].ExtendedProperties.Contains(Root.FADING_PEN))
+                        Root.PenAttr[i].ExtendedProperties.Add(Root.FADING_PEN, Root.TimeBeforeFading);
+                }
             }
             else
             {
