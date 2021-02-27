@@ -296,6 +296,9 @@ namespace gInk
         public bool ZoomContinous = false;
         public int ZoomEnabled = 3;
 
+        public Rectangle WindowRect = new Rectangle(Int32.MinValue, Int32.MinValue, -1, -1);
+        public bool ResizeDrawingWindow = false;
+
         //public string ProgramFolder;
 
         public string ExpandVarCmd(string cmd, int x, int y, int w, int h)
@@ -431,6 +434,8 @@ namespace gInk
 
             Docked = false;
             PointerMode = false; // we have to reset pointer mode when starting drawing;
+            ResizeDrawingWindow = false;
+            UponTakingSnap = false;
 
             FormCollection = new FormCollection(this);
 			FormButtonHitter = new FormButtonHitter(this);
@@ -486,7 +491,7 @@ namespace gInk
 				UponBalloonSnap = false;
 			}
             //if (FormOpacity > 0) callForm.Show();
-            if (FormOpacity > 0)
+            if (FormOpacity > 0 && !ResizeDrawingWindow)
             {
                 callForm = new CallForm(this);
                 callForm.Show();
@@ -634,6 +639,7 @@ namespace gInk
 				return;
 
 			PointerMode = true;
+            FormDisplay.DrawBorder(false);
 			FormCollection.ToThrough();     
 			FormButtonHitter.Show();
             FormButtonHitter.timer1_Tick(null,null); // Force Size recomputation for alt+tab processing
@@ -1123,6 +1129,22 @@ namespace gInk
 							if (tab.Length >= 3 ) { FormWidth = Int32.Parse(tab[2]); }
 							if (tab.Length >= 4) { FormOpacity = Int32.Parse(tab[3]); }
 							break;
+                        case "INKING_AREA": // 4 integers
+                            tab = sPara.Split(',');
+                            if (tab.Length <= 4)
+                            {
+                                int a, b, c, d;
+                                if (Int32.TryParse(tab[0], out a) && Int32.TryParse(tab[1], out b) && Int32.TryParse(tab[2], out c) && Int32.TryParse(tab[3], out d))
+                                {
+                                    if (c > 0 && d > 0) // else default value ie full screen;
+                                    {
+                                        a = a < 0 ? -1 : (Math.Min(Math.Max(SystemInformation.VirtualScreen.Left, a), SystemInformation.VirtualScreen.Right - c));
+                                        b = b < 0 ? -1 : (Math.Min(Math.Max(SystemInformation.VirtualScreen.Top, b), SystemInformation.VirtualScreen.Bottom - d));
+                                        WindowRect = new Rectangle(a, b, c, d);
+                                    }
+                                }
+                            }
+                            break;
                         case "GRAY_BOARD1": // if not defined, no window else 2 to 4 integers Top,Left,[Width/Height,[Opacity]]
                             tab = sPara.Split(',');
                             if (tab.Length == 4)
@@ -1588,6 +1610,12 @@ namespace gInk
                             break;
                         case "GRAYBOARD1": 
                             sPara = Gray1[0].ToString() + "," + Gray1[1].ToString() + "," + Gray1[2].ToString() + "," + Gray1[3].ToString();
+                            break;
+                        case "INKING_AREA": // 4 integers
+                            if (WindowRect.Width <= 0 || WindowRect.Height <= 0)
+                                sPara = "-1,-1,-1,-1";
+                            else
+                                sPara = WindowRect.Left.ToString() + "," + WindowRect.Top.ToString() + "," + WindowRect.Width.ToString() + "," + WindowRect.Height.ToString();
                             break;
                         case "GRAYBOARD2":
                             sPara = Gray2[0].ToString() + "," + Gray2[1].ToString() + "," + Gray2[2].ToString() + "," + Gray2[3].ToString();

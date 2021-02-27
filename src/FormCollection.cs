@@ -287,9 +287,27 @@ namespace gInk
 
             //Console.WriteLine("A=" + (DateTime.Now.Ticks/1e7).ToString());
             InitializeComponent();
+            if (Root.WindowRect.Width <= 0 || Root.WindowRect.Height <= 0)
+            {
+                this.Left = SystemInformation.VirtualScreen.Left;
+                this.Top = SystemInformation.VirtualScreen.Top;
+                this.Width = SystemInformation.VirtualScreen.Width;
+                this.Height = SystemInformation.VirtualScreen.Height - 2;
+                PrimaryLeft = Screen.PrimaryScreen.Bounds.Left - SystemInformation.VirtualScreen.Left;
+                PrimaryTop = Screen.PrimaryScreen.Bounds.Top - SystemInformation.VirtualScreen.Top;
+            }
+            else // window mode
+            {
+                this.Left = Math.Min(Math.Max(SystemInformation.VirtualScreen.Left, Root.WindowRect.Left), SystemInformation.VirtualScreen.Right - Root.WindowRect.Width);
+                this.Top = Math.Min(Math.Max(SystemInformation.VirtualScreen.Top, Root.WindowRect.Top), SystemInformation.VirtualScreen.Bottom - Root.WindowRect.Height);
+                this.Width = Root.WindowRect.Width;
+                this.Height = Root.WindowRect.Height;
+                PrimaryLeft = 0; // top corner: Screen.PrimaryScreen.Bounds.Left - SystemInformation.VirtualScreen.Left;
+                PrimaryTop = 0;  //             Screen.PrimaryScreen.Bounds.Top - SystemInformation.VirtualScreen.Top;
+            }
+
             ZoomImage = new Bitmap(Root.ZoomWidth, Root.ZoomHeight);
             ZoomImage2 = new Bitmap(Root.ZoomWidth, Root.ZoomHeight);
-            //ZoomForm.BackgroundImage = ZoomImage;   // the image will be automatically scaled by stretch setup;
             ZoomForm.pictureBox1.BackgroundImage = ZoomImage;
             ZoomForm.pictureBox2.BackgroundImage = ZoomImage2;
             ZoomFormRePosX = ZoomImage.Width / 2;
@@ -316,13 +334,6 @@ namespace gInk
 
             longClickTimer.Interval = (int)(Root.LongClickTime * 1000 + 100);
 
-            PrimaryLeft = Screen.PrimaryScreen.Bounds.Left - SystemInformation.VirtualScreen.Left;
-            PrimaryTop = Screen.PrimaryScreen.Bounds.Top - SystemInformation.VirtualScreen.Top;
-
-            this.Left = SystemInformation.VirtualScreen.Left;
-            this.Top = SystemInformation.VirtualScreen.Top;
-            this.Width = SystemInformation.VirtualScreen.Width;
-            this.Height = SystemInformation.VirtualScreen.Height - 2;
             this.DoubleBuffered = true;
 
             int nbPen = 0;
@@ -685,9 +696,11 @@ namespace gInk
                   (gpButtonsLeft == 0 && gpButtonsTop == 0)))
                 || (!Root.AllowDraggingToolbar))
             {
-                switch (Root.ToolbarOrientation)
+                if (Root.WindowRect.Width <= 0 || Root.WindowRect.Height <= 0)
                 {
-                    case Orientation.toLeft:
+                    switch (Root.ToolbarOrientation)
+                    {
+                        case Orientation.toLeft:
                         gpButtonsLeft = Screen.PrimaryScreen.WorkingArea.Right - gpButtons.Width + PrimaryLeft;
                         gpButtonsTop = Screen.PrimaryScreen.WorkingArea.Bottom - gpButtons.Height - 15 + PrimaryTop;
                         gpButtons.Left = gpButtonsLeft + gpButtons.Width;
@@ -713,8 +726,28 @@ namespace gInk
                         gpButtonsTop = Screen.PrimaryScreen.WorkingArea.Top + PrimaryTop;
                         gpButtons.Left = gpButtonsLeft;
                         gpButtons.Top = gpButtonsTop;
+                            VisibleToolbar.Height = 0;
+                            break;
+                    }
+                }
+                else
+                {
+                    if (Root.ToolbarOrientation <= Orientation.Horizontal)
+                    {
+                        gpButtonsLeft = this.ClientRectangle.Right - gpButtons.Width;
+                        gpButtonsTop = this.ClientRectangle.Bottom - gpButtons.Height;
+                        gpButtons.Left = gpButtonsLeft + gpButtons.Width;
+                        gpButtons.Top = gpButtonsTop;
+                        VisibleToolbar.Width = 0;
+                    }
+                    else
+                    {
+                        gpButtonsLeft = this.ClientRectangle.Right - gpButtons.Width;
+                        gpButtonsTop = this.ClientRectangle.Top ;
+                        gpButtons.Left = gpButtonsLeft;
+                        gpButtons.Top = gpButtonsTop;
                         VisibleToolbar.Height = 0;
-                        break;
+                    }
                 }
                 Root.gpButtonsLeft = gpButtonsLeft;
                 Root.gpButtonsTop = gpButtonsTop;
@@ -855,6 +888,7 @@ namespace gInk
                 SelectTool(SavedTool, SavedFilled);
                 SavedTool = -1;
                 SavedFilled = -1;
+                Root.FormDisplay.DrawBorder(true);
                 Root.UnDock();
                 Root.UponAllDrawingUpdate = true;
                 Root.UponButtonsUpdate |= 0x7;
@@ -865,6 +899,12 @@ namespace gInk
         {
             if (msg.Msg == 0x001C) //WM_ACTIVATEAPP : generated through alt+tab
             {
+                if (Root.FormDisplay != null)
+                {
+                    //Console.WriteLine(Root.FormDisplay.HasFocus() ? "WM_ACT" : "!WM");
+                    Root.FormDisplay.DrawBorder(Root.FormDisplay.HasFocus());
+                    Root.FormDisplay.UpdateFormDisplay(true);
+                }
                 if (!Root.AltTabPointer)
                     return;
                 if (msg.WParam == IntPtr.Zero)
@@ -1788,17 +1828,27 @@ namespace gInk
 				int left = Math.Min(Root.SnappingX, e.X);
 				int top = Math.Min(Root.SnappingY, e.Y);
 				int width = Math.Abs(Root.SnappingX - e.X);
-				int height = Math.Abs(Root.SnappingY - e.Y);
-				if (width < 5 || height < 5)
-				{
-					left = 0;
-					top = 0;
-					width = this.Width;
-					height = this.Height;
-				}
-				Root.SnappingRect = new Rectangle(left + this.Left, top + this.Top, width, height);
-				Root.UponTakingSnap = true;
-				ExitSnapping();
+                int height = Math.Abs(Root.SnappingY - e.Y);
+                if (width < 5 || height < 5)
+                {
+                    if (Root.ResizeDrawingWindow)
+                    {
+                        left = SystemInformation.VirtualScreen.Left - this.Left;
+                        top = SystemInformation.VirtualScreen.Top - this.Top;
+                        width = SystemInformation.VirtualScreen.Width;
+                        height = SystemInformation.VirtualScreen.Height;
+                    }
+                    else
+                    {
+                        left = 0;
+                        top = 0;
+                        width = this.Width;
+                        height = this.Height;
+                    }
+                }
+                Root.SnappingRect = new Rectangle(left + this.Left, top + this.Top, width, height);
+                Root.UponTakingSnap = true;
+                ExitSnapping();
 			}
 			else if (Root.PanMode)
 			{
@@ -1848,10 +1898,11 @@ namespace gInk
 			SetLayeredWindowAttributes(this.Handle, 0x00FFFFFF, 1, 0x2);
 		}
 
-		public void ToTopMost()
-		{
-			SetWindowPos(this.Handle, (IntPtr)(-1), 0, 0, 0, 0, 0x0002 | 0x0001 | 0x0020);
-		}
+        public void ToTopMost()
+        {
+            TopMost = true;
+            SetWindowPos(this.Handle, (IntPtr)(-1), 0, 0, 0, 0, 0x0002 | 0x0001 | 0x0020);
+        }
 
 		public void ToThrough()
 		{
@@ -2380,16 +2431,24 @@ namespace gInk
                 Root.UponSubPanelUpdate = true;
 		}
 
-		public void btSnap_Click(object sender, EventArgs e)
-		{
-			if (ToolbarMoved)
-			{
-				ToolbarMoved = false;
+        public void btSnap_Click(object sender, EventArgs e)
+        {
+            longClickTimer.Stop(); // for an unkown reason the mouse arrives later
+            if (sender is ContextMenu)
+            {
+                sender = (sender as ContextMenu).SourceControl;
+                MouseTimeDown = DateTime.FromBinary(0);
+            }
+            if (ToolbarMoved)
+            {
+                ToolbarMoved = false;
                 return;
             }
 
             if (ZoomForm.Visible)
                 ZoomBtn_Click(btZoom, null);
+
+            TimeSpan tsp = DateTime.Now - MouseTimeDown;
 
             if (Root.Snapping > 0)
                 return;
@@ -2405,12 +2464,17 @@ namespace gInk
 			}
 			catch
 			{
-				Thread.Sleep(1);
-				IC.SetWindowInputRectangle(new Rectangle(0, 0, 1, 1));
-			}
-			Root.SnappingX = -1;
-			Root.SnappingY = -1;
-			Root.SnappingRect = new Rectangle(0, 0, 0, 0);
+                Thread.Sleep(1);
+                IC.SetWindowInputRectangle(new Rectangle(0, 0, 1, 1));
+            }
+            if (sender != null && tsp.TotalSeconds > Root.LongClickTime)
+            {
+                Root.ResizeDrawingWindow = true;
+                this.Cursor = cursorred;
+            }
+            Root.SnappingX = -1;
+            Root.SnappingY = -1;
+            Root.SnappingRect = new Rectangle(0, 0, 0, 0);
 			Root.Snapping = 1;
 			ButtonsEntering = -2;
 			Root.UnPointer();
@@ -2942,7 +3006,12 @@ namespace gInk
                 tempArrowCursor = null;
             }
 
-            if (!Root.FingerInAction && (!Root.PointerMode || Root.AllowHotkeyInPointerMode) && Root.Snapping <= 0)
+            if (((Root.PointerMode||!Root.FormDisplay.HasFocus()) && !Root.AllowHotkeyInPointerMode) || Root.Snapping > 0)
+            {
+                return;
+            }
+            //if (!Root.FingerInAction && (!Root.PointerMode || Root.AllowHotkeyInPointerMode) && Root.Snapping <= 0)
+            if (!Root.FingerInAction)
             {
                 bool control = ((short)(GetKeyState(VK_LCONTROL) | GetKeyState(VK_RCONTROL)) & 0x8000) == 0x8000;
                 //bool alt = (((short)(GetKeyState(VK_LMENU) | GetKeyState(VK_RMENU)) & 0x8000) == 0x8000);
@@ -3168,11 +3237,15 @@ namespace gInk
                 Root.Snapping++;
         }
 
-		private bool IsInsideVisibleScreen(int x, int y)
-		{
-			x -= PrimaryLeft;
-			y -= PrimaryTop;
-			//foreach (Screen s in Screen.AllScreens)
+        private bool IsInsideVisibleScreen(int x, int y)
+        {
+            if (Root.WindowRect.Width > 0 && Root.WindowRect.Height > 0)
+            {
+                return ClientRectangle.Contains(x, y);
+            }            
+            x -= PrimaryLeft;
+            y -= PrimaryTop;
+            //foreach (Screen s in Screen.AllScreens)
 			//	Console.WriteLine(s.Bounds);
 			//Console.WriteLine(x.ToString() + ", " + y.ToString());
 

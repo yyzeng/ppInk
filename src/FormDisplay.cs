@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using Microsoft.Ink;
 using System.Drawing.Imaging;
+using System.Diagnostics;
 
 namespace gInk
 {
@@ -61,21 +62,22 @@ namespace gInk
 
 			InitializeComponent();
 
-			this.Left = SystemInformation.VirtualScreen.Left;
-			this.Top = SystemInformation.VirtualScreen.Top;
-			//int targetbottom = 0;
-			//foreach (Screen screen in Screen.AllScreens)
-			//{
-			//	if (screen.WorkingArea.Bottom > targetbottom)
-			//		targetbottom = screen.WorkingArea.Bottom;
-			//}
-			//int virwidth = SystemInformation.VirtualScreen.Width;
-			//this.Width = virwidth;
-			//this.Height = targetbottom - this.Top;
-			this.Width = SystemInformation.VirtualScreen.Width;
-			this.Height = SystemInformation.VirtualScreen.Height - 2;
+            if(Root.WindowRect.Width <= 0 || Root.WindowRect.Height <= 0)
+            {
+                this.Left = SystemInformation.VirtualScreen.Left;
+                this.Top = SystemInformation.VirtualScreen.Top;
+                this.Width = SystemInformation.VirtualScreen.Width;
+                this.Height = SystemInformation.VirtualScreen.Height - 2;
+            }
+            else
+            {
+                this.Left = Math.Min(Math.Max(SystemInformation.VirtualScreen.Left, Root.WindowRect.Left), SystemInformation.VirtualScreen.Right - Root.WindowRect.Width);
+                this.Top = Math.Min(Math.Max(SystemInformation.VirtualScreen.Top, Root.WindowRect.Top), SystemInformation.VirtualScreen.Bottom - Root.WindowRect.Height);
+                this.Width = Root.WindowRect.Width;
+                this.Height = Root.WindowRect.Height;
+            }
 
-			Bitmap InitCanvus = new Bitmap(this.Width, this.Height);
+            Bitmap InitCanvus = new Bitmap(this.Width, this.Height);
             Bitmap Init2Canvus = new Bitmap(this.Width, this.Height);
 			Canvus = InitCanvus.GetHbitmap(Color.FromArgb(0));
 			OneStrokeCanvus = InitCanvus.GetHbitmap(Color.FromArgb(0));
@@ -139,14 +141,32 @@ namespace gInk
 
 		public void ClearCanvus()
 		{
-			gCanvus.Clear(Color.Transparent);
-		}
-		public void ClearCanvus(Graphics g)
-		{
-			g.Clear(Color.Transparent);
+            //gCanvus.Clear(Color.Transparent);
+            ClearCanvus(gCanvus);
 		}
 
-		public void DrawSnapping(Rectangle rect)
+        public void ClearCanvus(Graphics g)
+		{
+			g.Clear(Color.Transparent);
+            // to draw a border to the area. Only really visible in window mode
+
+
+            DrawBorder(HasFocus(), g);
+        }
+
+        public void DrawBorder(bool Focus,Graphics g=null)
+        {
+            if (g == null)
+                g = gCanvus;
+            if((Root.WindowRect.Width> 0)&&(Root.WindowRect.Width > 0))
+            {
+                g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
+                g.DrawRectangle(new Pen(Focus ? Color.Red : Color.Black, 1), new Rectangle(0, 0, this.ClientSize.Width - 1, this.ClientSize.Height - 1));
+            }
+        }
+
+
+        public void DrawSnapping(Rectangle rect)
 		{
 			gCanvus.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
 			if (rect.Width > 0 && rect.Height > 0)
@@ -155,7 +175,7 @@ namespace gInk
 				gCanvus.FillRectangle(SemiTransparentBrush, new Rectangle(rect.Right, 0, this.Width - rect.Right, this.Height));
 				gCanvus.FillRectangle(SemiTransparentBrush, new Rectangle(rect.Left, 0, rect.Width, rect.Top));
 				gCanvus.FillRectangle(SemiTransparentBrush, new Rectangle(rect.Left, rect.Bottom, rect.Width, this.Height - rect.Bottom));
-				Pen pen = new Pen(Color.FromArgb(200, 80, 80, 80));
+                Pen pen = new Pen(Root.ResizeDrawingWindow? Color.FromArgb(200, 255, 0, 0):Color.FromArgb(200, 80, 80, 80));
 				pen.Width = 3;
 				gCanvus.DrawRectangle(pen, rect);
 			}
@@ -637,8 +657,18 @@ namespace gInk
 			}
 
 			else if (Root.UponTakingSnap)
-			{
-				if (Root.SnappingRect.Width == this.Width && Root.SnappingRect.Height == this.Height)
+            {
+                if (Root.ResizeDrawingWindow)
+                {
+                    if ((Root.SnappingRect.Width == SystemInformation.VirtualScreen.Width) && (Root.SnappingRect.Height == SystemInformation.VirtualScreen.Height))
+                        Root.WindowRect = new Rectangle(Int32.MinValue, Int32.MinValue, -1, -1);
+                    else
+                        Root.WindowRect = new Rectangle(Root.SnappingRect.Left, Root.SnappingRect.Top, Root.SnappingRect.Width, Root.SnappingRect.Height);
+                    Root.StopInk();
+                    Root.StartInk();
+                    return;
+                }
+                if (Root.SnappingRect.Width == this.Width && Root.SnappingRect.Height == this.Height)
 					System.Threading.Thread.Sleep(200);
 				ClearCanvus();
 				DrawStrokes();
@@ -650,8 +680,7 @@ namespace gInk
                     Root.UponTakingSnap = false;
                     return;
                 }
-                else
-				    SnapShot(Root.SnappingRect);
+                SnapShot(Root.SnappingRect);
 				Root.UponTakingSnap = false;
 				if (Root.CloseOnSnap == "true")
 				{
@@ -801,7 +830,23 @@ namespace gInk
 		const int AC_SRC_ALPHA = 0x01;
 
 
-		[DllImport("user32.dll")]
+
+        public bool HasFocus()
+        {
+            var activatedHandle = GetForegroundWindow();
+            if (activatedHandle == IntPtr.Zero)
+            {
+                return false;       // No window is currently activated
+            }
+
+            var procId = Process.GetCurrentProcess().Id;
+            int activeProcId;
+            GetWindowThreadProcessId(activatedHandle, out activeProcId);
+
+            return activeProcId == procId;
+        }
+
+    [DllImport("user32.dll")]
 		static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
 		[DllImport("user32.dll", SetLastError = true)]
 		static extern UInt32 GetWindowLong(IntPtr hWnd, int nIndex);
@@ -821,5 +866,10 @@ namespace gInk
 		[DllImport("msvcrt.dll", EntryPoint = "memcpy", CallingConvention = CallingConvention.Cdecl, SetLastError = false)]
 		public static extern IntPtr memcpy(IntPtr dest, IntPtr src, int count);
 
-	}
+        [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
+        private static extern IntPtr GetForegroundWindow();
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern int GetWindowThreadProcessId(IntPtr handle, out int processId);
+    }
 }

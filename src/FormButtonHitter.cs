@@ -77,6 +77,7 @@ namespace gInk
 
 		public void ToTopMost()
 		{
+            TopMost = true;
 			UInt32 dwExStyle = GetWindowLong(this.Handle, -20);
 			SetWindowLong(this.Handle, -20, dwExStyle | 0x00080000);
 			//SetLayeredWindowAttributes(this.Handle, 0x00FFFFFF, 200, 0x2);
