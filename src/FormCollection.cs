@@ -1983,7 +1983,8 @@ namespace gInk
 
             if (AltKeyPressed())
             {
-                if (SavedTool <= Tools.Invalid || tool != Root.ToolSelected)
+                //if (SavedTool <= Tools.Invalid || tool != Root.ToolSelected )
+                if (SavedTool <= Tools.Invalid)
                 {
                     SavedTool = Root.ToolSelected;
                     SavedFilled = Root.FilledSelected;
@@ -2973,7 +2974,13 @@ namespace gInk
                 }
             }
 
-            if (!AltKeyPressed() && !Root.PointerMode)//&& (SavedPen>=0 || SavedTool>=0))
+            if (((Root.PointerMode||!Root.FormDisplay.HasFocus()) && !Root.AllowHotkeyInPointerMode) || Root.Snapping  > 0)
+            {
+                return;
+            }
+
+            //if (!AltKeyPressed() && !Root.PointerMode)//&& (SavedPen>=0 || SavedTool>=0))
+            if (!AltKeyPressed()) 
             {
                 if (SavedPen >= 0)
                 {
@@ -3006,10 +3013,6 @@ namespace gInk
                 tempArrowCursor = null;
             }
 
-            if (((Root.PointerMode||!Root.FormDisplay.HasFocus()) && !Root.AllowHotkeyInPointerMode) || Root.Snapping > 0)
-            {
-                return;
-            }
             //if (!Root.FingerInAction && (!Root.PointerMode || Root.AllowHotkeyInPointerMode) && Root.Snapping <= 0)
             if (!Root.FingerInAction)
             {
@@ -3096,12 +3099,16 @@ namespace gInk
                 }
 				LastPanStatus = pressed;
 
-				pressed = (GetKeyState(Root.Hotkey_Clear.Key) & 0x8000) == 0x8000;
-				if (pressed && !LastClearStatus && Root.Hotkey_Clear.ModifierMatch(control, alt, shift, win))
-				{
-					btClear_Click(null, null);
-				}
-				LastClearStatus = pressed;
+                pressed = (GetKeyState(Root.Hotkey_Clear.Key) & 0x8000) == 0x8000;
+                if (pressed && !LastClearStatus && Root.Hotkey_Clear.ModifierMatch(control, alt, shift, win))
+                {
+                    if (AltKeyPressed())
+                        MouseTimeDown = DateTime.FromBinary(0);
+                    else
+                        MouseTimeDown = DateTime.Now;
+                    btClear_Click(btClear, null);
+                }
+                LastClearStatus = pressed;
 
                 pressed = (GetKeyState(Root.Hotkey_Video.Key) & 0x8000) == 0x8000;
                 if (pressed && !LastVideoStatus && Root.Hotkey_Video.ModifierMatch(control, alt, shift, win))
@@ -3118,11 +3125,15 @@ namespace gInk
                 LastDockStatus = pressed;
 
                 pressed = (GetKeyState(Root.Hotkey_Snap.Key) & 0x8000) == 0x8000;
-				if (pressed && !LastSnapStatus && Root.Hotkey_Snap.ModifierMatch(control, alt, shift, win))
-				{
-                    btSnap_Click(null, null);
-				}
-				LastSnapStatus = pressed;
+                if (pressed && !LastSnapStatus && Root.Hotkey_Snap.ModifierMatch(control, alt, shift, win))
+                {
+                    if (AltKeyPressed())
+                        MouseTimeDown = DateTime.FromBinary(0);
+                    else
+                        MouseTimeDown = DateTime.Now;
+                    btSnap_Click(btSnap, null);
+                }
+                LastSnapStatus = pressed;
 
                 pressed = (GetKeyState(Root.Hotkey_Hand.Key) & 0x8000) == 0x8000;
                 if (pressed && !LastHandStatus && Root.Hotkey_Hand.ModifierMatch(control, alt, shift, win))
