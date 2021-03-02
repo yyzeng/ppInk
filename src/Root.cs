@@ -338,8 +338,8 @@ namespace gInk
 
 			SetDefaultPens();
 			SetDefaultConfig();
-			ReadOptions("pens.ini");
 			ReadOptions("config.ini");
+			ReadOptions("pens.ini");
 			ReadOptions("hotkeys.ini");
 
             if(TagFont=="")     // if no options, we apply text parameters
