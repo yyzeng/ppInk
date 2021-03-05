@@ -2650,11 +2650,11 @@ namespace gInk
 			{
 				Pen cpen = new Pen(Color.FromArgb(50, 128, 128, 128), 2);
 				dia += 6;
-				g.DrawEllipse(cpen, 64 - dia / 2, 64 - dia / 2, dia, dia);
-			}
-			IC.Cursor = new System.Windows.Forms.Cursor(bitmaptip.GetHicon());
-			
-		}
+                g.DrawEllipse(cpen, 64 - dia / 2, 64 - dia / 2, dia, dia);
+            }            
+            IC.Cursor = new System.Windows.Forms.Cursor(bitmaptip.GetHicon());
+            System.Windows.Forms.Cursor.Position = new Point(System.Windows.Forms.Cursor.Position.X, System.Windows.Forms.Cursor.Position.Y);
+        }
 
         short LastESCStatus = 0;
         int ZoomX = -1;
