@@ -36,7 +36,7 @@ namespace gInk
 
 		private void FormOptions_Load(object sender, EventArgs e)
 		{
-            Root.UnsetHotkey();
+            //Root.UnsetHotkey();
             ToolbarDwg.BackColor = Color.FromArgb(Root.ToolbarBGColor[0], Root.ToolbarBGColor[1], Root.ToolbarBGColor[2], Root.ToolbarBGColor[3]);
             ToolbarOrientationBtn.BackgroundImage = ToolBarOrientationIcons[Root.ToolbarOrientation];
             Clip1Btn.BackColor = ToolbarDwg.BackColor;
@@ -480,7 +480,11 @@ namespace gInk
 
 		private void FormOptions_FormClosing(object sender, FormClosingEventArgs e)
 		{
-			Root.SetHotkey();
+            try
+            {
+                Root.SetHotkey();
+            }
+            catch { }
 
             // Save button added
             //Root.SaveOptions("pens.ini");
@@ -913,6 +917,26 @@ namespace gInk
         private void ZoomEnabledCb_SelectedIndexChanged(object sender, EventArgs e)
         {
             Root.ZoomEnabled = ZoomEnabledCb.SelectedIndex;
+        }
+
+        private void hiGlobal_Enter(object sender, EventArgs e)
+        {
+            Root.UnsetHotkey();
+        }
+
+        private void hiGlobal_Leave(object sender, EventArgs e)
+        {
+            Root.SetHotkey();
+        }
+
+        private void FormOptions_Leave(object sender, EventArgs e)
+        {
+            try
+            {
+                ActiveControl.SelectNextControl(ActiveControl, true, true, false, true);
+                ActiveControl.SelectNextControl(ActiveControl, false, true, false, true);
+            }
+            catch { }
         }
 
         private void cbAllowHotkeyInPointer_CheckedChanged(object sender, EventArgs e)

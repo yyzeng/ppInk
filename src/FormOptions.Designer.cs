@@ -1664,6 +1664,8 @@ namespace gInk
             this.hiGlobal.TabIndex = 5;
             this.hiGlobal.Text = "None";
             this.hiGlobal.OnHotkeyChanged += new System.EventHandler(this.hi_OnHotkeyChanged);
+            this.hiGlobal.Enter += new System.EventHandler(this.hiGlobal_Enter);
+            this.hiGlobal.Leave += new System.EventHandler(this.hiGlobal_Leave);
             // 
             // VideoTab
             // 

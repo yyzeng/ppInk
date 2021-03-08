@@ -2977,11 +2977,13 @@ namespace gInk
                 }
             }
 
-            if (((Root.PointerMode||!Root.FormDisplay.HasFocus()) && !Root.AllowHotkeyInPointerMode) || Root.Snapping  > 0)
+            //Console.WriteLine("return? " + (Root.PointerMode ? "Pointer " : "Nopoint ") + (Root.FormDisplay.HasFocus() ? "Focus " : "NoFoc ") + (Root.AllowHotkeyInPointerMode ? "Allow " : "NoAll ") + Root.Snapping.ToString());
+
+            if ((Root.PointerMode||(!Root.FormDisplay.HasFocus() && !Root.AllowHotkeyInPointerMode)) || Root.Snapping  > 0)
             {
                 return;
             }
-
+            //Console.WriteLine("process Keys");
             //if (!AltKeyPressed() && !Root.PointerMode)//&& (SavedPen>=0 || SavedTool>=0))
             if (!AltKeyPressed()) 
             {
