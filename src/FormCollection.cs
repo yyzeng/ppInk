@@ -960,6 +960,24 @@ namespace gInk
                 ZoomForm.Width += t*10;
                 return;
             }
+            if (((GetKeyState(VK_LSHIFT ) | GetKeyState(VK_RSHIFT)) & 0x8000)!= 0 || System.Windows.Input.Keyboard.IsKeyToggled(System.Windows.Input.Key.CapsLock))
+            {
+                int p = LastPenSelected + (e.Delta>0?1:-1);
+                if (p >= Root.MaxPenCount)
+                    p = 0;
+                if (p < 0)
+                    p = Root.MaxPenCount - 1;
+                while (!Root.PenEnabled[p])
+                {
+                    p += (e.Delta > 0 ? 1 : -1);
+                    if (p >= Root.MaxPenCount)
+                        p = 0;
+                    if (p < 0)
+                        p = Root.MaxPenCount - 1;
+                }
+                SelectPen(p);
+                return;
+            }
             Root.GlobalPenWidth += Root.PixelToHiMetric(e.Delta > 0 ? 2 : -2);
             if (Root.GlobalPenWidth < 1)
                 Root.GlobalPenWidth = 1;
