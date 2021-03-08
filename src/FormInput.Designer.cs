@@ -74,6 +74,7 @@ namespace gInk
             this.InputML.Text = "inputML\r\nline2";
             this.InputML.Visible = false;
             this.InputML.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TB_CtrlAPressed);
+            this.InputML.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.FormInput_PreviewKeyDown);
             // 
             // InputSL
             // 

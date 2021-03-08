@@ -202,5 +202,14 @@ namespace gInk
             Root.FormDisplay.DrawStrokes();
             Root.FormDisplay.UpdateFormDisplay(true);
         }
+
+        private void FormInput_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            if (e.Control && (e.KeyCode == Keys.Enter || e.KeyCode == Keys.Return ))
+            {
+                this.DialogResult = DialogResult.OK;
+                this.Close();                
+            }
+        }
     }
 }
