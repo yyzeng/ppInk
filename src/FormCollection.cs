@@ -783,8 +783,7 @@ namespace gInk
                 }
 
             }
-            gpPenWidth.Left = gpButtonsLeft + btPenWidth.Left - gpPenWidth.Width / 2 + btPenWidth.Width / 2;
-            gpPenWidth.Top = gpButtonsTop - gpPenWidth.Height - 10;
+            setPenWidthBarPosition();
 
             pboxPenWidthIndicator.Top = 0;
             pboxPenWidthIndicator.Left = (int)Math.Sqrt(Root.GlobalPenWidth * 30);
@@ -860,7 +859,44 @@ namespace gInk
             PenModifyDlg = new PenModifyDlg(Root); // It seems to be a little long to build so we prepare it.
             SelectTool(0, 0); // Select Hand Drawing by Default
 
-        //Console.WriteLine("C=" + (DateTime.Now.Ticks/1e7).ToString());
+            //Console.WriteLine("C=" + (DateTime.Now.Ticks/1e7).ToString());
+        }
+
+
+        private void setPenWidthBarPosition()
+        {
+                    if(Root.ToolbarOrientation <= Orientation.Horizontal)
+            {
+                gpPenWidth.Left = gpButtonsLeft + btPenWidth.Left; // gpButtonsLeft + btPenWidth.Left - gpPenWidth.Width / 2 + btPenWidth.Width / 2;
+                gpPenWidth.Top = gpButtonsTop - gpPenWidth.Height - 10;
+                if ( !(IsInsideVisibleScreen(gpPenWidth.Left, gpPenWidth.Top) && IsInsideVisibleScreen(gpPenWidth.Right, gpPenWidth.Bottom)))
+                    gpPenWidth.Top = gpButtonsTop + gpButtonsHeight + 10;
+            }
+            else
+            {
+                gpPenWidth.Top = gpButtonsTop + btPenWidth.Top;
+                gpPenWidth.Left = gpButtonsLeft - gpPenWidth.Width - 10; // gpButtonsLeft + btPenWidth.Left - gpPenWidth.Width / 2 + btPenWidth.Width / 2;
+                if (!(IsInsideVisibleScreen(gpPenWidth.Left, gpPenWidth.Top) && IsInsideVisibleScreen(gpPenWidth.Right, gpPenWidth.Bottom)))
+                    gpPenWidth.Left = gpButtonsLeft +gpButtonsWidth + 10;
+            }
+        }
+
+        private void setClipArtDlgPosition()
+        {
+            if (Root.ToolbarOrientation <= Orientation.Horizontal)
+            {
+                ClipartsDlg.Left = gpButtons.Right - ClipartsDlg.Width - 1;
+                ClipartsDlg.Top = gpButtons.Top - ClipartsDlg.Height - 1;
+                if (!(IsInsideVisibleScreen(ClipartsDlg.Left, ClipartsDlg.Top) && IsInsideVisibleScreen(ClipartsDlg.Right, ClipartsDlg.Bottom)))
+                    ClipartsDlg.Top = gpButtons.Bottom + 1;
+            }
+            else // vertical
+            {
+                ClipartsDlg.Left = gpButtons.Left - ClipartsDlg.Width - 1;
+                ClipartsDlg.Top = gpButtons.Top + 1;
+                if (!(IsInsideVisibleScreen(ClipartsDlg.Left, ClipartsDlg.Top) && IsInsideVisibleScreen(ClipartsDlg.Right, ClipartsDlg.Bottom)))
+                    ClipartsDlg.Left = gpButtons.Right + 1;
+            }
         }
 
         // I want to be able to use the space,escape,... I must not leave leave the application handle those and generate clicks...
@@ -1003,6 +1039,7 @@ namespace gInk
             longClickTimer.Start();
             longClickTimer.Tag = sender;
             //Console.WriteLine(string.Format("MD {0} {1}", DateTime.Now.Second, DateTime.Now.Millisecond));
+            gpButtons_MouseDown(sender, e);
         }
 
         private void btAllButtons_MouseUp(object sender, MouseEventArgs e)
@@ -1012,6 +1049,7 @@ namespace gInk
             (sender as Button).RightToLeft = RightToLeft.No;
             longClickTimer.Stop();
             IsMovingToolbar = 0;
+            gpButtons_MouseUp(sender, e);
         }
 
         private void btAllButtons_RightClick(object sender, EventArgs e)
@@ -1033,7 +1071,8 @@ namespace gInk
             //Console.WriteLine(string.Format("!LC {0}", bt.Name));
             bt.RightToLeft = RightToLeft.Yes;
             bt.PerformClick();
-            IsMovingToolbar = 0;
+            if(IsMovingToolbar<2)
+                IsMovingToolbar = 0;
         }
 
         private void setStrokeProperties(ref Stroke st, int FilledSelected)
@@ -3421,14 +3460,13 @@ namespace gInk
 						Root.gpButtonsLeft = gpButtonsLeft;
 						Root.gpButtonsTop = gpButtonsTop;
 						if (Root.Docked)
-							gpButtons.Left = gpButtonsLeft + gpButtonsWidth - btDock.Right;
-						else
-							gpButtons.Left = gpButtonsLeft;
-						gpPenWidth.Left = gpButtonsLeft + btPenWidth.Left - gpPenWidth.Width / 2 + btPenWidth.Width / 2;
-						gpPenWidth.Top = gpButtonsTop - gpPenWidth.Height - 10;
-						gpButtons.Top = gpButtonsTop;
-						Root.UponAllDrawingUpdate = true;
-					}
+                            gpButtons.Left = gpButtonsLeft + gpButtonsWidth - btDock.Right;
+                        else
+                            gpButtons.Left = gpButtonsLeft;
+                        setPenWidthBarPosition();
+                        gpButtons.Top = gpButtonsTop;
+                        Root.UponAllDrawingUpdate = true;
+                    }
 				}
 			}
 		}
@@ -4027,8 +4065,7 @@ namespace gInk
             {
                 AllowInteractions(true);
                 TextEdited = true;
-                ClipartsDlg.Left = gpButtons.Right - ClipartsDlg.Width - 1;
-                ClipartsDlg.Top = gpButtons.Top - ClipartsDlg.Height - 1;
+                setClipArtDlgPosition();
                 i = -1;
                 if (ClipartsDlg.ShowDialog() == DialogResult.OK)
                 {
@@ -4045,8 +4082,9 @@ namespace gInk
                     AllowInteractions(true);
                     TextEdited = true;
                     ImageLister dlg = new ImageLister(Root);
-                    dlg.Left = gpButtons.Right - dlg.Width - 1;
-                    dlg.Top = gpButtons.Top - dlg.Height - 1;
+                    dlg.StartPosition = FormStartPosition.CenterScreen;
+                    //dlg.Left = gpButtons.Right - dlg.Width - 1;
+                    //dlg.Top = gpButtons.Top - dlg.Height - 1;
                     dlg.FromClpBtn.Visible = false;
                     dlg.LoadImageBtn.Visible = false;
                     dlg.DelBtn.Visible = false;

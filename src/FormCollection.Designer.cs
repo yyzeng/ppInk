@@ -126,6 +126,9 @@ namespace gInk
             this.toolTip.SetToolTip(this.btZoom, "Zoom");
             this.btZoom.UseVisualStyleBackColor = true;
             this.btZoom.Click += new System.EventHandler(this.ZoomBtn_Click);
+            this.btZoom.MouseDown += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseDown);
+            this.btZoom.MouseMove += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseMove);
+            this.btZoom.MouseUp += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseUp);
             // 
             // btSave
             // 
@@ -190,9 +193,9 @@ namespace gInk
             this.toolTip.SetToolTip(this.btClip3, "Hand Drawing");
             this.btClip3.UseVisualStyleBackColor = true;
             this.btClip3.Click += new System.EventHandler(this.btTool_Click);
-            this.btClip3.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pboxPenWidthIndicator_MouseDown);
+            this.btClip3.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btAllButtons_MouseDown);
             this.btClip3.MouseMove += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseMove);
-            this.btClip3.MouseUp += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseUp);
+            this.btClip3.MouseUp += new System.Windows.Forms.MouseEventHandler(this.btAllButtons_MouseUp);
             // 
             // btClip2
             // 
@@ -213,9 +216,9 @@ namespace gInk
             this.toolTip.SetToolTip(this.btClip2, "Hand Drawing");
             this.btClip2.UseVisualStyleBackColor = true;
             this.btClip2.Click += new System.EventHandler(this.btTool_Click);
-            this.btClip2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseDown);
+            this.btClip2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btAllButtons_MouseDown);
             this.btClip2.MouseMove += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseMove);
-            this.btClip2.MouseUp += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseUp);
+            this.btClip2.MouseUp += new System.Windows.Forms.MouseEventHandler(this.btAllButtons_MouseUp);
             // 
             // btClip1
             // 
@@ -236,9 +239,9 @@ namespace gInk
             this.toolTip.SetToolTip(this.btClip1, "Hand Drawing");
             this.btClip1.UseVisualStyleBackColor = true;
             this.btClip1.Click += new System.EventHandler(this.btTool_Click);
-            this.btClip1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseDown);
+            this.btClip1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btAllButtons_MouseDown);
             this.btClip1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseMove);
-            this.btClip1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseUp);
+            this.btClip1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.btAllButtons_MouseUp);
             // 
             // btClipArt
             // 
@@ -258,6 +261,9 @@ namespace gInk
             this.toolTip.SetToolTip(this.btClipArt, "Hand Drawing");
             this.btClipArt.UseVisualStyleBackColor = true;
             this.btClipArt.Click += new System.EventHandler(this.btTool_Click);
+            this.btClipArt.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btAllButtons_MouseDown);
+            this.btClipArt.MouseMove += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseMove);
+            this.btClipArt.MouseUp += new System.Windows.Forms.MouseEventHandler(this.btAllButtons_MouseUp);
             // 
             // btStop
             // 
@@ -299,6 +305,9 @@ namespace gInk
             this.toolTip.SetToolTip(this.btVideo, "Video Recording");
             this.btVideo.UseVisualStyleBackColor = true;
             this.btVideo.Click += new System.EventHandler(this.btVideo_Click);
+            this.btVideo.MouseDown += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseDown);
+            this.btVideo.MouseMove += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseMove);
+            this.btVideo.MouseUp += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseUp);
             // 
             // btInkVisible
             // 
