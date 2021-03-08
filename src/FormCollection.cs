@@ -119,6 +119,7 @@ namespace gInk
         int ZoomFormRePosX;
         int ZoomFormRePosY;
         string ZoomSaveStroke;
+        public MouseButtons CurrentMouseButton=MouseButtons.None;
 
         public string SaveStrokeFile="";
 
@@ -1459,7 +1460,10 @@ namespace gInk
                 if ((Root.ToolSelected == Tools.Line) && (Root.CursorX0 != Int32.MinValue))
                     AddLineStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY);
                 else if ((Root.ToolSelected == Tools.Rect) && (Root.CursorX0 != Int32.MinValue))
-                    AddRectStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY, Root.FilledSelected);
+                    if ((CurrentMouseButton == MouseButtons.Right)||((int)CurrentMouseButton == 2))
+                        AddRectStroke(2*Root.CursorX0-Root.CursorX, 2*Root.CursorY0- Root.CursorY, Root.CursorX, Root.CursorY, Root.FilledSelected);
+                    else
+                        AddRectStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY, Root.FilledSelected);
                 else if (Root.ToolSelected == Tools.ClipArt)
                 {
                     //int idx = ClipartsDlg.Images.Images.IndexOfKey(Root.ImageStamp.ImageStamp);
@@ -1485,11 +1489,15 @@ namespace gInk
                     AddImageStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY, Root.ImageStamp.ImageStamp);
                 }
                 else if ((Root.ToolSelected == Tools.Oval) && (Root.CursorX0 != Int32.MinValue))
-                    AddEllipseStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY, Root.FilledSelected);
-                else if ((Root.ToolSelected == Tools.StartArrow) && (Root.CursorX0 != Int32.MinValue))
-                    AddArrowStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY);
-                else if ((Root.ToolSelected == Tools.EndArrow) && (Root.CursorX0 != Int32.MinValue))
-                    AddArrowStroke(Root.CursorX, Root.CursorY, Root.CursorX0, Root.CursorY0);
+                    if ((CurrentMouseButton == MouseButtons.Right) || ((int)CurrentMouseButton == 2))
+                        AddEllipseStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY, Root.FilledSelected);
+                    else
+                        AddEllipseStroke((Root.CursorX0+Root.CursorX)/2, (Root.CursorY0+Root.CursorY)/2, Root.CursorX, Root.CursorY, Root.FilledSelected);
+                else if (((Root.ToolSelected == Tools.StartArrow)||(Root.ToolSelected == Tools.EndArrow)) && (Root.CursorX0 != Int32.MinValue))
+                    if (((CurrentMouseButton == MouseButtons.Right) || ((int)CurrentMouseButton == 2)) ^ (Root.ToolSelected == Tools.StartArrow))
+                        AddArrowStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY);
+                    else
+                        AddArrowStroke(Root.CursorX, Root.CursorY, Root.CursorX0, Root.CursorY0);
                 else if (Root.ToolSelected == Tools.NumberTag)
                 {
                     Stroke st = AddNumberTagStroke(Root.CursorX, Root.CursorY, Root.CursorX, Root.CursorY, Root.TagNumbering.ToString());
@@ -1563,6 +1571,7 @@ namespace gInk
             Root.FormDisplay.UpdateFormDisplay(true);*/
 
             // reset the CursorX0/Y0 : this seems to introduce a wrong interim drawing
+            CurrentMouseButton = MouseButtons.None;
             Root.CursorX0 = Int32.MinValue;
             Root.CursorY0 = Int32.MinValue;
         }
@@ -1675,10 +1684,11 @@ namespace gInk
         }
 
         private void IC_MouseDown(object sender, CancelMouseEventArgs e)
-		{
-			if (Root.gpPenWidthVisible)
-			{
-				Root.gpPenWidthVisible = false;
+        {
+            CurrentMouseButton = e.Button;    
+            if (Root.gpPenWidthVisible)
+            {
+                Root.gpPenWidthVisible = false;
 				Root.UponSubPanelUpdate = true;
 			}
 
@@ -1852,9 +1862,10 @@ namespace gInk
                 Root.SnappingRect = new Rectangle(left + this.Left, top + this.Top, width, height);
                 Root.UponTakingSnap = true;
                 ExitSnapping();
-			}
-			else if (Root.PanMode)
-			{
+                CurrentMouseButton = MouseButtons.None;
+            }
+            else if (Root.PanMode)
+            {
 				SaveUndoStrokes();
 			}
 			else

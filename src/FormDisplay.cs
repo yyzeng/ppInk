@@ -512,13 +512,20 @@ namespace gInk
                 else if((Root.ToolSelected == Tools.Line)|| (Root.ToolSelected == Tools.Poly))
                     DrawLineOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY);
                 else if ((Root.ToolSelected == Tools.Rect)|| (Root.ToolSelected == Tools.ClipArt))
-                    DrawRectOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY);
+                    if ((Root.FormCollection.CurrentMouseButton == MouseButtons.Right) || ((int)(Root.FormCollection.CurrentMouseButton) == 2))
+                        DrawRectOnGraphic(g, 2*CursorX0-CursorX, 2*CursorY0-CursorY, CursorX, CursorY);
+                    else
+                        DrawRectOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY);
                 else if (Root.ToolSelected == Tools.Oval)
-                    DrawEllipseOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY);
-                else if (Root.ToolSelected == Tools.StartArrow)
-                    DrawArrowOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY);
-                else if (Root.ToolSelected == Tools.EndArrow)
-                    DrawArrowOnGraphic(g, CursorX, CursorY, CursorX0, CursorY0);
+                    if ((Root.FormCollection.CurrentMouseButton == MouseButtons.Right) || ((int)(Root.FormCollection.CurrentMouseButton) == 2))
+                        DrawEllipseOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY);
+                    else
+                        DrawEllipseOnGraphic(g,(CursorX0+ CursorX)/2,(CursorY0+ CursorY)/2, CursorX, CursorY);
+                else if ((Root.ToolSelected == Tools.StartArrow)|| (Root.ToolSelected == Tools.EndArrow))
+                    if ((Root.ToolSelected == Tools.StartArrow) ^ ((Root.FormCollection.CurrentMouseButton == MouseButtons.Right) || ((int)(Root.FormCollection.CurrentMouseButton) == 2)))
+                        DrawArrowOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY);
+                    else
+                        DrawArrowOnGraphic(g, CursorX, CursorY, CursorX0, CursorY0);
             }
         }
 
