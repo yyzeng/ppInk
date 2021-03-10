@@ -2350,15 +2350,17 @@ namespace gInk
                 {
                     SavedPen = LastPenSelected;
                 }
-                LastPenSelected = pen;
                 if (this.Cursor != System.Windows.Forms.Cursors.Default)
-					this.Cursor = System.Windows.Forms.Cursors.Default;
-
-				IC.DefaultDrawingAttributes = Root.PenAttr[pen].Clone();
-				if (Root.PenWidthEnabled && !Root.WidthAtPenSel)
-				{
-					IC.DefaultDrawingAttributes.Width = Root.GlobalPenWidth;
-				}
+                    this.Cursor = System.Windows.Forms.Cursors.Default;
+                float w = IC.DefaultDrawingAttributes.Width;
+                IC.DefaultDrawingAttributes = Root.PenAttr[pen].Clone();
+                if (pen == LastPenSelected)
+                    IC.DefaultDrawingAttributes.Width = w;
+                else if (Root.PenWidthEnabled && !Root.WidthAtPenSel)
+                {
+                    IC.DefaultDrawingAttributes.Width = Root.GlobalPenWidth;
+                }
+                LastPenSelected = pen;
                 IC.DefaultDrawingAttributes.FitToCurve = true;
                 for (int b = 0; b < Root.MaxPenCount; b++)
                     //btPen[b].Image = image_pen[b];
