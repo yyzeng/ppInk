@@ -286,6 +286,11 @@ namespace gInk
         {
             Root = root;
 
+            /* // Kept for debug if required
+            using (StreamWriter sw = File.AppendText("LogKey.txt"))
+                sw.WriteLine("Start inking");
+            */
+
             //Console.WriteLine("A=" + (DateTime.Now.Ticks/1e7).ToString());
             InitializeComponent();
             if (Root.WindowRect.Width <= 0 || Root.WindowRect.Height <= 0)
@@ -1465,6 +1470,7 @@ namespace gInk
         private void IC_Stroke(object sender, InkCollectorStrokeEventArgs e)
         {
             movedStroke = null; // reset the moving object
+            Root.FingerInAction = false;        // this is done a little before MouseUp ; but it looks like the one from MouseUp is not always done...
             try { if (e.Stroke.ExtendedProperties.Contains(Root.ISSTROKE_GUID)) e.Stroke.ExtendedProperties.Remove(Root.ISSTROKE_GUID); } catch { } // the ISSTROKE set for drawin
             try { e.Stroke.ExtendedProperties.Add(Root.FADING_PEN, DateTime.Now.AddSeconds((float)(e.Stroke.DrawingAttributes.ExtendedProperties[Root.FADING_PEN].Data)).Ticks); } catch { };
             if (ZoomCapturing)
@@ -3045,6 +3051,21 @@ namespace gInk
                 }
             }
 
+            /* // Kept for debug if required
+            var array = new byte[256];
+            bool OneKeyPressed = false;
+            GetKeyboardState(array);
+            for(int i=0;i<256;i++)
+            {
+                if ((array[i] & 0x80) != 0)
+                    using (StreamWriter sw = File.AppendText("LogKey.txt"))
+                    {
+                        sw.WriteLine((OneKeyPressed?"":"\n") + "[" + i.ToString() + "]  return? " + (Root.PointerMode ? "Pointer " : "Nopoint ") + (Root.FormDisplay.HasFocus() ? "Focus " : "NoFoc ") + (Root.AllowHotkeyInPointerMode ? "Allow " : "NoAll ") + Root.Snapping.ToString());
+                        Console.WriteLine((OneKeyPressed ? "" : "\n") + "[" + i.ToString() + "]  return? " + (Root.PointerMode ? "Pointer " : "Nopoint ") + (Root.FormDisplay.HasFocus() ? "Focus " : "NoFoc ") + (Root.AllowHotkeyInPointerMode ? "Allow " : "NoAll ") + Root.Snapping.ToString());
+                        OneKeyPressed = true;
+                    }
+            }
+            */
             //Console.WriteLine("return? " + (Root.PointerMode ? "Pointer " : "Nopoint ") + (Root.FormDisplay.HasFocus() ? "Focus " : "NoFoc ") + (Root.AllowHotkeyInPointerMode ? "Allow " : "NoAll ") + Root.Snapping.ToString());
 
             if ((Root.PointerMode||(!Root.FormDisplay.HasFocus() && !Root.AllowHotkeyInPointerMode)) || Root.Snapping  > 0)
@@ -3087,6 +3108,16 @@ namespace gInk
             }
 
             //if (!Root.FingerInAction && (!Root.PointerMode || Root.AllowHotkeyInPointerMode) && Root.Snapping <= 0)
+
+            /* // Kept for debug if required
+            if (OneKeyPressed)
+                using(StreamWriter sw = File.AppendText("LogKey.txt"))
+                {
+                    sw.WriteLine(Root.FingerInAction ? "Finger" : "notFinger");
+                    Console.WriteLine(Root.FingerInAction ? "Finger" : "notFinger");
+                }
+            */
+
             if (!Root.FingerInAction)
             {
                 bool control = ((short)(GetKeyState(VK_LCONTROL) | GetKeyState(VK_RCONTROL)) & 0x8000) == 0x8000;
@@ -3246,6 +3277,7 @@ namespace gInk
                 pressed = (GetKeyState(Root.Hotkey_Numb.Key) & 0x8000) == 0x8000;
                 if (pressed && !LastNumbStatus && Root.Hotkey_Numb.ModifierMatch(control, alt, shift, win))
                 {
+                    MouseTimeDown = DateTime.Now;
                     btTool_Click(btNumb, null);
                 }
                 LastNumbStatus = pressed;
@@ -3253,6 +3285,7 @@ namespace gInk
                 pressed = (GetKeyState(Root.Hotkey_Text.Key) & 0x8000) == 0x8000;
                 if (pressed && !LastTextStatus && Root.Hotkey_Text.ModifierMatch(control, alt, shift, win))
                 {
+                    MouseTimeDown = DateTime.Now;
                     btTool_Click(btText, null);
                 }
                 LastTextStatus = pressed;
@@ -4589,5 +4622,9 @@ namespace gInk
 		static extern bool ReleaseDC(IntPtr hWnd, IntPtr hDC);
         [DllImport("user32.dll")]
         static extern bool ShowWindow(int hWnd, int nCmdShow);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool GetKeyboardState(byte[] lpKeyState);
     }
 }
