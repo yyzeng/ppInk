@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -52,14 +52,19 @@ namespace gInk
                 ImgSizes[j].Y = img.Height;
             }
             ImageListViewer.LargeImageList.ImageSize = new Size(Root.StampSize , Root.StampSize);
+            ImageListViewer.Select();
         }
 
         private bool OpaqueCorner(Bitmap img, int x0, int y0)
         {
-            for (int x = x0; x < (x0 + 10); x++)
-                for (int y = y0; y < (y0 + 10); y++)
-                    if (img.GetPixel(x, y).A < 255)
-                        return false;
+            try
+            {
+                for (int x = x0; x < (x0 + 10); x++)
+                    for (int y = y0; y < (y0 + 10); y++)
+                        if (img.GetPixel(x, y).A < 255)
+                            return false;
+            }
+            catch { };
             return true;
         }
 
@@ -87,6 +92,8 @@ namespace gInk
                     }
                     gch.Free();
                 }
+                else
+                    img = (Bitmap)Clipboard.GetImage();
             }
             else if (Clipboard.ContainsImage())
             {
@@ -96,7 +103,7 @@ namespace gInk
             {
                 return;
             }
-            if(OpaqueCorner(img,0,0))
+            if (OpaqueCorner(img, 0, 0))
             {
                 img.MakeTransparent(img.GetPixel(0, 0));
                 Console.WriteLine("transp " + img.PixelFormat.ToString());
@@ -108,6 +115,10 @@ namespace gInk
             Originals.Add(st, (Image)(img.Clone())); 
             ImgSizes[j].X = img.Width;
             ImgSizes[j].Y = img.Height;
+            ImageListViewer.Items[ImageListViewer.Items.Count-1].EnsureVisible();
+            ImageListViewer.SelectedIndices.Clear();
+            ImageListViewer.SelectedIndices.Add(ImageListViewer.Items.Count - 1);
+            ImageListViewer.Select();
         }
         
         private void LoadImageBtn_Click(object sender, EventArgs e)
@@ -130,7 +141,10 @@ namespace gInk
                     Originals.Add(fn, (Image)(img.Clone()));
                     ImgSizes[j].X = img.Width;
                     ImgSizes[j].Y = img.Height;
-
+                    ImageListViewer.Items[ImageListViewer.Items.Count - 1].EnsureVisible();
+                    ImageListViewer.SelectedIndices.Clear();
+                    ImageListViewer.SelectedIndices.Add(ImageListViewer.Items.Count - 1);
+                    ImageListViewer.Select();
                 }
             }
         }
@@ -172,14 +186,13 @@ namespace gInk
             Close();
         }
 
-        private void ImageLister_Enter(object sender, EventArgs e)
+        private void ImageLister_KeyDown(object sender, KeyEventArgs e)
         {
-            return; 
-        }
-
-        private void ImageLister_Leave(object sender, EventArgs e)
-        {
-            return; 
+            if (e.KeyData == (Keys.Control|Keys.V))
+            {
+                e.SuppressKeyPress  = true;
+                FromClipB_Click(null, null);
+            }
         }
     }
 }

@@ -145,6 +145,7 @@
             // 
             // ImageLister
             // 
+            this.AcceptButton = this.InsertBtn;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.CancelBtn;
@@ -158,14 +159,13 @@
             this.Controls.Add(this.CancelBtn);
             this.Controls.Add(this.ImageListViewer);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.KeyPreview = true;
             this.Name = "ImageLister";
             this.ShowIcon = false;
-            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Form1";
             this.TopMost = true;
-            this.Enter += new System.EventHandler(this.ImageLister_Enter);
-            this.Leave += new System.EventHandler(this.ImageLister_Leave);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ImageLister_KeyDown);
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -4307,7 +4307,7 @@ namespace gInk
                 {
                     IC.Enabled = true;
                     tiSlide.Start();
-                    Root.FormDisplay.Select();
+                    Select();
                 }
             }
         }
