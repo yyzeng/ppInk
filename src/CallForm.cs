@@ -14,6 +14,7 @@ namespace gInk
     public partial class CallForm : Form
     {
         public Root Root;
+        public bool FirstActivation = true;
         public CallForm(Root r)
         {
             InitializeComponent();
@@ -24,6 +25,11 @@ namespace gInk
 
         private void _Click(object sender, EventArgs e)
         {
+            if(FirstActivation)
+            {
+                FirstActivation = false;
+                return;
+            }
             Root.callshortcut();
         }
 

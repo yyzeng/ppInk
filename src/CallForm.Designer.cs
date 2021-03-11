@@ -55,8 +55,8 @@ namespace gInk
             this.Text = "ppInk";
             this.TopMost = true;
             this.TransparencyKey = System.Drawing.Color.White;
+            this.Activated += new System.EventHandler(this._Click);
             this.Click += new System.EventHandler(this._Click);
-            this.Enter += new System.EventHandler(this._Click);
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this._MouseMove);
             this.ResumeLayout(false);
 
