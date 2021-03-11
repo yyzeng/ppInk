@@ -41,15 +41,22 @@ namespace gInk
             AutoCloseCb.Text = Root.Local.CheckBoxAutoCloseText;
             for (int i=0;i<Root.StampFileNames.Count;i++)
             {
-                ImageListViewer.Items.Add(new ListViewItem(Path.GetFileNameWithoutExtension(Root.StampFileNames[i]), Root.StampFileNames[i]));
-                Image img = Image.FromFile(Root.StampFileNames[i]);
-                img.Tag = img.Width * 10000 + img.Height;
-                ImageListViewer.LargeImageList.Images.Add(Root.StampFileNames[i], img);
-                int j = ImageListViewer.LargeImageList.Images.IndexOfKey(Root.StampFileNames[i]);
-                Originals.Add(Root.StampFileNames[i],(Image)(img.Clone()));
-                //ImgSize[ImageListViewer.LargeImageList.Images.IndexOfKey(Root.StampFileNames[i])] = new Point(img.Width,img.Height);
-                ImgSizes[j].X = img.Width;
-                ImgSizes[j].Y = img.Height;
+                try
+                {
+                    ImageListViewer.Items.Add(new ListViewItem(Path.GetFileNameWithoutExtension(Root.StampFileNames[i]), Root.StampFileNames[i]));
+                    Image img = Image.FromFile(Root.StampFileNames[i]);
+                    img.Tag = img.Width * 10000 + img.Height;
+                    ImageListViewer.LargeImageList.Images.Add(Root.StampFileNames[i], img);
+                    int j = ImageListViewer.LargeImageList.Images.IndexOfKey(Root.StampFileNames[i]);
+                    Originals.Add(Root.StampFileNames[i], (Image)(img.Clone()));
+                    //ImgSize[ImageListViewer.LargeImageList.Images.IndexOfKey(Root.StampFileNames[i])] = new Point(img.Width,img.Height);
+                    ImgSizes[j].X = img.Width;
+                    ImgSizes[j].Y = img.Height;
+                }
+                catch
+                {
+                    MessageBox.Show("Error Loading ClipArt image:\n" + Root.StampFileNames[i],"ppInk", MessageBoxButtons.OK,MessageBoxIcon.Error );
+                }
             }
             ImageListViewer.LargeImageList.ImageSize = new Size(Root.StampSize , Root.StampSize);
             ImageListViewer.Select();
