@@ -685,6 +685,7 @@ namespace gInk
                 {
                     Root.FormCollection.VideoRecordStartFFmpeg(Root.SnappingRect);
                     Root.UponTakingSnap = false;
+                    Root.VideoRecordWindowInProgress = false;
                     return;
                 }
                 SnapShot(Root.SnappingRect);
