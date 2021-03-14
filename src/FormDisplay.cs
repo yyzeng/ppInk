@@ -318,7 +318,7 @@ namespace gInk
                         {
                             img = gInk.Properties.Resources.unknown;
                         }
-                        Rectangle r = st.GetBoundingBox();
+                        /*Rectangle r = st.GetBoundingBox();
                         Point p1 = new Point(r.Location.X, r.Location.Y);
                         Point p2 = new Point(r.Location.X+r.Size.Width, r.Location.Y+r.Size.Height);
                         Root.FormCollection.IC.Renderer.InkSpaceToPixel(gOneStrokeCanvus, ref p1);
@@ -327,6 +327,12 @@ namespace gInk
                         int Y = p1.Y; //(int)(st.ExtendedProperties[Root.IMAGE_Y_GUID].Data);
                         int W = p2.X - p1.X;// (int)(st.ExtendedProperties[Root.IMAGE_W_GUID].Data);
                         int H = p2.Y - p1.Y;//(int)(st.ExtendedProperties[Root.IMAGE_H_GUID].Data);
+                        */
+                        // I came back to this solution of using IMAGE_?_GUID in order to have a more accurate position and therefore prevent blurry image
+                        int X = (int)(st.ExtendedProperties[Root.IMAGE_X_GUID].Data);
+                        int Y = (int)(st.ExtendedProperties[Root.IMAGE_Y_GUID].Data);
+                        int W = (int)(st.ExtendedProperties[Root.IMAGE_W_GUID].Data);
+                        int H = (int)(st.ExtendedProperties[Root.IMAGE_H_GUID].Data);
                         g.DrawImage(img, new Rectangle(X, Y, W, H));
                     }
                     /*else */
@@ -405,7 +411,7 @@ namespace gInk
 			return lastscreenbits[Llastp];
 		}
 
-		public void SnapShot(Rectangle rect)
+		public void SnapShot(Rectangle rect,string dest="")
 		{
 			string snapbasepath = Root.SnapshotBasePath;
 			snapbasepath = Environment.ExpandEnvironmentVariables(snapbasepath);
@@ -446,20 +452,25 @@ namespace gInk
 					g.CopyFromScreen(rect.Left, rect.Top, 0, 0, new Size(rect.Width, rect.Height));
 				}
 
-				Clipboard.SetImage(tempbmp);
-				DateTime now = DateTime.Now;
-				string nowstr = now.Year.ToString() + "-" + now.Month.ToString("D2") + "-" + now.Day.ToString("D2") + " " + now.Hour.ToString("D2") + "-" + now.Minute.ToString("D2") + "-" + now.Second.ToString("D2");
-				string savefilename = nowstr + ".png";
+                if (dest == "")
+                    Clipboard.SetImage(tempbmp);
+                //DateTime now = DateTime.Now;
+                //string nowstr = now.Year.ToString() + "-" + now.Month.ToString("D2") + "-" + now.Day.ToString("D2") + " " + now.Hour.ToString("D2") + "-" + now.Minute.ToString("D2") + "-" + now.Second.ToString("D2");
+                string savefilename = DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss'.png'");
 				Root.SnapshotFileFullPath = snapbasepath + savefilename;
 
-				tempbmp.Save(Root.SnapshotFileFullPath, System.Drawing.Imaging.ImageFormat.Png);
+                if (dest == "")
+                    dest = Root.SnapshotFileFullPath;
+                else
+                    dest = Environment.ExpandEnvironmentVariables(dest);
+                tempbmp.Save(dest, System.Drawing.Imaging.ImageFormat.Png);
 
 				tempbmp.Dispose();
 				DeleteObject(hBmp);
 				ReleaseDC(IntPtr.Zero, screenDc);
 				DeleteDC(hDest);
 
-				Root.UponBalloonSnap = true;
+				// transfered out :Root.UponBalloonSnap = true;
 			}
 		}
 
@@ -689,8 +700,12 @@ namespace gInk
                     return;
                 }
                 SnapShot(Root.SnappingRect);
-				Root.UponTakingSnap = false;
-				if (Root.CloseOnSnap == "true")
+                Root.UponBalloonSnap = true;
+                Root.UponTakingSnap = false;
+                if (!Root.FormCollection.SnapWithoutClosing && (Root.CloseOnSnap == "true" || (Root.CloseOnSnap == "blankonly" && Root.FormCollection.IC.Ink.Strokes.Count == 0)))
+                    Root.FormCollection.RetreatAndExit();
+                /*
+                if (Root.CloseOnSnap == "true")
 				{
 					Root.FormCollection.RetreatAndExit();
 				}
@@ -698,7 +713,7 @@ namespace gInk
 				{
 					if ((Root.FormCollection.IC.Ink.Strokes.Count == 0))
 						Root.FormCollection.RetreatAndExit();
-				}
+				}*/
 			}
 
 			else if (Root.Snapping == 2)

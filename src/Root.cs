@@ -652,6 +652,7 @@ namespace gInk
 			if (PointerMode == false)
 				return;
 
+            FormCollection.AddPointerSnaps();
 			FormButtonHitter.Hide();
 			FormCollection.ToUnThrough();
 			FormCollection.ToTopMost();

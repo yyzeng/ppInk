@@ -102,6 +102,8 @@ namespace gInk
         private int PolyLineLastY = Int32.MinValue;
         private Stroke PolyLineInProgress = null;
 
+        public bool SnapWithoutClosing = false;
+
         // we have local variables for font to have an session limited default font characteristics
         public int TextSize = 25;
         public string TextFont = "Arial";
@@ -125,6 +127,7 @@ namespace gInk
         public MouseButtons CurrentMouseButton=MouseButtons.None;
 
         public string SaveStrokeFile="";
+        public List<string> PointerModeSnaps = new List<string>();
 
         // http://www.csharp411.com/hide-form-from-alttab/
         protected override CreateParams CreateParams
@@ -1307,7 +1310,8 @@ namespace gInk
             //minStroke = IC.Ink.Strokes[0];
             minStroke = null;
             //foreach (Stroke st in IC.Ink.Strokes)
-            for (int i = 0; i <= IC.Ink.Strokes.Count - (butLast ? 2 : 1); i++)
+            //reverse the order to select to most ontop :
+            for (int i = IC.Ink.Strokes.Count - (butLast ? 2 : 1); i>=0 ; i--)
             {
                 Stroke st = IC.Ink.Strokes[i];
                 if (st.ExtendedProperties.Contains(Root.ISDELETION_GUID))
@@ -2464,23 +2468,67 @@ namespace gInk
                     Root.UponButtonsUpdate |= 0x7;
                 }
                 Root.UnDock();
-			}
-		}
+            }
+        }
 
-		public void btPointer_Click(object sender, EventArgs e)
-		{
-			if (ToolbarMoved)
-			{
+        public void btWindowMode_Click2(object sender, EventArgs e)
+        {
+            if (ToolbarMoved)
+            {
                 ToolbarMoved = false;
                 return;
             }
+
             PolyLineLastX = Int32.MinValue; PolyLineLastY = Int32.MinValue; PolyLineInProgress = null;
+            Root.gpPenWidthVisible = false;
+            try
+            {
+                IC.SetWindowInputRectangle(new Rectangle(0, 0, 1, 1));
+            }
+            catch
+            {
+                Thread.Sleep(1);
+                IC.SetWindowInputRectangle(new Rectangle(0, 0, 1, 1));
+            }
+            if (ZoomForm.Visible)
+                ZoomBtn_Click(btZoom, null);
+            cursorsnap = new System.Windows.Forms.Cursor(gInk.Properties.Resources.cursorsnap.Handle);
+            this.Cursor = cursorsnap;
+            Root.ResizeDrawingWindow = true;
+            this.Cursor = cursorred;
+            Root.SnappingX = -1;
+            Root.SnappingY = -1;
+            Root.SnappingRect = new Rectangle(0, 0, 0, 0);
+            Root.Snapping = 1;
+            ButtonsEntering = -2;
+            Root.UnPointer();
+        }
+
+
+        public void btPointer_Click(object sender, EventArgs e)
+        {
+            if (ToolbarMoved)
+            {
+                ToolbarMoved = false;
+                return;
+            }
+
+            PolyLineLastX = Int32.MinValue; PolyLineLastY = Int32.MinValue; PolyLineInProgress = null;
+            Root.gpPenWidthVisible = false;
+            TimeSpan tsp = DateTime.Now - MouseTimeDown;
+
+            if (sender != null && tsp.TotalSeconds > Root.LongClickTime)
+            {
+                btWindowMode_Click2(sender, e);
+                return;
+            }
+
             if (!Root.PointerMode)
             {
                 SavedTool = Root.ToolSelected;
                 SavedFilled = Root.FilledSelected;
-                //Console.WriteLine("------------------------ "+DateTime.Now.ToString());
                 SelectPen(-2);
+                PointerModeSnaps.Clear();
                 if (Root.AltTabPointer)
                 {
                     Root.Dock();
@@ -2493,12 +2541,27 @@ namespace gInk
                 SavedTool = -1;
                 SavedFilled = -1;
             }
-		}
+        }
+
+        public void AddPointerSnaps()
+        {
+            if (PointerModeSnaps.Count > 0)
+            {
+                for (int i = PointerModeSnaps.Count - 1; i >= 0; i--) // we have to insert then in the reversed way...
+                {
+                    Bitmap capt = new Bitmap(PointerModeSnaps[i]);
+                    ClipartsDlg.Originals.Add(Path.GetFileNameWithoutExtension(PointerModeSnaps[i]), capt);
+                    Stroke st = AddImageStroke(SystemInformation.VirtualScreen.Left, SystemInformation.VirtualScreen.Top, SystemInformation.VirtualScreen.Right, SystemInformation.VirtualScreen.Bottom, Path.GetFileNameWithoutExtension(PointerModeSnaps[i]), Filling.NoFrame);
+                }
+                PointerModeSnaps.Clear();
+                Root.UponAllDrawingUpdate = true;
+            }
+        }
 
 
-		private void btPenWidth_Click(object sender, EventArgs e)
-		{
-			if (ToolbarMoved)
+        private void btPenWidth_Click(object sender, EventArgs e)
+        {
+            if (ToolbarMoved)
 			{
 				ToolbarMoved = false;
 				return;
@@ -2555,9 +2618,13 @@ namespace gInk
             }
             if (sender != null && tsp.TotalSeconds > Root.LongClickTime)
             {
-                Root.ResizeDrawingWindow = true;
-                this.Cursor = cursorred;
+                SnapWithoutClosing = true;
             }
+            else
+            {
+                SnapWithoutClosing = false;
+            }
+
             Root.SnappingX = -1;
             Root.SnappingY = -1;
             Root.SnappingRect = new Rectangle(0, 0, 0, 0);
@@ -2624,6 +2691,7 @@ namespace gInk
         bool LastClipArt1Status = false;
         bool LastClipArt2Status = false;
         bool LastClipArt3Status = false;
+        int SnappingPointerStep=0;
 
         private void gpPenWidth_MouseDown(object sender, MouseEventArgs e)
         {
@@ -3075,6 +3143,76 @@ namespace gInk
             }
             */
             //Console.WriteLine("return? " + (Root.PointerMode ? "Pointer " : "Nopoint ") + (Root.FormDisplay.HasFocus() ? "Focus " : "NoFoc ") + (Root.AllowHotkeyInPointerMode ? "Allow " : "NoAll ") + Root.Snapping.ToString());
+            //
+            //Console.WriteLine("avt");
+            if (Root.PointerMode)
+            {
+                // we have to use getAsyncKeyState as we do not have the focus
+                switch (SnappingPointerStep)
+                {
+                    case 0:
+                        if((GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0)
+                            SnappingPointerStep += 1;
+                        break;
+                    case 1:
+                        if ((GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0)
+                        {
+                            if ((GetAsyncKeyState(VK_CONTROL) & 0x8000) != 0)
+                                SnappingPointerStep += 1;
+                            // else wait for next key or should check for other keys
+                        }                            
+                        else
+                            SnappingPointerStep = 0;
+                        break;
+                    case 2:
+                        if ((GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0)
+                        {
+                            if ((GetAsyncKeyState(VK_CONTROL) & 0x8000) == 0) // control released
+                                SnappingPointerStep += 1;
+                            // else wait for next key or should check for other keys
+                        }
+                        else
+                            SnappingPointerStep = 0;
+                        break;
+                    case 3:
+                        if ((GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0)
+                        {
+                            if ((GetAsyncKeyState(VK_CONTROL) & 0x8000) != 0) // 
+                                SnappingPointerStep = 100;
+                            // else wait for next key or should check for other keys
+                        }
+                        else
+                            SnappingPointerStep = 0;
+                        break;
+                    case 100:
+                        SnappingPointerStep += 1;
+                        break;
+                    case 101:
+                        if ((GetAsyncKeyState(VK_SHIFT) & 0x8000) == 0) //released
+                        {
+                            SnappingPointerStep = 0;
+                        }
+                        break;
+                    default:
+                        SnappingPointerStep = 0;
+                        break;
+                }
+
+                Console.WriteLine(SnappingPointerStep);
+                if (SnappingPointerStep == 100)
+                {
+                    string fn = Environment.ExpandEnvironmentVariables(DateTime.Now.ToString("'%temp%/CtrlShift'ddMMM-HHmmss'.png'"));
+                    Root.FormDisplay.SnapShot(new Rectangle(Left, Top, Width, Height), fn);
+                    PointerModeSnaps.Add(fn);
+                    SnappingPointerStep = 101;      // for security
+                    System.Media.SystemSounds.Asterisk.Play();
+                }
+            }
+            else
+                SnappingPointerStep=0;
+
+
+
 
             if ((Root.PointerMode||(!Root.FormDisplay.HasFocus() && !Root.AllowHotkeyInPointerMode)) || Root.Snapping  > 0)
             {
@@ -3197,12 +3335,16 @@ namespace gInk
 				LastRedoStatus = pressed;
 
 				pressed = (GetKeyState(Root.Hotkey_Pointer.Key) & 0x8000) == 0x8000;
-				if (pressed && !LastPointerStatus && Root.Hotkey_Pointer.ModifierMatch(control, alt, shift, win))
-				{
+                if (pressed && !LastPointerStatus && Root.Hotkey_Pointer.ModifierMatch(control, alt, shift, win))
+                {
                     //SelectPen(-2);
-                    btPointer_Click(null, null);
-				}
-				LastPointerStatus = pressed;
+                    if (AltKeyPressed())
+                        MouseTimeDown = DateTime.FromBinary(0);
+                    else
+                        MouseTimeDown = DateTime.Now;
+                    btPointer_Click(btPointer, null);
+                }
+                LastPointerStatus = pressed;
 
 				pressed = (GetKeyState(Root.Hotkey_Pan.Key) & 0x8000) == 0x8000;
 				if (pressed && !LastPanStatus && Root.Hotkey_Pan.ModifierMatch(control, alt, shift, win))
@@ -4631,8 +4773,10 @@ namespace gInk
         [DllImport("user32.dll")]
         static extern bool ShowWindow(int hWnd, int nCmdShow);
 
-        [DllImport("user32.dll")]
+        [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool GetKeyboardState(byte[] lpKeyState);
+        [DllImport("user32.dll")]
+        public static extern short GetAsyncKeyState(int vKey);
     }
 }
