@@ -119,6 +119,8 @@ OptionsPensNormal = "Normal"
 OptionsPensThick = "Thick"
 OptionsPensFading = "Fading (after...sec)"
 OptionsPensWidthAtSelection = "Apply Width on Pen Selection\n(even with width selector)"
+OptionsInverseMouseWheel = "Inverse MouseWheel control\nWheel = Pen Width\nShift+Wheel = Pen Selection"
+OptionsInverseMouseWheelChecked = "Inverse MouseWheel control\nWheel = Pen Selection\nShift+Wheel = Pen Width"
 
 OptionsHotKeyAltAsOneCommand = "Process Alt as Temporary Command (Alt will be ignored in hotkeys)"
 OptionsHotkeysglobal = "Global hotkey (starts drawing, switches between mouse pointer and drawing)"

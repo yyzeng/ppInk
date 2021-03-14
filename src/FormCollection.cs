@@ -55,6 +55,9 @@ namespace gInk
         const double InterButtonGap = NormSizePercent*.05;
 
         // hotkeys
+        const int VK_SHIFT = 0x10;
+        const int VK_CONTROL = 0x11;
+        const int VK_MENU = 0x12;
         const int VK_LCONTROL = 0xA2;
         const int VK_RCONTROL = 0xA3;
         const int VK_LSHIFT = 0xA0;
@@ -994,14 +997,14 @@ namespace gInk
 
         private void IC_MouseWheel(object sender, CancelMouseEventArgs e)
         {
-            if(ZoomForm.Visible && ((GetKeyState(VK_LCONTROL) | GetKeyState(VK_RCONTROL)) & 0x8000)!=0)
+            if(ZoomForm.Visible && ((GetKeyState(VK_CONTROL)) & 0x8000)!=0)
             {
                 int t = Math.Sign(e.Delta);
                 ZoomForm.Height += t*(int)(10.0F* Root.ZoomHeight/Root.ZoomWidth);
                 ZoomForm.Width += t*10;
                 return;
             }
-            if (((GetKeyState(VK_LSHIFT ) | GetKeyState(VK_RSHIFT)) & 0x8000)!= 0 || System.Windows.Input.Keyboard.IsKeyToggled(System.Windows.Input.Key.CapsLock))
+            if (Root.InverseMousewheel ^ (GetKeyState(VK_SHIFT ) & 0x8000)!= 0)
             {
                 int p = LastPenSelected + (e.Delta>0?1:-1);
                 if (p >= Root.MaxPenCount)
@@ -1019,17 +1022,20 @@ namespace gInk
                 SelectPen(p);
                 return;
             }
-            Root.GlobalPenWidth += Root.PixelToHiMetric(e.Delta > 0 ? 2 : -2);
-            if (Root.GlobalPenWidth < 1)
-                Root.GlobalPenWidth = 1;
+            else
+            {
+                Root.GlobalPenWidth += Root.PixelToHiMetric(e.Delta > 0 ? 2 : -2);
+                if (Root.GlobalPenWidth < 1)
+                    Root.GlobalPenWidth = 1;
             /*if (Root.GlobalPenWidth > 120)
                 Root.GlobalPenWidth = 120;
             */
             //Console.WriteLine(Root.GlobalPenWidth);
-            IC.DefaultDrawingAttributes.Width = Root.GlobalPenWidth;
-            if (Root.CanvasCursor == 1)
-                SetPenTipCursor();
-
+                IC.DefaultDrawingAttributes.Width = Root.GlobalPenWidth;
+                if (Root.CanvasCursor == 1)
+                    SetPenTipCursor();
+                return;
+            }
         }
 
         private bool AltKeyPressed()

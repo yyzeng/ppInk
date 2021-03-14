@@ -299,6 +299,8 @@ namespace gInk
         public Rectangle WindowRect = new Rectangle(Int32.MinValue, Int32.MinValue, -1, -1);
         public bool ResizeDrawingWindow = false;
 
+        public bool InverseMousewheel=false;
+
         //public string ProgramFolder;
 
         public string ExpandVarCmd(string cmd, int x, int y, int w, int h)
@@ -1274,6 +1276,9 @@ namespace gInk
                             }
                             catch { }
                             break;
+                        case "INVERSE_MOUSEWHEEL_CONTROL":
+                            InverseMousewheel = (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON");
+                            break;
                     }
                 }
 			}
@@ -1683,6 +1688,9 @@ namespace gInk
                             break;
                         case "ZOOM":     // Width;Height;scale(f);Continuous(Y/N)
                             sPara = ZoomWidth.ToString() + ";" + ZoomHeight.ToString() + ";" + ZoomScale.ToString() + ";" + (ZoomContinous ? "Y" : "N");
+                            break;
+                        case "INVERSE_MOUSEWHEEL_CONTROL":
+                            sPara = InverseMousewheel ? "True" : "False";
                             break;
                     }
                 }

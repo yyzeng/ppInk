@@ -107,6 +107,7 @@ OptionsGeneralDefaultArrHdBtn = "Tête de flèche au début par déf."
 OptionsGeneralMagnetLbl = "Rayon de l'aimant(%Ecr)(<=0 = désactivé)"
 OptionsGeneralSaveConfigToFile = "&Sauver fichiers config"
 OptionsGeneralNotePenwidth = "Notes : (1)l'option globale d'épaisseur du trait écrase les options individuelles\n  (2) modifier directement config.ini pour ajuster la transparence et la taille de la fenêtre d'appel"
+
 OptionsPensShow = "Afficher"
 OptionsPensColor = "Couleur"
 OptionsPensAlpha = "Alpha"
@@ -118,6 +119,9 @@ OptionsPensNormal = "Normal"
 OptionsPensThick = "Épais"
 OptionsPensFading = "Effacement\n         (apres...sec)"
 OptionsPensWidthAtSelection = "Modifie La largeur à la sélection\n(Même avec L'outils largeur de stylo)"
+OptionsInverseMouseWheel = "Inverse les actions de la molette\nMolette seule = Largeur du stylo\nShift+Molette = Selection du stylo"
+OptionsInverseMouseWheelChecked = "Inverse les actions de la molette\nMolette seule = Selection du stylo\nShift+Molette = Largeur du stylo"
+
 
 OptionsHotKeyAltAsOneCommand = "Alt utilisé comme commande temporaire (Alt sera ignoré dans les raccourcis)"
 OptionsHotkeysglobal = "Raccourci général (débuter un dessin, basculer entre le mode curseur de souris et le dessin)"

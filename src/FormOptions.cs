@@ -20,7 +20,7 @@ namespace gInk
 		ComboBox[] comboPensAlpha = new ComboBox[10];
 		ComboBox[] comboPensWidth = new ComboBox[10];
         CheckBox[] comboPensFading = new CheckBox[10];
-        Label lbcbPens, lbpboxPens, lbcomboPensAlpha, lbcomboPensWidth, lbcomboPensFading;
+        //Label lbcbPens, lbpboxPens, lbcomboPensAlpha, lbcomboPensWidth, lbcomboPensFading;
 
 		Label[] lbHotkeyPens = new Label[10];
 		HotkeyInputBox[] hiPens = new HotkeyInputBox[10];
@@ -100,7 +100,7 @@ namespace gInk
 
             lbNote.ForeColor = Color.Black;
 
-			lbcbPens = new Label();
+            /*lbcbPens = new Label();
 			lbcbPens.Left = (int)(this.Width / 500.0 * 25);
 			lbcbPens.Width = 100;
 			lbcbPens.Top = 15;
@@ -130,14 +130,19 @@ namespace gInk
             lbcomboPensFading.Top = 15;
             lbcomboPensFading.AutoSize = true;
             tabPage2.Controls.Add(lbcomboPensFading);
+            */
+
+            lbPens[0] = lbPens0; lbPens[1] = lbPens1; lbPens[2] = lbPens2; lbPens[3] = lbPens3; lbPens[4] = lbPens4;
+            lbPens[5] = lbPens5; lbPens[6] = lbPens6; lbPens[7] = lbPens7; lbPens[8] = lbPens8; lbPens[9] = lbPens9;
 
             for (int p = 0; p < Root.MaxPenCount; p++)
 			{
-				int top = p * (int)(this.Height * 0.075) + (int)(this.Height * 0.09);
-				lbPens[p] = new Label();
+				//int top = p * (int)(this.Height * 0.075) + (int)(this.Height * 0.09);
+                int top = lbPens0.Top + p * (lbPens1.Top-lbPens0.Top);
+                /*lbPens[p] = new Label();
 				lbPens[p].Left = (int)(this.Width / 500.0 * 60);
 				lbPens[p].Width = 80;
-				lbPens[p].Top = top;
+				lbPens[p].Top = top;*/
 
 				cbPens[p] = new CheckBox();
 				cbPens[p].Left = (int)(this.Width / 500.0 * 30);
@@ -188,6 +193,7 @@ namespace gInk
             }
 
             FadingTimeEd.Text = Root.TimeBeforeFading.ToString();
+            InverseWheelCb.Checked = Root.InverseMousewheel;
 
             cbAllowHotkeyInPointer.Top = (int)(this.Height * 0.18);
 
@@ -389,8 +395,9 @@ namespace gInk
                 lbcomboPensFading.Text = Root.Local.OptionsPensFading;
 			}
             WidthAtPenSelCb.Text = Root.Local.OptionsPensWidthAtSelection;
+            InverseWheelCb.Text = Root.InverseMousewheel ? Root.Local.OptionsInverseMouseWheelChecked : Root.Local.OptionsInverseMouseWheel;
 
-				comboLanguage.Items.Clear();
+            comboLanguage.Items.Clear();
 			List<string> langs = Root.Local.GetLanguagenames();
 			foreach (string languagename in langs)
 			{
@@ -978,5 +985,12 @@ namespace gInk
 				FormOptions_LocalReload();
 			}
 		}
-	}
+
+        private void InverseWheelCb_CheckedChanged(object sender, EventArgs e)
+        {
+            Root.InverseMousewheel = InverseWheelCb.Checked;
+            InverseWheelCb.Text = Root.InverseMousewheel ? Root.Local.OptionsInverseMouseWheelChecked : Root.Local.OptionsInverseMouseWheel;
+        }
+    }
 }
+ 
