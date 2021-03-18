@@ -262,11 +262,11 @@ namespace gInk
                     {
                         Rectangle rect = st.GetBoundingBox();
                         Point pt = rect.Location;
-                        Root.FormCollection.IC.Renderer.InkSpaceToPixel(gCanvus, ref pt);
+                        Root.FormCollection.IC.Renderer.InkSpaceToPixel(gOneStrokeCanvus, ref pt);
                         rect.Location = pt;
                         pt.X = rect.Width;
                         pt.Y = rect.Height;
-                        Root.FormCollection.IC.Renderer.InkSpaceToPixel(gCanvus, ref pt);
+                        Root.FormCollection.IC.Renderer.InkSpaceToPixel(gOneStrokeCanvus, ref pt);
                         rect.Width = pt.X;
                         rect.Height = pt.Y;
                         g.DrawRectangle(Root.SelectionFramePen, rect);
@@ -291,7 +291,7 @@ namespace gInk
                             try
                             {
                                 Point[] pts = st.GetFlattenedBezierPoints(0); // 0 to get a good fitting curve
-                                Root.FormCollection.IC.Renderer.InkSpaceToPixel(g, ref pts);
+                                Root.FormCollection.IC.Renderer.InkSpaceToPixel(gOneStrokeCanvus, ref pts);
                                 g.FillClosedCurve(bru, pts);
                             }
                             catch { }
@@ -299,7 +299,7 @@ namespace gInk
                         else
                         {
                             Point[] pts = st.GetPoints();
-                            Root.FormCollection.IC.Renderer.InkSpaceToPixel(g, ref pts);
+                            Root.FormCollection.IC.Renderer.InkSpaceToPixel(gOneStrokeCanvus, ref pts);
                             g.FillPolygon(bru, pts);
 
                         }
@@ -342,7 +342,7 @@ namespace gInk
                     if (st.ExtendedProperties.Contains(Root.TEXT_GUID))
                     {
                         Point pt = new Point((int)(st.ExtendedProperties[Root.TEXTX_GUID].Data), (int)(st.ExtendedProperties[Root.TEXTY_GUID].Data));
-                        Root.FormCollection.IC.Renderer.InkSpaceToPixel(Root.FormCollection.IC.Handle, ref pt);
+                        Root.FormCollection.IC.Renderer.InkSpaceToPixel(gOneStrokeCanvus, ref pt);
                         System.Drawing.StringFormat stf = new System.Drawing.StringFormat(System.Drawing.StringFormatFlags.NoClip);
                         stf.Alignment = (System.Drawing.StringAlignment)(st.ExtendedProperties[Root.TEXTHALIGN_GUID].Data);
                         stf.LineAlignment = (System.Drawing.StringAlignment)(st.ExtendedProperties[Root.TEXTVALIGN_GUID].Data);
@@ -361,8 +361,8 @@ namespace gInk
 		{
 			Point pt1 = new Point(0, 0);
 			Point pt2 = new Point(0, 100);
-			Root.FormCollection.IC.Renderer.PixelToInkSpace(gCanvus, ref pt1);
-			Root.FormCollection.IC.Renderer.PixelToInkSpace(gCanvus, ref pt2);
+			Root.FormCollection.IC.Renderer.PixelToInkSpace(gOneStrokeCanvus, ref pt1);
+			Root.FormCollection.IC.Renderer.PixelToInkSpace(gOneStrokeCanvus, ref pt2);
 			float unitperpixel = (pt2.Y - pt1.Y) / 100.0f;
 			float shouldmove = dy * unitperpixel;
 			foreach (Stroke stroke in Root.FormCollection.IC.Ink.Strokes)

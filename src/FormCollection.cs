@@ -1230,7 +1230,7 @@ namespace gInk
             Stroke st = AddEllipseStroke(CursorX0, CursorY0, (int)(CursorX0 + TagSize * 1.2), (int)(CursorY0 + TagSize * 1.2), Root.FilledSelected == Filling.PenColorFilled ? 0 : Root.FilledSelected);
             st.ExtendedProperties.Add(Root.ISSTROKE_GUID, true);
             Point pt = new Point(CursorX0, CursorY0);
-            IC.Renderer.PixelToInkSpace(IC.Handle, ref pt);
+            IC.Renderer.PixelToInkSpace(Root.FormDisplay.gOneStrokeCanvus, ref pt);
             st.ExtendedProperties.Add(Root.ISTAG_GUID, true);
             st.ExtendedProperties.Add(Root.TEXT_GUID, txt);
             st.ExtendedProperties.Add(Root.TEXTX_GUID, pt.X);
@@ -1249,7 +1249,7 @@ namespace gInk
         {
             Point pt = new Point(CursorX0, CursorY0);
             //IC.Renderer.PixelToInkSpace(Root.FormDisplay.gOneStrokeCanvus, ref pt);
-            IC.Renderer.PixelToInkSpace(IC.Handle, ref pt);
+            IC.Renderer.PixelToInkSpace(Root.FormDisplay.gOneStrokeCanvus, ref pt);
             Point[] pts = new Point[9] { pt, pt, pt, pt, pt, pt, pt, pt,pt };
 
             Stroke st = Root.FormCollection.IC.Ink.CreateStroke(pts);
@@ -1279,7 +1279,7 @@ namespace gInk
             FormInput inp = new FormInput(Root.Local.DlgTextCaption, Root.Local.DlgTextLabel, txt, true, Root, stk);
 
             Point pt = stk.GetPoint(0);
-            IC.Renderer.InkSpaceToPixel(IC.Handle, ref pt);
+            IC.Renderer.InkSpaceToPixel(Root.FormDisplay.gOneStrokeCanvus, ref pt);
             pt = PointToScreen(pt);
             inp.Top = pt.Y - inp.Height - 10;// +this.Top ;
             inp.Left = pt.X;// +this.Left;
@@ -1301,7 +1301,7 @@ namespace gInk
         private float NearestStroke(Point pt, bool ptInPixel, out Stroke minStroke, out float pos, bool Search4Text = true, bool butLast = false)
         {
             if (ptInPixel)
-                IC.Renderer.PixelToInkSpace(IC.Handle, ref pt);
+                IC.Renderer.PixelToInkSpace(Root.FormDisplay.gOneStrokeCanvus, ref pt);
 
             float dst = 10000000000;
             float dst1 = dst;
@@ -1351,7 +1351,7 @@ namespace gInk
                 (NearestStroke(new Point(cursorX, cursorY), true, out st, out pos, false, true) < Root.PixelToHiMetric(Root.MinMagneticRadius())))
             {
                 pt = st.GetPoint((int)Math.Round(pos));
-                IC.Renderer.InkSpaceToPixel(IC.Handle, ref pt);
+                IC.Renderer.InkSpaceToPixel(Root.FormDisplay.gOneStrokeCanvus, ref pt);
                 //cursorX = pt.X;
                 //cursorY = pt.Y;
                 //return;
@@ -1678,7 +1678,7 @@ namespace gInk
                 Point pt = new Point((int)(st.ExtendedProperties[Root.TEXTX_GUID].Data), (int)(st.ExtendedProperties[Root.TEXTY_GUID].Data));
                 //IC.Renderer.PixelToInkSpace(IC.Handle, ref pt);
                 Point pt2 = new Point((int)layoutSize.Width,(int)layoutSize.Height);
-                IC.Renderer.PixelToInkSpace(IC.Handle, ref pt2);
+                IC.Renderer.PixelToInkSpace(Root.FormDisplay.gOneStrokeCanvus, ref pt2);
                 if (stf.Alignment==StringAlignment.Near) //align Left
                     st.SetPoints(new Point[] { pt, new Point((int)(pt.X+pt2.X / 2),pt.Y+0), new Point((int)(pt.X+pt2.X),pt.Y+0),
                                                new Point((int)(pt.X+pt2.X),(int)(pt.Y+pt2.Y/2)),new Point((int)(pt.X+pt2.X),(int)(pt.Y+pt2.Y)),
@@ -2798,10 +2798,10 @@ namespace gInk
 			{
 				cbrush = new SolidBrush(Color.Black);
 				widt = new Point(60, 0);
-			}
+            }
             try
             {
-			    IC.Renderer.InkSpaceToPixel(IC.Handle, ref widt);
+                IC.Renderer.InkSpaceToPixel(Root.FormDisplay.gOneStrokeCanvus, ref widt);
             }
             catch  // not in good context. considered to be able to stop processing at that time
             {
