@@ -812,10 +812,10 @@ namespace gInk
             IC.CursorDown += IC_CursorDown;
             IC.MouseWheel += IC_MouseWheel;
             IC.Stroke += IC_Stroke;
-            IC.DefaultDrawingAttributes.Width = 80;
+            /*IC.DefaultDrawingAttributes.Width = 80;
             IC.DefaultDrawingAttributes.Transparency = 30;
             IC.DefaultDrawingAttributes.AntiAliased = true;
-            IC.DefaultDrawingAttributes.FitToCurve = true;
+            IC.DefaultDrawingAttributes.FitToCurve = true;*/
 
             cursorred = getCursFromDiskOrRes("cursorarrow", System.Windows.Forms.Cursors.NoMove2D);
             cursorerase = getCursFromDiskOrRes("cursoreraser", System.Windows.Forms.Cursors.No);
@@ -868,6 +868,8 @@ namespace gInk
                 }
             }
             PenModifyDlg = new PenModifyDlg(Root); // It seems to be a little long to build so we prepare it.
+            SelectPen(0);
+            IC.DefaultDrawingAttributes.Width = Root.PenAttr[0].Width; //required to ensure width
             SelectTool(0, 0); // Select Hand Drawing by Default
 
             //Console.WriteLine("C=" + (DateTime.Now.Ticks/1e7).ToString());
