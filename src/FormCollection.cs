@@ -1504,14 +1504,25 @@ namespace gInk
                 Bitmap capt = new Bitmap(Math.Abs(Root.CursorX0- Root.CursorX), Math.Abs(Root.CursorY0 - Root.CursorY));
                 using (Graphics g = Graphics.FromImage(capt))
                 {
-                    Point p = new Point(Math.Min(Root.CursorX0,Root.CursorX), Math.Min(Root.CursorY0, Root.CursorY));
+                    Point p = PointToScreen(new Point(Math.Min(Root.CursorX0,Root.CursorX), Math.Min(Root.CursorY0, Root.CursorY)));
                     Size sz = new Size(capt.Width, capt.Height);
                     g.CopyFromScreen(p, Point.Empty, sz);
                     try { ClipartsDlg.Originals.Remove("_ZoomClip"); } catch { }
                     ClipartsDlg.Originals.Add("_ZoomClip", capt);
                     IC.Ink.Strokes.Clear();
-                    Screen scr = Screen.FromPoint(MousePosition);
-                    Stroke st=AddImageStroke(scr.Bounds.Left, scr.Bounds.Top, scr.Bounds.Right, scr.Bounds.Bottom, "_ZoomClip", Filling.NoFrame );                    
+                    Stroke st;
+                    if(Root.WindowRect.Width>0)
+                    {
+                        st = AddImageStroke(0,0,Width,Height, "_ZoomClip", Filling.NoFrame);
+                    }
+                    else
+                    {
+                        Screen scr = Screen.FromPoint(MousePosition);
+                        st = AddImageStroke(scr.Bounds.Left, scr.Bounds.Top, scr.Bounds.Right, scr.Bounds.Bottom, "_ZoomClip", Filling.NoFrame);
+                    }
+                    try { st.ExtendedProperties.Remove(Root.FADING_PEN); } catch { };  // if the pen was fading we need to remove that 
+                    if (Root.CanvasCursor == 1)
+                        SetPenTipCursor();
                 }
 
                 return;
@@ -1847,7 +1858,10 @@ namespace gInk
             Root.CursorY = e.Y;
             if (ZoomCapturing)
             {
-                Root.CursorY = (int)(Root.CursorY0 + (Root.CursorX - Root.CursorX0) / ZoomScreenRatio*Math.Sign(Root.CursorY-Root.CursorY0)*Math.Sign(Root.CursorX - Root.CursorX0));
+                if(Root.WindowRect.Width > 0)
+                    Root.CursorY = (int)(Root.CursorY0 + (Root.CursorX - Root.CursorX0) / (1.0*Width/Height) * Math.Sign(Root.CursorY - Root.CursorY0) * Math.Sign(Root.CursorX - Root.CursorX0));
+                else
+                    Root.CursorY = (int)(Root.CursorY0 + (Root.CursorX - Root.CursorX0) / ZoomScreenRatio*Math.Sign(Root.CursorY-Root.CursorY0)*Math.Sign(Root.CursorX - Root.CursorX0));
             }
             else
                 MagneticEffect(Root.CursorX0, Root.CursorY0, ref Root.CursorX, ref Root.CursorY, Root.ToolSelected > Tools.Hand && Root.MagneticRadius > 0);
@@ -2553,8 +2567,13 @@ namespace gInk
                 {
                     Bitmap capt = new Bitmap(PointerModeSnaps[i]);
                     ClipartsDlg.Originals.Add(Path.GetFileNameWithoutExtension(PointerModeSnaps[i]), capt);
-                    Stroke st = AddImageStroke(SystemInformation.VirtualScreen.Left, SystemInformation.VirtualScreen.Top, SystemInformation.VirtualScreen.Right, SystemInformation.VirtualScreen.Bottom, Path.GetFileNameWithoutExtension(PointerModeSnaps[i]), Filling.NoFrame);
+                    //Stroke st = AddImageStroke(SystemInformation.VirtualScreen.Left, SystemInformation.VirtualScreen.Top, SystemInformation.VirtualScreen.Right, SystemInformation.VirtualScreen.Bottom, Path.GetFileNameWithoutExtension(PointerModeSnaps[i]), Filling.NoFrame);
+                    Rectangle r = RectangleToClient(new Rectangle(Left, Top, Width, Height));
+                    //Stroke st = AddImageStroke(Left,Top,Right,Bottom, Path.GetFileNameWithoutExtension(PointerModeSnaps[i]), Filling.NoFrame);
+                    Stroke st = AddImageStroke(r.Left,r.Top,r.Right,r.Bottom, Path.GetFileNameWithoutExtension(PointerModeSnaps[i]), Filling.NoFrame);
+                    try { st.ExtendedProperties.Remove(Root.FADING_PEN); } catch { };  // if the pen was fading we need to remove that 
                 }
+                SaveUndoStrokes();
                 PointerModeSnaps.Clear();
                 Root.UponAllDrawingUpdate = true;
             }
@@ -4381,6 +4400,8 @@ namespace gInk
                 ToolbarMoved = false;
                 return;
             }
+            if (Root.CanvasCursor == 1)
+                SetPenTipCursor();
             if (ZoomForm.Visible)
             {
                 ZoomForm.Hide();
@@ -4388,6 +4409,14 @@ namespace gInk
                 {
                     ZoomCapturing = true;
                     btZoom.BackgroundImage = getImgFromDiskOrRes("ZoomWin_act");
+                    try
+                    {
+                        IC.Cursor = cursorred;
+                    }
+                    catch
+                    {
+                        IC.Cursor = getCursFromDiskOrRes("cursorarrow", System.Windows.Forms.Cursors.NoMove2D);
+                    }
                 }
                 else
                 {
