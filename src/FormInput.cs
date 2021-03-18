@@ -73,6 +73,10 @@ namespace gInk
                 Saved_Frame = stk.ExtendedProperties.Contains(Root.ISSTROKE_GUID);
                 Saved_White = stk.ExtendedProperties.Contains(Root.ISFILLEDWHITE_GUID);
                 Saved_Black = stk.ExtendedProperties.Contains(Root.ISFILLEDBLACK_GUID);
+                if (ML)
+                    InputML.SelectAll();
+                else
+                    InputSL.SelectAll();
             }
         }
 
