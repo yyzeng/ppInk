@@ -3485,6 +3485,7 @@ namespace gInk
                 pressed = (GetKeyState(Root.Hotkey_Edit.Key) & 0x8000) == 0x8000;
                 if (pressed && !LastEditStatus && Root.Hotkey_Edit.ModifierMatch(control, alt, shift, win))
                 {
+                    MouseTimeDown = DateTime.Now;
                     btTool_Click(btEdit, null);
                 }
                 LastEditStatus = pressed;
