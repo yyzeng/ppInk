@@ -218,7 +218,10 @@ namespace gInk
 
             AltAsOneCommandCb.Checked = Root.AltAsOneCommand;
 
-			hiGlobal.Hotkey = Root.Hotkey_Global;
+            SnapInPointerHoldCb.SelectedIndex = (int)(Root.SnapInPointerHoldKey);
+            SnapInPointerTwiceCb.SelectedIndex = (int)(Root.SnapInPointerPressTwiceKey);
+
+            hiGlobal.Hotkey = Root.Hotkey_Global;
 			hiEraser.Hotkey = Root.Hotkey_Eraser;
 			hiPan.Hotkey = Root.Hotkey_Pan;
 			hiInkVisible.Hotkey = Root.Hotkey_InkVisible;
@@ -314,6 +317,18 @@ namespace gInk
             this.ZoomDimLbl.Text = Root.Local.OptionsZoomDim;
             this.ZoomScaleLbl.Text = Root.Local.OptionsZoomScale;
             this.ZoomContinousCb.Text = Root.Local.OptionsZoomContinous;
+
+            this.SnapInPointerGrp.Text = Root.Local.OptionsHotKeySnapInPointerGrp;
+            this.SnapInPointerLbl.Text = Root.Local.OptionsHotKeySnapInPointerLbl;
+
+            {
+                int i = 0;
+                foreach(string st in Root.Local.OptionsHotKeySnapInPointerKeys.Split('\n'))
+                {
+                    this.SnapInPointerHoldCb.Items[i] = st;
+                    this.SnapInPointerTwiceCb.Items[i++] = st;
+                }
+            }
 
             this.AltAsOneCommandCb.Text = Root.Local.OptionsHotKeyAltAsOneCommand;
 			this.lbHkClear.Text = shortTxt(Root.Local.ButtonNameClear);
@@ -990,6 +1005,14 @@ namespace gInk
         {
             Root.InverseMousewheel = InverseWheelCb.Checked;
             InverseWheelCb.Text = Root.InverseMousewheel ? Root.Local.OptionsInverseMouseWheelChecked : Root.Local.OptionsInverseMouseWheel;
+        }
+
+        private void SnapInPointerKeysChanged(object sender, EventArgs e)
+        {
+            if(SnapInPointerHoldCb.SelectedIndex>=0)
+                Root.SnapInPointerHoldKey = (SnapInPointerKeys)(SnapInPointerHoldCb.SelectedIndex);
+            if(SnapInPointerTwiceCb.SelectedIndex>=0)
+                Root.SnapInPointerPressTwiceKey = (SnapInPointerKeys)(SnapInPointerTwiceCb.SelectedIndex);
         }
     }
 }

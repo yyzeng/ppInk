@@ -133,6 +133,9 @@ namespace gInk
 		public string OptionsPensNormal = "Normal";
 		public string OptionsPensThick = "Thick";
 
+        public string OptionsHotKeySnapInPointerGrp = "Snaphsot in Pointer Mode";
+        public string OptionsHotKeySnapInPointerLbl = "press and hold....                .... and press twice\n\n\nBoth None = Disabled";
+        public string OptionsHotKeySnapInPointerKeys = "None\nShift\nCtrl\nAlt";                            // Order to be respected!!!
         public string OptionsHotKeyAltAsOneCommand = "Process Alt as Temporary Command (Alt will be ignored in hotkeys)";
         public string OptionsHotkeysglobal = "Global hotkey (start drawing, switch between mouse pointer and drawing)";
 		public string OptionsHotkeysEnableinpointer = "Enable all following hotkeys in mouse pointer mode (may cause a mess)";

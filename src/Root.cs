@@ -59,6 +59,8 @@ namespace gInk
     public enum VideoRecordMode {NoVideo=0 , OBSRec=1 , OBSBcst=2 , FfmpegRec=3 };
     public enum VideoRecInProgress { Stopped=0, Starting=1, Recording=2, Stopping = 3, Pausing=4, Paused=5, Resuming=6, Streaming = 7 };
 
+    public enum SnapInPointerKeys { None=0, Shift=1, Control=2, Alt=3 };
+
     public class TestMessageFilter : IMessageFilter
 	{
 		public Root Root;
@@ -299,6 +301,9 @@ namespace gInk
         public Rectangle WindowRect = new Rectangle(Int32.MinValue, Int32.MinValue, -1, -1);
         public bool ResizeDrawingWindow = false;
 
+        public SnapInPointerKeys SnapInPointerHoldKey = SnapInPointerKeys.Shift;
+        public SnapInPointerKeys SnapInPointerPressTwiceKey = SnapInPointerKeys.Control;
+        
         public bool InverseMousewheel=false;
 
         //public string ProgramFolder;
@@ -1280,6 +1285,14 @@ namespace gInk
                         case "INVERSE_MOUSEWHEEL_CONTROL":
                             InverseMousewheel = (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON");
                             break;
+                        case "SNAP_IN_POINTER_HOLD_KEY": //directly the int value; expected to be in hotkey.ini
+                            if (Int32.TryParse(sPara, out tempi))
+                                SnapInPointerHoldKey=(SnapInPointerKeys)tempi;
+                            break;
+                        case "SNAP_IN_POINTER_PRESSTWICE_KEY": //directly the int value; expected to be in hotkey.ini
+                            if (Int32.TryParse(sPara, out tempi))
+                                SnapInPointerPressTwiceKey = (SnapInPointerKeys)tempi;
+                            break;
                     }
                 }
 			}
@@ -1693,6 +1706,13 @@ namespace gInk
                         case "INVERSE_MOUSEWHEEL_CONTROL":
                             sPara = InverseMousewheel ? "True" : "False";
                             break;
+                        case "SNAP_IN_POINTER_HOLD_KEY": //directly the int value; expected to be in hotkey.ini
+                            sPara = ((int)SnapInPointerHoldKey).ToString();
+                            break;
+                        case "SNAP_IN_POINTER_PRESSTWICE_KEY": //directly the int value; expected to be in hotkey.ini
+                            sPara = ((int)SnapInPointerPressTwiceKey).ToString();
+                            break;
+
                     }
                 }
 				if (sPara != "")

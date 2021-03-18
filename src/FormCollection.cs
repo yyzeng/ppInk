@@ -2692,6 +2692,7 @@ namespace gInk
         bool LastClipArt2Status = false;
         bool LastClipArt3Status = false;
         int SnappingPointerStep=0;
+        DateTime SnappingPointerReset;
 
         private void gpPenWidth_MouseDown(object sender, MouseEventArgs e)
         {
@@ -2851,6 +2852,20 @@ namespace gInk
             }
         }
 
+
+        private bool KeyCodeState(SnapInPointerKeys k)
+        {
+            if (k == SnapInPointerKeys.None)
+                return true;
+            else if (k == SnapInPointerKeys.Shift)
+                return (GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0;
+                else if (k == SnapInPointerKeys.Control)
+                return (GetAsyncKeyState(VK_CONTROL) & 0x8000) != 0;
+                else if (k == SnapInPointerKeys.Alt)
+                return (GetAsyncKeyState(VK_MENU) & 0x8000) != 0;
+                else
+                    return false;
+        }
 
         private void tiSlide_Tick(object sender, EventArgs e)
         {
@@ -3145,39 +3160,45 @@ namespace gInk
             //Console.WriteLine("return? " + (Root.PointerMode ? "Pointer " : "Nopoint ") + (Root.FormDisplay.HasFocus() ? "Focus " : "NoFoc ") + (Root.AllowHotkeyInPointerMode ? "Allow " : "NoAll ") + Root.Snapping.ToString());
             //
             //Console.WriteLine("avt");
+
             if (Root.PointerMode)
             {
                 // we have to use getAsyncKeyState as we do not have the focus
                 switch (SnappingPointerStep)
                 {
                     case 0:
-                        if((GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0)
+                        if(KeyCodeState(Root.SnapInPointerHoldKey))
                             SnappingPointerStep += 1;
                         break;
-                    case 1:
-                        if ((GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0)
+                    case 1:   // awaiting first press
+                        if (KeyCodeState(Root.SnapInPointerHoldKey))
                         {
-                            if ((GetAsyncKeyState(VK_CONTROL) & 0x8000) != 0)
+                            if (KeyCodeState(Root.SnapInPointerPressTwiceKey))
                                 SnappingPointerStep += 1;
                             // else wait for next key or should check for other keys
                         }                            
                         else
                             SnappingPointerStep = 0;
                         break;
-                    case 2:
-                        if ((GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0)
+                    case 2:   // awaiting release
+                        if (KeyCodeState(Root.SnapInPointerHoldKey))
                         {
-                            if ((GetAsyncKeyState(VK_CONTROL) & 0x8000) == 0) // control released
+                            if (!KeyCodeState(Root.SnapInPointerPressTwiceKey)) // control released
+                            {
                                 SnappingPointerStep += 1;
+                                SnappingPointerReset = DateTime.Now.AddSeconds(3.0);
+                            }
                             // else wait for next key or should check for other keys
                         }
                         else
                             SnappingPointerStep = 0;
                         break;
-                    case 3:
-                        if ((GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0)
+                    case 3:   // awaiting second release
+                        if (DateTime.Now > SnappingPointerReset)
+                            SnappingPointerStep = 0;
+                        if (KeyCodeState(Root.SnapInPointerHoldKey))
                         {
-                            if ((GetAsyncKeyState(VK_CONTROL) & 0x8000) != 0) // 
+                            if (KeyCodeState(Root.SnapInPointerPressTwiceKey)) // 
                                 SnappingPointerStep = 100;
                             // else wait for next key or should check for other keys
                         }
@@ -3188,7 +3209,7 @@ namespace gInk
                         SnappingPointerStep += 1;
                         break;
                     case 101:
-                        if ((GetAsyncKeyState(VK_SHIFT) & 0x8000) == 0) //released
+                        if ((Root.SnapInPointerHoldKey == SnapInPointerKeys.None || !KeyCodeState(Root.SnapInPointerHoldKey)) && !KeyCodeState(Root.SnapInPointerPressTwiceKey)) //all keys released
                         {
                             SnappingPointerStep = 0;
                         }
