@@ -1002,6 +1002,8 @@ namespace gInk
 
         private void IC_MouseWheel(object sender, CancelMouseEventArgs e)
         {
+            if (Root.PointerMode)   // Wheel shall not be taken into account in edit mode
+                return;
             if(ZoomForm.Visible && ((GetKeyState(VK_CONTROL)) & 0x8000)!=0)
             {
                 int t = Math.Sign(e.Delta);
