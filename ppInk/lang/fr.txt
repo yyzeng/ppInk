@@ -122,7 +122,9 @@ OptionsPensWidthAtSelection = "Modifie La largeur à la sélection\n(Même avec 
 OptionsInverseMouseWheel = "Inverse les actions de la molette\nMolette seule = Largeur du stylo\nShift+Molette = Selection du stylo"
 OptionsInverseMouseWheelChecked = "Inverse les actions de la molette\nMolette seule = Selection du stylo\nShift+Molette = Largeur du stylo"
 
-
+OptionsHotKeySnapInPointerGrp = "Capture d'écran en mode Pointeur"
+OptionsHotKeySnapInPointerLbl = "maintenir...                       ... et appuyer 2 fois sur\n\n\nAucun pour les deux = Désactivé"
+OptionsHotKeySnapInPointerKeys = "(Aucun)\nMaj\nControl\nAlt"
 OptionsHotKeyAltAsOneCommand = "Alt utilisé comme commande temporaire (Alt sera ignoré dans les raccourcis)"
 OptionsHotkeysglobal = "Raccourci général (débuter un dessin, basculer entre le mode curseur de souris et le dessin)"
 OptionsHotkeysEnableinpointer = "Activer tous les raccourcis en mode curseur de souris (peut poser problème)"

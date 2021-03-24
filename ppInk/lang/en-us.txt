@@ -122,6 +122,9 @@ OptionsPensWidthAtSelection = "Apply Width on Pen Selection\n(even with width se
 OptionsInverseMouseWheel = "Inverse MouseWheel control\nWheel = Pen Width\nShift+Wheel = Pen Selection"
 OptionsInverseMouseWheelChecked = "Inverse MouseWheel control\nWheel = Pen Selection\nShift+Wheel = Pen Width"
 
+OptionsHotKeySnapInPointerGrp = "Snaphsot in Pointer Mode"
+OptionsHotKeySnapInPointerLbl = "press and hold....                .... and press twice\n\n\nBoth None = Disabled"
+OptionsHotKeySnapInPointerKeys = "None\nShift\nCtrl\nAlt"
 OptionsHotKeyAltAsOneCommand = "Process Alt as Temporary Command (Alt will be ignored in hotkeys)"
 OptionsHotkeysglobal = "Global hotkey (starts drawing, switches between mouse pointer and drawing)"
 OptionsHotkeysEnableinpointer = "Enable all following hotkeys in mouse pointer mode (may cause a mess)"
