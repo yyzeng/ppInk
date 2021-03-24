@@ -1,5 +1,15 @@
 p1.5 (in progress)
 =================
+---> RC2
+* new : Add multiple snapshots in pointer mode for advanced drawings with configurable keys (between alt/shift/control)
+* enh : add option to swap between wheel and shift+wheel (between width adjust and pen selection)
+* new : shift+mousewheel selects pen (configurable see above)
+* enh: Start Inking when selecting ppInk with Alt+Tab
+* enh : ctrl+enter validates and close text input
+* translated : arabic added (thanks to @eamayreh)
+* new : window mode (allow restricted area to interact and freeing mouse (wheel and clicks) elsewhere)
+* fix : multiple fixes, see commits history
+
 ---> beta1
 * new icone but you can still deploy your own
 * new : add zoom capability : both dynamic magnifier and freezed to full screen.

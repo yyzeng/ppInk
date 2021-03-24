@@ -40,6 +40,7 @@ selected my multiple click on those or some through long or right click:
 
 -   Text:  
     Text left aligned -\> Text Right aligned
+    You can now use ctrl+enter to validate the entry
 
 -   Move:  
     Move 1 drawing -\> Copy 1 drawing -\> Move all drawings.
@@ -64,7 +65,7 @@ The magnet activates some magnetic effect :
 -   Find a point on the drawing next to the cursor. For rectangles, magnetic
     effect is available to vertices, and also to the middle of sides.(also activated pressing Ctrl)
 -   The 8 points of the bounding rectangle of a text.(also activated pressing Ctrl)
--   On the line from the origin. The lines are horizontal,vertical and every 15°.(also activated pressing Shift)
+-   On the line from the origin. The lines are horizontal,vertical and every 15ï¿½.(also activated pressing Shift)
 The Magnetic distance can be adjusted in the options.
 If only Ctrl or Shift is depressed, the global magnetic effect is switched off to only take into account the magnetic of the pressed key.
 Hotkeys are availables for all tools,pens (configurable throught right click on icon next to clock)
@@ -109,6 +110,8 @@ When defining a color, you can check Fading : in this case the stroke drawn will
 You can configure you own cursor file, saving it as cursor.ico in your exe folder (click position and size are loaded from the file). In the same you can save an image as FloatingCall.png to define the calling form image(in this case the width and transparency are in the Window_POS parameter in config.ini
 *mouse wheel:*
 Mouse wheel allows you to modify the pen width. this can be easily observed with the tipped cursor. in this configuration, finding the mouse may be difficult to find in this configuration : you can then depress the alt key to get the arrow(or customized) cursor
+shift+mouse wheel allows to select pen
+mouse wheel / shift+ mouse wheel can now be swapped (shift+mouse wheel to access pen width) : available in options / pen tab
 
 *video recording:*
 ppInk has now some capability to do some video recording. tuning is available in options/video tab :
@@ -129,6 +132,19 @@ You can now select how the toolbar will be deployed : to left/ to right or verti
 *Alt+Tab engaging Pointer*
 When the option is set in the options, switching application (with alt+tab) will engage pointer mode. Also, when pointer mode is activated (by any means, ie button click, alt+tab, global short cut), the toolbar is folded automatically, and when pressing undock button, alt+tab, or global shortcut,the inking mode is restored and the toolbar is unfolded.
 Note that you can still fold toolbar when drawing without engaging pointer mode with the dock button.
+
+*Window mode*
+You can now run ppink in window mode (engaged through Long/Right Click on pointer icon)
+In this mode ppInk is run in a window and you can access clicks or mousewheel applications out of the window:
+https://user-images.githubusercontent.com/4083478/112311221-c656c580-8ca5-11eb-895b-2279366c0fc4.mp4>
+
+*snapshots in pointer mode*
+when trying to annote menu opened with mouse click / contextual menus
+https://user-images.githubusercontent.com/61389799/111090958-1d3bfc80-853a-11eb-91fc-04e85ed18454.mp4
+(demo from @eamayreh)
+
+you can configure shortcuts with shift/ctrl/alt with a press and hold and tap twice keys to prevent menu to close
+multiple snapshots can be captured, they are pasted one over the other, in the reverse order to make a full sequence
 
 
 #### Download
@@ -209,6 +225,8 @@ contribute translation. Simply create a duplication of the file "en-us.txt" in
 in ppInk to make sure your translation shows correctly, and then you can make a
 pull request to merge your translation to the next version of release for others
 to use.
+
+NEW :  arabic available
 
 gInk  
 https://github.com/geovens/gInk  
