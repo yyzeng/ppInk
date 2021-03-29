@@ -958,6 +958,9 @@ namespace gInk
                     Root.FormDisplay.DrawBorder(Root.FormDisplay.HasFocus());
                     Root.FormDisplay.UpdateFormDisplay(true);
                 }
+                else if(Initializing)        // This is normally because we have not yet finish initialisation, we ignore the action...
+                    return;
+                // else exception will be raised somewhere else if a problem is met
                 if (!Root.AltTabPointer)
                     return;
                 if (msg.WParam == IntPtr.Zero)
