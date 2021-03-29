@@ -2451,7 +2451,8 @@ namespace gInk
                 string st = Path.GetFullPath(Environment.ExpandEnvironmentVariables(Root.SnapshotBasePath));
                 if (!System.IO.Directory.Exists(st))
                     System.IO.Directory.CreateDirectory(st);
-                SaveStrokes(st+ "AutoSave.strokes.txt");
+                if(IC.Ink.Strokes.Count>0)          // do not save it if there is no data to save
+                    SaveStrokes(st+ "AutoSave.strokes.txt");
             }
             catch(Exception ex)
             {
