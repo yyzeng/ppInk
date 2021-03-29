@@ -181,9 +181,10 @@ namespace gInk
 			}
 			else
 			{
-				gCanvus.FillRectangle(SemiTransparentBrush, new Rectangle(0, 0, this.Width, this.Height));
+                gCanvus.FillRectangle(SemiTransparentBrush, new Rectangle(0, 0, this.Width, this.Height));
+                ;
 			}
-			gCanvus.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
+			//gCanvus.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
 		}
 
         public void DrawButtons(bool redrawbuttons = true, bool exiting = false)
