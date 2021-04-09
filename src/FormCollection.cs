@@ -273,9 +273,9 @@ namespace gInk
             }
         }
 
-        public Bitmap buildPenIcon(Color col, int transparency, Boolean Sel)
+        public Bitmap buildPenIcon(Color col, int transparency, bool Sel,bool Fading)
         {
-            Bitmap fg, img;
+            Bitmap fg, img, fadingOverlay;
             ImageAttributes imageAttributes = new ImageAttributes();
             bool Large = transparency >= 100;
 
@@ -290,9 +290,12 @@ namespace gInk
 
             img = getImgFromDiskOrRes((Large ? "Lpen" : "pen") + (Sel ? "S" : "") + "_bg", ImageExts);
             fg = getImgFromDiskOrRes((Large ? "Lpen" : "pen") + (Sel ? "S" : "") + "_col", ImageExts);
+            fadingOverlay = getImgFromDiskOrRes("fadingTag", ImageExts);
 
             Graphics g = Graphics.FromImage(img);
             g.DrawImage(fg, new Rectangle(0, 0, img.Width, img.Height), 0, 0, img.Width, img.Height, GraphicsUnit.Pixel, imageAttributes);
+            if(Fading)
+                g.DrawImage(fadingOverlay, new Rectangle(0, 0, img.Width, img.Height), 0, 0, img.Width, img.Height, GraphicsUnit.Pixel);
             return img;
         }
 
@@ -2313,9 +2316,10 @@ namespace gInk
                 SelectTool(-1, 0);       // Alt will be processed inhere
                 for (int b = 0; b < Root.MaxPenCount; b++)
                     //btPen[b].Image = image_pen[b];
-                    btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, false);// image_pen[b];
+                    btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, false,
+                                                            Root.PenAttr[b].ExtendedProperties.Contains(Root.FADING_PEN));// image_pen[b];
                 btEraser.BackgroundImage = image_eraser;
-				btPointer.BackgroundImage = image_pointer;
+                btPointer.BackgroundImage = image_pointer;
                 btPan.BackgroundImage = getImgFromDiskOrRes("pan_act", ImageExts);
                 EnterEraserMode(false);
 				Root.UnPointer();
@@ -2340,10 +2344,11 @@ namespace gInk
                 SelectTool(-1, 0);       // Alt will be processed inhere
                 for (int b = 0; b < Root.MaxPenCount; b++)
                     //btPen[b].Image = image_pen[b];
-                    btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, false);// image_pen[b];
+                    btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, false,
+                                                            Root.PenAttr[b].ExtendedProperties.Contains(Root.FADING_PEN));// image_pen[b];
                 btEraser.BackgroundImage = image_eraser;
-				btPointer.BackgroundImage = image_pointer_act;
-				EnterEraserMode(false);
+                btPointer.BackgroundImage = image_pointer_act;
+                EnterEraserMode(false);
 				Root.Pointer();
 				Root.PanMode = false;
 			}
@@ -2358,11 +2363,12 @@ namespace gInk
                                          //	this.Cursor = System.Windows.Forms.Cursors.Default;
 
                 for (int b = 0; b < Root.MaxPenCount; b++)
-					//btPen[b].Image = image_pen[b];
-                    btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, false);// image_pen[b];
+                    //btPen[b].Image = image_pen[b];
+                    btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, false,
+                                                            Root.PenAttr[b].ExtendedProperties.Contains(Root.FADING_PEN));// image_pen[b];
 
                 btEraser.BackgroundImage = image_eraser_act;
-				btPointer.BackgroundImage = image_pointer;
+                btPointer.BackgroundImage = image_pointer;
 				EnterEraserMode(true);
                 Root.UnPointer();
                 Root.PanMode = false;
@@ -2412,8 +2418,9 @@ namespace gInk
                 IC.DefaultDrawingAttributes.FitToCurve = true;
                 for (int b = 0; b < Root.MaxPenCount; b++)
                     //btPen[b].Image = image_pen[b];
-                    btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, b == pen);
-				//btPen[pen].Image = image_pen_act[pen];
+                    btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, b == pen,
+                                                            Root.PenAttr[b].ExtendedProperties.Contains(Root.FADING_PEN));
+                //btPen[pen].Image = image_pen_act[pen];
 				btEraser.BackgroundImage = image_eraser;
 				btPointer.BackgroundImage = image_pointer;
 				EnterEraserMode(false);
@@ -3880,7 +3887,8 @@ namespace gInk
                             SelectTool(0);
                         PreparePenImages(Root.PenAttr[b].Transparency, ref image_pen[b], ref image_pen_act[b]);
                         //btPen[b].Image = image_pen_act[b];
-                        btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, false);// image_pen[b];
+                        btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, false,
+                                                                Root.PenAttr[b].ExtendedProperties.Contains(Root.FADING_PEN));// image_pen[b];
                         //btPen[b].BackColor = Root.PenAttr[b].Color;
                         btPen[b].FlatAppearance.MouseDownBackColor = Root.PenAttr[b].Color;
                         btPen[b].FlatAppearance.MouseOverBackColor = Root.PenAttr[b].Color;
