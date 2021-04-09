@@ -191,6 +191,7 @@ namespace gInk
         public Hotkey Hotkey_Video = new Hotkey();
         public Hotkey Hotkey_DockUndock = new Hotkey();
         public Hotkey Hotkey_Close = new Hotkey();
+        public Hotkey Hotkey_SnapClose = new Hotkey(); // to keep Esc to close in snapping;
 
         public Hotkey Hotkey_Hand = new Hotkey();
         public Hotkey Hotkey_Line = new Hotkey();
@@ -348,8 +349,9 @@ namespace gInk
 			ReadOptions("config.ini");
 			ReadOptions("pens.ini");
 			ReadOptions("hotkeys.ini");
+            Hotkey_SnapClose.Parse("Escape");
 
-            if(TagFont=="")     // if no options, we apply text parameters
+            if (TagFont=="")     // if no options, we apply text parameters
             {
                 TagFont = TextFont;
                 TagBold = TextBold;

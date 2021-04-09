@@ -3144,12 +3144,14 @@ namespace gInk
 			bool pressed;
 
 			if (!Root.PointerMode)
-			{
-				// ESC key : Exit
-				short retVal;
+            {
+                // customized close key or ESC in key : Exit
+                short retVal;
                 if (Root.Hotkey_Close.Key != 0)
                 {
                     retVal = GetKeyState(Root.Hotkey_Close.Key);
+                    if(Root.Snapping > 0)
+                        retVal |=GetKeyState(Root.Hotkey_SnapClose.Key);
                     if ((retVal & 0x8000) == 0x8000 && (LastESCStatus & 0x8000) == 0x0000 && !TextEdited)
                     {
                         if (Root.Snapping > 0)
