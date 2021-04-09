@@ -40,6 +40,7 @@ ButtonNameZoom = "Zoom"
 
 StrokeFileExists = "{0} Already Exists\nDo you want to override it?"
 FileCanNotWrite = "{0}\ncan not be written."
+SnappingInPointerMessage = "Snapshot ({0})"
 
 OptionsZoomEnabled = "0 - No Zoom\n1 - Magnifier\n2 - Frozen Area\n3 - Both"
 OptionsZoomDim = "Dim."

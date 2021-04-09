@@ -3248,14 +3248,15 @@ namespace gInk
                         break;
                 }
 
-                Console.WriteLine(SnappingPointerStep);
+                //Console.WriteLine(SnappingPointerStep);
                 if (SnappingPointerStep == 100)
                 {
                     string fn = Environment.ExpandEnvironmentVariables(DateTime.Now.ToString("'%temp%/CtrlShift'ddMMM-HHmmss'.png'"));
                     Root.FormDisplay.SnapShot(new Rectangle(Left, Top, Width, Height), fn);
                     PointerModeSnaps.Add(fn);
+                    Root.trayIcon.ShowBalloonTip(100, "", string.Format(Root.Local.SnappingInPointerMessage, PointerModeSnaps.Count), ToolTipIcon.Info);
                     SnappingPointerStep = 101;      // for security
-                    System.Media.SystemSounds.Asterisk.Play();
+                    //System.Media.SystemSounds.Asterisk.Play();
                 }
             }
             else

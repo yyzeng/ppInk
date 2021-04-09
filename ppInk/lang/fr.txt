@@ -40,6 +40,7 @@ ButtonNameZoom = "Zoom"
 
 StrokeFileExists = "{0} Existe\nVoulez-vous le remplacer?"
 FileCanNotWrite = "impossible d'écrire\n{0}"
+SnappingInPointerMessage = "Capture d'écran n°{0}"
 
 OptionsZoomEnabled = "0 - Pas de Zoom\n1 - Loupe\n2 - Zone agrandie\n3 - Les deux"
 OptionsZoomDim = "Dim."
