@@ -40,11 +40,35 @@ namespace gInk
             ToolbarDwg.BackColor = Color.FromArgb(Root.ToolbarBGColor[0], Root.ToolbarBGColor[1], Root.ToolbarBGColor[2], Root.ToolbarBGColor[3]);
             ToolbarOrientationBtn.BackgroundImage = ToolBarOrientationIcons[Root.ToolbarOrientation];
             Clip1Btn.BackColor = ToolbarDwg.BackColor;
-            Clip1Btn.BackgroundImage = FormCollection.getImgFromDiskOrRes(Root.ImageStamp1);
+            try
+            {
+                Clip1Btn.BackgroundImage = FormCollection.getImgFromDiskOrRes(Root.ImageStamp1);
+            }
+            catch
+            {
+                Program.WriteErrorLog(string.Format("File {0} found but can not be loaded:{1} \n", "Stamp1", Root.ImageStamp1));
+                Clip1Btn.BackgroundImage = FormCollection.getImgFromDiskOrRes("unknown");
+            }
             Clip2Btn.BackColor = ToolbarDwg.BackColor;
-            Clip2Btn.BackgroundImage = FormCollection.getImgFromDiskOrRes(Root.ImageStamp2);
+            try
+            {
+                Clip2Btn.BackgroundImage = FormCollection.getImgFromDiskOrRes(Root.ImageStamp2);
+            }
+            catch
+            {
+                Program.WriteErrorLog(string.Format("File {0} found but can not be loaded:{1} \n", "Stamp2", Root.ImageStamp2));
+                Clip1Btn.BackgroundImage = FormCollection.getImgFromDiskOrRes("unknown");
+            }
             Clip3Btn.BackColor = ToolbarDwg.BackColor;
-            Clip3Btn.BackgroundImage = FormCollection.getImgFromDiskOrRes(Root.ImageStamp3);
+            try
+            {
+                Clip3Btn.BackgroundImage = FormCollection.getImgFromDiskOrRes(Root.ImageStamp3);
+            }
+            catch
+            {
+                Program.WriteErrorLog(string.Format("File {0} found but can not be loaded:{1} \n", "Stamp3", Root.ImageStamp3));
+                Clip1Btn.BackgroundImage = FormCollection.getImgFromDiskOrRes("unknown");
+            }
 
             if (Root.EraserEnabled)
 				cbEraserEnabled.Checked = true;

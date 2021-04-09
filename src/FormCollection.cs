@@ -222,9 +222,17 @@ namespace gInk
                     catch(Exception e)
                     {
                         Program.WriteErrorLog(string.Format("File {0} found but can not be loaded:{1} \n",filename,e));
+                        return getImgFromDiskOrRes("unknown");
                     }
             }
-            return new Bitmap((Bitmap)Properties.Resources.ResourceManager.GetObject(name));
+            try
+            {
+                return new Bitmap((Bitmap)Properties.Resources.ResourceManager.GetObject(name));
+            }
+            catch
+            {
+                return getImgFromDiskOrRes("unknown");
+            }
         }
 
         private void SetButtonPosition(Button previous, Button current, int spacing)
@@ -1534,7 +1542,16 @@ namespace gInk
             }
             else if (Root.ToolSelected == Tools.Hand)
             {
+                //Stroke st = e.Stroke;// IC.Ink.Strokes[IC.Ink.Strokes.Count-1];
                 Stroke st = e.Stroke;// IC.Ink.Strokes[IC.Ink.Strokes.Count-1];
+                int i = 0;
+                try
+                {
+                    //if (e.Stroke.GetPoint(0).Equals(e.Stroke.GetPoint(1)) || e.Stroke.GetPoint(0).Equals(e.Stroke.GetPoint(2)))
+                    //    st.SetPoints(st.GetPoints(1, st.GetPoints().Length - 1));
+                    if (e.Stroke.GetPoint(0).Equals(e.Stroke.GetPoint(2)))
+                        st.SetPoint(0, e.Stroke.GetPoint(1));
+                } catch { }
                 setStrokeProperties(ref st, Root.FilledSelected);
             }
             else
@@ -4614,6 +4631,8 @@ namespace gInk
 
         public void LoadStrokes(string fn = "ppinkSav.txt")
         {
+            if (!File.Exists(fn))
+                return;
             using (StreamReader fileout = new StreamReader(fn, System.Text.Encoding.UTF8))
             {
                 int j, l;
