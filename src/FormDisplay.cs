@@ -30,8 +30,10 @@ namespace gInk
 		IntPtr memscreenDc;
 
         ImageAttributes iaToolBarTransparency = new ImageAttributes();
-		Bitmap gpButtonsImage;
+        public ImageAttributes iaSubToolsTransparency = new ImageAttributes();
+        Bitmap gpButtonsImage;
         Bitmap gpPenWidthImage;
+        Bitmap gpSubToolsImage;           
 		SolidBrush TransparentBrush;
 		SolidBrush SemiTransparentBrush;
 
@@ -60,7 +62,12 @@ namespace gInk
             cm.Matrix33 = Root.ToolbarBGColor[0]/255f;
             iaToolBarTransparency.SetColorMatrix(cm);
 
-			InitializeComponent();
+            cm = new ColorMatrix();
+            cm.Matrix00 = 1f; cm.Matrix11 = 1f; cm.Matrix22 = 1f;
+            cm.Matrix33 = Root.ToolbarBGColor[0] / 255f;
+            iaSubToolsTransparency.SetColorMatrix(cm);
+
+            InitializeComponent();
 
             if(Root.WindowRect.Width <= 0 || Root.WindowRect.Height <= 0)
             {
@@ -122,7 +129,8 @@ namespace gInk
             int gpheight = (int)(Screen.PrimaryScreen.Bounds.Height * Root.ToolbarHeight);
 			gpButtonsImage = new Bitmap(2000, 2000, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 			gpPenWidthImage = new Bitmap(200, 200, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-			TransparentBrush = new SolidBrush(Color.Transparent);
+            gpSubToolsImage = new Bitmap(Root.FormCollection.gpSubTools.Width+50, Root.FormCollection.gpSubTools.Height+50, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            TransparentBrush = new SolidBrush(Color.Transparent);
 			SemiTransparentBrush = new SolidBrush(Color.FromArgb(120, 255, 255, 255));
 
 
@@ -246,9 +254,23 @@ namespace gInk
                 g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
                 g.DrawImage(gpPenWidthImage, new Rectangle(left, top, width, height), 0, 0, width, height, GraphicsUnit.Pixel, iaToolBarTransparency);
 			}
-		}
+            if (Root.FormCollection.gpSubTools.Visible)
+            {
+                top = Root.FormCollection.gpSubTools.Top;
+                height = Root.FormCollection.gpSubTools.Height;
+                left = Root.FormCollection.gpSubTools.Left;
+                width = Root.FormCollection.gpSubTools.Width;
+                if (redrawbuttons)
+                    Root.FormCollection.gpSubTools.DrawToBitmap(gpSubToolsImage, new Rectangle(0, 0, width, height));
 
-		public void DrawStrokes()
+                g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
+                g.FillRectangle(TransparentBrush, left, top, width, height);
+                g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
+                g.DrawImage(gpSubToolsImage, new Rectangle(left, top, width, height), 0, 0, width, height, GraphicsUnit.Pixel, iaSubToolsTransparency);
+            }
+        }
+
+        public void DrawStrokes()
 		{
             DrawStrokes(gCanvus);
 		}

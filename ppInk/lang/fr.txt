@@ -38,6 +38,8 @@ SaveStroke = "Sauver Dessins\n(appui long = sélectionne fichier ; court = ouvre
 LoadStroke = "Charger Dessins\n(appui long = sélectionne fichier ; court = ouvre {0})"
 ButtonNameZoom = "Zoom"
 
+SubToolsBarCbText = "Activation de la barre d'outils secondaire"
+
 StrokeFileExists = "{0} Existe\nVoulez-vous le remplacer?"
 FileCanNotWrite = "impossible d'écrire\n{0}"
 SnappingInPointerMessage = "Capture d'écran n°{0}"
@@ -140,6 +142,15 @@ LblObsNote = "Note : OBS doit être démarré avant de lancer un enregistrement\
 OptFfmpeg="Enregistrement FFmpeg"
 LblFfmpegCmd="Ligne de commande"
 LblFfmpegNote= "Note : substitutions dans la ligne de commande\n            $xx$ $yy$                                             : coordonnes coin haut gauche\n            $ww$ $hh$                                            : largeur/hauteur de la capture\n            $DD$ $MM$ $YY$ $YYYY$               : date courante\n            $H$ $M$ $S$                                      : heure courante\n            %DD% %MM% %YY% %YYYY%     : date au lancement de ppInk\n            %H% %M% %S%                               : heure au lancement de ppInk\n            $nn$                                                      : compteur de capture (reinitialiser au lancement de ppInk)\n            %VAR%                                                : substitution de de la variable d'environnement VAR"
+
+PanSubToolsHints = "Déplace un dessin\nTranslate tout\nCopie un dessin"
+HandSubToolsHints = "Dessin à main levée\nForme à main Coloriée\nForme à main blanche\nForme à main noire"
+LineSubToolsHints = "Segment\nLigne brisée\nPolygone de couleur\nPolygone blanc\nPolygone noir"
+RectSubToolsHints = "Rectangle\nRectangle Rempli\nRectangle blanche\nRectangle noir"
+OvalSubToolsHints = "Ellipse\nEllipse de couleur\nEllipse blanche\nEllipse noir"
+ArrowSubToolsHints = "Flèche commençant par la pointe\nFlèche commençant par la queue"
+TextSubToolsHints = "Texte aligné à gauche\nTexte aligné à droite"
+
 
 NotificationSnapshot = "Capture sauvegardée. Cliquez ici pour parcourir les captures."
 KeyNamesStr = "0x00=(Aucun) \n0x01=LButton \n0x02=RButton \n0x03=Cancel \n0x04=MButton \n0x05=XButton1 \n0x06=XButton2 \n0x08=RetArr \n0x09=Tab \n0x0A=LineFeed \n0x0C=Clear \n0x0D=Entrée \n0x10=Maj \n0x11=Control \n0x12=Menu \n0x13=Pause \n0x14=Verr.Maj \n0x15=KanaMode \n0x17=JunjaMode \n0x18=FinalMode \n0x19=KanjiMode \n0x1B=Echap. \n0x1C=IMEConvert \n0x1D=IMENonconvert \n0x1E=IMEAccept \n0x1F=IMEModeChange \n0x20=Espace \n0x21=Pg Prec \n0x22=Pg Suiv \n0x23=Fin \n0x24=Deb. \n0x25=Gauche \n0x26=Haut \n0x27=Droit \n0x28=Bas \n0x29=Select \n0x2A=Print \n0x2B=Execute \n0x2C=Imp.Ecr. \n0x2D=Insert \n0x2E=Suppr. \n0x2F=Help \n0x30=0 \n0x31=1 \n0x32=2 \n0x33=3 \n0x34=4  \n0x35=5 \n0x36=6 \n0x37=7 \n0x38=8  \n0x39=9 \n0x41=A \n0x42=B \n0x43=C \n0x44=D \n0x45=E \n0x46=F \n0x47=G \n0x48=H \n0x49=I \n0x4A=J \n0x4B=K \n0x4C=L \n0x4D=M \n0x4E=N \n0x4F=O \n0x50=P \n0x51=Q \n0x52=R \n0x53=S \n0x54=T \n0x55=U \n0x56=V \n0x57=W \n0x58=X \n0x59=Y \n0x5A=Z \n0x5B=LWin \n0x5C=RWin \n0x5D=Apps \n0x5F=Sleep \n0x60=PavNum0 \n0x61=PavNum1 \n0x62=PavNum2 \n0x63=PavNum3 \n0x64=PavNum4 \n0x65=PavNum5 \n0x66=PavNum6 \n0x67=PavNum7 \n0x68=PavNum8 \n0x69=PavNum9 \n0x6A=Mult. \n0x6B=Plus \n0x6C=Separator \n0x6D=Moins \n0x6E=PavNum. \n0x6F=Divis. \n0x70=F1 \n0x71=F2 \n0x72=F3 \n0x73=F4 \n0x74=F5 \n0x75=F6 \n0x76=F7 \n0x77=F8 \n0x78=F9 \n0x79=F10 \n0x7A=F11 \n0x7B=F12 \n0x7C=F13 \n0x7D=F14 \n0x7E=F15 \n0x7F=F16 \n0x80=F17 \n0x81=F18 \n0x82=F19 \n0x83=F20 \n0x84=F21 \n0x85=F22 \n0x86=F23 \n0x87=F24 \n0x90=Ver.Num. \n0x91=Defil. \n0xA0=Maj G. \n0xA1=Maj D. \n0xA2=Control G. \n0xA3=Control D. \n0xA4=Menu G. \n0xA5=Menu D. \n0xA6=BrowserBack \n0xA7=BrowserForward \n0xA8=BrowserRefresh \n0xA9=BrowserStop \n0xAA=BrowserSearch \n0xAB=BrowserFavorites \n0xAC=BrowserHome \n0xAD=Volume Off \n0xAE=Volume - \n0xAF=Volume + \n0xB0=MediaNextTrack \n0xB1=MediaPreviousTrack \n0xB2=MediaStop \n0xB3=MediaPlayPause \n0xB4=LaunchMail \n0xB5=SelectMedia \n0xB6=LaunchApplication1 \n0xB7=LaunchApplication2 \n0xBA=$ \n0xBB== \n0xBC=, \n0xBD=OemMinus \n0xBE=; \n0xBF=: \n0xC0=ù \n0xDB=) \n0xDC=* \n0xDD=^ \n0xDE=² \n0xDF=! \n0xE2=< \n0xE5=ProcessKey \n0xE7=Packet \n0xF6=Attn \n0xF7=Crsel \n0xF8=Exsel \n0xF9=EraseEof \n0xFA=Play \n0xFB=Zoom \n0xFC=NoName \n0xFD=Pa1 \n0xFE=OemClear \n0x00010000=Maj \n0x00020000=Control \n0x00040000=Alt"

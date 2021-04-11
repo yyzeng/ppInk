@@ -69,6 +69,7 @@ namespace gInk
                 Program.WriteErrorLog(string.Format("File {0} found but can not be loaded:{1} \n", "Stamp3", Root.ImageStamp3));
                 Clip1Btn.BackgroundImage = FormCollection.getImgFromDiskOrRes("unknown");
             }
+            SubToolsBar_cb.Checked = Root.SubToolsEnabled;
 
             if (Root.EraserEnabled)
 				cbEraserEnabled.Checked = true;
@@ -308,6 +309,7 @@ namespace gInk
 			VideoTabCtrl.TabPages[0].Text = Root.Local.OptionsTabGeneral;
 			VideoTabCtrl.TabPages[1].Text = Root.Local.OptionsTabPens;
 			VideoTabCtrl.TabPages[2].Text = Root.Local.OptionsTabHotkeys;
+            SubToolsBar_cb.Text = Root.Local.SubToolsBarCbText;
             this.ToolBarColorLbl.Text = Root.Local.OptionsGeneralToolBarColorText;
             this.ClipartsSelBtn.Text = shortTxt(Root.Local.ButtonNameClipArt);
             this.AltTabActivateCb.Text = Root.Local.OptionsGeneralAltTabActivateText;
@@ -1037,6 +1039,11 @@ namespace gInk
                 Root.SnapInPointerHoldKey = (SnapInPointerKeys)(SnapInPointerHoldCb.SelectedIndex);
             if(SnapInPointerTwiceCb.SelectedIndex>=0)
                 Root.SnapInPointerPressTwiceKey = (SnapInPointerKeys)(SnapInPointerTwiceCb.SelectedIndex);
+        }
+
+        private void SubToolsBar_cb_CheckedChanged(object sender, EventArgs e)
+        {
+            Root.SubToolsEnabled = SubToolsBar_cb.Checked;
         }
     }
 }

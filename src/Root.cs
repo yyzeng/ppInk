@@ -35,6 +35,7 @@ namespace gInk
         public const int PenColorFilled = 1;
         public const int WhiteFilled = 2;
         public const int BlackFilled = 3;
+        public const int Modulo = 4;
     } // applicable to Hand,Rect,Oval
 
     public class Orientation{
@@ -232,6 +233,7 @@ namespace gInk
         public Stroke StrokeHovered;            // contains the "selection" for edit/move/copy/erase else is null
         public Pen SelectionFramePen = new Pen(Color.Red, 1);
 
+        public bool SubToolsEnabled = true;
 
         public bool DefaultArrow_start = true;
 
@@ -1067,7 +1069,13 @@ namespace gInk
 							else if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
 								PenWidthEnabled = true;
 							break;
-						case "SNAPSHOT_ICON":
+                        case "SUBTOOLSBAR_ENABLED":
+                            if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
+                                SubToolsEnabled = false;
+                            else if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
+                                SubToolsEnabled = true;
+                            break;
+                        case "SNAPSHOT_ICON":
 							if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
 								SnapEnabled = false;
 							break;
@@ -1549,7 +1557,10 @@ namespace gInk
 							else
 								sPara = "False";
 							break;
-						case "SNAPSHOT_ICON":
+                        case "SUBTOOLSBAR_ENABLED":
+                            sPara = SubToolsEnabled ? "True" : "False";
+                            break;
+                        case "SNAPSHOT_ICON":
 							if (SnapEnabled)
 								sPara = "True";
 							else

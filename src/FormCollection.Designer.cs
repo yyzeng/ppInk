@@ -60,13 +60,25 @@ namespace gInk
             this.btUndo = new System.Windows.Forms.Button();
             this.tiSlide = new System.Windows.Forms.Timer(this.components);
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.Btn_SubTool1 = new System.Windows.Forms.Button();
+            this.Btn_SubTool2 = new System.Windows.Forms.Button();
+            this.Btn_SubTool4 = new System.Windows.Forms.Button();
+            this.Btn_SubTool3 = new System.Windows.Forms.Button();
+            this.Btn_SubTool6 = new System.Windows.Forms.Button();
+            this.Btn_SubTool5 = new System.Windows.Forms.Button();
+            this.Btn_SubTool0 = new System.Windows.Forms.Button();
+            this.Btn_SubTool7 = new System.Windows.Forms.Button();
+            this.Btn_SubToolClose = new System.Windows.Forms.Button();
             this.gpPenWidth = new System.Windows.Forms.Panel();
             this.pboxPenWidthIndicator = new System.Windows.Forms.PictureBox();
             this.longClickTimer = new System.Windows.Forms.Timer(this.components);
             this.FontDlg = new System.Windows.Forms.FontDialog();
+            this.gpSubTools = new System.Windows.Forms.Panel();
+            this.Btn_SubToolPin = new System.Windows.Forms.Button();
             this.gpButtons.SuspendLayout();
             this.gpPenWidth.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pboxPenWidthIndicator)).BeginInit();
+            this.gpSubTools.SuspendLayout();
             this.SuspendLayout();
             // 
             // gpButtons
@@ -702,6 +714,221 @@ namespace gInk
             this.tiSlide.Interval = 15;
             this.tiSlide.Tick += new System.EventHandler(this.tiSlide_Tick);
             // 
+            // Btn_SubTool1
+            // 
+            this.Btn_SubTool1.BackColor = System.Drawing.Color.Transparent;
+            this.Btn_SubTool1.BackgroundImage = global::gInk.Properties.Resources.tool_clipart;
+            this.Btn_SubTool1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.Btn_SubTool1.FlatAppearance.BorderColor = System.Drawing.Color.Orange;
+            this.Btn_SubTool1.FlatAppearance.BorderSize = 0;
+            this.Btn_SubTool1.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.Btn_SubTool1.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.Btn_SubTool1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Btn_SubTool1.ForeColor = System.Drawing.Color.Transparent;
+            this.Btn_SubTool1.Location = new System.Drawing.Point(51, 2);
+            this.Btn_SubTool1.Margin = new System.Windows.Forms.Padding(2);
+            this.Btn_SubTool1.Name = "Btn_SubTool1";
+            this.Btn_SubTool1.Size = new System.Drawing.Size(46, 46);
+            this.Btn_SubTool1.TabIndex = 13;
+            this.Btn_SubTool1.Tag = 1;
+            this.toolTip.SetToolTip(this.Btn_SubTool1, "SubTool1");
+            this.Btn_SubTool1.UseVisualStyleBackColor = true;
+            this.Btn_SubTool1.Click += new System.EventHandler(this.SubTool_Click);
+            this.Btn_SubTool1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.gpSubTools_MouseDown);
+            this.Btn_SubTool1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.gpSubTools_MouseMove);
+            this.Btn_SubTool1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.gpSubTools_MouseUp);
+            // 
+            // Btn_SubTool2
+            // 
+            this.Btn_SubTool2.BackColor = System.Drawing.Color.Transparent;
+            this.Btn_SubTool2.BackgroundImage = global::gInk.Properties.Resources.tool_clipart;
+            this.Btn_SubTool2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.Btn_SubTool2.FlatAppearance.BorderColor = System.Drawing.Color.Orange;
+            this.Btn_SubTool2.FlatAppearance.BorderSize = 0;
+            this.Btn_SubTool2.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.Btn_SubTool2.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.Btn_SubTool2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Btn_SubTool2.ForeColor = System.Drawing.Color.Transparent;
+            this.Btn_SubTool2.Location = new System.Drawing.Point(99, 2);
+            this.Btn_SubTool2.Margin = new System.Windows.Forms.Padding(2);
+            this.Btn_SubTool2.Name = "Btn_SubTool2";
+            this.Btn_SubTool2.Size = new System.Drawing.Size(46, 46);
+            this.Btn_SubTool2.TabIndex = 14;
+            this.Btn_SubTool2.Tag = 2;
+            this.toolTip.SetToolTip(this.Btn_SubTool2, "SubTool2");
+            this.Btn_SubTool2.UseVisualStyleBackColor = true;
+            this.Btn_SubTool2.Click += new System.EventHandler(this.SubTool_Click);
+            this.Btn_SubTool2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.gpSubTools_MouseDown);
+            this.Btn_SubTool2.MouseMove += new System.Windows.Forms.MouseEventHandler(this.gpSubTools_MouseMove);
+            this.Btn_SubTool2.MouseUp += new System.Windows.Forms.MouseEventHandler(this.gpSubTools_MouseUp);
+            // 
+            // Btn_SubTool4
+            // 
+            this.Btn_SubTool4.BackColor = System.Drawing.Color.Transparent;
+            this.Btn_SubTool4.BackgroundImage = global::gInk.Properties.Resources.tool_clipart;
+            this.Btn_SubTool4.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.Btn_SubTool4.FlatAppearance.BorderColor = System.Drawing.Color.Orange;
+            this.Btn_SubTool4.FlatAppearance.BorderSize = 0;
+            this.Btn_SubTool4.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.Btn_SubTool4.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.Btn_SubTool4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Btn_SubTool4.ForeColor = System.Drawing.Color.Transparent;
+            this.Btn_SubTool4.Location = new System.Drawing.Point(195, 2);
+            this.Btn_SubTool4.Margin = new System.Windows.Forms.Padding(2);
+            this.Btn_SubTool4.Name = "Btn_SubTool4";
+            this.Btn_SubTool4.Size = new System.Drawing.Size(46, 46);
+            this.Btn_SubTool4.TabIndex = 16;
+            this.Btn_SubTool4.TabStop = false;
+            this.Btn_SubTool4.Tag = 4;
+            this.toolTip.SetToolTip(this.Btn_SubTool4, "SubTool4");
+            this.Btn_SubTool4.UseVisualStyleBackColor = true;
+            this.Btn_SubTool4.Click += new System.EventHandler(this.SubTool_Click);
+            this.Btn_SubTool4.MouseDown += new System.Windows.Forms.MouseEventHandler(this.gpSubTools_MouseDown);
+            this.Btn_SubTool4.MouseMove += new System.Windows.Forms.MouseEventHandler(this.gpSubTools_MouseMove);
+            this.Btn_SubTool4.MouseUp += new System.Windows.Forms.MouseEventHandler(this.gpSubTools_MouseUp);
+            // 
+            // Btn_SubTool3
+            // 
+            this.Btn_SubTool3.BackColor = System.Drawing.Color.Transparent;
+            this.Btn_SubTool3.BackgroundImage = global::gInk.Properties.Resources.tool_clipart;
+            this.Btn_SubTool3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.Btn_SubTool3.FlatAppearance.BorderColor = System.Drawing.Color.Orange;
+            this.Btn_SubTool3.FlatAppearance.BorderSize = 3;
+            this.Btn_SubTool3.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.Btn_SubTool3.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.Btn_SubTool3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Btn_SubTool3.ForeColor = System.Drawing.Color.Transparent;
+            this.Btn_SubTool3.Location = new System.Drawing.Point(147, 2);
+            this.Btn_SubTool3.Margin = new System.Windows.Forms.Padding(2);
+            this.Btn_SubTool3.Name = "Btn_SubTool3";
+            this.Btn_SubTool3.Size = new System.Drawing.Size(46, 46);
+            this.Btn_SubTool3.TabIndex = 15;
+            this.Btn_SubTool3.Tag = 3;
+            this.toolTip.SetToolTip(this.Btn_SubTool3, "SubTool3");
+            this.Btn_SubTool3.UseVisualStyleBackColor = true;
+            this.Btn_SubTool3.Click += new System.EventHandler(this.SubTool_Click);
+            this.Btn_SubTool3.MouseDown += new System.Windows.Forms.MouseEventHandler(this.gpSubTools_MouseDown);
+            this.Btn_SubTool3.MouseMove += new System.Windows.Forms.MouseEventHandler(this.gpSubTools_MouseMove);
+            this.Btn_SubTool3.MouseUp += new System.Windows.Forms.MouseEventHandler(this.gpSubTools_MouseUp);
+            // 
+            // Btn_SubTool6
+            // 
+            this.Btn_SubTool6.BackColor = System.Drawing.Color.Transparent;
+            this.Btn_SubTool6.BackgroundImage = global::gInk.Properties.Resources.tool_clipart;
+            this.Btn_SubTool6.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.Btn_SubTool6.FlatAppearance.BorderColor = System.Drawing.Color.Orange;
+            this.Btn_SubTool6.FlatAppearance.BorderSize = 0;
+            this.Btn_SubTool6.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.Btn_SubTool6.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.Btn_SubTool6.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Btn_SubTool6.ForeColor = System.Drawing.Color.Transparent;
+            this.Btn_SubTool6.Location = new System.Drawing.Point(291, 2);
+            this.Btn_SubTool6.Margin = new System.Windows.Forms.Padding(2);
+            this.Btn_SubTool6.Name = "Btn_SubTool6";
+            this.Btn_SubTool6.Size = new System.Drawing.Size(46, 46);
+            this.Btn_SubTool6.TabIndex = 18;
+            this.Btn_SubTool6.Tag = 6;
+            this.toolTip.SetToolTip(this.Btn_SubTool6, "SubTool6");
+            this.Btn_SubTool6.UseVisualStyleBackColor = true;
+            this.Btn_SubTool6.Click += new System.EventHandler(this.SubTool_Click);
+            this.Btn_SubTool6.MouseDown += new System.Windows.Forms.MouseEventHandler(this.gpSubTools_MouseDown);
+            this.Btn_SubTool6.MouseMove += new System.Windows.Forms.MouseEventHandler(this.gpSubTools_MouseMove);
+            this.Btn_SubTool6.MouseUp += new System.Windows.Forms.MouseEventHandler(this.gpSubTools_MouseUp);
+            // 
+            // Btn_SubTool5
+            // 
+            this.Btn_SubTool5.BackColor = System.Drawing.Color.Transparent;
+            this.Btn_SubTool5.BackgroundImage = global::gInk.Properties.Resources.tool_clipart;
+            this.Btn_SubTool5.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.Btn_SubTool5.FlatAppearance.BorderColor = System.Drawing.Color.Orange;
+            this.Btn_SubTool5.FlatAppearance.BorderSize = 0;
+            this.Btn_SubTool5.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.Btn_SubTool5.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.Btn_SubTool5.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Btn_SubTool5.ForeColor = System.Drawing.Color.Transparent;
+            this.Btn_SubTool5.Location = new System.Drawing.Point(243, 2);
+            this.Btn_SubTool5.Margin = new System.Windows.Forms.Padding(2);
+            this.Btn_SubTool5.Name = "Btn_SubTool5";
+            this.Btn_SubTool5.Size = new System.Drawing.Size(46, 46);
+            this.Btn_SubTool5.TabIndex = 17;
+            this.Btn_SubTool5.Tag = 5;
+            this.toolTip.SetToolTip(this.Btn_SubTool5, "SubTool5");
+            this.Btn_SubTool5.UseVisualStyleBackColor = true;
+            this.Btn_SubTool5.Click += new System.EventHandler(this.SubTool_Click);
+            this.Btn_SubTool5.MouseDown += new System.Windows.Forms.MouseEventHandler(this.gpSubTools_MouseDown);
+            this.Btn_SubTool5.MouseMove += new System.Windows.Forms.MouseEventHandler(this.gpSubTools_MouseMove);
+            this.Btn_SubTool5.MouseUp += new System.Windows.Forms.MouseEventHandler(this.gpSubTools_MouseUp);
+            // 
+            // Btn_SubTool0
+            // 
+            this.Btn_SubTool0.BackColor = System.Drawing.Color.Transparent;
+            this.Btn_SubTool0.BackgroundImage = global::gInk.Properties.Resources.tool_clipart;
+            this.Btn_SubTool0.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.Btn_SubTool0.FlatAppearance.BorderColor = System.Drawing.Color.Orange;
+            this.Btn_SubTool0.FlatAppearance.BorderSize = 0;
+            this.Btn_SubTool0.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.Btn_SubTool0.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.Btn_SubTool0.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Btn_SubTool0.ForeColor = System.Drawing.Color.Transparent;
+            this.Btn_SubTool0.Location = new System.Drawing.Point(3, 2);
+            this.Btn_SubTool0.Margin = new System.Windows.Forms.Padding(2);
+            this.Btn_SubTool0.Name = "Btn_SubTool0";
+            this.Btn_SubTool0.Size = new System.Drawing.Size(46, 46);
+            this.Btn_SubTool0.TabIndex = 20;
+            this.Btn_SubTool0.Tag = 0;
+            this.toolTip.SetToolTip(this.Btn_SubTool0, "SubTool0");
+            this.Btn_SubTool0.UseVisualStyleBackColor = true;
+            this.Btn_SubTool0.Click += new System.EventHandler(this.SubTool_Click);
+            this.Btn_SubTool0.MouseDown += new System.Windows.Forms.MouseEventHandler(this.gpSubTools_MouseDown);
+            this.Btn_SubTool0.MouseMove += new System.Windows.Forms.MouseEventHandler(this.gpSubTools_MouseMove);
+            this.Btn_SubTool0.MouseUp += new System.Windows.Forms.MouseEventHandler(this.gpSubTools_MouseUp);
+            // 
+            // Btn_SubTool7
+            // 
+            this.Btn_SubTool7.BackColor = System.Drawing.Color.Transparent;
+            this.Btn_SubTool7.BackgroundImage = global::gInk.Properties.Resources.tool_clipart;
+            this.Btn_SubTool7.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.Btn_SubTool7.FlatAppearance.BorderColor = System.Drawing.Color.Orange;
+            this.Btn_SubTool7.FlatAppearance.BorderSize = 0;
+            this.Btn_SubTool7.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.Btn_SubTool7.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.Btn_SubTool7.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Btn_SubTool7.ForeColor = System.Drawing.Color.Transparent;
+            this.Btn_SubTool7.Location = new System.Drawing.Point(339, 2);
+            this.Btn_SubTool7.Margin = new System.Windows.Forms.Padding(2);
+            this.Btn_SubTool7.Name = "Btn_SubTool7";
+            this.Btn_SubTool7.Size = new System.Drawing.Size(46, 46);
+            this.Btn_SubTool7.TabIndex = 19;
+            this.Btn_SubTool7.Tag = 7;
+            this.toolTip.SetToolTip(this.Btn_SubTool7, "SubTool7");
+            this.Btn_SubTool7.UseVisualStyleBackColor = true;
+            this.Btn_SubTool7.Click += new System.EventHandler(this.SubTool_Click);
+            this.Btn_SubTool7.MouseDown += new System.Windows.Forms.MouseEventHandler(this.gpSubTools_MouseDown);
+            this.Btn_SubTool7.MouseMove += new System.Windows.Forms.MouseEventHandler(this.gpSubTools_MouseMove);
+            this.Btn_SubTool7.MouseUp += new System.Windows.Forms.MouseEventHandler(this.gpSubTools_MouseUp);
+            // 
+            // Btn_SubToolClose
+            // 
+            this.Btn_SubToolClose.BackColor = System.Drawing.Color.Transparent;
+            this.Btn_SubToolClose.BackgroundImage = global::gInk.Properties.Resources.exit;
+            this.Btn_SubToolClose.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.Btn_SubToolClose.FlatAppearance.BorderSize = 0;
+            this.Btn_SubToolClose.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.Btn_SubToolClose.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.Btn_SubToolClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Btn_SubToolClose.ForeColor = System.Drawing.Color.Transparent;
+            this.Btn_SubToolClose.Location = new System.Drawing.Point(388, 2);
+            this.Btn_SubToolClose.Margin = new System.Windows.Forms.Padding(2);
+            this.Btn_SubToolClose.Name = "Btn_SubToolClose";
+            this.Btn_SubToolClose.Size = new System.Drawing.Size(25, 22);
+            this.Btn_SubToolClose.TabIndex = 21;
+            this.toolTip.SetToolTip(this.Btn_SubToolClose, "Hand Drawing");
+            this.Btn_SubToolClose.UseVisualStyleBackColor = true;
+            this.Btn_SubToolClose.Click += new System.EventHandler(this.Btn_SubToolClose_Click);
+            this.Btn_SubToolClose.MouseDown += new System.Windows.Forms.MouseEventHandler(this.gpSubTools_MouseDown);
+            this.Btn_SubToolClose.MouseMove += new System.Windows.Forms.MouseEventHandler(this.gpSubTools_MouseMove);
+            this.Btn_SubToolClose.MouseUp += new System.Windows.Forms.MouseEventHandler(this.gpSubTools_MouseUp);
+            // 
             // gpPenWidth
             // 
             this.gpPenWidth.BackColor = System.Drawing.Color.WhiteSmoke;
@@ -737,12 +964,57 @@ namespace gInk
             // 
             this.FontDlg.FontMustExist = true;
             // 
+            // gpSubTools
+            // 
+            this.gpSubTools.BackColor = System.Drawing.Color.Maroon;
+            this.gpSubTools.Controls.Add(this.Btn_SubToolPin);
+            this.gpSubTools.Controls.Add(this.Btn_SubToolClose);
+            this.gpSubTools.Controls.Add(this.Btn_SubTool0);
+            this.gpSubTools.Controls.Add(this.Btn_SubTool7);
+            this.gpSubTools.Controls.Add(this.Btn_SubTool6);
+            this.gpSubTools.Controls.Add(this.Btn_SubTool5);
+            this.gpSubTools.Controls.Add(this.Btn_SubTool4);
+            this.gpSubTools.Controls.Add(this.Btn_SubTool3);
+            this.gpSubTools.Controls.Add(this.Btn_SubTool2);
+            this.gpSubTools.Controls.Add(this.Btn_SubTool1);
+            this.gpSubTools.Location = new System.Drawing.Point(676, 217);
+            this.gpSubTools.Name = "gpSubTools";
+            this.gpSubTools.Size = new System.Drawing.Size(415, 53);
+            this.gpSubTools.TabIndex = 5;
+            this.gpSubTools.Visible = false;
+            this.gpSubTools.MouseDown += new System.Windows.Forms.MouseEventHandler(this.gpSubTools_MouseDown);
+            this.gpSubTools.MouseMove += new System.Windows.Forms.MouseEventHandler(this.gpSubTools_MouseMove);
+            this.gpSubTools.MouseUp += new System.Windows.Forms.MouseEventHandler(this.gpSubTools_MouseUp);
+            // 
+            // Btn_SubToolPin
+            // 
+            this.Btn_SubToolPin.BackColor = System.Drawing.Color.Transparent;
+            this.Btn_SubToolPin.BackgroundImage = global::gInk.Properties.Resources.unpinned;
+            this.Btn_SubToolPin.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.Btn_SubToolPin.FlatAppearance.BorderSize = 0;
+            this.Btn_SubToolPin.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.Btn_SubToolPin.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.Btn_SubToolPin.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Btn_SubToolPin.ForeColor = System.Drawing.Color.Transparent;
+            this.Btn_SubToolPin.Location = new System.Drawing.Point(388, 26);
+            this.Btn_SubToolPin.Margin = new System.Windows.Forms.Padding(2);
+            this.Btn_SubToolPin.Name = "Btn_SubToolPin";
+            this.Btn_SubToolPin.Size = new System.Drawing.Size(25, 22);
+            this.Btn_SubToolPin.TabIndex = 21;
+            this.Btn_SubToolPin.Tag = 0;
+            this.Btn_SubToolPin.UseVisualStyleBackColor = false;
+            this.Btn_SubToolPin.Click += new System.EventHandler(this.BtnPin_Click);
+            this.Btn_SubToolPin.MouseDown += new System.Windows.Forms.MouseEventHandler(this.gpSubTools_MouseDown);
+            this.Btn_SubToolPin.MouseMove += new System.Windows.Forms.MouseEventHandler(this.gpSubTools_MouseMove);
+            this.Btn_SubToolPin.MouseUp += new System.Windows.Forms.MouseEventHandler(this.gpSubTools_MouseUp);
+            // 
             // FormCollection
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.WhiteSmoke;
             this.ClientSize = new System.Drawing.Size(1368, 526);
+            this.Controls.Add(this.gpSubTools);
             this.Controls.Add(this.gpPenWidth);
             this.Controls.Add(this.gpButtons);
             this.ForeColor = System.Drawing.Color.Transparent;
@@ -759,6 +1031,7 @@ namespace gInk
             this.gpButtons.ResumeLayout(false);
             this.gpPenWidth.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pboxPenWidthIndicator)).EndInit();
+            this.gpSubTools.ResumeLayout(false);
             this.ResumeLayout(false);
 
 		}
@@ -800,6 +1073,17 @@ namespace gInk
         public System.Windows.Forms.Button btLoad;
         public System.Windows.Forms.Button btSave;
         public System.Windows.Forms.Button btZoom;
+        public System.Windows.Forms.Button Btn_SubTool6;
+        public System.Windows.Forms.Button Btn_SubTool5;
+        public System.Windows.Forms.Button Btn_SubTool4;
+        public System.Windows.Forms.Button Btn_SubTool3;
+        public System.Windows.Forms.Button Btn_SubTool2;
+        public System.Windows.Forms.Button Btn_SubTool1;
+        public System.Windows.Forms.Button Btn_SubTool0;
+        public System.Windows.Forms.Button Btn_SubTool7;
+        public System.Windows.Forms.Button Btn_SubToolClose;
+        public System.Windows.Forms.Button Btn_SubToolPin;
+        public System.Windows.Forms.Panel gpSubTools;
     }
 }
 

@@ -91,6 +91,7 @@ namespace gInk
         public Size VisibleToolbar = new Size();
 
         public bool gpPenWidth_MouseOn = false;
+        public int gpSubTools_MouseOn = 0;
 
         public int PrimaryLeft, PrimaryTop;
 
@@ -128,6 +129,8 @@ namespace gInk
 
         public string SaveStrokeFile="";
         public List<string> PointerModeSnaps = new List<string>();
+
+        public Button[] Btn_SubTools;
 
         // http://www.csharp411.com/hide-form-from-alttab/
         protected override CreateParams CreateParams
@@ -235,33 +238,39 @@ namespace gInk
             }
         }
 
-        private void SetButtonPosition(Button previous, Button current, int spacing)
+        private void SetButtonPosition(Button previous, Button current, int spacing,int Orient=-1)
         {
-            if (Root.ToolbarOrientation == Orientation.toLeft)
+            if (Orient < Orientation.min)
+                Orient = Root.ToolbarOrientation;
+
+            if (Orient == Orientation.toLeft)
             {
                 current.Left = previous.Left + previous.Width + spacing;
                 current.Top = previous.Top;
             }
-            else if (Root.ToolbarOrientation == Orientation.toRight)
+            else if (Orient == Orientation.toRight)
             {
                 current.Left = previous.Left - spacing - current.Width;
                 current.Top = previous.Top;
             }
-            else if (Root.ToolbarOrientation == Orientation.toDown)
+            else if (Orient == Orientation.toDown)
             {
                 current.Left = previous.Left;
                 current.Top = previous.Top  - spacing - current.Height;
             }
-            else if (Root.ToolbarOrientation == Orientation.toUp)
+            else if (Orient == Orientation.toUp)
             {
                 current.Left = previous.Left;
                 current.Top = previous.Top + previous.Height + spacing;
             }
         }
 
-        private void SetSmallButtonNext(Button previous, Button current, int incr)
+        private void SetSmallButtonNext(Button previous, Button current, int incr, int Orient = -1)
         {
-            if (Root.ToolbarOrientation <= Orientation.Horizontal)
+            if (Orient < Orientation.min)
+                Orient = Root.ToolbarOrientation;
+
+            if (Orient <= Orientation.Horizontal)
             {
                 current.Left = previous.Left;
                 current.Top = previous.Top + incr;
@@ -354,6 +363,7 @@ namespace gInk
 
             gpButtons.BackColor = Color.FromArgb(Root.ToolbarBGColor[0], Root.ToolbarBGColor[1], Root.ToolbarBGColor[2], Root.ToolbarBGColor[3]);
             gpPenWidth.BackColor = Color.FromArgb(Root.ToolbarBGColor[0], Root.ToolbarBGColor[1], Root.ToolbarBGColor[2], Root.ToolbarBGColor[3]);
+            gpSubTools.BackColor = Color.FromArgb(Root.ToolbarBGColor[0], Root.ToolbarBGColor[1], Root.ToolbarBGColor[2], Root.ToolbarBGColor[3]);
 
             longClickTimer.Interval = (int)(Root.LongClickTime * 1000 + 100);
 
@@ -883,13 +893,73 @@ namespace gInk
             IC.DefaultDrawingAttributes.Width = Root.PenAttr[0].Width; //required to ensure width
             SelectTool(0, 0); // Select Hand Drawing by Default
 
-            //Console.WriteLine("C=" + (DateTime.Now.Ticks/1e7).ToString());
+            if (Root.ToolbarOrientation <= Orientation.Horizontal )
+            {
+                gpSubTools.Height = dim;
+                gpSubTools.Width = dim1 * 8 + dim3 * 8 + dim1s;
+            }
+            else
+            {
+                gpSubTools.Width = dim;
+                gpSubTools.Height = dim1 * 8 + dim3 * 8 + dim1s;
+            }
+            
+            Btn_SubTools = new Button[] { Btn_SubTool0, Btn_SubTool1, Btn_SubTool2, Btn_SubTool3, Btn_SubTool4, Btn_SubTool5, Btn_SubTool6, Btn_SubTool7 };
+            Btn_SubTool0.Height = dim1;
+            Btn_SubTool0.Width = dim1;
+            int o;
+            if ((Root.ToolbarOrientation == Orientation.toLeft)|| (Root.ToolbarOrientation == Orientation.toRight))
+            {
+                Btn_SubTool0.Top = dim2;
+                Btn_SubTool0.Left = 0;
+                o = Orientation.toLeft;
+            }
+            else 
+            {
+                Btn_SubTool0.Top = 0;
+                Btn_SubTool0.Left = dim2;
+                o = Orientation.toUp;
+            }
+            prev = Btn_SubTool0;
+            for(int i=1; i< Btn_SubTools.Length ; i++)
+            {
+                Btn_SubTools[i].Width = dim1;
+                Btn_SubTools[i].Height = dim1;
+                SetButtonPosition(prev, Btn_SubTools[i], dim3,o);
+                prev = Btn_SubTools[i];
+            }
+            Btn_SubToolClose.Height = dim1s;
+            Btn_SubToolClose.Width = dim1s;
+            SetButtonPosition(prev, Btn_SubToolClose, dim3,o);
+            Btn_SubToolPin.Height = dim1s;
+            Btn_SubToolPin.Width = dim1s;
+            SetSmallButtonNext(Btn_SubToolClose, Btn_SubToolPin, dim2s,o);
+            //Console.WriteLine("C=" + (DateTime.Now.Ticks/1e7).ToString());        
+        }
+
+        private void SetSubBarPosition(Panel Tb, Button RefButton)
+        {
+            if (Root.ToolbarOrientation <= Orientation.Horizontal)
+            {
+                Tb.Left = gpButtonsLeft + RefButton.Left; // gpButtonsLeft + btPenWidth.Left - gpPenWidth.Width / 2 + btPenWidth.Width / 2;
+                Tb.Top = gpButtonsTop - Tb.Height - 10;
+                if (!(IsInsideVisibleScreen(Tb.Left, Tb.Top) && IsInsideVisibleScreen(Tb.Right, Tb.Bottom)))
+                    Tb.Top = gpButtonsTop + gpButtonsHeight + 10;
+            }
+            else
+            {
+                Tb.Top = gpButtonsTop + RefButton.Top;
+                Tb.Left = gpButtonsLeft - Tb.Width - 10; // gpButtonsLeft + btPenWidth.Left - gpPenWidth.Width / 2 + btPenWidth.Width / 2;
+                if (!(IsInsideVisibleScreen(Tb.Left, Tb.Top) && IsInsideVisibleScreen(Tb.Right, Tb.Bottom)))
+                    Tb.Left = gpButtonsLeft + gpButtonsWidth + 10;
+            }
         }
 
 
         private void setPenWidthBarPosition()
         {
-                    if(Root.ToolbarOrientation <= Orientation.Horizontal)
+            SetSubBarPosition(gpPenWidth, btPenWidth);
+            /*if(Root.ToolbarOrientation <= Orientation.Horizontal)
             {
                 gpPenWidth.Left = gpButtonsLeft + btPenWidth.Left; // gpButtonsLeft + btPenWidth.Left - gpPenWidth.Width / 2 + btPenWidth.Width / 2;
                 gpPenWidth.Top = gpButtonsTop - gpPenWidth.Height - 10;
@@ -902,7 +972,7 @@ namespace gInk
                 gpPenWidth.Left = gpButtonsLeft - gpPenWidth.Width - 10; // gpButtonsLeft + btPenWidth.Left - gpPenWidth.Width / 2 + btPenWidth.Width / 2;
                 if (!(IsInsideVisibleScreen(gpPenWidth.Left, gpPenWidth.Top) && IsInsideVisibleScreen(gpPenWidth.Right, gpPenWidth.Bottom)))
                     gpPenWidth.Left = gpButtonsLeft +gpButtonsWidth + 10;
-            }
+            }*/
         }
 
         private void setClipArtDlgPosition()
@@ -1796,7 +1866,12 @@ namespace gInk
 
         private void IC_MouseDown(object sender, CancelMouseEventArgs e)
         {
-            CurrentMouseButton = e.Button;    
+            CurrentMouseButton = e.Button;
+            if (gpSubTools.Visible && (int)(Btn_SubToolPin.Tag) != 1)
+            {
+                gpSubTools.Visible = false;
+                Root.UponAllDrawingUpdate = true;
+            }
             if (Root.gpPenWidthVisible)
             {
                 Root.gpPenWidthVisible = false;
@@ -2121,21 +2196,22 @@ namespace gInk
                 }
             }
 
-            if (filled >= 0)
+            if (filled >= Filling.Empty)
                 Root.FilledSelected = filled;
             else if ((Array.IndexOf(applicableTool, tool) >= 0) && (tool == Root.ToolSelected))
-                Root.FilledSelected = (Root.FilledSelected + 1) % 4;
+                Root.FilledSelected = (Root.FilledSelected + 1) % Filling.Modulo;
             else
-                Root.FilledSelected = 0;
-
+                Root.FilledSelected = Filling.Empty;
             Root.UponButtonsUpdate |= 0x2;
+            EnterEraserMode(false);
 
             if (tool == Tools.Invalid)
             {
                 Root.ToolSelected = Tools.Hand; // to prevent drawing
-                return;
+                //return;
             }
-            else if (tool == Tools.Hand)
+            //else 
+            if (tool == Tools.Hand)
             {
                 if (Root.FilledSelected == Filling.Empty)
                     btHand.BackgroundImage = getImgFromDiskOrRes("tool_hand_act", ImageExts);
@@ -2145,35 +2221,46 @@ namespace gInk
                     btHand.BackgroundImage = getImgFromDiskOrRes("tool_hand_filledW", ImageExts);
                 else if (Root.FilledSelected == Filling.BlackFilled)
                     btHand.BackgroundImage = getImgFromDiskOrRes("tool_hand_filledB", ImageExts);
-                EnterEraserMode(false);
+                if (gpSubTools.Visible && subTools_title.Contains("Hand"))
+                    changeActiveTool(Root.FilledSelected, false, 1);
             }
             else if ((tool == Tools.Line) || (tool == Tools.Poly))
-            {
-                if (Root.ToolSelected == Tools.Line)
+            {   if (filled >= Filling.Empty)
+                {
+                    Root.FilledSelected = filled;
+                }
+                else if (Root.ToolSelected == Tools.Line)
                 {
                     tool = Tools.Poly;
-                    Root.FilledSelected = 0;
-                    btLine.BackgroundImage = getImgFromDiskOrRes("tool_mlines", ImageExts);
-                    filled = 0;
+                    Root.FilledSelected = Filling.Empty;
                     PolyLineLastX = Int32.MinValue; PolyLineLastY = Int32.MinValue;
+                    if (gpSubTools.Visible && subTools_title.Contains("Line"))
+                        changeActiveTool(1, false, 1);
                 }
                 else if ((Root.ToolSelected == Tools.Poly && (Root.FilledSelected ==Filling.Empty || Root.FilledSelected > Filling.BlackFilled)) || (Root.ToolSelected != Tools.Poly))
                 {
                     tool = Tools.Line;
-                    Root.FilledSelected = 0;
-                    btLine.BackgroundImage = getImgFromDiskOrRes("tool_line_act", ImageExts);
+                    Root.FilledSelected = Filling.Empty;
+                    if (gpSubTools.Visible && subTools_title.Contains("Line"))
+                        changeActiveTool(0, false, 1);
                 }
                 else // Root.ToolSelected == Tools.Poly && Root.FilledSelected != 4
                 {
                     tool = Tools.Poly;
                     PolyLineLastX = Int32.MinValue; PolyLineLastY = Int32.MinValue;
-                    if (Root.FilledSelected == Filling.PenColorFilled)
-                        btLine.BackgroundImage = getImgFromDiskOrRes("tool_mlines_filledC", ImageExts);
-                    else if (Root.FilledSelected == Filling.WhiteFilled)
-                        btLine.BackgroundImage = getImgFromDiskOrRes("tool_mlines_filledW", ImageExts);
-                    else if (Root.FilledSelected == Filling.BlackFilled)
-                        btLine.BackgroundImage = getImgFromDiskOrRes("tool_mlines_filledB", ImageExts);
+                    if (gpSubTools.Visible && subTools_title.Contains("Line"))
+                        changeActiveTool(Root.FilledSelected+1, false, 1);
                 }
+                if (tool == Tools.Line)
+                    btLine.BackgroundImage = getImgFromDiskOrRes("tool_line_act", ImageExts);
+                else if (Root.FilledSelected == Filling.Empty)
+                    btLine.BackgroundImage = getImgFromDiskOrRes("tool_mlines", ImageExts);
+                else if (Root.FilledSelected == Filling.PenColorFilled)
+                    btLine.BackgroundImage = getImgFromDiskOrRes("tool_mlines_filledC", ImageExts);
+                else if (Root.FilledSelected == Filling.WhiteFilled)
+                    btLine.BackgroundImage = getImgFromDiskOrRes("tool_mlines_filledW", ImageExts);
+                else if (Root.FilledSelected == Filling.BlackFilled)
+                    btLine.BackgroundImage = getImgFromDiskOrRes("tool_mlines_filledB", ImageExts);
 
             }
             else if (tool == Tools.Rect)
@@ -2186,7 +2273,8 @@ namespace gInk
                     btRect.BackgroundImage = getImgFromDiskOrRes("tool_rect_filledW", ImageExts);
                 else if (Root.FilledSelected == Filling.BlackFilled)
                     btRect.BackgroundImage = getImgFromDiskOrRes("tool_rect_filledB", ImageExts);
-
+                if (gpSubTools.Visible && subTools_title.Contains("Rect"))
+                    changeActiveTool(Root.FilledSelected, false, 1);
             }
             else if (tool == Tools.ClipArt)
             {
@@ -2202,17 +2290,23 @@ namespace gInk
                     btOval.BackgroundImage = getImgFromDiskOrRes("tool_oval_filledW", ImageExts);
                 else if (Root.FilledSelected == Filling.BlackFilled)
                     btOval.BackgroundImage = getImgFromDiskOrRes("tool_oval_filledB", ImageExts);
+                if (gpSubTools.Visible && subTools_title.Contains("Oval"))
+                    changeActiveTool(Root.FilledSelected, false, 1);
             }
             else if ((tool == Tools.StartArrow) || (tool == Tools.EndArrow)) // also include tool=5
                 if ((tool == Tools.EndArrow) || (Root.ToolSelected == Tools.StartArrow))
                 {
                     btArrow.BackgroundImage = getImgFromDiskOrRes("tool_enAr_act", ImageExts);
                     tool = Tools.EndArrow;
+                    if (gpSubTools.Visible && subTools_title.Contains("Arrow"))
+                        changeActiveTool(1, false, 1);
                 }
                 else
                 {
                     btArrow.BackgroundImage = getImgFromDiskOrRes("tool_stAr_act", ImageExts);
                     tool = Tools.StartArrow;
+                    if (gpSubTools.Visible && subTools_title.Contains("Arrow"))
+                        changeActiveTool(0, false, 1);
                 }
             else if (tool == Tools.NumberTag)
             {
@@ -2256,11 +2350,15 @@ namespace gInk
                 {
                     btText.BackgroundImage = getImgFromDiskOrRes("tool_txtR_act", ImageExts);
                     tool = Tools.txtRightAligned;
+                    if (gpSubTools.Visible && subTools_title.Contains("Text"))
+                        changeActiveTool(1, false, 1);
                 }
                 else
                 {
                     btText.BackgroundImage = getImgFromDiskOrRes("tool_txtL_act", ImageExts);
                     tool = Tools.txtLeftAligned;
+                    if (gpSubTools.Visible && subTools_title.Contains("Text"))
+                        changeActiveTool(0, false, 1);
                 }
                 try
                 {
@@ -2470,6 +2568,7 @@ namespace gInk
             ToThrough();
             if (ZoomForm.Visible)
                 ZoomBtn_Click(btZoom, null);
+            gpSubTools.Visible = false;
             try
             {
                 string st = Path.GetFullPath(Environment.ExpandEnvironmentVariables(Root.SnapshotBasePath));
@@ -2498,12 +2597,14 @@ namespace gInk
 			if (ToolbarMoved)
 			{
 				ToolbarMoved = false;
-				return;
-			}
+                return;
+            }
 
-			LastTickTime = DateTime.Now;
-			if (!Root.Docked)
-			{
+            gpSubTools.Visible = false;
+
+            LastTickTime = DateTime.Now;
+            if (!Root.Docked)
+            {
 				Root.Dock();
             }
             else
@@ -2970,28 +3071,31 @@ namespace gInk
                 LastTickTime = DateTime.Now;
                 return;
             }
-
-            for(int i=IC.Ink.Strokes.Count-1; i>=0;i--)
+            try
             {
-                Stroke st = IC.Ink.Strokes[i];
-                if (st.ExtendedProperties.Contains(Root.FADING_PEN))
+                for (int i = IC.Ink.Strokes.Count - 1; i >= 0; i--)
                 {
-                    Int64 j = (Int64)(st.ExtendedProperties[Root.FADING_PEN].Data);
-                    if(DateTime.Now.Ticks>j)
+                    Stroke st = IC.Ink.Strokes[i];
+                    if (st.ExtendedProperties.Contains(Root.FADING_PEN))
                     {
-                        if(st.DrawingAttributes.Transparency == 255)
+                        Int64 j = (Int64)(st.ExtendedProperties[Root.FADING_PEN].Data);
+                        if (DateTime.Now.Ticks > j)
                         {
-                            //IC.Ink.Strokes.RemoveAt(i);
-                            IC.Ink.DeleteStroke(IC.Ink.Strokes[i]);
+                            if (st.DrawingAttributes.Transparency == 255)
+                            {
+                                //IC.Ink.Strokes.RemoveAt(i);
+                                IC.Ink.DeleteStroke(IC.Ink.Strokes[i]);
                         }
                         else if (st.DrawingAttributes.Transparency > 245)
                             st.DrawingAttributes.Transparency = 255;
                         else
                             st.DrawingAttributes.Transparency += 10;
                         Root.UponAllDrawingUpdate = true;
+                        }
                     }
                 }
             }
+            catch { };
 
             Size AimedSize = new Size(gpButtonsWidth,gpButtonsHeight);
             Point AimedPos = new Point(gpButtonsLeft, gpButtonsTop);
@@ -3622,112 +3726,28 @@ namespace gInk
 					IsMovingToolbar = 2;
 			}
 			if (IsMovingToolbar == 2)
-			{
-				if (e.X != HitMovingToolbareXY.X || e.Y != HitMovingToolbareXY.Y)
-				{
-					/*
-					gpButtonsLeft += e.X - HitMovingToolbareXY.X;
-					gpButtonsTop += e.Y - HitMovingToolbareXY.Y;
-					
-					if (gpButtonsLeft + gpButtonsWidth > SystemInformation.VirtualScreen.Right)
-						gpButtonsLeft = SystemInformation.VirtualScreen.Right - gpButtonsWidth;
-					if (gpButtonsLeft < SystemInformation.VirtualScreen.Left)
-						gpButtonsLeft = SystemInformation.VirtualScreen.Left;
-					if (gpButtonsTop + gpButtonsHeight > SystemInformation.VirtualScreen.Bottom)
-						gpButtonsTop = SystemInformation.VirtualScreen.Bottom - gpButtonsHeight;
-					if (gpButtonsTop < SystemInformation.VirtualScreen.Top)
-						gpButtonsTop = SystemInformation.VirtualScreen.Top;
-					*/
-					int newleft = gpButtonsLeft + e.X - HitMovingToolbareXY.X;
-					int newtop = gpButtonsTop + e.Y - HitMovingToolbareXY.Y;
+            {
+                if (e.X != HitMovingToolbareXY.X || e.Y != HitMovingToolbareXY.Y)
+                {
+                    int newleft = gpButtons.Left + e.X - HitMovingToolbareXY.X;
+                    int newtop = gpButtons.Top + e.Y - HitMovingToolbareXY.Y;
 
-					bool continuemoving;
-					bool toolbarmovedthisframe = false;
-					int dleft = 0, dtop = 0;
-					if
-					(
-						IsInsideVisibleScreen(newleft, newtop) &&
-						IsInsideVisibleScreen(newleft + gpButtonsWidth, newtop) &&
-						IsInsideVisibleScreen(newleft, newtop + gpButtonsHeight) &&
-						IsInsideVisibleScreen(newleft + gpButtonsWidth, newtop + gpButtonsHeight)
-					)
+                    if( IsInsideVisibleScreen(newleft, newtop) && IsInsideVisibleScreen(newleft + gpButtonsWidth, newtop) && 
+                        IsInsideVisibleScreen(newleft, newtop + gpButtonsHeight) && IsInsideVisibleScreen(newleft + gpButtonsWidth, newtop + gpButtonsHeight) )
 					{
-						continuemoving = true;
-						ToolbarMoved = true;
-						toolbarmovedthisframe = true;
-						dleft = newleft - gpButtonsLeft;
-						dtop = newtop - gpButtonsTop;
-					}
-					else
-					{
-						do
-						{
-							if (dleft != newleft - gpButtonsLeft)
-								dleft += Math.Sign(newleft - gpButtonsLeft);
-							else
-								break;
-							if
-							(
-								IsInsideVisibleScreen(gpButtonsLeft + dleft, gpButtonsTop + dtop) &&
-								IsInsideVisibleScreen(gpButtonsLeft + gpButtonsWidth + dleft, gpButtonsTop + dtop) &&
-								IsInsideVisibleScreen(gpButtonsLeft + dleft, gpButtonsTop + gpButtonsHeight + dtop) &&
-								IsInsideVisibleScreen(gpButtonsLeft + gpButtonsWidth + dleft, gpButtonsTop + gpButtonsHeight + dtop)
-							)
-							{
-								continuemoving = true;
-								ToolbarMoved = true;
-								toolbarmovedthisframe = true;
-							}
-							else
-							{
-								continuemoving = false;
-								dleft -= Math.Sign(newleft - gpButtonsLeft);
-							}
-						}
-						while (continuemoving);
-						do
-						{
-							if (dtop != newtop - gpButtonsTop)
-								dtop += Math.Sign(newtop - gpButtonsTop);
-							else
-								break;
-							if
-							(
-								IsInsideVisibleScreen(gpButtonsLeft + dleft, gpButtonsTop + dtop) &&
-								IsInsideVisibleScreen(gpButtonsLeft + gpButtonsWidth + dleft, gpButtonsTop + dtop) &&
-								IsInsideVisibleScreen(gpButtonsLeft + dleft, gpButtonsTop + gpButtonsHeight + dtop) &&
-								IsInsideVisibleScreen(gpButtonsLeft + gpButtonsWidth + dleft, gpButtonsTop + gpButtonsHeight + dtop)
-							)
-							{
-								continuemoving = true;
-								ToolbarMoved = true;
-								toolbarmovedthisframe = true;
-							}
-							else
-							{
-								continuemoving = false;
-								dtop -= Math.Sign(newtop - gpButtonsTop);
-							}
-						}
-						while (continuemoving);
-					}
-
-					if (toolbarmovedthisframe)
-					{
-						gpButtonsLeft += dleft;
-						gpButtonsTop += dtop;
-						Root.gpButtonsLeft = gpButtonsLeft;
-						Root.gpButtonsTop = gpButtonsTop;
-						if (Root.Docked)
-                            gpButtons.Left = gpButtonsLeft + gpButtonsWidth - btDock.Right;
-                        else
-                            gpButtons.Left = gpButtonsLeft;
-                        setPenWidthBarPosition();
-                        gpButtons.Top = gpButtonsTop;
+                        HitMovingToolbareXY.X = e.X - newleft + gpButtons.Left;
+                        HitMovingToolbareXY.Y = e.Y - newtop + gpButtons.Top;
+                        gpButtonsLeft = gpButtonsLeft + newleft - gpButtons.Left;
+                        gpButtonsTop = gpButtonsTop + newtop - gpButtons.Top;
+                        gpButtons.Left = newleft;
+                        gpButtons.Top = newtop;
                         Root.UponAllDrawingUpdate = true;
+                        ToolbarMoved = true;
+                        Root.gpButtonsLeft = gpButtonsLeft;
+                        Root.gpButtonsTop = gpButtonsTop;
                     }
 				}
-			}
+            }
 		}
 
 		private void gpButtons_MouseUp(object sender, MouseEventArgs e)
@@ -4278,20 +4298,57 @@ namespace gInk
             TimeSpan tsp = DateTime.Now - MouseTimeDown;
             if(ClipartsDlg.Visible)
             {
-                Console.WriteLine("Close ClipArtDlg");
+                //Console.WriteLine("Close ClipArtDlg");
                 ClipartsDlg.Close();
             }
 
             int i = -1;
             if (((Button)sender).Name.Contains("Hand"))
+            {
+                CustomizeAndOpenSubTools(-1 , "SubToolsHand", new string[] { "tool_hand_act", "tool_hand_filledC", "tool_hand_filledW", "tool_hand_filledB" },Root.Local.HandSubToolsHints,
+                                     new Func<int, bool>[] { ii => { SelectTool(Tools.Hand,Filling.Empty); return true; },
+                                                             ii => { SelectTool(Tools.Hand,Filling.PenColorFilled); return true; },
+                                                             ii => { SelectTool(Tools.Hand,Filling.WhiteFilled); return true; },
+                                                             ii => { SelectTool(Tools.Hand,Filling.BlackFilled ); return true; } });
                 i = Tools.Hand;
+                
+            }
             else if (((Button)sender).Name.Contains("Line"))
+            {
+                CustomizeAndOpenSubTools(-1, "SubToolsLines", new string[] { "tool_line_act", "tool_mlines", "tool_mlines_filledC", "tool_mlines_filledW", "tool_mlines_filledB" }, Root.Local.LineSubToolsHints,
+                                     new Func<int, bool>[] { ii => { SelectTool(Tools.Line,Filling.Empty); return true; },
+                                                             ii => { SelectTool(Tools.Poly ,Filling.Empty); return true; },
+                                                             ii => { SelectTool(Tools.Poly ,Filling.PenColorFilled); return true; },
+                                                             ii => { SelectTool(Tools.Poly,Filling.WhiteFilled); return true; },
+                                                             ii => { SelectTool(Tools.Poly,Filling.BlackFilled ); return true; } });
                 i = Root.ToolSelected == Tools.Poly ? Tools.Poly : Tools.Line;    // to keep filled
+            }
+
             else if (((Button)sender).Name.Contains("Rect"))
+            {
+                CustomizeAndOpenSubTools(-1, "SubToolsRect", new string[] { "tool_rect_act", "tool_rect_filledC", "tool_rect_filledW", "tool_rect_filledB" }, Root.Local.RectSubToolsHints,
+                                     new Func<int, bool>[] { ii => { SelectTool(Tools.Rect,Filling.Empty); return true; },
+                                                             ii => { SelectTool(Tools.Rect,Filling.PenColorFilled); return true; },
+                                                             ii => { SelectTool(Tools.Rect,Filling.WhiteFilled); return true; },
+                                                             ii => { SelectTool(Tools.Rect,Filling.BlackFilled ); return true; } });
                 i = Tools.Rect;
+
+            }
             else if (((Button)sender).Name.Contains("Oval"))
+            {
+                CustomizeAndOpenSubTools(-1, "SubToolsOval", new string[] { "tool_oval_act", "tool_oval_filledC", "tool_oval_filledW", "tool_oval_filledB" }, Root.Local.OvalSubToolsHints,
+                                     new Func<int, bool>[] { ii => { SelectTool(Tools.Oval,Filling.Empty); return true; },
+                                                             ii => { SelectTool(Tools.Oval,Filling.PenColorFilled); return true; },
+                                                             ii => { SelectTool(Tools.Oval,Filling.WhiteFilled); return true; },
+                                                             ii => { SelectTool(Tools.Oval,Filling.BlackFilled ); return true; } });
                 i = Tools.Oval;
+
+            }
             else if (((Button)sender).Name.Contains("Arrow"))
+            {
+                CustomizeAndOpenSubTools(-1, "SubToolsArrow", new string[] { "tool_stAr_act", "tool_enAr_act" }, Root.Local.ArrowSubToolsHints,
+                                     new Func<int, bool>[] { ii => { SelectTool(Tools.StartArrow ,Filling.Empty); return true; },
+                                                             ii => { SelectTool(Tools.EndArrow ,Filling.Empty); return true; } });
                 if (Root.ToolSelected == Tools.EndArrow)
                     i = Tools.StartArrow;
                 else if (Root.ToolSelected == Tools.StartArrow)
@@ -4300,6 +4357,7 @@ namespace gInk
                     i = Tools.StartArrow;
                 else
                     i = Tools.EndArrow;
+            }
             //               i = (Root.DefaultArrow_start ||Root.ToolSelected==5) ?4:5 ;
             else if (((Button)sender).Name.Contains("Numb"))
             {
@@ -4312,7 +4370,13 @@ namespace gInk
                     i = Tools.NumberTag;
             }
             else if (((Button)sender).Name.Contains("Text"))
+            {
+                CustomizeAndOpenSubTools(-1, "SubToolsText", new string[] { "tool_txtL_act", "tool_txtR_act" }, Root.Local.TextSubToolsHints,
+                                     new Func<int, bool>[] { ii => { SelectTool(Tools.txtLeftAligned ,Filling.Empty); return true; },
+                                                             ii => { SelectTool(Tools.txtRightAligned ,Filling.Empty); return true; } });
+
                 i = Tools.txtLeftAligned;
+            }
             else if (((Button)sender).Name.Contains("Edit"))
                 if (sender != null && tsp.TotalSeconds > Root.LongClickTime)
                 {
@@ -4388,26 +4452,34 @@ namespace gInk
 
 		private void btPan_Click(object sender, EventArgs e)
 		{
+            CustomizeAndOpenSubTools(-1, "PanSubTools",new string[] { "pan1_act" , "pan_copy","pan_act"  } , Root.Local.PanSubToolsHints,
+                                     new Func<int, bool>[] { i => { SelectPen(LastPenSelected); SelectTool(Tools.Move); return true; },
+                                                             i => { SelectPen(LastPenSelected); SelectTool(Tools.Copy); return true; },
+                                                             i => { SelectPen(-3); return true; } });
 			if (ToolbarMoved)
 			{
 				ToolbarMoved = false;
 				return;
-			}
+            }
             if (Root.ToolSelected == Tools.Move)
             {
-                SelectPen(LastPenSelected);
-                SelectTool(Tools.Copy);
+                //SelectPen(LastPenSelected);
+                //SelectTool(Tools.Copy);
+                changeActiveTool(1,true,1);
             }
             else if (Root.ToolSelected == Tools.Copy)
             {
-                SelectPen(-3);
+                //SelectPen(-3);
+                changeActiveTool(2,true,1);
             }
             else
             {
-                SelectPen(LastPenSelected);
-                SelectTool(Tools.Move);
+                //SelectPen(LastPenSelected);
+                //SelectTool(Tools.Move);
+                changeActiveTool(0,true,1);
             }
-		}
+            ;
+        }
 
         private void btMagn_Click(object sender, EventArgs e)
         {
@@ -4512,8 +4584,175 @@ namespace gInk
 					RetreatAndExit();
 			}
 
-			LastF4Status = retVal;
-		}
+            LastF4Status = retVal;
+        }
+
+        // active (-1 == none)
+        // strings [inactive,active,...] ; empty string = button non visible
+        // strings TextHints
+        // lambda fonctions when clicking
+
+        int subTools_activeTool = -1;
+        string subTools_title;
+        string[] subTools_icons=null;
+        Func<int, bool>[] subTools_actions=null;
+
+        const int ACTIVE_SUBTOOL_BORDERSIZE=3;
+
+        public void CustomizeAndOpenSubTools(int active, string title, string [] icons, string TextHintsStr, Func<int,bool> [] clickFuncts)
+        {
+            if (title != "" && gpSubTools.Visible && title == subTools_title ) // already configured
+                return;
+
+            int dim = (int)Math.Round(Screen.PrimaryScreen.Bounds.Height * Root.ToolbarHeight);
+            int dim2s = (int)(dim * SmallButtonNext);
+            int dim3 = (int)(dim * InterButtonGap);
+
+            subTools_title = title;
+            subTools_activeTool = active;
+            subTools_icons = icons;
+            subTools_actions = clickFuncts;
+            string[] TextHints = TextHintsStr.Split('\n');
+            for(int i=0 ; i<Btn_SubTools.Length ; i++)
+            {
+                if (i <= icons.GetLength(0) - 1)
+                {
+                    Btn_SubTools[i].Visible = true;
+                    Btn_SubTools[i].BackgroundImage = getImgFromDiskOrRes(icons[i]);
+                    Btn_SubTools[i].FlatAppearance.BorderSize = i == active ? ACTIVE_SUBTOOL_BORDERSIZE : 0;
+                    toolTip.SetToolTip(Btn_SubTools[i], TextHints[i]);
+                }
+                else
+                {
+                    Btn_SubTools[i].Visible = false;
+                }
+                if (i == icons.GetLength(0)-1)
+                {
+                    int o = Root.ToolbarOrientation <= Orientation.Horizontal ? Orientation.toLeft : Orientation.toUp;
+                    SetButtonPosition(Btn_SubTools[i], Btn_SubToolClose, dim3,o);
+                    SetSmallButtonNext(Btn_SubToolClose, Btn_SubToolPin, dim2s,o);
+                    if (Root.ToolbarOrientation <= Orientation.Horizontal)
+                        gpSubTools.Width = Btn_SubToolClose.Right;
+                    else
+                        gpSubTools.Height = Btn_SubToolClose.Bottom;
+                }
+            }
+            if(!gpSubTools.Visible)
+            {
+                SetSubBarPosition(gpSubTools, btHand);
+            }
+            gpSubTools.Visible = Root.SubToolsEnabled;
+            Root.UponAllDrawingUpdate = true;
+            Task.Run(() => { for (int i = 1; i <= 10; i++)
+                             {
+                                ColorMatrix cm = new ColorMatrix();
+                                cm.Matrix00 = 1f; cm.Matrix11 = 1f; cm.Matrix22 = 1f;
+                                cm.Matrix33 = i *Root.ToolbarBGColor[0] / 2550f;
+                                try{ Root.FormDisplay.iaSubToolsTransparency.SetColorMatrix(cm); }catch { };
+                                Root.UponAllDrawingUpdate = true;
+                                Thread.Sleep(30);
+                             }
+            });
+        }
+
+        public void changeActiveTool(int active = -1,bool click=false,int visibility=0)     // visibility = -1 = force off ; 0 = auto ; 1 = force on
+        {
+            if (click)
+                SubTool_Click(Btn_SubTools[active], null);
+                // active buttons will be set through the click and will keep previous active state
+            else
+            {
+                if (subTools_activeTool >= 0) Btn_SubTools[subTools_activeTool].FlatAppearance.BorderSize = 0;
+                subTools_activeTool = active;
+                if (subTools_activeTool >= 0) Btn_SubTools[subTools_activeTool].FlatAppearance.BorderSize = ACTIVE_SUBTOOL_BORDERSIZE;
+            }
+            if (visibility == -1)
+                gpSubTools.Visible = false;
+            else if (visibility == 1)
+                gpSubTools.Visible = true;
+            Root.UponButtonsUpdate |= 0x2;
+        }
+
+        private void SubTool_Click(object sender, EventArgs e)
+        {
+            bool First = subTools_activeTool == -1;
+            if (gpSubTools_MouseOn == 2)
+            {
+                gpSubTools_MouseOn = 0;
+                return;
+            }
+            Console.WriteLine("SubTool_Click");
+            changeActiveTool((int)(((Button)sender).Tag),false);
+            subTools_actions[(int)(((Button)sender).Tag)]((int)(((Button)sender).Tag));
+            // close if not pinned
+            if (!First && (int)(Btn_SubToolPin.Tag) != 1)
+            {
+                gpSubTools.Visible = false;
+            }
+            Root.UponButtonsUpdate |= 0x2;
+            Root.UponAllDrawingUpdate = true;
+        }
+
+        private void gpSubTools_MouseDown(object sender, MouseEventArgs e)
+        {
+            gpSubTools_MouseOn = 1;
+            HitMovingToolbareXY.X = e.X;
+            HitMovingToolbareXY.Y = e.Y;
+        }
+
+        private void gpSubTools_MouseMove(object sender, MouseEventArgs e)
+        {
+            //Console.WriteLine(e.X.ToString() + " ; " + e.Y.ToString() + " - " + HitMovingToolbareXY.X.ToString() + " ; " + HitMovingToolbareXY.Y.ToString() + " / "+ gpSubTools_MouseOn.ToString());
+            if (gpSubTools_MouseOn == 1)
+            {
+                if (Math.Abs(e.X - HitMovingToolbareXY.X) > 20 || Math.Abs(e.Y - HitMovingToolbareXY.Y) > 20)
+                    gpSubTools_MouseOn = 2;
+            }
+            else if (gpSubTools_MouseOn == 2)
+            {
+                if (e.X != HitMovingToolbareXY.X || e.Y != HitMovingToolbareXY.Y)
+                {
+                    int newleft = gpSubTools.Left + e.X - HitMovingToolbareXY.X;
+                    int newtop = gpSubTools.Top + e.Y - HitMovingToolbareXY.Y;
+
+                    if ( IsInsideVisibleScreen(newleft, newtop) && IsInsideVisibleScreen(newleft + gpSubTools.Width, newtop) &&
+                         IsInsideVisibleScreen(newleft, newtop + gpSubTools.Height) && IsInsideVisibleScreen(newleft + gpSubTools.Width, newtop + gpSubTools.Height))
+                    {
+                        HitMovingToolbareXY.X = e.X - newleft + gpSubTools.Left;
+                        HitMovingToolbareXY.Y = e.Y - newtop + gpSubTools.Top;
+                        gpSubTools.Left = newleft;
+                        gpSubTools.Top = newtop;
+                        Root.UponAllDrawingUpdate = true;
+                    }
+                }
+            }
+        }
+
+        private void gpSubTools_MouseUp(object sender, MouseEventArgs e)
+        {
+            gpSubTools_MouseOn = 0;
+        }
+
+        private void Btn_SubToolClose_Click(object sender, EventArgs e)
+        {
+            gpSubTools.Visible = false;
+            Root.UponAllDrawingUpdate = true;
+        }
+
+        private void BtnPin_Click(object sender, EventArgs e)
+        {
+            if((int)(Btn_SubToolPin.Tag) != 1 )
+            {
+                Btn_SubToolPin.Tag = 1;
+                Btn_SubToolPin.BackgroundImage = gInk.Properties.Resources.pinned;
+            }
+            else
+            {
+                Btn_SubToolPin.Tag = 0;
+                Btn_SubToolPin.BackgroundImage = gInk.Properties.Resources.unpinned;
+            }
+            Root.UponButtonsUpdate |= 0x2;
+        }
 
         public void RestorePolylineData(Stroke st)
         {
