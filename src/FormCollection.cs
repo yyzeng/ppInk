@@ -4988,7 +4988,7 @@ namespace gInk
                         string st2 = st.Substring(l + 1);
                         object obj=null;
                         if(st.Contains("Int"))
-                            obj = int.Parse(st2);
+                            obj = Int64.Parse(st2);
                         else if (st.Contains("Bool"))
                             obj = bool.Parse(st2);
                         else if (st.Contains("Single"))
