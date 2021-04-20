@@ -33,11 +33,18 @@ namespace gInk
 			FC = Root.FormCollection;
 			InitializeComponent();
 
-			this.Left = FC.gpButtons.Left + FC.Left;
-			this.Top = FC.gpButtons.Top + FC.Top;
-			this.Width = FC.gpButtons.Width;
-			this.Height = FC.gpButtons.Height;
+            Initialize();
+
 		}
+
+        public void Initialize()
+        {
+            Left = FC.gpButtons.Left + FC.Left;
+            Top = FC.gpButtons.Top + FC.Top;
+            Width = FC.gpButtons.Width;
+            Height = FC.gpButtons.Height;
+            timer1.Enabled = true;
+        }
 
         protected override void WndProc(ref Message msg)
         {

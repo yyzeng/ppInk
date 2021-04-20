@@ -28,18 +28,27 @@ namespace gInk
             Root = rt;
 
             InitializeComponent();
+            Initialize();
+        }
+
+        public void Initialize()
+        {
+
             AutoCloseCb.Checked = true;
             Text = Root.Local.FormClipartsTitle;
             InsertBtn.Text = Root.Local.ButtonInsertText;
             CancelBtn.Text = Root.Local.ButtonCancelText;
             FromClpBtn.Text = Root.Local.ButtonFromClipBText;
             LoadImageBtn.Text = Root.Local.ButtonLoadImageText;
-            DelBtn.Text = Root.Local.ButtonDeleteText;        
+            DelBtn.Text = Root.Local.ButtonDeleteText;
             FillingCombo.Items.Clear();
             FillingCombo.Items.AddRange(Root.Local.ListFillingsText.Split(';'));
             FillingCombo.Text = (string)FillingCombo.Items[Root.ImageStampFilling + 1];
             AutoCloseCb.Text = Root.Local.CheckBoxAutoCloseText;
-            for (int i=0;i<Root.StampFileNames.Count;i++)
+            ImageListViewer.Items.Clear();
+            ImageListViewer.LargeImageList.Images.Clear();
+            Originals.Clear();
+            for (int i = 0; i < Root.StampFileNames.Count; i++)
             {
                 try
                 {
@@ -55,10 +64,10 @@ namespace gInk
                 }
                 catch
                 {
-                    MessageBox.Show("Error Loading ClipArt image:\n" + Root.StampFileNames[i],"ppInk", MessageBoxButtons.OK,MessageBoxIcon.Error );
+                    MessageBox.Show("Error Loading ClipArt image:\n" + Root.StampFileNames[i], "ppInk", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-            ImageListViewer.LargeImageList.ImageSize = new Size(Root.StampSize , Root.StampSize);
+            ImageListViewer.LargeImageList.ImageSize = new Size(Root.StampSize, Root.StampSize);
             ImageListViewer.Select();
         }
 

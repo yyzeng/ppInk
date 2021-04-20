@@ -56,6 +56,7 @@ namespace gInk
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "ppInk - drawing in progress";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormDisplay_FormClosed);
+            this.VisibleChanged += new System.EventHandler(this.FormDisplay_VisibleChanged);
             this.ResumeLayout(false);
 
 		}

@@ -32,9 +32,47 @@ namespace gInk
 		{
 			Root = root;
 			InitializeComponent();
-		}
+            for (int p = 0; p < Root.MaxPenCount; p++)
+			{
+				//int top = p * (int)(this.Height * 0.075) + (int)(this.Height * 0.09);
+                int top = lbPens0.Top + p * (lbPens1.Top-lbPens0.Top);
+                /*lbPens[p] = new Label();
+				lbPens[p].Left = (int)(this.Width / 500.0 * 60);
+				lbPens[p].Width = 80;
+				lbPens[p].Top = top;*/
 
-		private void FormOptions_Load(object sender, EventArgs e)
+				cbPens[p] = new CheckBox();
+				cbPens[p].CheckedChanged += cbPens_CheckedChanged;
+
+				pboxPens[p] = new PictureBox();
+				pboxPens[p].Click += pboxPens_Click;
+
+				comboPensAlpha[p] = new ComboBox();
+				comboPensAlpha[p].TextChanged += comboPensAlpha_TextChanged;
+
+				comboPensWidth[p] = new ComboBox();
+				comboPensWidth[p].TextChanged += comboPensWidth_TextChanged;
+
+                comboPensFading[p] = new CheckBox();
+                comboPensFading[p].CheckedChanged += comboPensFading_Changed;
+
+                tabPage2.Controls.Add(lbPens[p]);
+				tabPage2.Controls.Add(cbPens[p]);
+				tabPage2.Controls.Add(pboxPens[p]);
+				tabPage2.Controls.Add(comboPensAlpha[p]);
+				tabPage2.Controls.Add(comboPensWidth[p]);
+                tabPage2.Controls.Add(comboPensFading[p]);
+
+                lbHotkeyPens[p] = new Label();
+                hiPens[p] = new HotkeyInputBox();
+                hiPens[p].OnHotkeyChanged += hi_OnHotkeyChanged;
+
+                tabPage3.Controls.Add(lbHotkeyPens[p]);
+                tabPage3.Controls.Add(hiPens[p]);
+            }
+        }
+
+        private void FormOptions_Load(object sender, EventArgs e)
 		{
             //Root.UnsetHotkey();
             ToolbarDwg.BackColor = Color.FromArgb(Root.ToolbarBGColor[0], Root.ToolbarBGColor[1], Root.ToolbarBGColor[2], Root.ToolbarBGColor[3]);
@@ -42,6 +80,8 @@ namespace gInk
             Clip1Btn.BackColor = ToolbarDwg.BackColor;
             try
             {
+                if (Clip1Btn.BackgroundImage != null)
+                    Clip1Btn.BackgroundImage.Dispose();
                 Clip1Btn.BackgroundImage = FormCollection.getImgFromDiskOrRes(Root.ImageStamp1);
             }
             catch
@@ -52,6 +92,8 @@ namespace gInk
             Clip2Btn.BackColor = ToolbarDwg.BackColor;
             try
             {
+                if (Clip2Btn.BackgroundImage != null)
+                    Clip2Btn.BackgroundImage.Dispose();
                 Clip2Btn.BackgroundImage = FormCollection.getImgFromDiskOrRes(Root.ImageStamp2);
             }
             catch
@@ -62,6 +104,8 @@ namespace gInk
             Clip3Btn.BackColor = ToolbarDwg.BackColor;
             try
             {
+                if (Clip3Btn.BackgroundImage != null)
+                    Clip3Btn.BackgroundImage.Dispose();
                 Clip3Btn.BackgroundImage = FormCollection.getImgFromDiskOrRes(Root.ImageStamp3);
             }
             catch
@@ -125,38 +169,6 @@ namespace gInk
 
             lbNote.ForeColor = Color.Black;
 
-            /*lbcbPens = new Label();
-			lbcbPens.Left = (int)(this.Width / 500.0 * 25);
-			lbcbPens.Width = 100;
-			lbcbPens.Top = 15;
-			tabPage2.Controls.Add(lbcbPens);
-
-            lbpboxPens = new Label();
-			lbpboxPens.Left = (int)(this.Width / 500.0 * 125);
-			lbpboxPens.Width = 60;
-			lbpboxPens.Top = 15;			
-			tabPage2.Controls.Add(lbpboxPens);
-
-			lbcomboPensAlpha = new Label();
-			lbcomboPensAlpha.Left = (int)(this.Width / 500.0 * 185);
-			lbcomboPensAlpha.Width = 100;
-			lbcomboPensAlpha.Top = 15;			
-			tabPage2.Controls.Add(lbcomboPensAlpha);
-
-			lbcomboPensWidth = new Label();
-			lbcomboPensWidth.Left = (int)(this.Width / 500.0 * 275);
-			lbcomboPensWidth.Width = 100;
-			lbcomboPensWidth.Top = 15;			
-			tabPage2.Controls.Add(lbcomboPensWidth);
-
-            lbcomboPensFading = new Label();
-            lbcomboPensFading.Left = (int)(this.Width / 500.0 * 375);
-            lbcomboPensFading.Width = 100;
-            lbcomboPensFading.Top = 15;
-            lbcomboPensFading.AutoSize = true;
-            tabPage2.Controls.Add(lbcomboPensFading);
-            */
-
             lbPens[0] = lbPens0; lbPens[1] = lbPens1; lbPens[2] = lbPens2; lbPens[3] = lbPens3; lbPens[4] = lbPens4;
             lbPens[5] = lbPens5; lbPens[6] = lbPens6; lbPens[7] = lbPens7; lbPens[8] = lbPens8; lbPens[9] = lbPens9;
 
@@ -169,52 +181,32 @@ namespace gInk
 				lbPens[p].Width = 80;
 				lbPens[p].Top = top;*/
 
-				cbPens[p] = new CheckBox();
 				cbPens[p].Left = (int)(this.Width / 500.0 * 30);
 				cbPens[p].Width = 25;
 				cbPens[p].Top = top - 5;
 				cbPens[p].Text = "";
 				cbPens[p].Checked = Root.PenEnabled[p];
-				cbPens[p].CheckedChanged += cbPens_CheckedChanged;
 
-				pboxPens[p] = new PictureBox();
 				pboxPens[p].Left = (int)(this.Width / 500.0 * 130);
 				pboxPens[p].Top = top;
 				pboxPens[p].Width = 15;
 				pboxPens[p].Height = 15;
 				pboxPens[p].BackColor = Root.PenAttr[p].Color;
-				pboxPens[p].Click += pboxPens_Click;
 
-				comboPensAlpha[p] = new ComboBox();
-				
 				comboPensAlpha[p].Left = (int)(this.Width / 500.0 * 180);
 				comboPensAlpha[p].Top = top - 2;
 				comboPensAlpha[p].Width = 80;
 				comboPensAlpha[p].Text = (255 - Root.PenAttr[p].Transparency).ToString();
-				comboPensAlpha[p].TextChanged += comboPensAlpha_TextChanged;
 
-				comboPensWidth[p] = new ComboBox();
-				
 				comboPensWidth[p].Left = (int)(this.Width / 500.0 * 270);
 				comboPensWidth[p].Top = top - 2;
 				comboPensWidth[p].Width = 80;
 				comboPensWidth[p].Text = ((int)Root.PenAttr[p].Width).ToString();
-				comboPensWidth[p].TextChanged += comboPensWidth_TextChanged;
-
-                comboPensFading[p] = new CheckBox();
 
                 comboPensFading[p].Left = (int)(this.Width / 500.0 * 380);
                 comboPensFading[p].Top = top - 2;
                 comboPensFading[p].Width = 20;
                 comboPensFading[p].Checked = Root.PenAttr[p].ExtendedProperties.Contains(Root.FADING_PEN);
-                comboPensFading[p].CheckedChanged += comboPensFading_Changed;
-
-                tabPage2.Controls.Add(lbPens[p]);
-				tabPage2.Controls.Add(cbPens[p]);
-				tabPage2.Controls.Add(pboxPens[p]);
-				tabPage2.Controls.Add(comboPensAlpha[p]);
-				tabPage2.Controls.Add(comboPensWidth[p]);
-                tabPage2.Controls.Add(comboPensFading[p]);
             }
 
             FadingTimeEd.Text = Root.TimeBeforeFading.ToString();
@@ -225,20 +217,14 @@ namespace gInk
 			for (int p = 0; p < Root.MaxPenCount; p++)
 			{
 				int top = p * (int)(this.Height * 0.055) + (int)(this.Height * 0.24);
-				lbHotkeyPens[p] = new Label();
 				lbHotkeyPens[p].Left = 20;
 				lbHotkeyPens[p].Width = 80;
 				lbHotkeyPens[p].Top = top;
 
-				hiPens[p] = new HotkeyInputBox();
 				hiPens[p].Hotkey = Root.Hotkey_Pens[p];
 				hiPens[p].Left = 100;
 				hiPens[p].Width = 120;
 				hiPens[p].Top = top;
-				hiPens[p].OnHotkeyChanged += hi_OnHotkeyChanged;
-
-				tabPage3.Controls.Add(lbHotkeyPens[p]);
-				tabPage3.Controls.Add(hiPens[p]);
 			}
 
             AltAsOneCommandCb.Checked = Root.AltAsOneCommand;
@@ -298,7 +284,12 @@ namespace gInk
             FormOptions_LocalReload();
 		}
 
-		private void FormOptions_LocalReload()
+        private void FormOptions_Shown(object sender, EventArgs e)
+        {
+            FormOptions_Load(sender, e);
+        }
+
+        private void FormOptions_LocalReload()
 		{   string shortTxt(string sin)
             {
                 int i = sin.IndexOf("(");
@@ -530,17 +521,21 @@ namespace gInk
 		{
             try
             {
+                ActiveControl.SelectNextControl(ActiveControl, true, true, false, true);
+                ActiveControl.SelectNextControl(ActiveControl, false, true, false, true);
+            }
+            catch { }
+            try
+            {
                 Root.SetHotkey();
             }
             catch { }
-
-            // Save button added
-            //Root.SaveOptions("pens.ini");
-            //Root.SaveOptions("config.ini");
-            //Root.SaveOptions("hotkeys.ini");
-
-            Root.FormOptions = null;
-
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                e.Cancel = true;
+                Hide();
+            }
+            GC.Collect();
         }
 
         private void cbWidthEnabled_CheckedChanged(object sender, EventArgs e)
@@ -723,7 +718,8 @@ namespace gInk
             }
             if (Root.FormOpacity > 0)
             {
-                Root.callForm = new CallForm(Root);
+                if(Root.callForm == null)
+                    Root.callForm = new CallForm(Root);
                 Root.callForm.Show();
                 Root.callForm.Top = Root.FormTop;
                 Root.callForm.Left = Root.FormLeft;
@@ -733,7 +729,7 @@ namespace gInk
             }
             else
             {
-                Root.callForm.Close();
+                Root.callForm.Hide();
             }
         }
 
@@ -760,10 +756,6 @@ namespace gInk
         private void WidthAtPenSelCb_CheckedChanged(object sender, EventArgs e)
         {
             Root.WidthAtPenSel = WidthAtPenSelCb.Checked;
-        }
-
-        private void ToolBarHeight_TextChanged(object sender, EventArgs e)
-        {
         }
 
         private void ToolBarHeight_Validated(object sender, EventArgs e)
@@ -809,6 +801,7 @@ namespace gInk
                 Root.Gray1[3] = at.Color.B;
                 BoardCustColorPnl.BackColor = Color.FromArgb(Root.Gray1[0], at.Color);
             }
+            dlg.Dispose();
         }
 
         private void WsUrlTxt_TextChanged(object sender, EventArgs e)
@@ -853,6 +846,7 @@ namespace gInk
                 Clip2Btn.BackColor = ToolbarDwg.BackColor;
                 Clip3Btn.BackColor = ToolbarDwg.BackColor;
             }
+            dlg.Dispose();
         }
 
         private void AltTabActivateCb_CheckedChanged(object sender, EventArgs e)
@@ -877,6 +871,7 @@ namespace gInk
                     Root.StampFileNames.Add(it.ImageKey);// dlg.Images.Images.Keys[i]);
                 }
             }
+            dlg.Dispose();
         }
 
         private void ClipBtn_Click(object sender, EventArgs e)
@@ -896,6 +891,7 @@ namespace gInk
                 else if ((string)(((Control)sender).Tag) == "3")
                     Root.ImageStamp3 = dlg.ImageStamp;
             }
+            dlg.Dispose();
         }
 
         private void cbLoadSaveEnabled_CheckedChanged(object sender, EventArgs e)
@@ -979,12 +975,6 @@ namespace gInk
 
         private void FormOptions_Leave(object sender, EventArgs e)
         {
-            try
-            {
-                ActiveControl.SelectNextControl(ActiveControl, true, true, false, true);
-                ActiveControl.SelectNextControl(ActiveControl, false, true, false, true);
-            }
-            catch { }
         }
 
         private void cbAllowHotkeyInPointer_CheckedChanged(object sender, EventArgs e)
@@ -1045,6 +1035,12 @@ namespace gInk
         {
             Root.SubToolsEnabled = SubToolsBar_cb.Checked;
         }
+
+        private void FormOptions_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            GC.Collect();
+        }
+
     }
 }
  

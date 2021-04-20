@@ -73,10 +73,10 @@ namespace gInk
 		public Button[] btPen;
 		public Bitmap image_exit, image_clear, image_undo, image_snap, image_penwidth;
 		public Bitmap image_dock, image_dockback;
-		public Bitmap image_pencil, image_highlighter, image_pencil_act, image_highlighter_act;
+		//public Bitmap image_pencil, image_highlighter, image_pencil_act, image_highlighter_act;
 		public Bitmap image_pointer, image_pointer_act;
-		public Bitmap[] image_pen;
-        public Bitmap[] image_pen_act;
+		//public Bitmap[] image_pen;
+        //public Bitmap[] image_pen_act;
         public Bitmap image_eraser_act, image_eraser;
         public Bitmap image_visible_not, image_visible;
         public System.Windows.Forms.Cursor cursorred, cursorsnap, cursorerase;
@@ -129,7 +129,7 @@ namespace gInk
         string ZoomSaveStroke;
         public MouseButtons CurrentMouseButton=MouseButtons.None;
 
-        public string SaveStrokeFile="";
+        public string SaveStrokeFile;
         public List<string> PointerModeSnaps = new List<string>();
 
         public Button[] Btn_SubTools;
@@ -145,19 +145,6 @@ namespace gInk
 				return cp;
 			}
 		}
-        void PreparePenImages(int Transparency, ref Bitmap img_pen, ref Bitmap img_pen_act)
-        {
-            if (Transparency >= 100)
-            {
-                img_pen = image_highlighter;
-                img_pen_act = image_highlighter_act;
-            }
-            else
-            {
-                img_pen = image_pencil;
-                img_pen_act = image_pencil_act;
-            }
-        }
 
         static class NativeMethods
         {
@@ -321,6 +308,73 @@ namespace gInk
 
             //Console.WriteLine("A=" + (DateTime.Now.Ticks/1e7).ToString());
             InitializeComponent();
+
+            //Console.WriteLine("B=" + (DateTime.Now.Ticks/1e7).ToString());
+            ClipartsDlg = new ImageLister(Root);
+            Initializing = true;
+
+            int nbPen = 0;
+            for (int b = 0; b < Root.MaxPenCount; b++)
+                if (Root.PenEnabled[b])
+                    nbPen++;
+            btPen = new Button[Root.MaxPenCount];
+
+            for (int b = 0; b < Root.MaxPenCount; b++)
+            {
+                btPen[b] = new Button();
+                btPen[b].Name = string.Format("pen{0}", b);
+                btPen[b].FlatAppearance.BorderSize = 0;
+                btPen[b].FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+                btPen[b].FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+
+                btPen[b].ContextMenu = new ContextMenu();
+                btPen[b].ContextMenu.Popup += new System.EventHandler(btColor_Click);
+                btPen[b].Click += new System.EventHandler(btColor_Click);
+
+                btPen[b].BackColor = System.Drawing.Color.Transparent;
+                btPen[b].BackgroundImageLayout = ImageLayout.Stretch;
+                this.toolTip.SetToolTip(this.btPen[b], Root.Local.ButtonNamePen[b] + " (" + Root.Hotkey_Pens[b].ToString() + ")");
+
+                btPen[b].MouseDown += gpButtons_MouseDown;
+                btPen[b].MouseMove += gpButtons_MouseMove;
+                btPen[b].MouseUp += gpButtons_MouseUp;
+
+                gpButtons.Controls.Add(btPen[b]);
+            }
+
+            IC = new InkOverlay(this.Handle);
+            IC.CollectionMode = CollectionMode.InkOnly;
+            IC.AutoRedraw = false;
+            IC.DynamicRendering = false;
+            IC.EraserMode = InkOverlayEraserMode.StrokeErase;
+            IC.CursorInRange += IC_CursorInRange;
+            IC.MouseDown += IC_MouseDown;
+            IC.MouseMove += IC_MouseMove;
+            IC.MouseUp += IC_MouseUp;
+            IC.CursorDown += IC_CursorDown;
+            IC.MouseWheel += IC_MouseWheel;
+            IC.Stroke += IC_Stroke;
+
+            foreach (Control ct in gpButtons.Controls)
+            {
+                if (ct.GetType() == typeof(Button))
+                {
+                    ct.MouseDown += new MouseEventHandler(this.btAllButtons_MouseDown);
+                    ct.MouseUp += new MouseEventHandler(this.btAllButtons_MouseUp);
+                    ct.ContextMenu = new ContextMenu();
+                    ct.ContextMenu.Popup += new EventHandler(this.btAllButtons_RightClick);
+                }
+            }
+            PenModifyDlg = new PenModifyDlg(Root); // It seems to be a little long to build so we prepare it.
+            
+            Btn_SubTools = new Button[] { Btn_SubTool0, Btn_SubTool1, Btn_SubTool2, Btn_SubTool3, Btn_SubTool4, Btn_SubTool5, Btn_SubTool6, Btn_SubTool7 };
+
+            Initialize();
+        }
+
+        public void Initialize()
+        {
+            Console.WriteLine("A=" + (DateTime.Now.Ticks / 1e7).ToString());
             FadingList.Clear();
             if (Root.WindowRect.Width <= 0 || Root.WindowRect.Height <= 0)
             {
@@ -341,19 +395,34 @@ namespace gInk
                 PrimaryTop = 0;  //             Screen.PrimaryScreen.Bounds.Top - SystemInformation.VirtualScreen.Top;
             }
 
-            ZoomImage = new Bitmap(Root.ZoomWidth, Root.ZoomHeight);
-            ZoomImage2 = new Bitmap(Root.ZoomWidth, Root.ZoomHeight);
+            try
+            {
+                ZoomImage.Dispose();
+            }
+            catch { }
+            finally
+            {
+                ZoomImage = new Bitmap(Root.ZoomWidth, Root.ZoomHeight);
+            }
+            try
+            {
+                ZoomImage2.Dispose();
+            }
+            catch { }
+            finally
+            {
+                ZoomImage2 = new Bitmap(Root.ZoomWidth, Root.ZoomHeight);
+            }
             ZoomForm.pictureBox1.BackgroundImage = ZoomImage;
             ZoomForm.pictureBox2.BackgroundImage = ZoomImage2;
             ZoomFormRePosX = ZoomImage.Width / 2;
             ZoomFormRePosY = ZoomImage.Height / 2;
-            ZoomForm.Width = (int)(Root.ZoomWidth*Root.ZoomScale);
-            ZoomForm.Height = (int)(Root.ZoomHeight*Root.ZoomScale);
-            ZoomSaveStroke = Path.GetFullPath(Environment.ExpandEnvironmentVariables("%temp%/ZoomSave.strokes.txt")).Replace('\\','/');
+            ZoomForm.Width = (int)(Root.ZoomWidth * Root.ZoomScale);
+            ZoomForm.Height = (int)(Root.ZoomHeight * Root.ZoomScale);
+            ZoomSaveStroke = Path.GetFullPath(Environment.ExpandEnvironmentVariables("%temp%/ZoomSave.strokes.txt")).Replace('\\', '/');
 
-            //Console.WriteLine("B=" + (DateTime.Now.Ticks/1e7).ToString());
-            ClipartsDlg = new ImageLister(Root);    
-            Initializing = true;
+            ClipartsDlg.Initialize();
+
             //loading default params
             TextFont = Root.TextFont;
             TextBold = Root.TextBold;
@@ -370,7 +439,7 @@ namespace gInk
 
             longClickTimer.Interval = (int)(Root.LongClickTime * 1000 + 100);
 
-            this.DoubleBuffered = true;
+            //usefull? this.DoubleBuffered = true;
 
             int nbPen = 0;
             for (int b = 0; b < Root.MaxPenCount; b++)
@@ -386,20 +455,15 @@ namespace gInk
             int dim3 = (int)(dim * InterButtonGap);
             int dim4 = dim1 + dim3;
             int dim4s = dim1s + dim3;
-            /*            const double NormSizePercent = 0.85;
-            const double SmallSizePercent = 0.44;
-            const double TopPercent = 0.06;
-            const double SmallButtonNext = 0.44;
-            const double InterButtonGap = NormSizePercent * .05;
-            */
-            if (Root.ToolbarOrientation<=Orientation.Horizontal)
+
+            if (Root.ToolbarOrientation <= Orientation.Horizontal)
             {
                 gpButtons.Height = dim;
-                gpButtons.Width = (int)((dim1 *.5 + dim3) +(nbPen * dim4 + (Root.ToolsEnabled ? (6*dim4s +dim4s) : 0) + (Root.EraserEnabled ? dim4 : 0) + (Root.PanEnabled ? dim4 : 0) + (Root.PointerEnabled ? dim4 : 0)
+                gpButtons.Width = (int)((dim1 * .5 + dim3) + (nbPen * dim4 + (Root.ToolsEnabled ? (6 * dim4s + dim4s) : 0) + (Root.EraserEnabled ? dim4 : 0) + (Root.PanEnabled ? dim4 : 0) + (Root.PointerEnabled ? dim4 : 0)
                                                                          + (Root.PenWidthEnabled ? dim4 : 0) + (Root.InkVisibleEnabled ? dim4 : 0) + (Root.SnapEnabled ? dim4 : 0)
-                                                                         + (Root.UndoEnabled ? dim4 : 0) + (Root.ClearEnabled ? dim4 : 0) + (Root.LoadSaveEnabled ? dim4s : 0) 
-                                                                         + ((Root.VideoRecordMode!=VideoRecordMode.NoVideo) ? dim4 : 0)
-                                                                         + dim1 ));
+                                                                         + (Root.UndoEnabled ? dim4 : 0) + (Root.ClearEnabled ? dim4 : 0) + (Root.LoadSaveEnabled ? dim4s : 0)
+                                                                         + ((Root.VideoRecordMode != VideoRecordMode.NoVideo) ? dim4 : 0)
+                                                                         + dim1));
             }
             else //Vertical
             {
@@ -417,7 +481,7 @@ namespace gInk
             {
                 btDock.Height = dim1;
                 btDock.Width = dim1 / 2;
-                btDock.BackgroundImage = getImgFromDiskOrRes(Root.Docked?"dockback":"dock");
+                btDock.BackgroundImage = getImgFromDiskOrRes(Root.Docked ? "dockback" : "dock");
                 btDock.Top = dim2;
                 btDock.Left = 0;
             }
@@ -427,7 +491,7 @@ namespace gInk
                 btDock.Width = dim1 / 2;
                 btDock.BackgroundImage = getImgFromDiskOrRes(!Root.Docked ? "dockback" : "dock");
                 btDock.Top = dim2;
-                btDock.Left = gpButtons.Width-btDock.Width;
+                btDock.Left = gpButtons.Width - btDock.Width;
             }
             else if (Root.ToolbarOrientation == Orientation.toDown)
             {
@@ -447,17 +511,9 @@ namespace gInk
             }
 
             Button prev = btDock;
-            btPen = new Button[Root.MaxPenCount];
-            image_pen = new Bitmap[Root.MaxPenCount];
-            image_pen_act = new Bitmap[Root.MaxPenCount];
 
             for (int b = 0; b < Root.MaxPenCount; b++)
             {
-                btPen[b] = new Button();
-                btPen[b].Name = string.Format("pen{0}", b);
-                image_pen[b] = new Bitmap(btPen[b].Width, btPen[b].Height);
-                image_pen_act[b] = new Bitmap(btPen[b].Width, btPen[b].Height);
-                PreparePenImages(Root.PenAttr[b].Transparency, ref image_pen[b], ref image_pen_act[b]);
 
                 if (Root.PenEnabled[b])
                 {
@@ -465,32 +521,16 @@ namespace gInk
                     btPen[b].Height = dim1;
 
                     SetButtonPosition(prev, btPen[b], dim3);
-                    //btPen[b].Top = (int)(gpButtons.Height * 0.08);
-                    btPen[b].FlatAppearance.BorderSize = 0;
-                    btPen[b].FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
-                    btPen[b].FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-
-                    btPen[b].ContextMenu = new ContextMenu();
-                    btPen[b].ContextMenu.Popup += new System.EventHandler(this.btColor_Click);
-                    btPen[b].Click += new System.EventHandler(this.btColor_Click);
-
-                    btPen[b].BackColor = System.Drawing.Color.Transparent;
-                    btPen[b].BackgroundImageLayout = ImageLayout.Stretch;
                     this.toolTip.SetToolTip(this.btPen[b], Root.Local.ButtonNamePen[b] + " (" + Root.Hotkey_Pens[b].ToString() + ")");
 
-                    btPen[b].MouseDown += gpButtons_MouseDown;
-                    btPen[b].MouseMove += gpButtons_MouseMove;
-                    btPen[b].MouseUp += gpButtons_MouseUp;
-
                     btPen[b].Visible = true;
-                    gpButtons.Controls.Add(btPen[b]);
                     prev = btPen[b];
                 }
                 else
                     btPen[b].Visible = false;
             }
 
-            if(root.ToolsEnabled)
+            if (Root.ToolsEnabled)
             {
                 // background images loaded/applied in SelectTool
                 btHand.Height = dim1s;
@@ -558,7 +598,7 @@ namespace gInk
                 btClip3.Visible = false;
             }
 
-            if (root.EraserEnabled)
+            if (Root.EraserEnabled)
             {
                 btEraser.Height = dim1;
                 btEraser.Width = dim1;
@@ -571,7 +611,7 @@ namespace gInk
             else
                 btEraser.Visible = false;
 
-            if (root.PanEnabled)
+            if (Root.PanEnabled)
             {
                 btPan.Height = dim1;
                 btPan.Width = dim1;
@@ -582,7 +622,7 @@ namespace gInk
             else
                 btPan.Visible = false;
 
-            if (root.ToolsEnabled)
+            if (Root.ToolsEnabled)
             {
                 btMagn.Height = dim1s;
                 btMagn.Width = dim1s;
@@ -593,7 +633,7 @@ namespace gInk
             else
                 btMagn.Visible = false;
 
-            if (root.ZoomEnabled>0)
+            if (Root.ZoomEnabled > 0)
             {
                 btZoom.Height = dim1s;
                 btZoom.Width = dim1s;
@@ -601,9 +641,9 @@ namespace gInk
                 SetSmallButtonNext(btMagn, btZoom, dim2s);
             }
             else
-                btZoom.Visible=false;
+                btZoom.Visible = false;
 
-            if (root.PointerEnabled)
+            if (Root.PointerEnabled)
             {
                 btPointer.Height = dim1;
                 btPointer.Width = dim1;
@@ -615,7 +655,7 @@ namespace gInk
             else
                 btPointer.Visible = false;
 
-            if (root.PenWidthEnabled)
+            if (Root.PenWidthEnabled)
             {
                 btPenWidth.Height = dim1;
                 btPenWidth.Width = dim1;
@@ -626,7 +666,7 @@ namespace gInk
             else
                 btPenWidth.Visible = false;
 
-            if (root.InkVisibleEnabled)
+            if (Root.InkVisibleEnabled)
             {
                 btInkVisible.Height = dim1;
                 btInkVisible.Width = dim1;
@@ -639,7 +679,7 @@ namespace gInk
             else
                 btInkVisible.Visible = false;
 
-            if (root.SnapEnabled)
+            if (Root.SnapEnabled)
             {
                 btSnap.Height = dim1;
                 btSnap.Width = dim1;
@@ -650,7 +690,7 @@ namespace gInk
             else
                 btSnap.Visible = false;
 
-            if (root.UndoEnabled)
+            if (Root.UndoEnabled)
             {
                 btUndo.Height = dim1;
                 btUndo.Width = dim1;
@@ -661,7 +701,7 @@ namespace gInk
             else
                 btUndo.Visible = false;
 
-            if (root.ClearEnabled)
+            if (Root.ClearEnabled)
             {
                 btClear.Height = dim1;
                 btClear.Width = dim1;
@@ -672,7 +712,7 @@ namespace gInk
             else
                 btClear.Visible = false;
 
-            if (root.LoadSaveEnabled)
+            if (Root.LoadSaveEnabled)
             {
                 btSave.Height = dim1s;
                 btSave.Width = dim1s;
@@ -690,7 +730,7 @@ namespace gInk
                 btLoad.Visible = false;
             }
 
-            if (root.VideoRecordMode != VideoRecordMode.NoVideo)
+            if (Root.VideoRecordMode != VideoRecordMode.NoVideo)
             {
                 btVideo.Height = dim1;
                 btVideo.Width = dim1;
@@ -702,7 +742,15 @@ namespace gInk
                     if (Root.ObsRecvTask == null || Root.ObsRecvTask.IsCompleted)
                     {
                         Root.VideoRecordWindowInProgress = true;
-                        Root.ObsRecvTask = Task.Run(() => ReceiveObsMesgs(this));
+                        try
+                        {
+                            Root.ObsRecvTask.Dispose();
+                        }
+                        catch { }
+                        finally
+                        {
+                            Root.ObsRecvTask = Task.Run(() => ReceiveObsMesgs(this));   
+                        }
                     }
                     while (Root.VideoRecordWindowInProgress)
                         Task.Delay(50);
@@ -740,31 +788,31 @@ namespace gInk
                     switch (Root.ToolbarOrientation)
                     {
                         case Orientation.toLeft:
-                        gpButtonsLeft = Screen.PrimaryScreen.WorkingArea.Right - gpButtons.Width + PrimaryLeft;
-                        gpButtonsTop = Screen.PrimaryScreen.WorkingArea.Bottom - gpButtons.Height - 15 + PrimaryTop;
-                        gpButtons.Left = gpButtonsLeft + gpButtons.Width;
-                        gpButtons.Top = gpButtonsTop;
-                        VisibleToolbar.Width = 0;
-                        break;
-                    case Orientation.toRight:
-                        gpButtonsLeft = Screen.PrimaryScreen.WorkingArea.Left + PrimaryLeft;
-                        gpButtonsTop = Screen.PrimaryScreen.WorkingArea.Bottom - gpButtons.Height - 15 + PrimaryTop;
-                        gpButtons.Left = gpButtonsLeft;
-                        gpButtons.Top = gpButtonsTop;
-                        VisibleToolbar.Width = 0;
-                        break;
-                    case Orientation.toUp:
-                        gpButtonsLeft = Screen.PrimaryScreen.WorkingArea.Right - gpButtons.Width - 15 + PrimaryLeft;
-                        gpButtonsTop = Screen.PrimaryScreen.WorkingArea.Bottom - gpButtons.Height + PrimaryTop;
-                        gpButtons.Left = gpButtonsLeft;
-                        gpButtons.Top = gpButtonsTop + gpButtons.Height;
-                        VisibleToolbar.Height = 0;
-                        break;
-                    case Orientation.toDown:
-                        gpButtonsLeft = Screen.PrimaryScreen.WorkingArea.Right - gpButtons.Width - 15 + PrimaryLeft;
-                        gpButtonsTop = Screen.PrimaryScreen.WorkingArea.Top + PrimaryTop;
-                        gpButtons.Left = gpButtonsLeft;
-                        gpButtons.Top = gpButtonsTop;
+                            gpButtonsLeft = Screen.PrimaryScreen.WorkingArea.Right - gpButtons.Width + PrimaryLeft;
+                            gpButtonsTop = Screen.PrimaryScreen.WorkingArea.Bottom - gpButtons.Height - 15 + PrimaryTop;
+                            gpButtons.Left = gpButtonsLeft + gpButtons.Width;
+                            gpButtons.Top = gpButtonsTop;
+                            VisibleToolbar.Width = 0;
+                            break;
+                        case Orientation.toRight:
+                            gpButtonsLeft = Screen.PrimaryScreen.WorkingArea.Left + PrimaryLeft;
+                            gpButtonsTop = Screen.PrimaryScreen.WorkingArea.Bottom - gpButtons.Height - 15 + PrimaryTop;
+                            gpButtons.Left = gpButtonsLeft;
+                            gpButtons.Top = gpButtonsTop;
+                            VisibleToolbar.Width = 0;
+                            break;
+                        case Orientation.toUp:
+                            gpButtonsLeft = Screen.PrimaryScreen.WorkingArea.Right - gpButtons.Width - 15 + PrimaryLeft;
+                            gpButtonsTop = Screen.PrimaryScreen.WorkingArea.Bottom - gpButtons.Height + PrimaryTop;
+                            gpButtons.Left = gpButtonsLeft;
+                            gpButtons.Top = gpButtonsTop + gpButtons.Height;
+                            VisibleToolbar.Height = 0;
+                            break;
+                        case Orientation.toDown:
+                            gpButtonsLeft = Screen.PrimaryScreen.WorkingArea.Right - gpButtons.Width - 15 + PrimaryLeft;
+                            gpButtonsTop = Screen.PrimaryScreen.WorkingArea.Top + PrimaryTop;
+                            gpButtons.Left = gpButtonsLeft;
+                            gpButtons.Top = gpButtonsTop;
                             VisibleToolbar.Height = 0;
                             break;
                     }
@@ -782,7 +830,7 @@ namespace gInk
                     else
                     {
                         gpButtonsLeft = this.ClientRectangle.Right - gpButtons.Width;
-                        gpButtonsTop = this.ClientRectangle.Top ;
+                        gpButtonsTop = this.ClientRectangle.Top;
                         gpButtons.Left = gpButtonsLeft;
                         gpButtons.Top = gpButtonsTop;
                         VisibleToolbar.Height = 0;
@@ -824,33 +872,29 @@ namespace gInk
             pboxPenWidthIndicator.Left = (int)Math.Sqrt(Root.GlobalPenWidth * 30);
             gpPenWidth.Controls.Add(pboxPenWidthIndicator);
 
-            IC = new InkOverlay(this.Handle);
-            IC.CollectionMode = CollectionMode.InkOnly;
-            IC.AutoRedraw = false;
-            IC.DynamicRendering = false;
-            IC.EraserMode = InkOverlayEraserMode.StrokeErase;
-            IC.CursorInRange += IC_CursorInRange;
-            IC.MouseDown += IC_MouseDown;
-            IC.MouseMove += IC_MouseMove;
-            IC.MouseUp += IC_MouseUp;
-            IC.CursorDown += IC_CursorDown;
-            IC.MouseWheel += IC_MouseWheel;
-            IC.Stroke += IC_Stroke;
-            /*IC.DefaultDrawingAttributes.Width = 80;
-            IC.DefaultDrawingAttributes.Transparency = 30;
-            IC.DefaultDrawingAttributes.AntiAliased = true;
-            IC.DefaultDrawingAttributes.FitToCurve = true;*/
-
-            cursorred = getCursFromDiskOrRes("cursorarrow", System.Windows.Forms.Cursors.NoMove2D);
-            cursorerase = getCursFromDiskOrRes("cursoreraser", System.Windows.Forms.Cursors.No);
+            try
+            {
+                cursorred.Dispose();
+            }
+            catch { }
+            finally
+            {
+                cursorred = getCursFromDiskOrRes("cursorarrow", System.Windows.Forms.Cursors.NoMove2D);
+            }
+            try
+            {
+                cursorerase.Dispose();
+            }
+            catch { }
+            finally
+            {
+                cursorerase = getCursFromDiskOrRes("cursoreraser", System.Windows.Forms.Cursors.No);
+            }
 
             IC.Enabled = true;
 
             LastTickTime = DateTime.Parse("1987-01-01");
             tiSlide.Enabled = true;
-
-            ToTransparent();
-            ToTopMost();
 
             this.toolTip.SetToolTip(this.btDock, Root.Local.ButtonNameDock + " (" + Root.Hotkey_DockUndock.ToString() + ")");
             this.toolTip.SetToolTip(this.btPenWidth, Root.Local.ButtonNamePenwidth);
@@ -877,26 +921,10 @@ namespace gInk
             this.toolTip.SetToolTip(this.btClip1, Root.Local.ButtonNameClipArt + "-1 (" + Root.Hotkey_ClipArt1.ToString() + ")");
             this.toolTip.SetToolTip(this.btClip2, Root.Local.ButtonNameClipArt + "-2 (" + Root.Hotkey_ClipArt2.ToString() + ")");
             this.toolTip.SetToolTip(this.btClip3, Root.Local.ButtonNameClipArt + "-3 (" + Root.Hotkey_ClipArt3.ToString() + ")");
-            this.toolTip.SetToolTip(this.btSave, String.Format(Root.Local.SaveStroke,""));
-            this.toolTip.SetToolTip(this.btLoad, String.Format(Root.Local.LoadStroke,""));
+            this.toolTip.SetToolTip(this.btSave, String.Format(Root.Local.SaveStroke, ""));
+            this.toolTip.SetToolTip(this.btLoad, String.Format(Root.Local.LoadStroke, ""));
 
-            foreach (Control ct in gpButtons.Controls)
-            {
-                if (ct.GetType() == typeof(Button))
-                {
-                    //Console.WriteLine("evt : " + ct.Name);
-                    ct.MouseDown += new MouseEventHandler(this.btAllButtons_MouseDown);
-                    ct.MouseUp += new MouseEventHandler(this.btAllButtons_MouseUp);
-                    ct.ContextMenu = new ContextMenu();
-                    ct.ContextMenu.Popup += new EventHandler(this.btAllButtons_RightClick);
-                }
-            }
-            PenModifyDlg = new PenModifyDlg(Root); // It seems to be a little long to build so we prepare it.
-            SelectPen(0);
-            IC.DefaultDrawingAttributes.Width = Root.PenAttr[0].Width; //required to ensure width
-            SelectTool(0, 0); // Select Hand Drawing by Default
-
-            if (Root.ToolbarOrientation <= Orientation.Horizontal )
+            if (Root.ToolbarOrientation <= Orientation.Horizontal)
             {
                 gpSubTools.Height = dim;
                 gpSubTools.Width = dim1 * 8 + dim3 * 8 + dim1s;
@@ -906,38 +934,47 @@ namespace gInk
                 gpSubTools.Width = dim;
                 gpSubTools.Height = dim1 * 8 + dim3 * 8 + dim1s;
             }
-            
-            Btn_SubTools = new Button[] { Btn_SubTool0, Btn_SubTool1, Btn_SubTool2, Btn_SubTool3, Btn_SubTool4, Btn_SubTool5, Btn_SubTool6, Btn_SubTool7 };
+
             Btn_SubTool0.Height = dim1;
             Btn_SubTool0.Width = dim1;
             int o;
-            if ((Root.ToolbarOrientation == Orientation.toLeft)|| (Root.ToolbarOrientation == Orientation.toRight))
+            if ((Root.ToolbarOrientation == Orientation.toLeft) || (Root.ToolbarOrientation == Orientation.toRight))
             {
                 Btn_SubTool0.Top = dim2;
                 Btn_SubTool0.Left = 0;
                 o = Orientation.toLeft;
             }
-            else 
+            else
             {
                 Btn_SubTool0.Top = 0;
                 Btn_SubTool0.Left = dim2;
                 o = Orientation.toUp;
             }
             prev = Btn_SubTool0;
-            for(int i=1; i< Btn_SubTools.Length ; i++)
+            for (int i = 1; i < Btn_SubTools.Length; i++)
             {
                 Btn_SubTools[i].Width = dim1;
                 Btn_SubTools[i].Height = dim1;
-                SetButtonPosition(prev, Btn_SubTools[i], dim3,o);
+                SetButtonPosition(prev, Btn_SubTools[i], dim3, o);
                 prev = Btn_SubTools[i];
             }
             Btn_SubToolClose.Height = dim1s;
             Btn_SubToolClose.Width = dim1s;
-            SetButtonPosition(prev, Btn_SubToolClose, dim3,o);
+            SetButtonPosition(prev, Btn_SubToolClose, dim3, o);
             Btn_SubToolPin.Height = dim1s;
             Btn_SubToolPin.Width = dim1s;
-            SetSmallButtonNext(Btn_SubToolClose, Btn_SubToolPin, dim2s,o);
-            //Console.WriteLine("C=" + (DateTime.Now.Ticks/1e7).ToString());        
+            SetSmallButtonNext(Btn_SubToolClose, Btn_SubToolPin, dim2s, o);
+
+            ToTransparent();
+            ToTopMost();
+
+            SelectPen(0);
+            IC.DefaultDrawingAttributes.Width = Root.PenAttr[0].Width; //required to ensure width
+            SelectTool(0, 0); // Select Hand Drawing by Default
+
+            SaveStrokeFile = "";
+
+            Console.WriteLine("C=" + (DateTime.Now.Ticks/1e7).ToString());        
         }
 
         private void SetSubBarPosition(Panel Tb, Button RefButton)
@@ -957,7 +994,6 @@ namespace gInk
                     Tb.Left = gpButtonsLeft + gpButtonsWidth + 10;
             }
         }
-
 
         private void setPenWidthBarPosition()
         {
@@ -1036,7 +1072,7 @@ namespace gInk
         {
             if (msg.Msg == 0x001C) //WM_ACTIVATEAPP : generated through alt+tab
             {
-                if (Root.FormDisplay != null)
+                if (Root.FormDisplay != null && Root.FormDisplay.Visible)
                 {
                     //Console.WriteLine(Root.FormDisplay.HasFocus() ? "WM_ACT" : "!WM");
                     Root.FormDisplay.DrawBorder(Root.FormDisplay.HasFocus());
@@ -1642,7 +1678,6 @@ namespace gInk
             {
                 //Stroke st = e.Stroke;// IC.Ink.Strokes[IC.Ink.Strokes.Count-1];
                 Stroke st = e.Stroke;// IC.Ink.Strokes[IC.Ink.Strokes.Count-1];
-                int i = 0;
                 try
                 {
                     //if (e.Stroke.GetPoint(0).Equals(e.Stroke.GetPoint(1)) || e.Stroke.GetPoint(0).Equals(e.Stroke.GetPoint(2)))
@@ -3046,10 +3081,11 @@ namespace gInk
                     return false;
         }
 
+        int Tick;
         private void tiSlide_Tick(object sender, EventArgs e)
         {
             Initializing = false;
-
+            Tick++;
             if (ZoomForm.Visible && (Root.ZoomContinous||MousePosition.X != ZoomX || MousePosition.Y != ZoomY))
             {
                 ZoomX = MousePosition.X;
@@ -3080,11 +3116,20 @@ namespace gInk
                     }
                     //ZoomForm.Refresh();
                 }
+                img.Dispose();
             }
             if (Root.FFmpegProcess!=null && Root.FFmpegProcess.HasExited)
             {
                 Root.VideoRecInProgress = VideoRecInProgress.Stopped;
-                btVideo.BackgroundImage = getImgFromDiskOrRes("VidStop", ImageExts);
+                try
+                {
+                    btVideo.BackgroundImage.Dispose();
+                }
+                catch { }
+                finally
+                {
+                    btVideo.BackgroundImage = getImgFromDiskOrRes("VidStop", ImageExts);
+                }
                 Root.UponButtonsUpdate |= 0x2;
             }
 
@@ -3938,7 +3983,7 @@ namespace gInk
                     {
                         if ((Root.ToolSelected == Tools.Move) || (Root.ToolSelected == Tools.Copy) || (Root.ToolSelected == Tools.Edit)) // if move
                             SelectTool(0);
-                        PreparePenImages(Root.PenAttr[b].Transparency, ref image_pen[b], ref image_pen_act[b]);
+                        //PreparePenImages(Root.PenAttr[b].Transparency, ref image_pen[b], ref image_pen_act[b]);
                         //btPen[b].Image = image_pen_act[b];
                         btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, false,
                                                                 Root.PenAttr[b].ExtendedProperties.Contains(Root.FADING_PEN));// image_pen[b];

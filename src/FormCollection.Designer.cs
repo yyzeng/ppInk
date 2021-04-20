@@ -1052,7 +1052,6 @@ namespace gInk
         public System.Windows.Forms.Button btMagn;
 
         public System.Windows.Forms.Button btEraser;
-		private System.Windows.Forms.Timer tiSlide;
 		public System.Windows.Forms.Button btDock;
 		public System.Windows.Forms.Button btSnap;
 		public System.Windows.Forms.Button btPointer;
@@ -1062,7 +1061,6 @@ namespace gInk
 		private System.Windows.Forms.PictureBox pboxPenWidthIndicator;
 		public System.Windows.Forms.Button btPan;
 		public System.Windows.Forms.Button btInkVisible;
-        private System.Windows.Forms.Timer longClickTimer;
         public System.Windows.Forms.Button btVideo;
         public System.Windows.Forms.FontDialog FontDlg;
         public System.Windows.Forms.Button btStop;
@@ -1084,6 +1082,8 @@ namespace gInk
         public System.Windows.Forms.Button Btn_SubToolClose;
         public System.Windows.Forms.Button Btn_SubToolPin;
         public System.Windows.Forms.Panel gpSubTools;
+        public System.Windows.Forms.Timer tiSlide;
+        public System.Windows.Forms.Timer longClickTimer;
     }
 }
 

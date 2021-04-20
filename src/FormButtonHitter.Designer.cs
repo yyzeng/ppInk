@@ -59,8 +59,8 @@ namespace gInk
 
 		}
 
-		#endregion
+        #endregion
 
-		private System.Windows.Forms.Timer timer1;
-	}
+        public System.Windows.Forms.Timer timer1;
+    }
 }

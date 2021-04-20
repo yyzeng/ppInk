@@ -78,7 +78,7 @@ namespace gInk
                 //Keys key = (Keys)(((int)m.LParam >> 16) & 0xFFFF);                  // The key of the hotkey that was pressed.
                 //int modifier = (int)m.LParam & 0xFFFF;       // The modifier of the hotkey that was pressed.
                 //int id = m.WParam.ToInt32();                                        // The id of the hotkey that was pressed.
-                bool activePointer = (m.Msg == 0x0312 && Root.FormCollection != null);
+                bool activePointer = (m.Msg == 0x0312 && (Root.FormCollection != null && Root.FormCollection.Visible));
                 Root.callshortcut();
                 if (activePointer)           // StartInkingMsg is received twice, therefore we have to froce pointerMode at that time...
                 {
@@ -376,9 +376,12 @@ namespace gInk
 			TestMessageFilter mf = new TestMessageFilter(this);
 			Application.AddMessageFilter(mf);
 
-			FormCollection = null;
-			FormDisplay = null;
-
+			//FormCollection = null;
+			//FormDisplay = null;
+            FormCollection = new FormCollection(this);
+            FormButtonHitter = new FormButtonHitter(this);
+            FormDisplay = new FormDisplay(this);  // FormDisplay is created at the end to ensure other objects are created.
+            UndoStrokes = new Ink[8];
             // to be done once only
             //ReadOptions("pens.ini");
             //ReadOptions("config.ini");
@@ -389,10 +392,10 @@ namespace gInk
         public void callshortcut()
         {
             TagNumbering = 1; //reset tag counter 
-            if (FormCollection == null && FormDisplay == null)
+            if ((FormCollection == null || !FormCollection.Visible) && (FormDisplay == null || !FormDisplay.Visible))
             {
-                //if (FormOpacity > 0) callForm.Hide();
-                if (FormOpacity > 0) callForm.Close();
+                if (FormOpacity > 0) callForm.Hide();
+                //if (FormOpacity > 0) callForm.Close();
                 StartInk();
                 if (OpenIntoSnapMode)
                     FormCollection.btSnap_Click(null,null);
@@ -425,7 +428,7 @@ namespace gInk
 			if (e.Button == MouseButtons.Left)
 			{
 
-                if (FormDisplay == null && FormCollection == null)
+                if ((FormDisplay == null || !FormDisplay.Visible) && (FormCollection == null || !FormCollection.Visible))
 				{
                     callshortcut();
                     //ReadOptions("pens.ini");
@@ -440,17 +443,27 @@ namespace gInk
 
 		public void StartInk()
 		{
-			if (FormDisplay != null || FormCollection != null)
+            /*
+            if (FormCollection == null)
+                FormCollection = new FormCollection(this);
+            if (FormButtonHitter == null)
+                FormButtonHitter = new FormButtonHitter(this);
+            if (FormDisplay == null)
+                FormDisplay = new FormDisplay(this);  // FormDisplay is created at the end to ensure other objects are created.
+            if (UndoStrokes == null)
+                UndoStrokes = new Ink[8];
+            */
+            if (FormDisplay.Visible|| FormCollection.Visible)
 				return;
+            FormCollection.Initialize();
+            FormButtonHitter.Initialize();
+            FormDisplay.Initialize();
 
             Docked = false;
             PointerMode = false; // we have to reset pointer mode when starting drawing;
             ResizeDrawingWindow = false;
             UponTakingSnap = false;
 
-            FormCollection = new FormCollection(this);
-			FormButtonHitter = new FormButtonHitter(this);
-			FormDisplay = new FormDisplay(this);  // FormDisplay is created at the end to ensure other objects are created.
 			if (CurrentPen < 0)
 				CurrentPen = 0;
 			if (!PenEnabled[CurrentPen])
@@ -468,33 +481,53 @@ namespace gInk
 			FormCollection.Show();
 			FormDisplay.DrawButtons(true);
 
-			if (UndoStrokes == null)
-			{
-				UndoStrokes = new Ink[8];
-				UndoStrokes[0] = FormCollection.IC.Ink.Clone();
-				UndoDepth = 0;
-				UndoP = 0;
-			}
+            for (int i = 0; i < UndoStrokes.Length; i++)
+                UndoStrokes[i] = null;
+            UndoStrokes[0] = FormCollection.IC.Ink.Clone();
+            UndoDepth = 0;
+            UndoP = 0;
 
-			//UponUndoStrokes = FormCollection.IC.Ink.Clone();
-		}
-		public void StopInk()
+        }
+        public void StopInk()
 		{
-            try { FormCollection.Close();  } catch { }
-            try { FormDisplay.Close(); } catch { }
-			try { FormButtonHitter.Close(); } catch { }
+            try { FormCollection.Hide(); FormCollection.tiSlide.Enabled = false; } catch { }
+            try { FormDisplay.Hide(); FormDisplay.timer1.Enabled = false; } catch { }
+			try { FormButtonHitter.Hide(); FormButtonHitter.timer1.Enabled = false; } catch { }
 
-            GC.Collect();
 
-            FormCollection = null;
+            //FormCollection = null;
             //  The FormCollection is destroyed, therefore all following calls to the form and its controls will not hit
-            ObsCancel.Cancel();
-            ObsRecvTask = null;
-            ObsWs = null;
-            ObsCancel = new CancellationTokenSource();
+            try
+            {
+                ObsRecvTask.Dispose();
+            }
+            catch { }
+            finally
+            {
+                ObsRecvTask = null;
+            }
+            try
+            {
+                ObsWs.Dispose();
+            }
+            catch { }
+            finally
+            {
+                ObsWs = null;
+            }
+            try
+            {
+                ObsCancel.Cancel();
+                ObsCancel.Dispose();
+            }
+            catch { }
+            finally
+            {
+                ObsCancel = new CancellationTokenSource();
+            }
 
-            FormDisplay = null;
-            FormButtonHitter = null;
+            //FormDisplay = null;
+            //FormButtonHitter = null;
 
             if (UponBalloonSnap)
 			{
@@ -504,7 +537,8 @@ namespace gInk
             //if (FormOpacity > 0) callForm.Show();
             if (FormOpacity > 0 && !ResizeDrawingWindow)
             {
-                callForm = new CallForm(this);
+                if (callForm == null)
+                    callForm = new CallForm(this);
                 callForm.Show();
                 callForm.Top = FormTop;
                 callForm.Left = FormLeft;
@@ -512,9 +546,11 @@ namespace gInk
                 callForm.Height = FormWidth;
                 callForm.Opacity = FormOpacity / 100.0;
             }
+
+            GC.Collect();
         }
 
-            public void ClearInk()
+        public void ClearInk()
 		{
 			FormCollection.IC.Ink.DeleteStrokes();
             FormDisplay.ClearCanvus();
@@ -611,7 +647,7 @@ namespace gInk
 
 		public void Dock()
 		{
-			if (FormDisplay == null || FormCollection == null)
+            if ((FormDisplay == null || !FormDisplay.Visible) || (FormCollection == null || !FormCollection.Visible)) 
 				return;
 
 			Docked = true;
@@ -629,7 +665,7 @@ namespace gInk
 
 		public void UnDock()
 		{
-			if (FormDisplay == null || FormCollection == null)
+            if ((FormDisplay == null || !FormDisplay.Visible) || (FormCollection == null || !FormCollection.Visible))
 				return;
 
 			Docked = false;
@@ -651,7 +687,7 @@ namespace gInk
 
 			PointerMode = true;
             FormDisplay.DrawBorder(false);
-			FormCollection.ToThrough();     
+			FormCollection.ToThrough();
 			FormButtonHitter.Show();
             FormButtonHitter.timer1_Tick(null,null); // Force Size recomputation for alt+tab processing
         }
@@ -664,7 +700,7 @@ namespace gInk
             FormCollection.AddPointerSnaps();
 			FormButtonHitter.Hide();
 			FormCollection.ToUnThrough();
-			FormCollection.ToTopMost();
+            FormCollection.ToTopMost();
 			FormCollection.Activate();
 			PointerMode = false;
 		}
@@ -1759,11 +1795,11 @@ namespace gInk
             //ReadOptions("pens.ini");
             //ReadOptions("config.ini");
             //ReadOptions("hotkeys.ini");
-            if (FormOptions != null)
+            if (FormOptions == null)
+                FormOptions = new FormOptions(this);
+            //if (FormDisplay != null || FormCollection != null)
+            if (FormDisplay.Visible|| FormCollection.Visible)
                 return;
-            if (FormDisplay != null || FormCollection != null)
-                return;
-            FormOptions = new FormOptions(this);
 			FormOptions.Show();
 		}
 

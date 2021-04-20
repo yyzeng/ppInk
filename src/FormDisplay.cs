@@ -69,7 +69,13 @@ namespace gInk
 
             InitializeComponent();
 
-            if(Root.WindowRect.Width <= 0 || Root.WindowRect.Height <= 0)
+            Initialize();
+		}
+
+        public void Initialize() 
+        /// part of the Constructor to be called everytime the window is displayed at startInking
+        {
+            if (Root.WindowRect.Width <= 0 || Root.WindowRect.Height <= 0)
             {
                 this.Left = SystemInformation.VirtualScreen.Left;
                 this.Top = SystemInformation.VirtualScreen.Top;
@@ -86,33 +92,35 @@ namespace gInk
 
             Bitmap InitCanvus = new Bitmap(this.Width, this.Height);
             Bitmap Init2Canvus = new Bitmap(this.Width, this.Height);
-			Canvus = InitCanvus.GetHbitmap(Color.FromArgb(0));
-			OneStrokeCanvus = InitCanvus.GetHbitmap(Color.FromArgb(0));
+            Canvus = InitCanvus.GetHbitmap(Color.FromArgb(0));
+            OneStrokeCanvus = InitCanvus.GetHbitmap(Color.FromArgb(0));
             OutCanvus = Init2Canvus.GetHbitmap(Color.FromArgb(0));
 
             IntPtr screenDc = GetDC(IntPtr.Zero);
             canvusDc = CreateCompatibleDC(screenDc);
-			SelectObject(canvusDc, Canvus);
-			onestrokeDc = CreateCompatibleDC(screenDc);
-			SelectObject(onestrokeDc, OneStrokeCanvus);
+            SelectObject(canvusDc, Canvus);
+            onestrokeDc = CreateCompatibleDC(screenDc);
+            SelectObject(onestrokeDc, OneStrokeCanvus);
             OutcanvusDc = CreateCompatibleDC(screenDc);
             SelectObject(OutcanvusDc, OutCanvus);
             gCanvus = Graphics.FromHdc(canvusDc);
-			gCanvus.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver; // source Over else we get some issues displaying text
+            gCanvus.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver; // source Over else we get some issues displaying text
             gCanvus.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
-			gOneStrokeCanvus = Graphics.FromHdc(onestrokeDc);
-			gOneStrokeCanvus.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
+            gOneStrokeCanvus = Graphics.FromHdc(onestrokeDc);
+            gOneStrokeCanvus.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
             gOutCanvus = Graphics.FromHdc(OutcanvusDc);
             gOutCanvus.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
-            if (Root.AutoScroll)
-			{
-				hScreenBitmap = InitCanvus.GetHbitmap(Color.FromArgb(0));
-				memscreenDc = CreateCompatibleDC(screenDc);
-				SelectObject(memscreenDc, hScreenBitmap);
-				screenbits = new byte[50000000];
-				lastscreenbits = new byte[50000000];
-			}
-			ReleaseDC(IntPtr.Zero, screenDc);
+
+            if (Root.AutoScroll) // apparently never called ; Autoscroll set to False never modified
+            {
+                hScreenBitmap = InitCanvus.GetHbitmap(Color.FromArgb(0));
+                memscreenDc = CreateCompatibleDC(screenDc);
+                SelectObject(memscreenDc, hScreenBitmap);
+                screenbits = new byte[50000000];
+                lastscreenbits = new byte[50000000];
+            }
+            ReleaseDC(IntPtr.Zero, screenDc);
+
             /* PPzz : 
              *     this is my understandarding about drawing: 
              *     gCanvus is the graphics where in standard the strokes are drawn, I've introduced there also the drawing
@@ -120,24 +128,23 @@ namespace gInk
              *     I've introduced gOutCanvus in order to have a graphics where I can draw in the inprogress shapes (Line,Ellipsis,Rectangular,Arrow) the previous ones, being strokes, are drawn on gCanvus
              *     the timer1 refresh the window regularly
              */
-          
-         
+
             InitCanvus.Dispose();
             Init2Canvus.Dispose();
             //this.DoubleBuffered = true;
 
             int gpheight = (int)(Screen.PrimaryScreen.Bounds.Height * Root.ToolbarHeight);
-			gpButtonsImage = new Bitmap(2000, 2000, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-			gpPenWidthImage = new Bitmap(200, 200, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            gpSubToolsImage = new Bitmap(Root.FormCollection.gpSubTools.Width+50, Root.FormCollection.gpSubTools.Height+50, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            gpButtonsImage = new Bitmap(2000, 2000, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            gpPenWidthImage = new Bitmap(200, 200, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            gpSubToolsImage = new Bitmap(500, 500, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
             TransparentBrush = new SolidBrush(Color.Transparent);
-			SemiTransparentBrush = new SolidBrush(Color.FromArgb(120, 255, 255, 255));
+            SemiTransparentBrush = new SolidBrush(Color.FromArgb(120, 255, 255, 255));
 
+            timer1.Enabled = true;
+            ToTopMostThrough();        
+        }
 
-			ToTopMostThrough();
-		}
-
-		public void ToTopMostThrough()
+        public void ToTopMostThrough()
 		{
 			UInt32 dwExStyle = GetWindowLong(this.Handle, -20);
 			SetWindowLong(this.Handle, -20, dwExStyle | 0x00080000);
@@ -672,7 +679,7 @@ namespace gInk
 
 		public void timer1_Tick(object sender, EventArgs e)
 		{
-            if (Root.FormCollection is null)
+            if (Root.FormCollection == null || !Root.FormCollection.Visible)
                 return; // the initialisation is not yet completed. we wait for
 			Tick++;
 
@@ -752,7 +759,7 @@ namespace gInk
 				}
 			}
 
-			else if (!(Root.FormCollection is null) && !(Root.FormCollection.IC is null) && Root.FormCollection.IC.CollectingInk && Root.EraserMode == false && Root.InkVisible)
+			else if ((Root.FormCollection != null && Root.FormCollection.Visible) && (Root.FormCollection.IC != null && Root.FormCollection.Visible) && Root.FormCollection.IC.CollectingInk && Root.EraserMode == false && Root.InkVisible)
 			{ // Drawing in progress : we get the last stroke in the list, if we have to draw because not deleted and not a shape in progress
               //we replace the rectangle containing the stroke by the saved one and 
 
@@ -821,18 +828,85 @@ namespace gInk
 			}
 		}
 
-		private void FormDisplay_FormClosed(object sender, FormClosedEventArgs e)
+        private void FormDisplay_VisibleChanged(object sender, EventArgs e)
+        {
+            if (Visible)
+            {
+                ;
+            }
+            else
+            {
+                FormDisplay_FormClosed(null,null);
+            }
+
+        }
+
+        private void FormDisplay_FormClosed(object sender, FormClosedEventArgs e)
 		{
 			DeleteObject(Canvus);
 			//DeleteObject(BlankCanvus);
 			DeleteDC(canvusDc);
-			if (Root.AutoScroll)
+            if (gpButtonsImage != null)
+                gpButtonsImage.Dispose();
+            if (gpPenWidthImage != null)
+                gpPenWidthImage.Dispose();
+            if (gpSubToolsImage != null)
+                gpSubToolsImage.Dispose();
+            if (TransparentBrush != null)
+                TransparentBrush.Dispose();
+            if (SemiTransparentBrush != null)
+                SemiTransparentBrush.Dispose();
+
+            if (Root.AutoScroll)
 			{
 				DeleteObject(hScreenBitmap);
 				DeleteDC(memscreenDc);
 			}
 		}
 
+
+
+
+        public bool HasFocus()
+        {
+            var activatedHandle = GetForegroundWindow();
+            if (activatedHandle == IntPtr.Zero)
+            {
+                return false;       // No window is currently activated
+            }
+
+            var procId = Process.GetCurrentProcess().Id;
+            int activeProcId;
+            GetWindowThreadProcessId(activatedHandle, out activeProcId);
+
+            return activeProcId == procId;
+        }
+
+        [DllImport("user32.dll")]
+		static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
+		[DllImport("user32.dll", SetLastError = true)]
+		static extern UInt32 GetWindowLong(IntPtr hWnd, int nIndex);
+		[DllImport("user32.dll")]
+		static extern int SetWindowLong(IntPtr hWnd, int nIndex, UInt32 dwNewLong);
+		[DllImport("user32.dll")]
+		public extern static bool SetLayeredWindowAttributes(IntPtr hwnd, uint crKey, byte bAlpha, uint dwFlags);
+
+		[DllImport("gdi32.dll")]
+		static extern int GetBitmapBits(IntPtr hbmp, int cbBuffer, [Out] byte[] lpvBits);
+		[DllImport("gdi32.dll")]
+		static extern uint GetPixel(IntPtr hdc, int nXPos, int nYPos);
+
+		[DllImport("gdi32.dll")]
+		static extern int GetDeviceCaps(IntPtr hdc, int nIndex);
+
+		[DllImport("msvcrt.dll", EntryPoint = "memcpy", CallingConvention = CallingConvention.Cdecl, SetLastError = false)]
+		public static extern IntPtr memcpy(IntPtr dest, IntPtr src, int count);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
+        private static extern IntPtr GetForegroundWindow();
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern int GetWindowThreadProcessId(IntPtr handle, out int processId);
 		[DllImport("user32.dll")]
 		static extern IntPtr GetDC(IntPtr hWnd);
 		[DllImport("user32.dll")]
@@ -874,48 +948,5 @@ namespace gInk
 		const int ULW_ALPHA = 2;
 		const int AC_SRC_OVER = 0x00;
 		const int AC_SRC_ALPHA = 0x01;
-
-
-
-        public bool HasFocus()
-        {
-            var activatedHandle = GetForegroundWindow();
-            if (activatedHandle == IntPtr.Zero)
-            {
-                return false;       // No window is currently activated
-            }
-
-            var procId = Process.GetCurrentProcess().Id;
-            int activeProcId;
-            GetWindowThreadProcessId(activatedHandle, out activeProcId);
-
-            return activeProcId == procId;
-        }
-
-    [DllImport("user32.dll")]
-		static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
-		[DllImport("user32.dll", SetLastError = true)]
-		static extern UInt32 GetWindowLong(IntPtr hWnd, int nIndex);
-		[DllImport("user32.dll")]
-		static extern int SetWindowLong(IntPtr hWnd, int nIndex, UInt32 dwNewLong);
-		[DllImport("user32.dll")]
-		public extern static bool SetLayeredWindowAttributes(IntPtr hwnd, uint crKey, byte bAlpha, uint dwFlags);
-
-		[DllImport("gdi32.dll")]
-		static extern int GetBitmapBits(IntPtr hbmp, int cbBuffer, [Out] byte[] lpvBits);
-		[DllImport("gdi32.dll")]
-		static extern uint GetPixel(IntPtr hdc, int nXPos, int nYPos);
-
-		[DllImport("gdi32.dll")]
-		static extern int GetDeviceCaps(IntPtr hdc, int nIndex);
-
-		[DllImport("msvcrt.dll", EntryPoint = "memcpy", CallingConvention = CallingConvention.Cdecl, SetLastError = false)]
-		public static extern IntPtr memcpy(IntPtr dest, IntPtr src, int count);
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
-        private static extern IntPtr GetForegroundWindow();
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        private static extern int GetWindowThreadProcessId(IntPtr handle, out int processId);
     }
 }
