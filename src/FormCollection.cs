@@ -120,6 +120,8 @@ namespace gInk
         public ImageLister ClipartsDlg;
         private Object btClipSel;
 
+        private List<Stroke> FadingList = new List<Stroke>();
+
         private ZoomForm ZoomForm = new ZoomForm();
         private Bitmap ZoomImage,ZoomImage2;
         int ZoomFormRePosX;
@@ -319,6 +321,7 @@ namespace gInk
 
             //Console.WriteLine("A=" + (DateTime.Now.Ticks/1e7).ToString());
             InitializeComponent();
+            FadingList.Clear();
             if (Root.WindowRect.Width <= 0 || Root.WindowRect.Height <= 0)
             {
                 this.Left = SystemInformation.VirtualScreen.Left;
@@ -1187,7 +1190,11 @@ namespace gInk
                 st.ExtendedProperties.Add(Root.ISFILLEDWHITE_GUID, true);
             else if (FilledSelected == Filling.BlackFilled)
                 st.ExtendedProperties.Add(Root.ISFILLEDBLACK_GUID, true);
-            try { st.ExtendedProperties.Add(Root.FADING_PEN, DateTime.Now.AddSeconds((float)(st.DrawingAttributes.ExtendedProperties[Root.FADING_PEN].Data)).Ticks); } catch { };
+            try
+            {
+                // if the penattributes is not fading there is no properties and it will turn into an exception
+                st.ExtendedProperties.Add(Root.FADING_PEN, DateTime.Now.AddSeconds((float)(st.DrawingAttributes.ExtendedProperties[Root.FADING_PEN].Data)).Ticks);
+            } catch { };
 
         }
 
@@ -1209,6 +1216,8 @@ namespace gInk
             st.DrawingAttributes.FitToCurve = true;
             setStrokeProperties(ref st, FilledSelected);
             Root.FormCollection.IC.Ink.Strokes.Add(st);
+            if (st.ExtendedProperties.Contains(Root.FADING_PEN))
+                FadingList.Add(st);
             return st;
         }
 
@@ -1235,6 +1244,8 @@ namespace gInk
             st.DrawingAttributes.FitToCurve = false;
             setStrokeProperties(ref st, FilledSelected);
             Root.FormCollection.IC.Ink.Strokes.Add(st);
+            if (st.ExtendedProperties.Contains(Root.FADING_PEN))
+                FadingList.Add(st);
             return st;
         }
 
@@ -1248,6 +1259,8 @@ namespace gInk
             st.ExtendedProperties.Add(Root.IMAGE_Y_GUID, CursorY0);
             st.ExtendedProperties.Add(Root.IMAGE_W_GUID, CursorX - CursorX0);
             st.ExtendedProperties.Add(Root.IMAGE_H_GUID, CursorY - CursorY0);
+            if (st.ExtendedProperties.Contains(Root.FADING_PEN))
+                FadingList.Add(st);
             return st;
         }
 
@@ -1264,6 +1277,8 @@ namespace gInk
             st.DrawingAttributes.FitToCurve = false;
             setStrokeProperties(ref st, 0);
             Root.FormCollection.IC.Ink.Strokes.Add(st);
+            if (st.ExtendedProperties.Contains(Root.FADING_PEN))
+                FadingList.Add(st);
             return st;
         }
 
@@ -1284,6 +1299,8 @@ namespace gInk
             setStrokeProperties(ref st1, FilledSelected);
             Root.FormCollection.IC.Ink.DeleteStroke(st);
             Root.FormCollection.IC.Ink.Strokes.Add(st1);
+            if (st1.ExtendedProperties.Contains(Root.FADING_PEN))
+                FadingList.Add(st1);
             return st1;
         }
 
@@ -1306,6 +1323,8 @@ namespace gInk
             st.DrawingAttributes.FitToCurve = false;
             setStrokeProperties(ref st, 0);
             Root.FormCollection.IC.Ink.Strokes.Add(st);
+            if (st.ExtendedProperties.Contains(Root.FADING_PEN))
+                FadingList.Add(st);
             return st;
         }
 
@@ -1352,6 +1371,8 @@ namespace gInk
             st.ExtendedProperties.Add(Root.TEXTFONTSTYLE_GUID, (TextItalic ? FontStyle.Italic : FontStyle.Regular) | (TextBold ? FontStyle.Bold : FontStyle.Regular));
             setStrokeProperties(ref st, Filling.NoFrame);
             Root.FormCollection.IC.Ink.Strokes.Add(st);
+            if (st.ExtendedProperties.Contains(Root.FADING_PEN))
+                    FadingList.Add(st);
             return st;
         }
 
@@ -1570,7 +1591,11 @@ namespace gInk
             movedStroke = null; // reset the moving object
             Root.FingerInAction = false;        // this is done a little before MouseUp ; but it looks like the one from MouseUp is not always done...
             try { if (e.Stroke.ExtendedProperties.Contains(Root.ISSTROKE_GUID)) e.Stroke.ExtendedProperties.Remove(Root.ISSTROKE_GUID); } catch { } // the ISSTROKE set for drawin
-            try { e.Stroke.ExtendedProperties.Add(Root.FADING_PEN, DateTime.Now.AddSeconds((float)(e.Stroke.DrawingAttributes.ExtendedProperties[Root.FADING_PEN].Data)).Ticks); } catch { };
+            // redundant ????
+            /*try {
+                e.Stroke.ExtendedProperties.Add(Root.FADING_PEN, DateTime.Now.AddSeconds((float)(e.Stroke.DrawingAttributes.ExtendedProperties[Root.FADING_PEN].Data)).Ticks);
+            } catch { };
+            */
             if (ZoomCapturing)
             {
                 IC.Ink.DeleteStroke(e.Stroke); // the stroke that was just inserted has to be replaced.
@@ -1626,6 +1651,8 @@ namespace gInk
                         st.SetPoint(0, e.Stroke.GetPoint(1));
                 } catch { }
                 setStrokeProperties(ref st, Root.FilledSelected);
+                if (st.ExtendedProperties.Contains(Root.FADING_PEN))
+                    FadingList.Add(st);
             }
             else
             {
@@ -3071,11 +3098,13 @@ namespace gInk
                 LastTickTime = DateTime.Now;
                 return;
             }
+            
             try
             {
-                for (int i = IC.Ink.Strokes.Count - 1; i >= 0; i--)
+                //for (int i = IC.Ink.Strokes.Count - 1; i >= 0; i--)                
+                foreach(Stroke st in FadingList)
                 {
-                    Stroke st = IC.Ink.Strokes[i];
+                    //Stroke st = IC.Ink.Strokes[i];
                     if (st.ExtendedProperties.Contains(Root.FADING_PEN))
                     {
                         Int64 j = (Int64)(st.ExtendedProperties[Root.FADING_PEN].Data);
@@ -3084,7 +3113,8 @@ namespace gInk
                             if (st.DrawingAttributes.Transparency == 255)
                             {
                                 //IC.Ink.Strokes.RemoveAt(i);
-                                IC.Ink.DeleteStroke(IC.Ink.Strokes[i]);
+                                FadingList.Remove(st);
+                                IC.Ink.DeleteStroke(st);
                         }
                         else if (st.DrawingAttributes.Transparency > 245)
                             st.DrawingAttributes.Transparency = 255;
@@ -3682,6 +3712,9 @@ namespace gInk
 
             if (Root.Snapping < 0)
                 Root.Snapping++;
+            if (Tick % 100 == 0)
+                GC.Collect();
+
         }
 
         private bool IsInsideVisibleScreen(int x, int y)
