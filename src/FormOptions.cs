@@ -233,7 +233,8 @@ namespace gInk
             SnapInPointerTwiceCb.SelectedIndex = (int)(Root.SnapInPointerPressTwiceKey);
 
             hiGlobal.Hotkey = Root.Hotkey_Global;
-			hiEraser.Hotkey = Root.Hotkey_Eraser;
+            hiFadingToggle.Hotkey = Root.Hotkey_FadingToggle;
+            hiEraser.Hotkey = Root.Hotkey_Eraser;
 			hiPan.Hotkey = Root.Hotkey_Pan;
 			hiInkVisible.Hotkey = Root.Hotkey_InkVisible;
 			hiPointer.Hotkey = Root.Hotkey_Pointer;
@@ -348,6 +349,7 @@ namespace gInk
             }
 
             this.AltAsOneCommandCb.Text = Root.Local.OptionsHotKeyAltAsOneCommand;
+            this.lbHkFadingToggle.Text = Root.Local.ButtonNameToogle;
 			this.lbHkClear.Text = shortTxt(Root.Local.ButtonNameClear);
             this.lbHkVideo.Text = shortTxt(Root.Local.ButtonNameVideo);
 			this.lbHkEraser.Text = shortTxt(Root.Local.ButtonNameErasor);

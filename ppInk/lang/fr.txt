@@ -12,6 +12,7 @@ ButtonNamePen8 = "Stylo 8"
 ButtonNamePen9 = "Stylo 9"
 
 ButtonNamePenwidth = "Largeur du trait"
+ButtonNameToogle = "Commuter Fondu"
 ButtonNameErasor = "Gomme"
 ButtonNamePan = "Déplace|copie (un objet)|\n déplace toute les objets"
 ButtonNameMousePointer = "Pointeur de la souris"

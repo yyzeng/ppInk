@@ -19,7 +19,8 @@ namespace gInk
 
 		public string[] ButtonNamePen = new string[10];
 
-		public string ButtonNamePenwidth = "Pen width";
+        public string ButtonNameToogle = "Toggle Fading";
+        public string ButtonNamePenwidth = "Pen width";
 		public string ButtonNameErasor = "Eraser";
 		public string ButtonNamePan = "move one drawing | Pan all drawings";
 		public string ButtonNameMousePointer = "Mouse pointer";

@@ -2880,7 +2880,8 @@ namespace gInk
 
 		DateTime LastTickTime;
 		bool[] LastPenStatus = new bool[10];
-		bool LastEraserStatus = false;
+        bool LastFadingToggle = false;
+        bool LastEraserStatus = false;
 		bool LastVisibleStatus = false;
 		bool LastPointerStatus = false;
 		bool LastPanStatus = false;
@@ -3557,6 +3558,13 @@ namespace gInk
                     }
                 }
 
+                pressed = (GetKeyState(Root.Hotkey_FadingToggle.Key) & 0x8000) == 0x8000;
+                if (pressed && !LastFadingToggle && Root.Hotkey_FadingToggle.ModifierMatch(control, alt, shift, win))
+                {
+                    FadingToggle(Root.CurrentPen);
+                }
+                LastFadingToggle = pressed;
+
                 pressed = (GetKeyState(Root.Hotkey_Eraser.Key) & 0x8000) == 0x8000;
                 if (pressed && !LastEraserStatus && Root.Hotkey_Eraser.ModifierMatch(control, alt, shift, win))
 				{
@@ -3904,6 +3912,21 @@ namespace gInk
                 return Int32.Parse((prompt.Tag as Control).Name);
             else
                 return -1;
+        }
+
+        public void FadingToggle(int pen)
+        {
+            if (pen < 0)
+                return;
+            if (Root.PenAttr[pen].ExtendedProperties.Contains(Root.FADING_PEN))
+            {
+                try { Root.PenAttr[pen].ExtendedProperties.Remove(Root.FADING_PEN); } catch { };
+            }
+            else
+                Root.PenAttr[pen].ExtendedProperties.Add(Root.FADING_PEN, Root.TimeBeforeFading);
+            //btPen[pen].BackgroundImage = buildPenIcon(Root.PenAttr[pen].Color, Root.PenAttr[pen].Transparency, true, Root.PenAttr[pen].ExtendedProperties.Contains(Root.FADING_PEN));
+            //Root.UponButtonsUpdate |= 0x2;
+            SelectPen(pen);
         }
 
         public void btClear_Click(object sender, EventArgs e)

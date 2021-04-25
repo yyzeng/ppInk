@@ -181,7 +181,8 @@ namespace gInk
         // hotkey options
         public Hotkey Hotkey_Global = new Hotkey();
 		public Hotkey[] Hotkey_Pens = new Hotkey[10];
-		public Hotkey Hotkey_Eraser = new Hotkey();
+        public Hotkey Hotkey_FadingToggle = new Hotkey();
+        public Hotkey Hotkey_Eraser = new Hotkey();
 		public Hotkey Hotkey_InkVisible = new Hotkey();
 		public Hotkey Hotkey_Pointer = new Hotkey();
 		public Hotkey Hotkey_Pan = new Hotkey();
@@ -913,6 +914,9 @@ namespace gInk
                         case "HOTKEY_GLOBAL":
                             Hotkey_Global.Parse(sPara);
                             break;
+                        case "HOTKEY_TOGGLEFADING":
+                            Hotkey_FadingToggle.Parse(sPara);
+                            break;                            
                         case "HOTKEY_ERASER":
                             Hotkey_Eraser.Parse(sPara);
                             break;
@@ -1451,7 +1455,10 @@ namespace gInk
 						case "HOTKEY_GLOBAL":
 							sPara = Hotkey_Global.ToStringInvariant();
 							break;
-						case "HOTKEY_ERASER":
+                        case "HOTKEY_TOGGLEFADING":
+                            sPara = Hotkey_FadingToggle.ToStringInvariant();                            
+                            break;
+                        case "HOTKEY_ERASER":
 							sPara = Hotkey_Eraser.ToStringInvariant();
 							break;
 						case "HOTKEY_INKVISIBLE":

@@ -12,6 +12,7 @@ ButtonNamePen8 = "Pen 8"
 ButtonNamePen9 = "Pen 9"
 
 ButtonNamePenwidth = "Pen width"
+ButtonNameToogle = "Toggle Fading"
 ButtonNameErasor = "Eraser"
 ButtonNamePan = "Move | Copy (one drawing)|\nPan all drawings"
 ButtonNameMousePointer = "Mouse pointer"
