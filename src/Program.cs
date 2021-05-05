@@ -24,14 +24,15 @@ namespace gInk
         #endregion Dll Imports
         public static int StartInkingMsg = RegisterWindowMessage("START_INKING");
 
-		/// <summary>
-		/// The main entry point for the application.
-		/// </summary>
-		[STAThread]
+
+        public static CallForm frm;
+
+        /// <summary>
+        /// The main entry point for the application.
+        /// </summary>
+        [STAThread]
 		static void Main()
 		{
-            CallForm frm;
-
             if (!EnsureSingleInstance()) return;
 
             Application.ThreadException += new ThreadExceptionEventHandler(UIThreadException);
@@ -80,7 +81,7 @@ namespace gInk
 				errorMsg += "Stack Trace:\r\n" + ex.StackTrace + "\r\n\r\n";
 				WriteErrorLog(errorMsg);
 
-				errorMsg += "!!! PLEASE PRESS ESC KEY TO EXIT IF YOU FEEL YOUR MOUSE CLICK IS BLOCKED BY SOMETHING";
+				errorMsg += "\r\n!!! Do you want to Quit ?";
 				ShowErrorDialog("UIThreadException", errorMsg);
 			}
 			catch
@@ -112,8 +113,9 @@ namespace gInk
 				errorMsg += ex.Message + "\r\n\r\n";
 				errorMsg += "Stack Trace:\r\n" + ex.StackTrace + "\r\n\r\n";
 				WriteErrorLog(errorMsg);
+                errorMsg += "\r\n!!! Do you want to Quit ?";
 
-				ShowErrorDialog("UnhandledException", errorMsg);
+                ShowErrorDialog("UnhandledException", errorMsg);
 
 				if (!EventLog.SourceExists("UnhandledException"))
 				{
@@ -161,7 +163,21 @@ namespace gInk
 
         private static DialogResult ShowErrorDialog(string title, string errormsg)
 		{
-			return MessageBox.Show(errormsg, title, MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Stop);
+			DialogResult rst = MessageBox.Show(errormsg, title, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+            if(rst==DialogResult.Yes)
+            {
+                try
+                {
+                    if (frm.Root.FormCollection != null && frm.Root.FormCollection.Visible)
+                        frm.Root.FormCollection.SaveStrokes("AutoSave.strokes.txt");
+                }
+                catch { }
+                finally
+                {
+                    Application.Exit();
+                }
+            }
+            return rst;
 		}
 
 		public static void WriteErrorLog(string errormsg)
