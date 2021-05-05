@@ -535,48 +535,60 @@ namespace gInk
                 // background images loaded/applied in SelectTool
                 btHand.Height = dim1s;
                 btHand.Width = dim1s;
+                btHand.Visible = true;
                 SetButtonPosition(prev, btHand, dim3);
                 btLine.Height = dim1s;
                 btLine.Width = dim1s;
+                btLine.Visible = true;
                 SetSmallButtonNext(btHand, btLine, dim2s);
 
                 btRect.Height = dim1s;
                 btRect.Width = dim1s;
+                btRect.Visible = true;
                 SetButtonPosition(btHand, btRect, dim3);
                 btOval.Height = dim1s;
                 btOval.Width = dim1s;
+                btOval.Visible = true;
                 SetSmallButtonNext(btRect, btOval, dim2s);
 
                 btArrow.Height = dim1s;
                 btArrow.Width = dim1s;
+                btArrow.Visible = true;
                 SetButtonPosition(btRect, btArrow, dim3);
                 btNumb.Height = dim1s;
                 btNumb.Width = dim1s;
+                btNumb.Visible = true;
                 SetSmallButtonNext(btArrow, btNumb, dim2s);
 
                 btText.Height = dim1s;
                 btText.Width = dim1s;
+                btText.Visible = true;
                 SetButtonPosition(btArrow, btText, dim3);
                 btEdit.Height = dim1s;
                 btEdit.Width = dim1s;
+                btEdit.Visible = true;
                 SetSmallButtonNext(btText, btEdit, dim2s);
 
                 btClipArt.Height = dim1s;
                 btClipArt.Width = dim1s;
+                btClipArt.Visible = true;
                 SetButtonPosition(btText, btClipArt, dim3);
                 btClip1.Height = dim1s;
                 btClip1.Width = dim1s;
+                btClip1.Visible = true;
                 SetSmallButtonNext(btClipArt, btClip1, dim2s);
                 btClip1.BackgroundImage = getImgFromDiskOrRes(Root.ImageStamp1, ImageExts);
                 btClip1.Tag = new ClipArtData { ImageStamp = Root.ImageStamp1, X = btClip1.BackgroundImage.Size.Width, Y = btClip1.BackgroundImage.Size.Height, Filling = Root.ImageStampFilling };
 
                 btClip2.Height = dim1s;
                 btClip2.Width = dim1s;
+                btClip2.Visible = true;
                 SetButtonPosition(btClipArt, btClip2, dim3);
                 btClip2.BackgroundImage = getImgFromDiskOrRes(Root.ImageStamp2, ImageExts);
                 btClip2.Tag = new ClipArtData { ImageStamp = Root.ImageStamp2, X = btClip2.BackgroundImage.Size.Width, Y = btClip2.BackgroundImage.Size.Height, Filling = Root.ImageStampFilling };
                 btClip3.Height = dim1s;
                 btClip3.Width = dim1s;
+                btClip3.Visible = true;
                 SetSmallButtonNext(btClip2, btClip3, dim2s);
                 btClip3.BackgroundImage = getImgFromDiskOrRes(Root.ImageStamp3, ImageExts);
                 btClip3.Tag = new ClipArtData { ImageStamp = Root.ImageStamp3, X = btClip3.BackgroundImage.Size.Width, Y = btClip3.BackgroundImage.Size.Height, Filling = Root.ImageStampFilling };
@@ -602,6 +614,7 @@ namespace gInk
             {
                 btEraser.Height = dim1;
                 btEraser.Width = dim1;
+                btEraser.Visible = true;
                 image_eraser_act = getImgFromDiskOrRes("eraser_act", ImageExts);
                 image_eraser = getImgFromDiskOrRes("eraser", ImageExts);
                 btEraser.BackgroundImage = image_eraser;
@@ -615,6 +628,7 @@ namespace gInk
             {
                 btPan.Height = dim1;
                 btPan.Width = dim1;
+                btPan.Visible = true;
                 btPan.BackgroundImage = getImgFromDiskOrRes("pan", ImageExts);
                 SetButtonPosition(prev, btPan, dim3);
                 prev = btPan;
@@ -626,6 +640,7 @@ namespace gInk
             {
                 btMagn.Height = dim1s;
                 btMagn.Width = dim1s;
+                btMagn.Visible = true;
                 this.btMagn.BackgroundImage = getImgFromDiskOrRes((Root.MagneticRadius > 0) ? "Magnetic_act" : "Magnetic", ImageExts);
                 SetButtonPosition(prev, btMagn, dim3);
                 prev = btMagn;
@@ -637,8 +652,10 @@ namespace gInk
             {
                 btZoom.Height = dim1s;
                 btZoom.Width = dim1s;
+                btZoom.Visible = true;
                 btZoom.BackgroundImage = getImgFromDiskOrRes("Zoom", ImageExts);
                 SetSmallButtonNext(btMagn, btZoom, dim2s);
+                btZoom.Visible = true;
             }
             else
                 btZoom.Visible = false;
@@ -647,6 +664,7 @@ namespace gInk
             {
                 btPointer.Height = dim1;
                 btPointer.Width = dim1;
+                btPointer.Visible = true;
                 image_pointer = getImgFromDiskOrRes("pointer", ImageExts);
                 image_pointer_act = getImgFromDiskOrRes("pointer_act", ImageExts);
                 SetButtonPosition(prev, btPointer, dim3);
@@ -659,6 +677,7 @@ namespace gInk
             {
                 btPenWidth.Height = dim1;
                 btPenWidth.Width = dim1;
+                btPenWidth.Visible = true;
                 btPenWidth.BackgroundImage = getImgFromDiskOrRes("penwidth", ImageExts);
                 SetButtonPosition(prev, btPenWidth, dim3);
                 prev = btPenWidth;
@@ -716,10 +735,12 @@ namespace gInk
             {
                 btSave.Height = dim1s;
                 btSave.Width = dim1s;
+                btSave.Visible = true;
                 btSave.BackgroundImage = getImgFromDiskOrRes("save", ImageExts);
                 SetButtonPosition(prev, btSave, dim3);
                 btLoad.Height = dim1s;
                 btLoad.Width = dim1s;
+                btLoad.Visible = true;
                 btLoad.BackgroundImage = getImgFromDiskOrRes("open", ImageExts);
                 SetSmallButtonNext(btSave, btLoad, dim2s);
                 prev = btSave;
@@ -734,6 +755,7 @@ namespace gInk
             {
                 btVideo.Height = dim1;
                 btVideo.Width = dim1;
+                btVideo.Visible = true;
                 SetButtonPosition(prev, btVideo, dim3);
                 SetVidBgImage();
                 if (Root.VideoRecordMode == VideoRecordMode.OBSBcst || Root.VideoRecordMode == VideoRecordMode.OBSRec)
