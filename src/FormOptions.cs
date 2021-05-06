@@ -336,6 +336,8 @@ namespace gInk
             this.ZoomScaleLbl.Text = Root.Local.OptionsZoomScale;
             this.ZoomContinousCb.Text = Root.Local.OptionsZoomContinous;
 
+            this.ActivateDbgWinBtn.Text = Root.Local.ButtonActivateDebug;
+
             this.SnapInPointerGrp.Text = Root.Local.OptionsHotKeySnapInPointerGrp;
             this.SnapInPointerLbl.Text = Root.Local.OptionsHotKeySnapInPointerLbl;
 
@@ -1041,6 +1043,12 @@ namespace gInk
         private void FormOptions_FormClosed(object sender, FormClosedEventArgs e)
         {
             GC.Collect();
+        }
+
+        private void ActivateDbgWinBtn_Click(object sender, EventArgs e)
+        {
+            Program.ShowWindow(Program.GetConsoleWindow(), 1);
+            Console.WriteLine("Debug Window activated");
         }
 
     }

@@ -46,6 +46,9 @@ namespace gInk
         public string SaveStroke = "Save Strokes\n(long =opendialog ; short = {0})";
         public string LoadStroke = "Load Strokes\n(long =opendialog ; short = {0})";
         public string ButtonNameZoom = "Zoom";
+
+        public string ButtonActivateDebug = "Debug Window";
+
         public string SubToolsBarCbText = "Enable Secondary ToolBar";
 
         public string StrokeFileExists = "{0} Already Exists\nDo you want to override it?";

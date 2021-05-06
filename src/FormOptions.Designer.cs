@@ -220,6 +220,7 @@ namespace gInk
             this.lbcbPens = new System.Windows.Forms.Label();
             this.FadingTimeEd = new System.Windows.Forms.TextBox();
             this.WidthAtPenSelCb = new System.Windows.Forms.CheckBox();
+            this.ActivateDbgWinBtn = new System.Windows.Forms.Button();
             this.tabPage3.SuspendLayout();
             this.SnapInPointerGrp.SuspendLayout();
             this.VideoTab.SuspendLayout();
@@ -1635,6 +1636,7 @@ namespace gInk
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.tabPage1.Controls.Add(this.ActivateDbgWinBtn);
             this.tabPage1.Controls.Add(this.SubToolsBar_cb);
             this.tabPage1.Controls.Add(this.ZoomEnabledCb);
             this.tabPage1.Controls.Add(this.ZoomBox);
@@ -2090,6 +2092,17 @@ namespace gInk
             this.WidthAtPenSelCb.UseVisualStyleBackColor = true;
             this.WidthAtPenSelCb.CheckedChanged += new System.EventHandler(this.WidthAtPenSelCb_CheckedChanged);
             // 
+            // ActivateDbgWinBtn
+            // 
+            this.ActivateDbgWinBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ActivateDbgWinBtn.Location = new System.Drawing.Point(659, 110);
+            this.ActivateDbgWinBtn.Name = "ActivateDbgWinBtn";
+            this.ActivateDbgWinBtn.Size = new System.Drawing.Size(98, 23);
+            this.ActivateDbgWinBtn.TabIndex = 50;
+            this.ActivateDbgWinBtn.Text = "Debug Window";
+            this.ActivateDbgWinBtn.UseVisualStyleBackColor = true;
+            this.ActivateDbgWinBtn.Click += new System.EventHandler(this.ActivateDbgWinBtn_Click);
+            // 
             // FormOptions
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2292,5 +2305,6 @@ namespace gInk
         private System.Windows.Forms.CheckBox SubToolsBar_cb;
         private System.Windows.Forms.Label lbHkFadingToggle;
         private HotkeyInputBox hiFadingToggle;
+        private System.Windows.Forms.Button ActivateDbgWinBtn;
     }
 }

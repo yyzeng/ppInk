@@ -343,6 +343,7 @@ namespace gInk
             }
 
             IC = new InkOverlay(this.Handle);
+            Console.WriteLine("Module of IC " + IC.GetType().Module.FullyQualifiedName);
             IC.CollectionMode = CollectionMode.InkOnly;
             IC.AutoRedraw = false;
             IC.DynamicRendering = false;

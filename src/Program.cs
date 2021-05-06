@@ -22,6 +22,15 @@ namespace gInk
         [DllImport("user32")]
         private static extern int RegisterWindowMessage(string message);
         #endregion Dll Imports
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern int AllocConsole();
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern int FreeConsole();
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern IntPtr GetConsoleWindow();
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool ShowWindow(IntPtr hwnd, int nCmdShow);
+
         public static int StartInkingMsg = RegisterWindowMessage("START_INKING");
 
 
@@ -35,6 +44,10 @@ namespace gInk
 		{
             if (!EnsureSingleInstance()) return;
 
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            AllocConsole();
+            ShowWindow(GetConsoleWindow(), 0);
             Application.ThreadException += new ThreadExceptionEventHandler(UIThreadException);
 			Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
 			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledException);
@@ -64,7 +77,18 @@ namespace gInk
             frm.Opacity = frm.Root.FormOpacity / 100.0;
             if (Environment.CommandLine.IndexOf("--StartInking", StringComparison.OrdinalIgnoreCase) >= 0 )
                 PostMessage((IntPtr)HWND_BROADCAST, StartInkingMsg, (IntPtr)null, (IntPtr)null); // to Myself
+            foreach (ProcessModule module in Process.GetCurrentProcess().Modules)
+            {
+                Console.WriteLine(string.Format("Loaded: {0}", module.FileName));                
+            }
+            Console.WriteLine("-----------");
+            foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                Console.WriteLine(string.Format("Found: {0} - {1}", a.FullName,a.Location));
+            }
+
             Application.Run();
+            FreeConsole();
 		}
 
         private static void UIThreadException(object sender, ThreadExceptionEventArgs t)

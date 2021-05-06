@@ -39,6 +39,8 @@ SaveStroke = "Save Strokes\n(long =opendialog ; short = {0})"
 LoadStroke = "Load Strokes\n(long =opendialog ; short = {0})"
 ButtonNameZoom = "Zoom"
 
+ButtonActivateDebug ="Debug Window"
+
 SubToolsBarCbText = "Enable Secondary ToolBar"
 
 StrokeFileExists = "{0} Already Exists\nDo you want to override it?"

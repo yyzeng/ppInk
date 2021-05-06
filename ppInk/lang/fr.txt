@@ -39,6 +39,8 @@ SaveStroke = "Sauver Dessins\n(appui long = sélectionne fichier ; court = ouvre
 LoadStroke = "Charger Dessins\n(appui long = sélectionne fichier ; court = ouvre {0})"
 ButtonNameZoom = "Zoom"
 
+ButtonActivateDebug ="Fenêtre Debug"
+
 SubToolsBarCbText = "Activation de la barre d'outils secondaire"
 
 StrokeFileExists = "{0} Existe\nVoulez-vous le remplacer?"
