@@ -990,7 +990,7 @@ namespace gInk
 
             ToTransparent();
             ToTopMost();
-
+            Root.PointerMode = true; // will be set to false within SelectPen(0) below
             SelectPen(0);
             IC.DefaultDrawingAttributes.Width = Root.PenAttr[0].Width; //required to ensure width
             SelectTool(0, 0); // Select Hand Drawing by Default

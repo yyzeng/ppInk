@@ -697,7 +697,8 @@ namespace gInk
 		{
 			if (PointerMode == false)
 				return;
-
+            if (FormCollection == null)
+                return;
             FormCollection.AddPointerSnaps();
 			FormButtonHitter.Hide();
 			FormCollection.ToUnThrough();
