@@ -994,7 +994,7 @@ namespace gInk
             Root.PointerMode = true; // will be set to false within SelectPen(0) below
             SelectPen(0);
             IC.DefaultDrawingAttributes.Width = Root.PenAttr[0].Width; //required to ensure width
-            SelectTool(0, 0); // Select Hand Drawing by Default
+            SelectTool(Tools.Hand, Filling.Empty); // Select Hand Drawing by Default
 
             SaveStrokeFile = "";
 
@@ -1781,7 +1781,7 @@ namespace gInk
                         if (minStroke.ExtendedProperties.Contains(Root.TEXT_GUID))
                         {
                             ModifyTextInStroke(minStroke, (string)(minStroke.ExtendedProperties[Root.TEXT_GUID].Data));
-                            SelectTool(0, 0);
+                            SelectTool(Tools.Hand, Filling.Empty); // Good Idea ????
                             ComputeTextBoxSize(ref minStroke);
 
                         }
@@ -2214,9 +2214,9 @@ namespace gInk
 			UInt32 dwExStyle = GetWindowLong(this.Handle, -20);
 			//SetWindowLong(this.Handle, -20, (uint)(dwExStyle & ~0x00080000 & ~0x0020));
 			SetWindowLong(this.Handle, -20, (uint)(dwExStyle & ~0x0020));
-			//SetWindowPos(this.Handle, (IntPtr)(-2), 0, 0, 0, 0, 0x0002 | 0x0001 | 0x0010 | 0x0020);
+            //SetWindowPos(this.Handle, (IntPtr)(-2), 0, 0, 0, 0, 0x0002 | 0x0001 | 0x0010 | 0x0020);
 
-			//dwExStyle = GetWindowLong(this.Handle, -20);
+            //dwExStyle = GetWindowLong(this.Handle, -20);
 			//SetWindowLong(this.Handle, -20, dwExStyle | 0x00080000);
 			//SetLayeredWindowAttributes(this.Handle, 0x00FFFFFF, 1, 0x2);
 			//SetWindowPos(this.Handle, (IntPtr)(-1), 0, 0, 0, 0, 0x0002 | 0x0001 | 0x0020);
@@ -2612,6 +2612,10 @@ namespace gInk
 				EnterEraserMode(false);
 				Root.UnPointer();
 				Root.PanMode = false;
+                if(Root.ToolSelected == Tools.Invalid)
+                {
+                    SelectTool(Tools.Hand,Filling.Empty);
+                }
 
                 if (Root.CanvasCursor == 0)
                 {
@@ -4041,7 +4045,7 @@ namespace gInk
                     if (PenModifyDlg.ModifyPen(ref Root.PenAttr[b]))
                     {
                         if ((Root.ToolSelected == Tools.Move) || (Root.ToolSelected == Tools.Copy) || (Root.ToolSelected == Tools.Edit)) // if move
-                            SelectTool(0);
+                            SelectTool(Tools.Hand,Filling.Empty);
                         //PreparePenImages(Root.PenAttr[b].Transparency, ref image_pen[b], ref image_pen_act[b]);
                         //btPen[b].Image = image_pen_act[b];
                         btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, false,
@@ -4081,8 +4085,8 @@ namespace gInk
             for (int b = 0; b < Root.MaxPenCount; b++)
                 if ((Button)sender == btPen[b])
                 {
-                    if ((Root.ToolSelected == Tools.Move) || (Root.ToolSelected == Tools.Copy) || (Root.ToolSelected == Tools.Edit)) // if move
-                        SelectTool(0);
+                    if ((Root.ToolSelected == Tools.Move) || (Root.ToolSelected == Tools.Copy) || (Root.ToolSelected == Tools.Edit || Root.PanMode  || Root.EraserMode )) // if move
+                        SelectTool(Tools.Hand, Filling.Empty);
                     SelectPen(b);
                 }
 		}
@@ -4570,9 +4574,9 @@ namespace gInk
                 Root.ImageStamp = (ClipArtData)btClipSel;
                 i = Tools.ClipArt;
             }
+            SelectTool(i);
             if (i >= Tools.Hand)
                 SelectPen(LastPenSelected);
-            SelectTool(i);
         }
 
         public void btEraser_Click(object sender, EventArgs e)
