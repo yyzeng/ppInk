@@ -343,7 +343,7 @@ namespace gInk
             }
 
             IC = new InkOverlay(this.Handle);
-            Console.WriteLine("Module of IC " + IC.GetType().Module.FullyQualifiedName);
+            Console.WriteLine("Module of IC "+IC.GetType().Module.FullyQualifiedName);
             IC.CollectionMode = CollectionMode.InkOnly;
             IC.AutoRedraw = false;
             IC.DynamicRendering = false;
@@ -398,7 +398,7 @@ namespace gInk
 
             try
             {
-                ZoomImage.Dispose();
+                    ZoomImage?.Dispose();
             }
             catch { }
             finally
@@ -407,7 +407,7 @@ namespace gInk
             }
             try
             {
-                ZoomImage2.Dispose();
+                    ZoomImage2?.Dispose();
             }
             catch { }
             finally
@@ -895,9 +895,10 @@ namespace gInk
             pboxPenWidthIndicator.Left = (int)Math.Sqrt(Root.GlobalPenWidth * 30);
             gpPenWidth.Controls.Add(pboxPenWidthIndicator);
 
+            tempArrowCursor = null;
             try
             {
-                cursorred.Dispose();
+                cursorred?.Dispose();
             }
             catch { }
             finally
@@ -906,7 +907,7 @@ namespace gInk
             }
             try
             {
-                cursorerase.Dispose();
+                cursorerase?.Dispose();
             }
             catch { }
             finally
@@ -1252,7 +1253,8 @@ namespace gInk
             try
             {
                 // if the penattributes is not fading there is no properties and it will turn into an exception
-                st.ExtendedProperties.Add(Root.FADING_PEN, DateTime.Now.AddSeconds((float)(st.DrawingAttributes.ExtendedProperties[Root.FADING_PEN].Data)).Ticks);
+                if(st.DrawingAttributes.ExtendedProperties.Contains(Root.FADING_PEN))
+                    st.ExtendedProperties.Add(Root.FADING_PEN, DateTime.Now.AddSeconds((float)(st.DrawingAttributes.ExtendedProperties[Root.FADING_PEN].Data)).Ticks);
             } catch { };
 
         }
@@ -1705,8 +1707,9 @@ namespace gInk
                 {
                     //if (e.Stroke.GetPoint(0).Equals(e.Stroke.GetPoint(1)) || e.Stroke.GetPoint(0).Equals(e.Stroke.GetPoint(2)))
                     //    st.SetPoints(st.GetPoints(1, st.GetPoints().Length - 1));
-                    if (e.Stroke.GetPoint(0).Equals(e.Stroke.GetPoint(2)))
-                        st.SetPoint(0, e.Stroke.GetPoint(1));
+                    if (e.Stroke.GetPoints().Length>=3)
+                        if(e.Stroke.GetPoint(0).Equals(e.Stroke.GetPoint(2)))
+                            st.SetPoint(0, e.Stroke.GetPoint(1));
                 } catch { }
                 setStrokeProperties(ref st, Root.FilledSelected);
                 if (st.ExtendedProperties.Contains(Root.FADING_PEN))
@@ -1928,7 +1931,11 @@ namespace gInk
                     IC.Renderer.InkSpaceToPixel(Root.FormDisplay.gOneStrokeCanvus, ref p);
                 }
                 else
-                    throw new System.ApplicationException("Empty Stroke");
+                {
+                    //throw new System.ApplicationException("Empty Stroke");
+                    p = System.Windows.Forms.Cursor.Position;
+                    p = Root.FormDisplay.PointToClient(p);
+                }
             }
             catch
             {
@@ -2048,7 +2055,7 @@ namespace gInk
                 else
                     Root.CursorY = (int)(Root.CursorY0 + (Root.CursorX - Root.CursorX0) / ZoomScreenRatio*Math.Sign(Root.CursorY-Root.CursorY0)*Math.Sign(Root.CursorX - Root.CursorX0));
             }
-            else
+            else if(Root.ToolSelected != Tools.Hand)
                 MagneticEffect(Root.CursorX0, Root.CursorY0, ref Root.CursorX, ref Root.CursorY, Root.ToolSelected > Tools.Hand && Root.MagneticRadius > 0);
 
             if (LasteXY.X == 0 && LasteXY.Y == 0)
@@ -2486,6 +2493,8 @@ namespace gInk
         public void SelectPen(int pen)
         // -3 = pan, -2 = pointer, -1 = erasor, >=0 = pens
 		{
+            btEraser.BackgroundImage = image_eraser;
+            btPointer.BackgroundImage = image_pointer;
             btPan.BackgroundImage = getImgFromDiskOrRes("pan", ImageExts);
             //Console.WriteLine("SelectPen : " + pen.ToString());
             //System.Diagnostics.StackTrace t = new System.Diagnostics.StackTrace();
@@ -2501,8 +2510,6 @@ namespace gInk
                     //btPen[b].Image = image_pen[b];
                     btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, false,
                                                             Root.PenAttr[b].ExtendedProperties.Contains(Root.FADING_PEN));// image_pen[b];
-                btEraser.BackgroundImage = image_eraser;
-                btPointer.BackgroundImage = image_pointer;
                 btPan.BackgroundImage = getImgFromDiskOrRes("pan_act", ImageExts);
                 EnterEraserMode(false);
 				Root.UnPointer();
@@ -2529,7 +2536,6 @@ namespace gInk
                     //btPen[b].Image = image_pen[b];
                     btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, false,
                                                             Root.PenAttr[b].ExtendedProperties.Contains(Root.FADING_PEN));// image_pen[b];
-                btEraser.BackgroundImage = image_eraser;
                 btPointer.BackgroundImage = image_pointer_act;
                 EnterEraserMode(false);
 				Root.Pointer();
@@ -2551,7 +2557,6 @@ namespace gInk
                                                             Root.PenAttr[b].ExtendedProperties.Contains(Root.FADING_PEN));// image_pen[b];
 
                 btEraser.BackgroundImage = image_eraser_act;
-                btPointer.BackgroundImage = image_pointer;
 				EnterEraserMode(true);
                 Root.UnPointer();
                 Root.PanMode = false;
@@ -2604,8 +2609,6 @@ namespace gInk
                     btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, b == pen,
                                                             Root.PenAttr[b].ExtendedProperties.Contains(Root.FADING_PEN));
                 //btPen[pen].Image = image_pen_act[pen];
-				btEraser.BackgroundImage = image_eraser;
-				btPointer.BackgroundImage = image_pointer;
 				EnterEraserMode(false);
 				Root.UnPointer();
 				Root.PanMode = false;
@@ -2631,7 +2634,7 @@ namespace gInk
                 }
                 catch
                 {
-                    //Console.WriteLine("!!excpt IC.SetWindowInputRectangle");
+                    Console.WriteLine("!!excpt IC.SetWindowInputRectangle");
                     SetWindowInputRectFlag = true;
                 }
             }
@@ -3018,7 +3021,8 @@ namespace gInk
             }
             try
             {
-                IC.Renderer.InkSpaceToPixel(Root.FormDisplay.gOneStrokeCanvus, ref widt);
+                if(Root.FormDisplay != null)
+                    IC.Renderer.InkSpaceToPixel(Root.FormDisplay.gOneStrokeCanvus, ref widt);
             }
             catch  // not in good context. considered to be able to stop processing at that time
             {
@@ -3119,7 +3123,7 @@ namespace gInk
                 ZoomForm.Left = MousePosition.X + ZoomFormRePosX;
 
                 Bitmap img;              
-                img = (ZoomForm.pictureBox1.Visible) ? ZoomImage2 : ZoomImage;
+                img = (ZoomForm.pictureBox1.Visible) ? ZoomImage2 : ZoomImage; // this is setting img to point to the ZoomImage(2) : do not dispose it !
 
                 using (Graphics g = Graphics.FromImage(img))
                 {
@@ -3140,7 +3144,6 @@ namespace gInk
                     }
                     //ZoomForm.Refresh();
                 }
-                img.Dispose();
             }
             if (Root.FFmpegProcess!=null && Root.FFmpegProcess.HasExited)
             {
@@ -3156,10 +3159,13 @@ namespace gInk
                 }
                 Root.UponButtonsUpdate |= 0x2;
             }
-
-            if (SetWindowInputRectFlag) // alternative to prevent some error when trying to call this function from WM_ACTIVATE event handler
-                IC.SetWindowInputRectangle(new Rectangle(0, 0, this.Width, this.Height));
-            SetWindowInputRectFlag = false;
+            try
+            {
+                if (SetWindowInputRectFlag) // alternative to prevent some error when trying to call this function from WM_ACTIVATE event handler
+                    IC.SetWindowInputRectangle(new Rectangle(0, 0, this.Width, this.Height));
+                SetWindowInputRectFlag = false;
+            }
+            catch { }
             // ignore the first tick
             if (LastTickTime.Year == 1987)
             {
@@ -3527,8 +3533,15 @@ namespace gInk
             }
             else if (!(tempArrowCursor is null) && !AltKeyPressed())
             {
-                IC.Cursor = tempArrowCursor;
-                tempArrowCursor = null;
+                try
+                {
+                    IC.Cursor = tempArrowCursor;
+                    tempArrowCursor = null;
+                }
+                catch
+                {
+                    Program.WriteErrorLog("silent exception in IC.Cursor = tempArrowCursor;");
+                }
             }
 
             //if (!Root.FingerInAction && (!Root.PointerMode || Root.AllowHotkeyInPointerMode) && Root.Snapping <= 0)

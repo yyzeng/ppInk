@@ -499,8 +499,8 @@ namespace gInk
             //FormCollection = null;
             //  The FormCollection is destroyed, therefore all following calls to the form and its controls will not hit
             try
-            {
-                ObsRecvTask.Dispose();
+            {                
+                ObsRecvTask?.Dispose();
             }
             catch { }
             finally
@@ -509,7 +509,7 @@ namespace gInk
             }
             try
             {
-                ObsWs.Dispose();
+                ObsWs?.Dispose();
             }
             catch { }
             finally
