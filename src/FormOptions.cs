@@ -144,6 +144,9 @@ namespace gInk
 
             AltTabActivateCb.Checked = Root.AltTabPointer;
 
+            APIRestEd.Text = Root.APIRestUrl;
+            APIRestEd.BackColor = Root.APIRest.IsListening() ? Color.White : Color.Orange;
+
             ToolBarHeight.Text = string.Format("{0:F1}", Root.ToolbarHeight * 100);
             //MoveToolBarCb.Checked = Root.AllowDraggingToolbar;
 
@@ -312,6 +315,7 @@ namespace gInk
             this.OpenIntoSnapCb.Text = Root.Local.OptionsGeneralOpenIntoSnapMode;
             this.cbWhiteIcon.Text = Root.Local.OptionsGeneralWhitetrayicon;
 			this.cbAllowDragging.Text = Root.Local.OptionsGeneralAllowdragging;
+            this.APIRestLbl.Text = Root.Local.OptionsGeneralAPIRest;
             this.ShowFloatingWinCb.Text = Root.Local.OptionsGeneralShowFloatingWindow;
             this.SaveWindowPosBtn.Text = Root.Local.OptionsGeneralSaveFloatingWindowPos;
             this.ArrwGrp.Text = Root.Local.OptionsGeneralArrowHead;
@@ -777,11 +781,6 @@ namespace gInk
             }
         }
 
-        private void MoveToolBarCb_CheckedChanged(object sender, EventArgs e)
-        {
-            Root.AllowDraggingToolbar = MoveToolBarCb.Checked;
-        }
-
         private void BoardAtOpenCombo_SelectedIndexChanged(object sender, EventArgs e)
         {
             Root.BoardAtOpening = BoardAtOpenCombo.SelectedIndex;
@@ -1051,6 +1050,31 @@ namespace gInk
             Console.WriteLine("Debug Window activated");
         }
 
+        private void APIRestEd_Validating(object sender, CancelEventArgs e)
+        {
+            if (Root.APIRest.ChangeAddress(APIRestEd.Text))
+            {
+                e.Cancel = false;
+                APIRestEd.BackColor = Color.White;
+                Root.APIRestUrl = APIRestEd.Text;
+            }
+            else
+            {
+                e.Cancel = true;
+                APIRestEd.BackColor = Color.Orange;
+                Root.APIRest.ChangeAddress(Root.APIRestUrl);
+            }
+        }
+
+        private void APIRestEd_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if(e.KeyChar=='\r')
+            {
+                this.SelectNextControl(this.ActiveControl, true, true, true, true);
+                (sender as TextBox).Select();
+                e.Handled = true;
+            }
+        }
     }
 }
  

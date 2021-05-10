@@ -28,6 +28,8 @@ namespace gInk
         public const int StartArrow = 4; public const int EndArrow = 5; public const int NumberTag = 6;
         public const int Edit = 7; public const int txtLeftAligned = 8; public const int txtRightAligned = 9;
         public const int Move = 10; public const int Copy = 11; public const int Poly = 21; public const int ClipArt = 22;
+        public static readonly int[] All = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 21, 22 };
+        public static readonly string[] Names = { "Hand", "Line", "Rect", "Oval", "StartArrow", "EndArrow", "Numbering", "Edit", "Text Left Aligned", "Text Right Aligned", "Move", "Copy", "PolyLine", "ClipArt" };
     }
     public class Filling {
         public const int NoFrame = -1;      // for Stamps
@@ -36,6 +38,7 @@ namespace gInk
         public const int WhiteFilled = 2;
         public const int BlackFilled = 3;
         public const int Modulo = 4;
+        public static readonly string[] Names = { "Empty", "Pen Colored", "White Colored", "Black Colored" };
     } // applicable to Hand,Rect,Oval
 
     public class Orientation{
@@ -310,6 +313,9 @@ namespace gInk
         
         public bool InverseMousewheel=false;
 
+        public string APIRestUrl="";
+        public APIRest APIRest;
+
         //public string ProgramFolder;
 
         public string ExpandVarCmd(string cmd, int x, int y, int w, int h)
@@ -383,10 +389,8 @@ namespace gInk
             FormButtonHitter = new FormButtonHitter(this);
             FormDisplay = new FormDisplay(this);  // FormDisplay is created at the end to ensure other objects are created.
             UndoStrokes = new Ink[8];
-            // to be done once only
-            //ReadOptions("pens.ini");
-            //ReadOptions("config.ini");
-            //ReadOptions("hotkeys.ini");
+
+            APIRest = new APIRest(this);
 
         }
 
@@ -1256,6 +1260,9 @@ namespace gInk
                         case "FFMPEG_CMD":
                             FFMpegCmd = sPara;
                             break;
+                        case "RESTSERVER_URL":
+                            APIRestUrl = sPara;
+                            break;
                         case "IMAGESTAMP_SIZE":
                             if (int.TryParse(sPara, out tempi))
                                 StampSize = tempi;
@@ -1713,6 +1720,9 @@ namespace gInk
                             break;
                         case "FFMPEG_CMD":
                             sPara = FFMpegCmd;
+                            break;
+                        case "RESTSERVER_URL":
+                            sPara = APIRestUrl;
                             break;
                         case "IMAGESTAMP_SIZE":
                             sPara = StampSize.ToString();

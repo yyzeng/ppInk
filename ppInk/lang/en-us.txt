@@ -52,6 +52,7 @@ OptionsZoomDim = "Dim."
 OptionsZoomScale = "Scale"
 OptionsZoomContinous = "Continous"
 
+OptionsGeneralAPIRest = "REST server url"
 
 BoardTitle = "Clean Desktop"
 BoardText = "Erase all drawings and fill it with..."

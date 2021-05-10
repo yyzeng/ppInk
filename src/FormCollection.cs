@@ -5120,7 +5120,7 @@ namespace gInk
             }
         }
 
-        private void btLoad_Click(object sender, EventArgs e)
+        public void btLoad_Click(object sender, EventArgs e)
         {
             longClickTimer.Stop(); // for an unkown reason the mouse arrives later
             if (sender is ContextMenu)
@@ -5162,7 +5162,7 @@ namespace gInk
             Root.UponAllDrawingUpdate = true;
         }
 
-        private void btSave_Click(object sender, EventArgs e)
+        public void btSave_Click(object sender, EventArgs e)
         {
             longClickTimer.Stop(); // for an unkown reason the mouse arrives later
             if (sender is ContextMenu)

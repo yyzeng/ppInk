@@ -180,6 +180,9 @@ namespace gInk
             this.cbWhiteIcon = new System.Windows.Forms.CheckBox();
             this.tbSnapPath = new System.Windows.Forms.TextBox();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.APIRestLbl = new System.Windows.Forms.Label();
+            this.APIRestEd = new System.Windows.Forms.TextBox();
+            this.ActivateDbgWinBtn = new System.Windows.Forms.Button();
             this.SubToolsBar_cb = new System.Windows.Forms.CheckBox();
             this.ArrwGrp = new System.Windows.Forms.GroupBox();
             this.ArrHdAperture = new System.Windows.Forms.TextBox();
@@ -187,7 +190,6 @@ namespace gInk
             this.ArrHdLength = new System.Windows.Forms.TextBox();
             this.ArrHdLenLbl = new System.Windows.Forms.Label();
             this.DefArrStartCb = new System.Windows.Forms.CheckBox();
-            this.MoveToolBarCb = new System.Windows.Forms.CheckBox();
             this.ToolBarHeight = new System.Windows.Forms.TextBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.OpenIntoSnapCb = new System.Windows.Forms.CheckBox();
@@ -220,7 +222,6 @@ namespace gInk
             this.lbcbPens = new System.Windows.Forms.Label();
             this.FadingTimeEd = new System.Windows.Forms.TextBox();
             this.WidthAtPenSelCb = new System.Windows.Forms.CheckBox();
-            this.ActivateDbgWinBtn = new System.Windows.Forms.Button();
             this.tabPage3.SuspendLayout();
             this.SnapInPointerGrp.SuspendLayout();
             this.VideoTab.SuspendLayout();
@@ -1548,7 +1549,7 @@ namespace gInk
             // lbNote
             // 
             this.lbNote.AutoSize = true;
-            this.lbNote.Location = new System.Drawing.Point(46, 410);
+            this.lbNote.Location = new System.Drawing.Point(46, 418);
             this.lbNote.Name = "lbNote";
             this.lbNote.Size = new System.Drawing.Size(316, 13);
             this.lbNote.TabIndex = 4;
@@ -1636,6 +1637,8 @@ namespace gInk
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.tabPage1.Controls.Add(this.APIRestLbl);
+            this.tabPage1.Controls.Add(this.APIRestEd);
             this.tabPage1.Controls.Add(this.ActivateDbgWinBtn);
             this.tabPage1.Controls.Add(this.SubToolsBar_cb);
             this.tabPage1.Controls.Add(this.ZoomEnabledCb);
@@ -1652,7 +1655,6 @@ namespace gInk
             this.tabPage1.Controls.Add(this.ToolBarColorLbl);
             this.tabPage1.Controls.Add(this.BoardBx);
             this.tabPage1.Controls.Add(this.ArrwGrp);
-            this.tabPage1.Controls.Add(this.MoveToolBarCb);
             this.tabPage1.Controls.Add(this.ToolBarHeight);
             this.tabPage1.Controls.Add(this.panel1);
             this.tabPage1.Controls.Add(this.OpenIntoSnapCb);
@@ -1690,6 +1692,37 @@ namespace gInk
             this.tabPage1.Size = new System.Drawing.Size(767, 473);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "General";
+            // 
+            // APIRestLbl
+            // 
+            this.APIRestLbl.AutoSize = true;
+            this.APIRestLbl.Location = new System.Drawing.Point(46, 396);
+            this.APIRestLbl.Name = "APIRestLbl";
+            this.APIRestLbl.Size = new System.Drawing.Size(82, 13);
+            this.APIRestLbl.TabIndex = 52;
+            this.APIRestLbl.Text = "REST server url";
+            // 
+            // APIRestEd
+            // 
+            this.APIRestEd.Location = new System.Drawing.Point(178, 392);
+            this.APIRestEd.Name = "APIRestEd";
+            this.APIRestEd.Size = new System.Drawing.Size(232, 20);
+            this.APIRestEd.TabIndex = 51;
+            this.APIRestEd.Text = "http://localhost:7999";
+            this.APIRestEd.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.APIRestEd_KeyPress);
+            this.APIRestEd.Validating += new System.ComponentModel.CancelEventHandler(this.APIRestEd_Validating);
+            // 
+            // ActivateDbgWinBtn
+            // 
+            this.ActivateDbgWinBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ActivateDbgWinBtn.Location = new System.Drawing.Point(716, 447);
+            this.ActivateDbgWinBtn.Margin = new System.Windows.Forms.Padding(0);
+            this.ActivateDbgWinBtn.Name = "ActivateDbgWinBtn";
+            this.ActivateDbgWinBtn.Size = new System.Drawing.Size(51, 26);
+            this.ActivateDbgWinBtn.TabIndex = 50;
+            this.ActivateDbgWinBtn.Text = "Debug\r\nWindow";
+            this.ActivateDbgWinBtn.UseVisualStyleBackColor = true;
+            this.ActivateDbgWinBtn.Click += new System.EventHandler(this.ActivateDbgWinBtn_Click);
             // 
             // SubToolsBar_cb
             // 
@@ -1767,18 +1800,6 @@ namespace gInk
             this.DefArrStartCb.UseVisualStyleBackColor = true;
             this.DefArrStartCb.CheckedChanged += new System.EventHandler(this.DefArrStartCb_CheckedChanged);
             // 
-            // MoveToolBarCb
-            // 
-            this.MoveToolBarCb.AutoSize = true;
-            this.MoveToolBarCb.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.MoveToolBarCb.Location = new System.Drawing.Point(742, 6);
-            this.MoveToolBarCb.Name = "MoveToolBarCb";
-            this.MoveToolBarCb.Size = new System.Drawing.Size(15, 14);
-            this.MoveToolBarCb.TabIndex = 29;
-            this.MoveToolBarCb.UseVisualStyleBackColor = true;
-            this.MoveToolBarCb.Visible = false;
-            this.MoveToolBarCb.CheckedChanged += new System.EventHandler(this.MoveToolBarCb_CheckedChanged);
-            // 
             // ToolBarHeight
             // 
             this.ToolBarHeight.AcceptsReturn = true;
@@ -1853,7 +1874,7 @@ namespace gInk
             // 
             // SaveConfigBtn
             // 
-            this.SaveConfigBtn.Location = new System.Drawing.Point(659, 377);
+            this.SaveConfigBtn.Location = new System.Drawing.Point(660, 382);
             this.SaveConfigBtn.Name = "SaveConfigBtn";
             this.SaveConfigBtn.Size = new System.Drawing.Size(98, 46);
             this.SaveConfigBtn.TabIndex = 17;
@@ -2092,17 +2113,6 @@ namespace gInk
             this.WidthAtPenSelCb.UseVisualStyleBackColor = true;
             this.WidthAtPenSelCb.CheckedChanged += new System.EventHandler(this.WidthAtPenSelCb_CheckedChanged);
             // 
-            // ActivateDbgWinBtn
-            // 
-            this.ActivateDbgWinBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ActivateDbgWinBtn.Location = new System.Drawing.Point(659, 110);
-            this.ActivateDbgWinBtn.Name = "ActivateDbgWinBtn";
-            this.ActivateDbgWinBtn.Size = new System.Drawing.Size(98, 23);
-            this.ActivateDbgWinBtn.TabIndex = 50;
-            this.ActivateDbgWinBtn.Text = "Debug Window";
-            this.ActivateDbgWinBtn.UseVisualStyleBackColor = true;
-            this.ActivateDbgWinBtn.Click += new System.EventHandler(this.ActivateDbgWinBtn_Click);
-            // 
             // FormOptions
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2265,7 +2275,6 @@ namespace gInk
         private System.Windows.Forms.TextBox ArrHdLength;
         private System.Windows.Forms.Label ArrHdLenLbl;
         private System.Windows.Forms.CheckBox DefArrStartCb;
-        private System.Windows.Forms.CheckBox MoveToolBarCb;
         private System.Windows.Forms.TextBox ToolBarHeight;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.CheckBox OpenIntoSnapCb;
@@ -2306,5 +2315,7 @@ namespace gInk
         private System.Windows.Forms.Label lbHkFadingToggle;
         private HotkeyInputBox hiFadingToggle;
         private System.Windows.Forms.Button ActivateDbgWinBtn;
+        private System.Windows.Forms.Label APIRestLbl;
+        private System.Windows.Forms.TextBox APIRestEd;
     }
 }

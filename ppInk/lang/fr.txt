@@ -52,6 +52,7 @@ OptionsZoomDim = "Dim."
 OptionsZoomScale = "Facteur"
 OptionsZoomContinous = "Continue"
 
+OptionsGeneralAPIRest = "URL Serveur REST"
 
 BoardTitle = "Effacer"
 BoardText = "Efface tous les dessins et rempli le fond avec..."

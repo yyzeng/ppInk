@@ -96,6 +96,7 @@
     <Compile Include="CallForm.Designer.cs">
       <DependentUpon>CallForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="APIRest.cs" />
     <Compile Include="zoomForm.cs">
       <SubType>Form</SubType>
     </Compile>
