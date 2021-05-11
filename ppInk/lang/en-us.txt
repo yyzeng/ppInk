@@ -137,6 +137,9 @@ OptionsHotKeyAltAsOneCommand = "Process Alt as Temporary Command (Alt will be ig
 OptionsHotkeysglobal = "Global hotkey (starts drawing, switches between mouse pointer and drawing)"
 OptionsHotkeysEnableinpointer = "Enable all following hotkeys in mouse pointer mode (may cause a mess)"
 
+OptionsHotkeysPenWidthPlus = "Pen Width +"
+OptionsHotkeysPenWidthMinus = "Pen Width -"
+
 VideoTab="Video"
 OptNoVideo="No video recording"
 OptObsRecord="OBS recording"

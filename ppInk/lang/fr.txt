@@ -137,6 +137,9 @@ OptionsHotKeyAltAsOneCommand = "Alt utilisé comme commande temporaire (Alt sera
 OptionsHotkeysglobal = "Raccourci général (débuter un dessin, basculer entre le mode curseur de souris et le dessin)"
 OptionsHotkeysEnableinpointer = "Activer tous les raccourcis en mode curseur de souris (peut poser problème)"
 
+OptionsHotkeysPenWidthPlus = "Largeur Stylo +"
+OptionsHotkeysPenWidthMinus = "Largeur Stylo -"
+
 VideoTab="Video"
 OptNoVideo="Pas d'enregistrement video"
 OptObsRecord="Enregistrement video avec OBS Studio"

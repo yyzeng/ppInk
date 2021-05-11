@@ -264,6 +264,8 @@ namespace gInk
             hiToolClipArt2.Hotkey = Root.Hotkey_ClipArt2;
             hiToolClipArt3.Hotkey = Root.Hotkey_ClipArt3;
             hiZoom.Hotkey = Root.Hotkey_Zoom;
+            hiPenWidthPlus.Hotkey = Root.Hotkey_PenWidthPlus;
+            hiPenWidthMinus.Hotkey = Root.Hotkey_PenWidthMinus;
 
             WsUrlTxt.Text = Root.ObsUrl;
             WsPwdTxt.Text = Root.ObsPwd;
@@ -384,6 +386,9 @@ namespace gInk
             this.lbHkClipart2.Text = shortTxt(Root.Local.ButtonNameClipArt) + " 2";
             this.lbHkClipart3.Text = shortTxt(Root.Local.ButtonNameClipArt) + " 3";
             this.lbHkZoom.Text = shortTxt(Root.Local.ButtonNameZoom);
+
+            this.lbHkPenWidthPlus.Text = Root.Local.OptionsHotkeysPenWidthPlus;
+            this.lbHkPenWidthMinus.Text = Root.Local.OptionsHotkeysPenWidthMinus;
 
             this.lbGlobalHotkey.Text = Root.Local.OptionsHotkeysglobal;
             this.cbAllowHotkeyInPointer.Text = Root.Local.OptionsHotkeysEnableinpointer;

@@ -1178,16 +1178,7 @@ namespace gInk
             }
             else
             {
-                Root.GlobalPenWidth += Root.PixelToHiMetric(e.Delta > 0 ? 2 : -2);
-                if (Root.GlobalPenWidth < 1)
-                    Root.GlobalPenWidth = 1;
-            /*if (Root.GlobalPenWidth > 120)
-                Root.GlobalPenWidth = 120;
-            */
-            //Console.WriteLine(Root.GlobalPenWidth);
-                IC.DefaultDrawingAttributes.Width = Root.GlobalPenWidth;
-                if (Root.CanvasCursor == 1)
-                    SetPenTipCursor();
+                PenWidth_Change(Root.PixelToHiMetric(e.Delta > 0 ? 2 : -2));
                 return;
             }
         }
@@ -2932,7 +2923,10 @@ namespace gInk
         bool LastClipArt1Status = false;
         bool LastClipArt2Status = false;
         bool LastClipArt3Status = false;
-        int SnappingPointerStep=0;
+
+        bool LastPenWidthPlus = false;
+        bool LastPenWidthMinus = false;
+        int SnappingPointerStep = 0;
         DateTime SnappingPointerReset;
 
         private void gpPenWidth_MouseDown(object sender, MouseEventArgs e)
@@ -3801,6 +3795,22 @@ namespace gInk
                     btTool_Click(btClip3, null);
                 }
                 LastClipArt3Status = pressed;
+
+                pressed = (GetKeyState(Root.Hotkey_PenWidthPlus.Key) & 0x8000) == 0x8000;
+                if (pressed && !LastPenWidthPlus && Root.Hotkey_PenWidthPlus.ModifierMatch(control, alt, shift, win))
+                {
+                    MouseTimeDown = DateTime.Now;
+                    PenWidth_Change(Root.PenWidth_Delta);
+                }
+                LastPenWidthPlus = pressed;
+
+                pressed = (GetKeyState(Root.Hotkey_PenWidthMinus.Key) & 0x8000) == 0x8000;
+                if (pressed && !LastPenWidthMinus && Root.Hotkey_PenWidthMinus.ModifierMatch(control, alt, shift, win))
+                {
+                    MouseTimeDown = DateTime.Now;
+                    PenWidth_Change(-Root.PenWidth_Delta);
+                }
+                LastPenWidthMinus = pressed;
             }
 
             if (Root.Snapping < 0)
@@ -3808,6 +3818,17 @@ namespace gInk
             if (Tick % 100 == 0)
                 GC.Collect();
 
+        }
+
+        public void PenWidth_Change(int n)
+        {
+            Root.GlobalPenWidth += n;
+            if (Root.GlobalPenWidth < 1)
+                Root.GlobalPenWidth = 1;
+            IC.DefaultDrawingAttributes.Width = Root.GlobalPenWidth;
+            if (Root.CanvasCursor == 1)
+                SetPenTipCursor();
+            return;
         }
 
         private bool IsInsideVisibleScreen(int x, int y)

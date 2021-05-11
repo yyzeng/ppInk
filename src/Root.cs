@@ -185,6 +185,10 @@ namespace gInk
         public Hotkey Hotkey_Global = new Hotkey();
 		public Hotkey[] Hotkey_Pens = new Hotkey[10];
         public Hotkey Hotkey_FadingToggle = new Hotkey();
+
+        public Hotkey Hotkey_PenWidthPlus = new Hotkey();
+        public Hotkey Hotkey_PenWidthMinus = new Hotkey();
+
         public Hotkey Hotkey_Eraser = new Hotkey();
 		public Hotkey Hotkey_InkVisible = new Hotkey();
 		public Hotkey Hotkey_Pointer = new Hotkey();
@@ -229,8 +233,9 @@ namespace gInk
 		public bool UponSubPanelUpdate = false;
 		public bool UponAllDrawingUpdate = false;
 		public bool MouseMovedUnderSnapshotDragging = false; // used to pause re-drawing when mouse is not moving during dragging to take a screenshot
+        public int PenWidth_Delta = 5;
 
-		public bool PanMode = false;
+        public bool PanMode = false;
 		public bool InkVisible = true;
         public int MagneticRadius= MIN_MAGNETIC;        // Magnet Radius; <=0 means off;
         public int MinMagneticRadius() { return Math.Max(Math.Abs(MagneticRadius), MIN_MAGNETIC); }
@@ -1001,7 +1006,19 @@ namespace gInk
                         case "HOTKEY_ZOOM":
                             Hotkey_Zoom.Parse(sPara);
                             break;
+                        case "HOTKEY_PENWIDTH_PLUS":
+                            Hotkey_PenWidthPlus.Parse(sPara);
+                            break;
+                        case "HOTKEY_PENWIDTH_MINUS":
+                            Hotkey_PenWidthMinus.Parse(sPara);
+                            break;
 
+                        case "PENWIDTH_DELTA":
+                            if (int.TryParse(sPara, out tempi))
+                            {
+                                PenWidth_Delta=tempi;
+                            }
+                            break;
                         case "WHITE_TRAY_ICON":
                             if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
                                 WhiteTrayIcon = true;
@@ -1550,6 +1567,15 @@ namespace gInk
                             break;
                         case "HOTKEY_ZOOM":
                             sPara = Hotkey_Zoom.ToStringInvariant();
+                            break;
+                        case "HOTKEY_PENWIDTH_PLUS":
+                            sPara = Hotkey_PenWidthPlus.ToStringInvariant();
+                            break;
+                        case "HOTKEY_PENWIDTH_MINUS":
+                            sPara = Hotkey_PenWidthMinus.ToStringInvariant();
+                            break;
+                        case "PENWIDTH_DELTA":
+                            sPara = PenWidth_Delta.ToString();
                             break;
 
                         case "WHITE_TRAY_ICON":

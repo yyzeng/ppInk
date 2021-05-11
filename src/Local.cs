@@ -149,6 +149,9 @@ namespace gInk
         public string OptionsHotkeysglobal = "Global hotkey (start drawing, switch between mouse pointer and drawing)";
 		public string OptionsHotkeysEnableinpointer = "Enable all following hotkeys in mouse pointer mode (may cause a mess)";
 
+        public string OptionsHotkeysPenWidthPlus = "Pen Width +";
+        public string OptionsHotkeysPenWidthMinus = "Pen Width -";
+
         public string VideoTab="Video";
         public string OptNoVideo="No video recording";
         public string OptObsRecord="OBS recording";
