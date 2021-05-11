@@ -136,6 +136,7 @@ namespace gInk
         public string OptionsPensWidthAtSelection = "Apply Width on Pen Selection\n(even with width selector)";
         public string OptionsInverseMouseWheel = "Inverse MouseWheel control\nWheel = Pen Width\nShift+Wheel = Pen Selection";
         public string OptionsInverseMouseWheelChecked = "Inverse MouseWheel control\nWheel = Pen Selection\nShift+Wheel = Pen Width";
+        public string OptionsFitToCurve = "Smooth Curves";
 
         public string OptionsPensThin = "Thin";
 		public string OptionsPensNormal = "Normal";

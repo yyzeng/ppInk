@@ -1274,7 +1274,7 @@ namespace gInk
             Stroke st = Root.FormCollection.IC.Ink.CreateStroke(pts);
             st.DrawingAttributes = Root.FormCollection.IC.DefaultDrawingAttributes.Clone();
             st.DrawingAttributes.AntiAliased = true;
-            st.DrawingAttributes.FitToCurve = true;
+            st.DrawingAttributes.FitToCurve = Root.FitToCurve;
             setStrokeProperties(ref st, FilledSelected);
             Root.FormCollection.IC.Ink.Strokes.Add(st);
             if (st.ExtendedProperties.Contains(Root.FADING_PEN))
@@ -1299,7 +1299,7 @@ namespace gInk
             IC.Renderer.PixelToInkSpace(Root.FormDisplay.gOneStrokeCanvus, ref pts);
             Stroke st = Root.FormCollection.IC.Ink.CreateStroke(pts);
             st.DrawingAttributes = Root.FormCollection.IC.DefaultDrawingAttributes.Clone();
-            if(FilledSelected==Filling.NoFrame)
+            if (FilledSelected == Filling.NoFrame)
                 st.DrawingAttributes.Transparency = 255;
             st.DrawingAttributes.AntiAliased = true;
             st.DrawingAttributes.FitToCurve = false;
@@ -2603,7 +2603,7 @@ namespace gInk
                     IC.DefaultDrawingAttributes.Width = Root.GlobalPenWidth;
                 }
                 LastPenSelected = pen;
-                IC.DefaultDrawingAttributes.FitToCurve = true;
+                IC.DefaultDrawingAttributes.FitToCurve = Root.FitToCurve;
                 for (int b = 0; b < Root.MaxPenCount; b++)
                     //btPen[b].Image = image_pen[b];
                     btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, b == pen,

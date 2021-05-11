@@ -256,6 +256,7 @@ namespace gInk
 		public int CurrentPen = 1;  // defaut pen
 		public int LastPen = 1;
 		public int GlobalPenWidth = 80;
+        public bool FitToCurve = true;
 		public bool gpPenWidthVisible = false;
 		public string SnapshotFileFullPath = ""; // used to record the last snapshot file name, to select it when the balloon is clicked
 
@@ -1019,7 +1020,7 @@ namespace gInk
                                 SnapshotBasePath += "/";
                             break;
                         case "OPEN_INTO_SNAP":
-                            if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "OFF")
+                            if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
                                 OpenIntoSnapMode = true;
                             else
                                 OpenIntoSnapMode = false;
@@ -1027,6 +1028,12 @@ namespace gInk
                         case "DRAWING_ICON":
                             if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
                                 ToolsEnabled = false;
+                            break;
+                        case "FITTOCURVE":
+                            if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
+                                FitToCurve = false;
+                            else if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
+                                FitToCurve = true;
                             break;
                         case "ARROW":           // angle in degrees, len in % of the screen width
                             tab = sPara.Split(',');
@@ -1568,6 +1575,9 @@ namespace gInk
                                 sPara = "True";
                             else
                                 sPara = "False";
+                            break;
+                        case "FITTOCURVE":
+                            sPara = FitToCurve?"True":"False";
                             break;
                         case "ARROW":           // angle in degrees, len in % of the screen width
                             sPara = (ArrowAngle / Math.PI * 180.0).ToString(CultureInfo.InvariantCulture) +","+ (ArrowLen / System.Windows.SystemParameters.PrimaryScreenWidth * 100.0).ToString(CultureInfo.InvariantCulture);

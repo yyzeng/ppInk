@@ -128,6 +128,7 @@ OptionsPensFading = "Fading (after...sec)"
 OptionsPensWidthAtSelection = "Apply Width on Pen Selection\n(even with width selector)"
 OptionsInverseMouseWheel = "Inverse MouseWheel control\nWheel = Pen Width\nShift+Wheel = Pen Selection"
 OptionsInverseMouseWheelChecked = "Inverse MouseWheel control\nWheel = Pen Selection\nShift+Wheel = Pen Width"
+OptionsFitToCurve = "Smooth Curves"
 
 OptionsHotKeySnapInPointerGrp = "Snaphsot in Pointer Mode"
 OptionsHotKeySnapInPointerLbl = "press and hold....                .... and press twice\n\n\nBoth None = Disabled"

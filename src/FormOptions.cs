@@ -214,6 +214,7 @@ namespace gInk
 
             FadingTimeEd.Text = Root.TimeBeforeFading.ToString();
             InverseWheelCb.Checked = Root.InverseMousewheel;
+            FitToCurveEd.Checked = Root.FitToCurve;
 
             cbAllowHotkeyInPointer.Top = (int)(this.Height * 0.18);
 
@@ -436,6 +437,7 @@ namespace gInk
 			}
             WidthAtPenSelCb.Text = Root.Local.OptionsPensWidthAtSelection;
             InverseWheelCb.Text = Root.InverseMousewheel ? Root.Local.OptionsInverseMouseWheelChecked : Root.Local.OptionsInverseMouseWheel;
+            FitToCurveEd.Text = Root.Local.OptionsFitToCurve;
 
             comboLanguage.Items.Clear();
 			List<string> langs = Root.Local.GetLanguagenames();
@@ -1074,6 +1076,11 @@ namespace gInk
                 (sender as TextBox).Select();
                 e.Handled = true;
             }
+        }
+
+        private void FitToCurveEd_CheckedChanged(object sender, EventArgs e)
+        {
+            Root.FitToCurve = FitToCurveEd.Checked;
         }
     }
 }
