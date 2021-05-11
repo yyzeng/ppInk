@@ -2609,13 +2609,9 @@ namespace gInk
                     btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, b == pen,
                                                             Root.PenAttr[b].ExtendedProperties.Contains(Root.FADING_PEN));
                 //btPen[pen].Image = image_pen_act[pen];
-				EnterEraserMode(false);
-				Root.UnPointer();
-				Root.PanMode = false;
-                if(Root.ToolSelected == Tools.Invalid)
-                {
-                    SelectTool(Tools.Hand,Filling.Empty);
-                }
+                EnterEraserMode(false);
+                Root.UnPointer();
+                Root.PanMode = false;
 
                 if (Root.CanvasCursor == 0)
                 {
@@ -3567,21 +3563,23 @@ namespace gInk
                 bool shift = ((short)(GetKeyState(VK_LSHIFT) | GetKeyState(VK_RSHIFT)) & 0x8000) == 0x8000;
                 bool win = ((short)(GetKeyState(VK_LWIN) | GetKeyState(VK_RWIN)) & 0x8000) == 0x8000;
 
-                if(Root.Hotkey_Pens[0].ConflictWith(Root.Hotkey_Pens[1] ))
+                if (Root.Hotkey_Pens[0].ConflictWith(Root.Hotkey_Pens[1]))
                 { // same hotkey for pen 0 and pen 1 : we have to rotate through pens
                     pressed = (GetKeyState(Root.Hotkey_Pens[0].Key) & 0x8000) == 0x8000;
                     if (pressed && !LastPenStatus[0] && Root.Hotkey_Pens[0].ModifierMatch(control, alt, shift, win))
                     {
-                        int p = LastPenSelected+1;
+                        int p = LastPenSelected + 1;
                         if (p >= Root.MaxPenCount)
                             p = 0;
                         while (!Root.PenEnabled[p])
                         {
                             p += 1;
                             if (p >= Root.MaxPenCount)
-                                p= 0;
+                                p = 0;
                         }
-                        SelectPen(p);
+                        //SelectPen(p);
+                        MouseTimeDown = DateTime.Now;
+                        btColor_Click(btPen[p], null);
                     }
                     LastPenStatus[0] = pressed;
                 }
@@ -3590,9 +3588,11 @@ namespace gInk
                     for (int p = 0; p < Root.MaxPenCount; p++)
                     {
                         pressed = (GetKeyState(Root.Hotkey_Pens[p].Key) & 0x8000) == 0x8000;
-                    if (pressed && !LastPenStatus[p] && Root.Hotkey_Pens[p].ModifierMatch(control, alt, shift, win))
-                    {
-                        SelectPen(p);
+                        if (pressed && !LastPenStatus[p] && Root.Hotkey_Pens[p].ModifierMatch(control, alt, shift, win))
+                        {
+                            //SelectPen(p);
+                            MouseTimeDown = DateTime.Now;
+                            btColor_Click(btPen[p], null);
                         }
                         LastPenStatus[p] = pressed;
                     }
@@ -4085,9 +4085,9 @@ namespace gInk
             for (int b = 0; b < Root.MaxPenCount; b++)
                 if ((Button)sender == btPen[b])
                 {
-                    if ((Root.ToolSelected == Tools.Move) || (Root.ToolSelected == Tools.Copy) || (Root.ToolSelected == Tools.Edit || Root.PanMode  || Root.EraserMode )) // if move
-                        SelectTool(Tools.Hand, Filling.Empty);
                     SelectPen(b);
+                    if (Root.ToolSelected == Tools.Invalid || Root.ToolSelected == Tools.Move || Root.ToolSelected == Tools.Copy || (Root.ToolSelected == Tools.Edit || Root.PanMode  || Root.EraserMode )) // if move
+                        SelectTool(Tools.Hand, Filling.Empty);
                 }
 		}
 
@@ -4574,9 +4574,9 @@ namespace gInk
                 Root.ImageStamp = (ClipArtData)btClipSel;
                 i = Tools.ClipArt;
             }
-            SelectTool(i);
             if (i >= Tools.Hand)
                 SelectPen(LastPenSelected);
+            SelectTool(i);
         }
 
         public void btEraser_Click(object sender, EventArgs e)
