@@ -51,8 +51,8 @@ namespace gInk
         const double NormSizePercent = 0.85;
         const double SmallSizePercent = 0.44;
         const double TopPercent = 0.06;
-        const double SmallButtonNext =0.44;
-        const double InterButtonGap = NormSizePercent*.05;
+        const double SmallButtonNext = 0.44;
+        const double InterButtonGap = NormSizePercent * .05;
 
         // hotkeys
         const int VK_SHIFT = 0x10;
@@ -123,11 +123,11 @@ namespace gInk
         private List<Stroke> FadingList = new List<Stroke>();
 
         private ZoomForm ZoomForm = new ZoomForm();
-        private Bitmap ZoomImage,ZoomImage2;
+        private Bitmap ZoomImage, ZoomImage2;
         int ZoomFormRePosX;
         int ZoomFormRePosY;
         string ZoomSaveStroke;
-        public MouseButtons CurrentMouseButton=MouseButtons.None;
+        public MouseButtons CurrentMouseButton = MouseButtons.None;
 
         public string SaveStrokeFile;
         public List<string> PointerModeSnaps = new List<string>();
@@ -162,7 +162,7 @@ namespace gInk
             public static extern uint ResumeThread(IntPtr hThread);
         }
 
-        public static System.Windows.Forms.Cursor getCursFromDiskOrRes(string name,System.Windows.Forms.Cursor nocurs)
+        public static System.Windows.Forms.Cursor getCursFromDiskOrRes(string name, System.Windows.Forms.Cursor nocurs)
         {
             string filename;
             string[] exts = { ".cur", ".ani", ".ico" };
@@ -211,9 +211,9 @@ namespace gInk
                     {
                         return new Bitmap(filename);
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
-                        Program.WriteErrorLog(string.Format("File {0} found but can not be loaded:{1} \n",filename,e));
+                        Program.WriteErrorLog(string.Format("File {0} found but can not be loaded:{1} \n", filename, e));
                         return getImgFromDiskOrRes("unknown");
                     }
             }
@@ -227,7 +227,7 @@ namespace gInk
             }
         }
 
-        private void SetButtonPosition(Button previous, Button current, int spacing,int Orient=-1)
+        private void SetButtonPosition(Button previous, Button current, int spacing, int Orient = -1)
         {
             if (Orient < Orientation.min)
                 Orient = Root.ToolbarOrientation;
@@ -245,7 +245,7 @@ namespace gInk
             else if (Orient == Orientation.toDown)
             {
                 current.Left = previous.Left;
-                current.Top = previous.Top  - spacing - current.Height;
+                current.Top = previous.Top - spacing - current.Height;
             }
             else if (Orient == Orientation.toUp)
             {
@@ -271,7 +271,7 @@ namespace gInk
             }
         }
 
-        public Bitmap buildPenIcon(Color col, int transparency, bool Sel,bool Fading)
+        public Bitmap buildPenIcon(Color col, int transparency, bool Sel, bool Fading)
         {
             Bitmap fg, img, fadingOverlay;
             ImageAttributes imageAttributes = new ImageAttributes();
@@ -292,7 +292,7 @@ namespace gInk
 
             Graphics g = Graphics.FromImage(img);
             g.DrawImage(fg, new Rectangle(0, 0, img.Width, img.Height), 0, 0, img.Width, img.Height, GraphicsUnit.Pixel, imageAttributes);
-            if(Fading)
+            if (Fading)
                 g.DrawImage(fadingOverlay, new Rectangle(0, 0, img.Width, img.Height), 0, 0, img.Width, img.Height, GraphicsUnit.Pixel);
             return img;
         }
@@ -343,7 +343,7 @@ namespace gInk
             }
 
             IC = new InkOverlay(this.Handle);
-            Console.WriteLine("Module of IC "+IC.GetType().Module.FullyQualifiedName);
+            Console.WriteLine("Module of IC " + IC.GetType().Module.FullyQualifiedName);
             IC.CollectionMode = CollectionMode.InkOnly;
             IC.AutoRedraw = false;
             IC.DynamicRendering = false;
@@ -998,7 +998,7 @@ namespace gInk
 
             SaveStrokeFile = "";
 
-            Console.WriteLine("C=" + (DateTime.Now.Ticks/1e7).ToString());        
+            Console.WriteLine("C=" + (DateTime.Now.Ticks / 1e7).ToString());
         }
 
         private void SetSubBarPosition(Panel Tb, Button RefButton)
@@ -1078,7 +1078,7 @@ namespace gInk
                 return;
             }
             //Console.WriteLine("activating " + (Root.PointerMode ? "pointer" : "not") + (Root.FormButtonHitter.Visible ? "visible" : "not")+ Root.FormButtonHitter.Width.ToString());
-            if (Root.FormButtonHitter.Visible && (Math.Min(Root.FormButtonHitter.Width, Root.FormButtonHitter.Height)<=Math.Min(Root.FormCollection.btDock.Width, Root.FormCollection.btDock.Height)*1.5))
+            if (Root.FormButtonHitter.Visible && (Math.Min(Root.FormButtonHitter.Width, Root.FormButtonHitter.Height) <= Math.Min(Root.FormCollection.btDock.Width, Root.FormCollection.btDock.Height) * 1.5))
             {
                 //Console.WriteLine("process ");
                 SelectPen(LastPenSelected);
@@ -1102,7 +1102,7 @@ namespace gInk
                     Root.FormDisplay.DrawBorder(Root.FormDisplay.HasFocus());
                     Root.FormDisplay.UpdateFormDisplay(true);
                 }
-                else if(Initializing)        // This is normally because we have not yet finish initialisation, we ignore the action...
+                else if (Initializing)        // This is normally because we have not yet finish initialisation, we ignore the action...
                     return;
                 // else exception will be raised somewhere else if a problem is met
                 if (!Root.AltTabPointer)
@@ -1151,16 +1151,16 @@ namespace gInk
         {
             if (Root.PointerMode)   // Wheel shall not be taken into account in edit mode
                 return;
-            if(ZoomForm.Visible && ((GetKeyState(VK_CONTROL)) & 0x8000)!=0)
+            if (ZoomForm.Visible && ((GetKeyState(VK_CONTROL)) & 0x8000) != 0)
             {
                 int t = Math.Sign(e.Delta);
-                ZoomForm.Height += t*(int)(10.0F* Root.ZoomHeight/Root.ZoomWidth);
-                ZoomForm.Width += t*10;
+                ZoomForm.Height += t * (int)(10.0F * Root.ZoomHeight / Root.ZoomWidth);
+                ZoomForm.Width += t * 10;
                 return;
             }
-            if (Root.InverseMousewheel ^ (GetKeyState(VK_SHIFT ) & 0x8000)!= 0)
+            if (Root.InverseMousewheel ^ (GetKeyState(VK_SHIFT) & 0x8000) != 0)
             {
-                int p = LastPenSelected + (e.Delta>0?1:-1);
+                int p = LastPenSelected + (e.Delta > 0 ? 1 : -1);
                 if (p >= Root.MaxPenCount)
                     p = 0;
                 if (p < 0)
@@ -1236,7 +1236,7 @@ namespace gInk
             //Console.WriteLine(string.Format("!LC {0}", bt.Name));
             bt.RightToLeft = RightToLeft.Yes;
             bt.PerformClick();
-            if(IsMovingToolbar<2)
+            if (IsMovingToolbar < 2)
                 IsMovingToolbar = 0;
         }
 
@@ -1253,7 +1253,7 @@ namespace gInk
             try
             {
                 // if the penattributes is not fading there is no properties and it will turn into an exception
-                if(st.DrawingAttributes.ExtendedProperties.Contains(Root.FADING_PEN))
+                if (st.DrawingAttributes.ExtendedProperties.Contains(Root.FADING_PEN))
                     st.ExtendedProperties.Add(Root.FADING_PEN, DateTime.Now.AddSeconds((float)(st.DrawingAttributes.ExtendedProperties[Root.FADING_PEN].Data)).Ticks);
             } catch { };
 
@@ -1310,7 +1310,7 @@ namespace gInk
             return st;
         }
 
-        private Stroke AddImageStroke(int CursorX0, int CursorY0, int CursorX, int CursorY, string fn,int Filling=-10)
+        private Stroke AddImageStroke(int CursorX0, int CursorY0, int CursorX, int CursorY, string fn, int Filling = -10)
         {
             if (Filling == -10)
                 Filling = Root.ImageStamp.Filling;
@@ -1416,7 +1416,7 @@ namespace gInk
             Point pt = new Point(CursorX0, CursorY0);
             //IC.Renderer.PixelToInkSpace(Root.FormDisplay.gOneStrokeCanvus, ref pt);
             IC.Renderer.PixelToInkSpace(Root.FormDisplay.gOneStrokeCanvus, ref pt);
-            Point[] pts = new Point[9] { pt, pt, pt, pt, pt, pt, pt, pt,pt };
+            Point[] pts = new Point[9] { pt, pt, pt, pt, pt, pt, pt, pt, pt };
 
             Stroke st = Root.FormCollection.IC.Ink.CreateStroke(pts);
             st.DrawingAttributes = Root.FormCollection.IC.DefaultDrawingAttributes.Clone();
@@ -1481,7 +1481,7 @@ namespace gInk
             minStroke = null;
             //foreach (Stroke st in IC.Ink.Strokes)
             //reverse the order to select to most ontop :
-            for (int i = IC.Ink.Strokes.Count - (butLast ? 2 : 1); i>=0 ; i--)
+            for (int i = IC.Ink.Strokes.Count - (butLast ? 2 : 1); i >= 0; i--)
             {
                 Stroke st = IC.Ink.Strokes[i];
                 if (st.ExtendedProperties.Contains(Root.ISDELETION_GUID))
@@ -1673,19 +1673,19 @@ namespace gInk
                 else
                     return;
                 SaveStrokes(ZoomSaveStroke);
-                Bitmap capt = new Bitmap(Math.Abs(Root.CursorX0- Root.CursorX), Math.Abs(Root.CursorY0 - Root.CursorY));
+                Bitmap capt = new Bitmap(Math.Abs(Root.CursorX0 - Root.CursorX), Math.Abs(Root.CursorY0 - Root.CursorY));
                 using (Graphics g = Graphics.FromImage(capt))
                 {
-                    Point p = PointToScreen(new Point(Math.Min(Root.CursorX0,Root.CursorX), Math.Min(Root.CursorY0, Root.CursorY)));
+                    Point p = PointToScreen(new Point(Math.Min(Root.CursorX0, Root.CursorX), Math.Min(Root.CursorY0, Root.CursorY)));
                     Size sz = new Size(capt.Width, capt.Height);
                     g.CopyFromScreen(p, Point.Empty, sz);
                     try { ClipartsDlg.Originals.Remove("_ZoomClip"); } catch { }
                     ClipartsDlg.Originals.Add("_ZoomClip", capt);
                     IC.Ink.Strokes.Clear();
                     Stroke st;
-                    if(Root.WindowRect.Width>0)
+                    if (Root.WindowRect.Width > 0)
                     {
-                        st = AddImageStroke(0,0,Width,Height, "_ZoomClip", Filling.NoFrame);
+                        st = AddImageStroke(0, 0, Width, Height, "_ZoomClip", Filling.NoFrame);
                     }
                     else
                     {
@@ -1707,8 +1707,8 @@ namespace gInk
                 {
                     //if (e.Stroke.GetPoint(0).Equals(e.Stroke.GetPoint(1)) || e.Stroke.GetPoint(0).Equals(e.Stroke.GetPoint(2)))
                     //    st.SetPoints(st.GetPoints(1, st.GetPoints().Length - 1));
-                    if (e.Stroke.GetPoints().Length>=3)
-                        if(e.Stroke.GetPoint(0).Equals(e.Stroke.GetPoint(2)))
+                    if (e.Stroke.GetPoints().Length >= 3)
+                        if (e.Stroke.GetPoint(0).Equals(e.Stroke.GetPoint(2)))
                             st.SetPoint(0, e.Stroke.GetPoint(1));
                 } catch { }
                 setStrokeProperties(ref st, Root.FilledSelected);
@@ -1729,8 +1729,8 @@ namespace gInk
                 if ((Root.ToolSelected == Tools.Line) && (Root.CursorX0 != Int32.MinValue))
                     AddLineStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY);
                 else if ((Root.ToolSelected == Tools.Rect) && (Root.CursorX0 != Int32.MinValue))
-                    if ((CurrentMouseButton == MouseButtons.Right)||((int)CurrentMouseButton == 2))
-                        AddRectStroke(2*Root.CursorX0-Root.CursorX, 2*Root.CursorY0- Root.CursorY, Root.CursorX, Root.CursorY, Root.FilledSelected);
+                    if ((CurrentMouseButton == MouseButtons.Right) || ((int)CurrentMouseButton == 2))
+                        AddRectStroke(2 * Root.CursorX0 - Root.CursorX, 2 * Root.CursorY0 - Root.CursorY, Root.CursorX, Root.CursorY, Root.FilledSelected);
                     else
                         AddRectStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY, Root.FilledSelected);
                 else if (Root.ToolSelected == Tools.ClipArt)
@@ -1761,8 +1761,8 @@ namespace gInk
                     if ((CurrentMouseButton == MouseButtons.Right) || ((int)CurrentMouseButton == 2))
                         AddEllipseStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY, Root.FilledSelected);
                     else
-                        AddEllipseStroke((Root.CursorX0+Root.CursorX)/2, (Root.CursorY0+Root.CursorY)/2, Root.CursorX, Root.CursorY, Root.FilledSelected);
-                else if (((Root.ToolSelected == Tools.StartArrow)||(Root.ToolSelected == Tools.EndArrow)) && (Root.CursorX0 != Int32.MinValue))
+                        AddEllipseStroke((Root.CursorX0 + Root.CursorX) / 2, (Root.CursorY0 + Root.CursorY) / 2, Root.CursorX, Root.CursorY, Root.FilledSelected);
+                else if (((Root.ToolSelected == Tools.StartArrow) || (Root.ToolSelected == Tools.EndArrow)) && (Root.CursorX0 != Int32.MinValue))
                     if (((CurrentMouseButton == MouseButtons.Right) || ((int)CurrentMouseButton == 2)) ^ (Root.ToolSelected == Tools.StartArrow))
                         AddArrowStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY);
                     else
@@ -1860,9 +1860,9 @@ namespace gInk
             {
                 Point pt = new Point((int)(st.ExtendedProperties[Root.TEXTX_GUID].Data), (int)(st.ExtendedProperties[Root.TEXTY_GUID].Data));
                 //IC.Renderer.PixelToInkSpace(IC.Handle, ref pt);
-                Point pt2 = new Point((int)layoutSize.Width,(int)layoutSize.Height);
+                Point pt2 = new Point((int)layoutSize.Width, (int)layoutSize.Height);
                 IC.Renderer.PixelToInkSpace(Root.FormDisplay.gOneStrokeCanvus, ref pt2);
-                if (stf.Alignment==StringAlignment.Near) //align Left
+                if (stf.Alignment == StringAlignment.Near) //align Left
                     st.SetPoints(new Point[] { pt, new Point((int)(pt.X+pt2.X / 2),pt.Y+0), new Point((int)(pt.X+pt2.X),pt.Y+0),
                                                new Point((int)(pt.X+pt2.X),(int)(pt.Y+pt2.Y/2)),new Point((int)(pt.X+pt2.X),(int)(pt.Y+pt2.Y)),
                                                new Point((int)(pt.X+pt2.X/2),(int)(pt.Y+pt2.Y)),new Point((int)(pt.X+0),(int)(pt.Y+pt2.Y)),
@@ -1906,10 +1906,10 @@ namespace gInk
                 ZoomScreenRatio = (float)(scr.Bounds.Width) / scr.Bounds.Height;
                 e.Stroke.ExtendedProperties.Add(Root.ISHIDDEN_GUID, true); // we set the ISTROKE_GUID in order to draw the inprogress as a line
                 e.Stroke.DrawingAttributes.Color = Color.Purple;
-                e.Stroke.DrawingAttributes.Transparency  = 0;
+                e.Stroke.DrawingAttributes.Transparency = 0;
                 e.Stroke.DrawingAttributes.Width = Root.PixelToHiMetric(1);
             }
-            else if (Root.ToolSelected == Tools.Hand) 
+            else if (Root.ToolSelected == Tools.Hand)
                 e.Stroke.ExtendedProperties.Add(Root.ISSTROKE_GUID, true); // we set the ISTROKE_GUID in order to draw the inprogress as a line
             else
                 e.Stroke.ExtendedProperties.Add(Root.ISHIDDEN_GUID, true); // we set the ISTROKE_GUID in order to draw the inprogress as a line
@@ -2033,7 +2033,7 @@ namespace gInk
             if (e.Button == MouseButtons.None)
                 if (Root.EraserMode || Root.ToolSelected == Tools.Edit || Root.ToolSelected == Tools.Move || Root.ToolSelected == Tools.Copy)
                 {
-                    if (NearestStroke(new Point(e.X, e.Y), true, out Root.StrokeHovered, out pos,false) > Root.PixelToHiMetric(Root.MinMagneticRadius()))
+                    if (NearestStroke(new Point(e.X, e.Y), true, out Root.StrokeHovered, out pos, false) > Root.PixelToHiMetric(Root.MinMagneticRadius()))
                     {
                         Root.StrokeHovered = null;
                         return;
@@ -2050,12 +2050,12 @@ namespace gInk
             Root.CursorY = e.Y;
             if (ZoomCapturing)
             {
-                if(Root.WindowRect.Width > 0)
-                    Root.CursorY = (int)(Root.CursorY0 + (Root.CursorX - Root.CursorX0) / (1.0*Width/Height) * Math.Sign(Root.CursorY - Root.CursorY0) * Math.Sign(Root.CursorX - Root.CursorX0));
+                if (Root.WindowRect.Width > 0)
+                    Root.CursorY = (int)(Root.CursorY0 + (Root.CursorX - Root.CursorX0) / (1.0 * Width / Height) * Math.Sign(Root.CursorY - Root.CursorY0) * Math.Sign(Root.CursorX - Root.CursorX0));
                 else
-                    Root.CursorY = (int)(Root.CursorY0 + (Root.CursorX - Root.CursorX0) / ZoomScreenRatio*Math.Sign(Root.CursorY-Root.CursorY0)*Math.Sign(Root.CursorX - Root.CursorX0));
+                    Root.CursorY = (int)(Root.CursorY0 + (Root.CursorX - Root.CursorX0) / ZoomScreenRatio * Math.Sign(Root.CursorY - Root.CursorY0) * Math.Sign(Root.CursorX - Root.CursorX0));
             }
-            else if(Root.ToolSelected != Tools.Hand)
+            else if (Root.ToolSelected != Tools.Hand)
                 MagneticEffect(Root.CursorX0, Root.CursorY0, ref Root.CursorX, ref Root.CursorY, Root.ToolSelected > Tools.Hand && Root.MagneticRadius > 0);
 
             if (LasteXY.X == 0 && LasteXY.Y == 0)
@@ -2317,7 +2317,7 @@ namespace gInk
                     changeActiveTool(Root.FilledSelected, false, 1);
             }
             else if ((tool == Tools.Line) || (tool == Tools.Poly))
-            {   if (filled >= Filling.Empty)
+            { if (filled >= Filling.Empty)
                 {
                     Root.FilledSelected = filled;
                 }
@@ -2329,7 +2329,7 @@ namespace gInk
                     if (gpSubTools.Visible && subTools_title.Contains("Line"))
                         changeActiveTool(1, false, 1);
                 }
-                else if ((Root.ToolSelected == Tools.Poly && (Root.FilledSelected ==Filling.Empty || Root.FilledSelected > Filling.BlackFilled)) || (Root.ToolSelected != Tools.Poly))
+                else if ((Root.ToolSelected == Tools.Poly && (Root.FilledSelected == Filling.Empty || Root.FilledSelected > Filling.BlackFilled)) || (Root.ToolSelected != Tools.Poly))
                 {
                     tool = Tools.Line;
                     Root.FilledSelected = Filling.Empty;
@@ -2341,7 +2341,7 @@ namespace gInk
                     tool = Tools.Poly;
                     PolyLineLastX = Int32.MinValue; PolyLineLastY = Int32.MinValue;
                     if (gpSubTools.Visible && subTools_title.Contains("Line"))
-                        changeActiveTool(Root.FilledSelected+1, false, 1);
+                        changeActiveTool(Root.FilledSelected + 1, false, 1);
                 }
                 if (tool == Tools.Line)
                     btLine.BackgroundImage = getImgFromDiskOrRes("tool_line_act", ImageExts);
@@ -2666,13 +2666,13 @@ namespace gInk
                 string st = Path.GetFullPath(Environment.ExpandEnvironmentVariables(Root.SnapshotBasePath));
                 if (!System.IO.Directory.Exists(st))
                     System.IO.Directory.CreateDirectory(st);
-                if(IC.Ink.Strokes.Count>0)          // do not save it if there is no data to save
-                    SaveStrokes(st+ "AutoSave.strokes.txt");
+                if (IC.Ink.Strokes.Count > 0)          // do not save it if there is no data to save
+                    SaveStrokes(st + "AutoSave.strokes.txt");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(string.Format(Root.Local.FileCanNotWrite, Environment.ExpandEnvironmentVariables(Root.SnapshotBasePath + "AutoSave.strokes.txt")));
-                string errorMsg = "Silent exception logged \r\n:"+ex.Message + "\r\n\r\nStack Trace:\r\n" + ex.StackTrace + "\r\n\r\n";
+                string errorMsg = "Silent exception logged \r\n:" + ex.Message + "\r\n\r\nStack Trace:\r\n" + ex.StackTrace + "\r\n\r\n";
                 Program.WriteErrorLog(errorMsg);
             }
             Root.ClearInk();
@@ -2793,7 +2793,7 @@ namespace gInk
                     //Stroke st = AddImageStroke(SystemInformation.VirtualScreen.Left, SystemInformation.VirtualScreen.Top, SystemInformation.VirtualScreen.Right, SystemInformation.VirtualScreen.Bottom, Path.GetFileNameWithoutExtension(PointerModeSnaps[i]), Filling.NoFrame);
                     Rectangle r = RectangleToClient(new Rectangle(Left, Top, Width, Height));
                     //Stroke st = AddImageStroke(Left,Top,Right,Bottom, Path.GetFileNameWithoutExtension(PointerModeSnaps[i]), Filling.NoFrame);
-                    Stroke st = AddImageStroke(r.Left,r.Top,r.Right,r.Bottom, Path.GetFileNameWithoutExtension(PointerModeSnaps[i]), Filling.NoFrame);
+                    Stroke st = AddImageStroke(r.Left, r.Top, r.Right, r.Bottom, Path.GetFileNameWithoutExtension(PointerModeSnaps[i]), Filling.NoFrame);
                     try { st.ExtendedProperties.Remove(Root.FADING_PEN); } catch { };  // if the pen was fading we need to remove that 
                 }
                 SaveUndoStrokes();
@@ -3025,7 +3025,7 @@ namespace gInk
             }
             try
             {
-                if(Root.FormDisplay != null)
+                if (Root.FormDisplay != null)
                     IC.Renderer.InkSpaceToPixel(Root.FormDisplay.gOneStrokeCanvus, ref widt);
             }
             catch  // not in good context. considered to be able to stop processing at that time
@@ -3061,9 +3061,9 @@ namespace gInk
         { int d0, d1;
             Point p = new Point(ZoomX, ZoomY);
             Screen scr = Screen.FromPoint(p);
-            if(ZoomX < (scr.Bounds.Left + scr.Bounds.Right) / 2)
+            if (ZoomX < (scr.Bounds.Left + scr.Bounds.Right) / 2)
             {
-                d0 = ZoomX + ZoomFormRePosX-scr.Bounds.Left;
+                d0 = ZoomX + ZoomFormRePosX - scr.Bounds.Left;
                 d1 = d0 + ZoomForm.Width;
             }
             else
@@ -3071,10 +3071,10 @@ namespace gInk
                 d0 = ZoomX + ZoomFormRePosX - scr.Bounds.Right;
                 d1 = d0 + ZoomForm.Width;
             }
-            if(Math.Sign(d0*d1)<0)
+            if (Math.Sign(d0 * d1) < 0)
             {
                 if (ZoomFormRePosX > 0)
-                    ZoomFormRePosX = - ZoomImage.Width / 2 - ZoomForm.Width;
+                    ZoomFormRePosX = -ZoomImage.Width / 2 - ZoomForm.Width;
                 else
                     ZoomFormRePosX = ZoomImage.Width / 2;
             }
@@ -3118,7 +3118,7 @@ namespace gInk
         {
             Initializing = false;
             Tick++;
-            if (ZoomForm.Visible && (Root.ZoomContinous||MousePosition.X != ZoomX || MousePosition.Y != ZoomY))
+            if (ZoomForm.Visible && (Root.ZoomContinous || MousePosition.X != ZoomX || MousePosition.Y != ZoomY))
             {
                 ZoomX = MousePosition.X;
                 ZoomY = MousePosition.Y;
@@ -3134,7 +3134,7 @@ namespace gInk
                     Point p = new Point(MousePosition.X - ZoomImage.Width / 2, MousePosition.Y - ZoomImage.Height / 2);
                     Size sz = new Size(ZoomImage.Width, ZoomImage.Height);
                     g.CopyFromScreen(p, Point.Empty, sz);
-                    if(ZoomForm.pictureBox1.Visible)
+                    if (ZoomForm.pictureBox1.Visible)
                     {
                         ZoomForm.pictureBox1.Visible = false;
                         ZoomForm.pictureBox2.Visible = true;
@@ -3149,7 +3149,7 @@ namespace gInk
                     //ZoomForm.Refresh();
                 }
             }
-            if (Root.FFmpegProcess!=null && Root.FFmpegProcess.HasExited)
+            if (Root.FFmpegProcess != null && Root.FFmpegProcess.HasExited)
             {
                 Root.VideoRecInProgress = VideoRecInProgress.Stopped;
                 try
@@ -3181,7 +3181,7 @@ namespace gInk
             try
             {
                 //for (int i = IC.Ink.Strokes.Count - 1; i >= 0; i--)                
-                foreach(Stroke st in FadingList)
+                foreach (Stroke st in FadingList)
                 {
                     //Stroke st = IC.Ink.Strokes[i];
                     if (st.ExtendedProperties.Contains(Root.FADING_PEN))
@@ -3206,7 +3206,7 @@ namespace gInk
             }
             catch { };
 
-            Size AimedSize = new Size(gpButtonsWidth,gpButtonsHeight);
+            Size AimedSize = new Size(gpButtonsWidth, gpButtonsHeight);
             Point AimedPos = new Point(gpButtonsLeft, gpButtonsTop);
             if (ButtonsEntering == 0)                  // do nothing
             {
@@ -3217,8 +3217,8 @@ namespace gInk
             }
             else if (ButtonsEntering == -9)              // Full Folding is requested
             {
-                switch(Root.ToolbarOrientation)
-                { 
+                switch (Root.ToolbarOrientation)
+                {
                     case Orientation.toLeft:
                         AimedPos.X = gpButtonsLeft + gpButtonsWidth;
                         AimedSize.Width = 0;
@@ -3228,7 +3228,7 @@ namespace gInk
                         AimedSize.Width = 0;
                         break;
                     case Orientation.toUp:
-                        AimedPos.Y = gpButtonsTop+gpButtonsHeight ;
+                        AimedPos.Y = gpButtonsTop + gpButtonsHeight;
                         AimedSize.Height = 0;
                         break;
                     case Orientation.toDown:
@@ -3243,7 +3243,7 @@ namespace gInk
                 if (Root.Snapping > 0)                  // if folding for snapping, final should be fully closed
                     d = Math.Max(gpButtonsWidth, gpButtonsHeight) - 0;
                 else if (Root.Docked)                   // else final position should show only dock button
-                    d = Math.Max(gpButtonsWidth,gpButtonsHeight) - Math.Min(btDock.Width, btDock.Height);
+                    d = Math.Max(gpButtonsWidth, gpButtonsHeight) - Math.Min(btDock.Width, btDock.Height);
                 else                                    // folding with undock is meaningless as security we consider unfolded position for security
                     d = 0;
                 switch (Root.ToolbarOrientation)
@@ -3277,7 +3277,7 @@ namespace gInk
                 {
                     case Orientation.toLeft:
                         AimedPos.X = gpButtonsLeft + d;
-                        AimedSize.Width = Root.Docked? btDock.Width: gpButtonsWidth;
+                        AimedSize.Width = Root.Docked ? btDock.Width : gpButtonsWidth;
                         break;
                     case Orientation.toRight:
                         AimedPos.X = gpButtonsLeft;
@@ -3303,7 +3303,7 @@ namespace gInk
             {
                 int d;
                 d = (int)(.5 * (AimedPos.X - gpButtons.Left));
-                if (Math.Abs(d) < (5*.5))
+                if (Math.Abs(d) < (5 * .5))
                     gpButtons.Left = AimedPos.X;
                 else
                     gpButtons.Left += d;
@@ -3335,7 +3335,7 @@ namespace gInk
                 Root.UponButtonsUpdate |= 0x1;
                 Root.UponButtonsUpdate |= 0x4;
             }
-            else if (ButtonsEntering == -9 ) // and Left=X&&Top==Y
+            else if (ButtonsEntering == -9) // and Left=X&&Top==Y
             {
                 tiSlide.Enabled = false;
                 Root.StopInk();
@@ -3350,7 +3350,7 @@ namespace gInk
             else if (ButtonsEntering != 0)
             {
                 // add a background if required at opening but not when snapping is in progress
-                if ((Root.Snapping == 0)&&(IC.Ink.Strokes.Count == 0))
+                if ((Root.Snapping == 0) && (IC.Ink.Strokes.Count == 0))
                 {
                     if ((Root.BoardAtOpening == 1) || (Root.BoardAtOpening == 4 && Root.BoardSelected == 1)) // White
                         AddBackGround(255, 255, 255, 255);
@@ -3387,8 +3387,8 @@ namespace gInk
                 if (Root.Hotkey_Close.Key != 0)
                 {
                     retVal = GetKeyState(Root.Hotkey_Close.Key);
-                    if(Root.Snapping > 0)
-                        retVal |=GetKeyState(Root.Hotkey_SnapClose.Key);
+                    if (Root.Snapping > 0)
+                        retVal |= GetKeyState(Root.Hotkey_SnapClose.Key);
                     if ((retVal & 0x8000) == 0x8000 && (LastESCStatus & 0x8000) == 0x0000 && !TextEdited)
                     {
                         if (Root.Snapping > 0)
@@ -3433,7 +3433,7 @@ namespace gInk
                 switch (SnappingPointerStep)
                 {
                     case 0:
-                        if(KeyCodeState(Root.SnapInPointerHoldKey))
+                        if (KeyCodeState(Root.SnapInPointerHoldKey))
                             SnappingPointerStep += 1;
                         break;
                     case 1:   // awaiting first press
@@ -3497,12 +3497,12 @@ namespace gInk
                 }
             }
             else
-                SnappingPointerStep=0;
+                SnappingPointerStep = 0;
 
 
 
 
-            if ((Root.PointerMode||(!Root.FormDisplay.HasFocus() && !Root.AllowHotkeyInPointerMode)) || Root.Snapping  > 0)
+            if ((Root.PointerMode || (!Root.FormDisplay.HasFocus() && !Root.AllowHotkeyInPointerMode)) || Root.Snapping > 0)
             {
                 return;
             }
