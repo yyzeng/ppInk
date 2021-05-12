@@ -218,6 +218,8 @@ namespace gInk
         public Hotkey Hotkey_ClipArt3 = new Hotkey();
         public Hotkey Hotkey_Zoom = new Hotkey();
 
+        public float LongHKPressDelay = 2.5F;
+
         public int ToolSelected = Tools.Hand;        // indicates which tool (Hand,Line,...) is currently selected
         public int FilledSelected = 0;      // indicates which filling (None, Selected color, ...) is currently select
         public bool EraserMode = false;

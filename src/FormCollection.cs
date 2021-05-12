@@ -2924,6 +2924,8 @@ namespace gInk
         bool LastClipArt2Status = false;
         bool LastClipArt3Status = false;
 
+        DateTime LongHkPress;
+
         bool LastPenWidthPlus = false;
         bool LastPenWidthMinus = false;
         int SnappingPointerStep = 0;
@@ -3586,8 +3588,13 @@ namespace gInk
                         {
                             //SelectPen(p);
                             MouseTimeDown = DateTime.Now;
+                            LongHkPress = DateTime.Now.AddSeconds(Root.LongHKPressDelay);
                             btColor_Click(btPen[p], null);
                         }
+                        if (LastPenStatus[p] && !pressed)
+                            LongHkPress = DateTime.Now.AddYears(1);
+                        if (LastPenStatus[p] && pressed && DateTime.Now.CompareTo(LongHkPress) > 0)
+                            btColor_LongClick(btPen[p]);
                         LastPenStatus[p] = pressed;
                     }
                 }
