@@ -322,6 +322,7 @@ namespace gInk
         public string APIRestUrl="";
         public APIRest APIRest;
 
+        public bool StrokesOnlySnapshot=true;
         //public string ProgramFolder;
 
         public string ExpandVarCmd(string cmd, int x, int y, int w, int h)
@@ -1148,7 +1149,13 @@ namespace gInk
 							if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
 								SnapEnabled = false;
 							break;
-						case "CLOSE_ON_SNAP":
+                        case "SNAPSHOT_STROKESONLY":
+                            if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
+                                StrokesOnlySnapshot = false;
+                            else if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
+                                StrokesOnlySnapshot = true;
+                                break;
+                        case "CLOSE_ON_SNAP":
 							if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
 								CloseOnSnap = "false";
 							else if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
@@ -1653,7 +1660,10 @@ namespace gInk
 							else
 								sPara = "False";
 							break;
-						case "CLOSE_ON_SNAP":
+                        case "SNAPSHOT_STROKESONLY":
+                            sPara = StrokesOnlySnapshot ? "True" : "False";
+                            break;
+                        case "CLOSE_ON_SNAP":
 							if (CloseOnSnap == "true")
 								sPara = "True";
 							else if (CloseOnSnap == "false")

@@ -387,7 +387,102 @@ namespace gInk
             }
         }
 
-		public void MoveStrokes(int dy)
+        // for an unknown reason drawing strokes through the graphics is not taking into account transparency
+        // I've adapted DrawStrokes to Bitmap for snapshots
+        public void DrawStrokes(Bitmap bmp)
+        {
+            Graphics g = Graphics.FromImage(bmp);
+            if (Root.InkVisible)
+            {
+                foreach (Stroke st in Root.FormCollection.IC.Ink.Strokes)
+                {
+                    if (st.ExtendedProperties.Contains(Root.ISHIDDEN_GUID))
+                        continue;
+                    //else //Should not be drawn as a stroke : for the moment only filled values.
+                    if (st.ExtendedProperties.Contains(Root.ISFILLEDCOLOR_GUID) || st.ExtendedProperties.Contains(Root.ISFILLEDWHITE_GUID) || st.ExtendedProperties.Contains(Root.ISFILLEDBLACK_GUID))
+                    {
+                        SolidBrush bru;
+                        if (st.ExtendedProperties.Contains(Root.ISFILLEDCOLOR_GUID))
+                            bru = new SolidBrush(Color.FromArgb(255 - st.DrawingAttributes.Transparency, st.DrawingAttributes.Color));
+                        else if (st.ExtendedProperties.Contains(Root.ISFILLEDWHITE_GUID))
+                            bru = new SolidBrush(Color.White);
+                        else if (st.ExtendedProperties.Contains(Root.ISFILLEDBLACK_GUID))
+                            bru = new SolidBrush(Color.Black);
+                        else
+                            continue;
+                        //bru = new SolidBrush(Color.Purple);
+                        if (st.DrawingAttributes.FitToCurve)
+                        {
+                            try
+                            {
+                                Point[] pts = st.GetFlattenedBezierPoints(0); // 0 to get a good fitting curve
+                                Root.FormCollection.IC.Renderer.InkSpaceToPixel(gOneStrokeCanvus, ref pts);
+                                g.FillClosedCurve(bru, pts);
+                            }
+                            catch { }
+                        }
+                        else
+                        {
+                            Point[] pts = st.GetPoints();
+                            Root.FormCollection.IC.Renderer.InkSpaceToPixel(gOneStrokeCanvus, ref pts);
+                            g.FillPolygon(bru, pts);
+
+                        }
+
+                    }
+                    /*else */
+                    if (st.ExtendedProperties.Contains(Root.IMAGE_GUID))
+                    {
+                        //Image img = Root.FormCollection.ClipartsDlg.Images.Images[(int)(st.ExtendedProperties[Root.IMAGE_GUID].Data)];
+                        Image img;
+                        try
+                        {
+                            img = Root.FormCollection.ClipartsDlg.Originals[(string)(st.ExtendedProperties[Root.IMAGE_GUID].Data)];
+                        }
+                        catch
+                        {
+                            img = gInk.Properties.Resources.unknown;
+                        }
+                        /*Rectangle r = st.GetBoundingBox();
+                        Point p1 = new Point(r.Location.X, r.Location.Y);
+                        Point p2 = new Point(r.Location.X+r.Size.Width, r.Location.Y+r.Size.Height);
+                        Root.FormCollection.IC.Renderer.InkSpaceToPixel(gOneStrokeCanvus, ref p1);
+                        Root.FormCollection.IC.Renderer.InkSpaceToPixel(gOneStrokeCanvus, ref p2);
+                        int X = p1.X; //(int)(st.ExtendedProperties[Root.IMAGE_X_GUID].Data);
+                        int Y = p1.Y; //(int)(st.ExtendedProperties[Root.IMAGE_Y_GUID].Data);
+                        int W = p2.X - p1.X;// (int)(st.ExtendedProperties[Root.IMAGE_W_GUID].Data);
+                        int H = p2.Y - p1.Y;//(int)(st.ExtendedProperties[Root.IMAGE_H_GUID].Data);
+                        */
+                        // I came back to this solution of using IMAGE_?_GUID in order to have a more accurate position and therefore prevent blurry image
+                        int X = (int)(st.ExtendedProperties[Root.IMAGE_X_GUID].Data);
+                        int Y = (int)(st.ExtendedProperties[Root.IMAGE_Y_GUID].Data);
+                        int W = (int)(st.ExtendedProperties[Root.IMAGE_W_GUID].Data);
+                        int H = (int)(st.ExtendedProperties[Root.IMAGE_H_GUID].Data);
+                        g.DrawImage(img, new Rectangle(X, Y, W, H));
+                    }
+                    /*else */
+                    if (st.ExtendedProperties.Contains(Root.ISSTROKE_GUID))
+                        Root.FormCollection.IC.Renderer.Draw(bmp, st);
+
+                    if (st.ExtendedProperties.Contains(Root.TEXT_GUID))
+                    {
+                        Point pt = new Point((int)(st.ExtendedProperties[Root.TEXTX_GUID].Data), (int)(st.ExtendedProperties[Root.TEXTY_GUID].Data));
+                        Root.FormCollection.IC.Renderer.InkSpaceToPixel(gOneStrokeCanvus, ref pt);
+                        System.Drawing.StringFormat stf = new System.Drawing.StringFormat(System.Drawing.StringFormatFlags.NoClip);
+                        stf.Alignment = (System.Drawing.StringAlignment)(st.ExtendedProperties[Root.TEXTHALIGN_GUID].Data);
+                        stf.LineAlignment = (System.Drawing.StringAlignment)(st.ExtendedProperties[Root.TEXTVALIGN_GUID].Data);
+                        g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
+                        g.DrawString((string)(st.ExtendedProperties[Root.TEXT_GUID].Data),
+                                     new Font((string)st.ExtendedProperties[Root.TEXTFONT_GUID].Data, (float)st.ExtendedProperties[Root.TEXTFONTSIZE_GUID].Data,
+                                        (System.Drawing.FontStyle)(int)st.ExtendedProperties[Root.TEXTFONTSTYLE_GUID].Data),
+                                     new SolidBrush(Color.FromArgb(255 - st.DrawingAttributes.Transparency, st.DrawingAttributes.Color)), pt.X, pt.Y, stf);
+
+                    }
+                }
+            }
+        }
+
+        public void MoveStrokes(int dy)
 		{
 			Point pt1 = new Point(0, 0);
 			Point pt2 = new Point(0, 100);
@@ -445,9 +540,9 @@ namespace gInk
 		{
 			string snapbasepath = Root.SnapshotBasePath;
 			snapbasepath = Environment.ExpandEnvironmentVariables(snapbasepath);
-			if (Root.SnapshotBasePath == "%USERPROFILE%/Pictures/gInk/")
-				if (!System.IO.Directory.Exists(snapbasepath))
-					System.IO.Directory.CreateDirectory(snapbasepath);
+			//if (Root.SnapshotBasePath == "%USERPROFILE%/Pictures/gInk/")
+			if (!System.IO.Directory.Exists(snapbasepath))
+				System.IO.Directory.CreateDirectory(snapbasepath);
 
 			if (System.IO.Directory.Exists(snapbasepath))
 			{
@@ -466,21 +561,34 @@ namespace gInk
 
 
 				Bitmap tempbmp = new Bitmap(rect.Width, rect.Height);
-				Graphics g = Graphics.FromImage(tempbmp);
-				g.Clear(Color.Red);
+                Graphics g = Graphics.FromImage(tempbmp);
+                if(Root.StrokesOnlySnapshot)
+                {
+                    Bitmap temp2bmp = new Bitmap(this.Width, this.Height, PixelFormat.Format32bppArgb);
+                    DrawStrokes(temp2bmp); 
+                    g.DrawImage(temp2bmp, new Rectangle(0, 0, rect.Width, rect.Height), rect, GraphicsUnit.Pixel);
+                    temp2bmp.Dispose();
+                }
+                else
+                {
+                    g.Clear(Color.Red);
 
-				IntPtr hDest = CreateCompatibleDC(screenDc);
-				IntPtr hBmp = tempbmp.GetHbitmap();
-				SelectObject(hDest, hBmp);
-				bool b = BitBlt(hDest, 0, 0, rect.Width, rect.Height, screenDc, rect.Left, rect.Top, (uint)(CopyPixelOperation.SourceCopy | CopyPixelOperation.CaptureBlt));
-				tempbmp = Bitmap.FromHbitmap(hBmp);
+                    IntPtr hDest = CreateCompatibleDC(screenDc);
+                    IntPtr hBmp = tempbmp.GetHbitmap();
+                    SelectObject(hDest, hBmp);
+                    bool b = BitBlt(hDest, 0, 0, rect.Width, rect.Height, screenDc, rect.Left, rect.Top, (uint)(CopyPixelOperation.SourceCopy | CopyPixelOperation.CaptureBlt));
+                    tempbmp = Bitmap.FromHbitmap(hBmp);
 
-				if (!b)
-				{
-					g = Graphics.FromImage(tempbmp);
-					g.Clear(Color.Blue);
-					g.CopyFromScreen(rect.Left, rect.Top, 0, 0, new Size(rect.Width, rect.Height));
-				}
+                    if (!b)
+                    {
+                        g = Graphics.FromImage(tempbmp);
+                        g.Clear(Color.Blue);
+                        g.CopyFromScreen(rect.Left, rect.Top, 0, 0, new Size(rect.Width, rect.Height));
+                    }
+                    DeleteObject(hBmp);
+                    ReleaseDC(IntPtr.Zero, screenDc);
+                    DeleteDC(hDest);
+                }
 
                 if (dest == "")
                     Clipboard.SetImage(tempbmp);
@@ -496,9 +604,6 @@ namespace gInk
                 tempbmp.Save(dest, System.Drawing.Imaging.ImageFormat.Png);
 
 				tempbmp.Dispose();
-				DeleteObject(hBmp);
-				ReleaseDC(IntPtr.Zero, screenDc);
-				DeleteDC(hDest);
 
 				// transfered out :Root.UponBalloonSnap = true;
 			}
@@ -844,8 +949,12 @@ namespace gInk
         private void FormDisplay_FormClosed(object sender, FormClosedEventArgs e)
 		{
 			DeleteObject(Canvus);
-			//DeleteObject(BlankCanvus);
-			DeleteDC(canvusDc);
+            DeleteObject(OutCanvus);
+            DeleteObject(OneStrokeCanvus);
+            //DeleteObject(BlankCanvus);
+            DeleteDC(canvusDc);
+            DeleteDC(OutcanvusDc);
+            DeleteDC(onestrokeDc);
             if (gpButtonsImage != null)
                 gpButtonsImage.Dispose();
             if (gpPenWidthImage != null)
