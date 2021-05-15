@@ -3576,8 +3576,13 @@ namespace gInk
                         }
                         //SelectPen(p);
                         MouseTimeDown = DateTime.Now;
+                        LongHkPress = DateTime.Now.AddSeconds(Root.LongHKPressDelay);
                         btColor_Click(btPen[p], null);
                     }
+                    if (LastPenStatus[0] && !pressed)
+                        LongHkPress = DateTime.Now.AddYears(1);
+                    if (LastPenStatus[0] && pressed && DateTime.Now.CompareTo(LongHkPress) > 0)
+                        btColor_LongClick(btPen[Root.CurrentPen]);
                     LastPenStatus[0] = pressed;
                 }
                 else
