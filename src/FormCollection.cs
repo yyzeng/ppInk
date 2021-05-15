@@ -3925,6 +3925,7 @@ namespace gInk
             Stroke stk = AddRectStroke(0,0,Width ,Height , Filling.PenColorFilled);
             stk.DrawingAttributes.Transparency = (byte)(255 - A);
             stk.DrawingAttributes.Color = Color.FromArgb(A, B, C, D);
+            stk.ExtendedProperties.Add(Root.ISBACKGROUND_GUID, true);
             SaveUndoStrokes();
             Root.UponAllDrawingUpdate = true;
             return stk;

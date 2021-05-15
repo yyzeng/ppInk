@@ -135,6 +135,7 @@ namespace gInk
         public static Guid IMAGE_W_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 7);
         public static Guid IMAGE_H_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 8);
         public static Guid ISHIDDEN_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 10);
+        public static Guid ISBACKGROUND_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 11);
 
         public static Guid FADING_PEN = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 3, 1);
 
@@ -609,10 +610,13 @@ namespace gInk
 			if (x == 0 && y == 0)
 				return;
 
-			FormCollection.IC.Ink.Strokes.Move(x, y);
+			//FormCollection.IC.Ink.Strokes.Move(x, y);
             // for texts
             foreach(Stroke st in FormCollection.IC.Ink.Strokes)
             {
+                if (st.ExtendedProperties.Contains(ISBACKGROUND_GUID))
+                    continue;
+                st.Move(x, y);
                 if (st.ExtendedProperties.Contains(TEXTX_GUID))
                 {
                     st.ExtendedProperties.Add(TEXTX_GUID, (int)(st.ExtendedProperties[TEXTX_GUID].Data) + x);
