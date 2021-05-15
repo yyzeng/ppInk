@@ -2617,6 +2617,7 @@ namespace gInk
                     IC.DefaultDrawingAttributes.Width = Root.GlobalPenWidth;
                 }
                 LastPenSelected = pen;
+                IC.DefaultDrawingAttributes.AntiAliased = true;
                 IC.DefaultDrawingAttributes.FitToCurve = Root.FitToCurve;
                 for (int b = 0; b < Root.MaxPenCount; b++)
                     //btPen[b].Image = image_pen[b];
@@ -4663,18 +4664,18 @@ namespace gInk
             {
                 //SelectPen(LastPenSelected);
                 //SelectTool(Tools.Copy);
-                changeActiveTool(1,true,1);
+                changeActiveTool(1, true, Root.SubToolsEnabled ? 1 : -1);
             }
             else if (Root.ToolSelected == Tools.Copy)
             {
                 //SelectPen(-3);
-                changeActiveTool(2,true,1);
+                changeActiveTool(2, true, Root.SubToolsEnabled ? 1 : -1);
             }
             else
             {
                 //SelectPen(LastPenSelected);
                 //SelectTool(Tools.Move);
-                changeActiveTool(0,true,1);
+                changeActiveTool(0, true, Root.SubToolsEnabled ? 1 : -1);
             }
             ;
         }
