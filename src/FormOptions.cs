@@ -170,6 +170,8 @@ namespace gInk
             ZoomScaleEd.Text = Root.ZoomScale.ToString();
             ZoomContinousCb.Checked = Root.ZoomContinous;
 
+            CaptStrokesOnlyCb.Checked = Root.StrokesOnlySnapshot;
+
             lbNote.ForeColor = Color.Black;
 
             lbPens[0] = lbPens0; lbPens[1] = lbPens1; lbPens[2] = lbPens2; lbPens[3] = lbPens3; lbPens[4] = lbPens4;
@@ -331,7 +333,9 @@ namespace gInk
             this.DefArrStartCb.Text = Root.Local.OptionsGeneralDefaultArrHdBtn;
             this.MagnetLbl.Text = Root.Local.OptionsGeneralMagnetLbl;
             this.SaveConfigBtn.Text = Root.Local.OptionsGeneralSaveConfigToFile;
-			this.lbNote.Text = Root.Local.OptionsGeneralNotePenwidth;
+            this.CaptStrokesOnlyCb.Text = Root.Local.OptionsCaptureStrokesOnly;
+
+            this.lbNote.Text = Root.Local.OptionsGeneralNotePenwidth;
 
             {
                 int i = 0;
@@ -1086,6 +1090,11 @@ namespace gInk
         private void FitToCurveEd_CheckedChanged(object sender, EventArgs e)
         {
             Root.FitToCurve = FitToCurveEd.Checked;
+        }
+
+        private void CaptStrokesOnlyCb_CheckedChanged(object sender, EventArgs e)
+        {
+            Root.StrokesOnlySnapshot = CaptStrokesOnlyCb.Checked;
         }
     }
 }

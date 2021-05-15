@@ -113,6 +113,7 @@ OptionsGeneralDefaultTextBtn = "&Police && Taille"
 OptionsGeneralDefaultArrHdBtn = "Tête de flèche au début par déf."
 OptionsGeneralMagnetLbl = "Rayon de l'aimant(%Ecr)(<=0 = désactivé)"
 OptionsGeneralSaveConfigToFile = "&Sauver fichiers config"
+OptionsCaptureStrokesOnly = "Capture uniquement les dessins"
 OptionsGeneralNotePenwidth = "Notes : (1)l'option globale d'épaisseur du trait écrase les options individuelles\n  (2) modifier directement config.ini pour ajuster la transparence et la taille de la fenêtre d'appel"
 
 OptionsPensShow = "Afficher"

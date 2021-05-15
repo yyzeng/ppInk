@@ -29,6 +29,8 @@ namespace gInk
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            gInk.Hotkey hotkey30 = new gInk.Hotkey();
+            gInk.Hotkey hotkey31 = new gInk.Hotkey();
             gInk.Hotkey hotkey32 = new gInk.Hotkey();
             gInk.Hotkey hotkey33 = new gInk.Hotkey();
             gInk.Hotkey hotkey34 = new gInk.Hotkey();
@@ -57,8 +59,6 @@ namespace gInk
             gInk.Hotkey hotkey57 = new gInk.Hotkey();
             gInk.Hotkey hotkey58 = new gInk.Hotkey();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormOptions));
-            gInk.Hotkey hotkey31 = new gInk.Hotkey();
-            gInk.Hotkey hotkey30 = new gInk.Hotkey();
             this.lbPens4 = new System.Windows.Forms.Label();
             this.lbHkZoom = new System.Windows.Forms.Label();
             this.lbHkClipart3 = new System.Windows.Forms.Label();
@@ -72,6 +72,10 @@ namespace gInk
             this.lbHkEdit = new System.Windows.Forms.Label();
             this.lbPens3 = new System.Windows.Forms.Label();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.lbHkPenWidthMinus = new System.Windows.Forms.Label();
+            this.hiPenWidthMinus = new gInk.HotkeyInputBox();
+            this.lbHkPenWidthPlus = new System.Windows.Forms.Label();
+            this.hiPenWidthPlus = new gInk.HotkeyInputBox();
             this.lbHkFadingToggle = new System.Windows.Forms.Label();
             this.hiFadingToggle = new gInk.HotkeyInputBox();
             this.SnapInPointerGrp = new System.Windows.Forms.GroupBox();
@@ -225,10 +229,7 @@ namespace gInk
             this.lbcbPens = new System.Windows.Forms.Label();
             this.FadingTimeEd = new System.Windows.Forms.TextBox();
             this.WidthAtPenSelCb = new System.Windows.Forms.CheckBox();
-            this.lbHkPenWidthPlus = new System.Windows.Forms.Label();
-            this.hiPenWidthPlus = new gInk.HotkeyInputBox();
-            this.lbHkPenWidthMinus = new System.Windows.Forms.Label();
-            this.hiPenWidthMinus = new gInk.HotkeyInputBox();
+            this.CaptStrokesOnlyCb = new System.Windows.Forms.CheckBox();
             this.tabPage3.SuspendLayout();
             this.SnapInPointerGrp.SuspendLayout();
             this.VideoTab.SuspendLayout();
@@ -421,6 +422,52 @@ namespace gInk
             this.tabPage3.Size = new System.Drawing.Size(767, 521);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Hotkeys";
+            // 
+            // lbHkPenWidthMinus
+            // 
+            this.lbHkPenWidthMinus.AutoSize = true;
+            this.lbHkPenWidthMinus.Location = new System.Drawing.Point(497, 495);
+            this.lbHkPenWidthMinus.Name = "lbHkPenWidthMinus";
+            this.lbHkPenWidthMinus.Size = new System.Drawing.Size(63, 13);
+            this.lbHkPenWidthMinus.TabIndex = 58;
+            this.lbHkPenWidthMinus.Text = "Pen Width -";
+            // 
+            // hiPenWidthMinus
+            // 
+            this.hiPenWidthMinus.BackColor = System.Drawing.Color.White;
+            this.hiPenWidthMinus.ExternalConflictFlag = false;
+            this.hiPenWidthMinus.Hotkey = hotkey30;
+            this.hiPenWidthMinus.ImeMode = System.Windows.Forms.ImeMode.Disable;
+            this.hiPenWidthMinus.Location = new System.Drawing.Point(601, 492);
+            this.hiPenWidthMinus.Name = "hiPenWidthMinus";
+            this.hiPenWidthMinus.RequireModifier = false;
+            this.hiPenWidthMinus.Size = new System.Drawing.Size(120, 20);
+            this.hiPenWidthMinus.TabIndex = 59;
+            this.hiPenWidthMinus.Text = "None";
+            this.hiPenWidthMinus.OnHotkeyChanged += new System.EventHandler(this.hi_OnHotkeyChanged);
+            // 
+            // lbHkPenWidthPlus
+            // 
+            this.lbHkPenWidthPlus.AutoSize = true;
+            this.lbHkPenWidthPlus.Location = new System.Drawing.Point(497, 469);
+            this.lbHkPenWidthPlus.Name = "lbHkPenWidthPlus";
+            this.lbHkPenWidthPlus.Size = new System.Drawing.Size(66, 13);
+            this.lbHkPenWidthPlus.TabIndex = 56;
+            this.lbHkPenWidthPlus.Text = "Pen Width +";
+            // 
+            // hiPenWidthPlus
+            // 
+            this.hiPenWidthPlus.BackColor = System.Drawing.Color.White;
+            this.hiPenWidthPlus.ExternalConflictFlag = false;
+            this.hiPenWidthPlus.Hotkey = hotkey31;
+            this.hiPenWidthPlus.ImeMode = System.Windows.Forms.ImeMode.Disable;
+            this.hiPenWidthPlus.Location = new System.Drawing.Point(601, 466);
+            this.hiPenWidthPlus.Name = "hiPenWidthPlus";
+            this.hiPenWidthPlus.RequireModifier = false;
+            this.hiPenWidthPlus.Size = new System.Drawing.Size(120, 20);
+            this.hiPenWidthPlus.TabIndex = 57;
+            this.hiPenWidthPlus.Text = "None";
+            this.hiPenWidthPlus.OnHotkeyChanged += new System.EventHandler(this.hi_OnHotkeyChanged);
             // 
             // lbHkFadingToggle
             // 
@@ -1226,7 +1273,7 @@ namespace gInk
             this.VideoTab.Location = new System.Drawing.Point(4, 22);
             this.VideoTab.Name = "VideoTab";
             this.VideoTab.Padding = new System.Windows.Forms.Padding(3);
-            this.VideoTab.Size = new System.Drawing.Size(767, 473);
+            this.VideoTab.Size = new System.Drawing.Size(767, 521);
             this.VideoTab.TabIndex = 3;
             this.VideoTab.Text = "Video";
             this.VideoTab.UseVisualStyleBackColor = true;
@@ -1328,7 +1375,7 @@ namespace gInk
             this.ZoomBox.Controls.Add(this.ZoomHeightEd);
             this.ZoomBox.Controls.Add(this.label1);
             this.ZoomBox.Controls.Add(this.ZoomWidthEd);
-            this.ZoomBox.Location = new System.Drawing.Point(458, 352);
+            this.ZoomBox.Location = new System.Drawing.Point(458, 367);
             this.ZoomBox.Name = "ZoomBox";
             this.ZoomBox.Size = new System.Drawing.Size(195, 62);
             this.ZoomBox.TabIndex = 46;
@@ -1359,7 +1406,7 @@ namespace gInk
             // DefTagLbl
             // 
             this.DefTagLbl.AutoSize = true;
-            this.DefTagLbl.Location = new System.Drawing.Point(455, 276);
+            this.DefTagLbl.Location = new System.Drawing.Point(455, 264);
             this.DefTagLbl.Name = "DefTagLbl";
             this.DefTagLbl.Size = new System.Drawing.Size(65, 13);
             this.DefTagLbl.TabIndex = 43;
@@ -1367,7 +1414,7 @@ namespace gInk
             // 
             // TagFontBtn
             // 
-            this.TagFontBtn.Location = new System.Drawing.Point(646, 271);
+            this.TagFontBtn.Location = new System.Drawing.Point(646, 259);
             this.TagFontBtn.Name = "TagFontBtn";
             this.TagFontBtn.Size = new System.Drawing.Size(111, 23);
             this.TagFontBtn.TabIndex = 42;
@@ -1432,7 +1479,7 @@ namespace gInk
             // AltTabActivateCb
             // 
             this.AltTabActivateCb.AutoSize = true;
-            this.AltTabActivateCb.Location = new System.Drawing.Point(458, 328);
+            this.AltTabActivateCb.Location = new System.Drawing.Point(458, 344);
             this.AltTabActivateCb.Name = "AltTabActivateCb";
             this.AltTabActivateCb.Size = new System.Drawing.Size(230, 17);
             this.AltTabActivateCb.TabIndex = 37;
@@ -1629,7 +1676,7 @@ namespace gInk
             // cbWhiteIcon
             // 
             this.cbWhiteIcon.AutoSize = true;
-            this.cbWhiteIcon.Location = new System.Drawing.Point(458, 214);
+            this.cbWhiteIcon.Location = new System.Drawing.Point(458, 316);
             this.cbWhiteIcon.Name = "cbWhiteIcon";
             this.cbWhiteIcon.Size = new System.Drawing.Size(116, 17);
             this.cbWhiteIcon.TabIndex = 0;
@@ -1648,6 +1695,7 @@ namespace gInk
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.tabPage1.Controls.Add(this.CaptStrokesOnlyCb);
             this.tabPage1.Controls.Add(this.APIRestLbl);
             this.tabPage1.Controls.Add(this.APIRestEd);
             this.tabPage1.Controls.Add(this.ActivateDbgWinBtn);
@@ -1700,7 +1748,7 @@ namespace gInk
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Margin = new System.Windows.Forms.Padding(0);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Size = new System.Drawing.Size(767, 473);
+            this.tabPage1.Size = new System.Drawing.Size(767, 521);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "General";
             // 
@@ -1845,7 +1893,7 @@ namespace gInk
             // 
             // Magnet_TB
             // 
-            this.Magnet_TB.Location = new System.Drawing.Point(690, 303);
+            this.Magnet_TB.Location = new System.Drawing.Point(690, 291);
             this.Magnet_TB.Name = "Magnet_TB";
             this.Magnet_TB.Size = new System.Drawing.Size(67, 20);
             this.Magnet_TB.TabIndex = 21;
@@ -1857,7 +1905,7 @@ namespace gInk
             // MagnetLbl
             // 
             this.MagnetLbl.AutoSize = true;
-            this.MagnetLbl.Location = new System.Drawing.Point(455, 305);
+            this.MagnetLbl.Location = new System.Drawing.Point(455, 293);
             this.MagnetLbl.Name = "MagnetLbl";
             this.MagnetLbl.Size = new System.Drawing.Size(190, 13);
             this.MagnetLbl.TabIndex = 20;
@@ -1866,7 +1914,7 @@ namespace gInk
             // ShowFloatingWinCb
             // 
             this.ShowFloatingWinCb.AutoSize = true;
-            this.ShowFloatingWinCb.Location = new System.Drawing.Point(49, 212);
+            this.ShowFloatingWinCb.Location = new System.Drawing.Point(49, 209);
             this.ShowFloatingWinCb.Name = "ShowFloatingWinCb";
             this.ShowFloatingWinCb.Size = new System.Drawing.Size(208, 17);
             this.ShowFloatingWinCb.TabIndex = 19;
@@ -1877,7 +1925,7 @@ namespace gInk
             // DefTxtLbl
             // 
             this.DefTxtLbl.AutoSize = true;
-            this.DefTxtLbl.Location = new System.Drawing.Point(455, 247);
+            this.DefTxtLbl.Location = new System.Drawing.Point(455, 235);
             this.DefTxtLbl.Name = "DefTxtLbl";
             this.DefTxtLbl.Size = new System.Drawing.Size(65, 13);
             this.DefTxtLbl.TabIndex = 18;
@@ -1895,7 +1943,7 @@ namespace gInk
             // 
             // DefaultFontBtn
             // 
-            this.DefaultFontBtn.Location = new System.Drawing.Point(646, 242);
+            this.DefaultFontBtn.Location = new System.Drawing.Point(646, 230);
             this.DefaultFontBtn.Name = "DefaultFontBtn";
             this.DefaultFontBtn.Size = new System.Drawing.Size(111, 23);
             this.DefaultFontBtn.TabIndex = 16;
@@ -1905,7 +1953,7 @@ namespace gInk
             // 
             // SaveWindowPosBtn
             // 
-            this.SaveWindowPosBtn.Location = new System.Drawing.Point(263, 207);
+            this.SaveWindowPosBtn.Location = new System.Drawing.Point(263, 204);
             this.SaveWindowPosBtn.Name = "SaveWindowPosBtn";
             this.SaveWindowPosBtn.Size = new System.Drawing.Size(147, 24);
             this.SaveWindowPosBtn.TabIndex = 10;
@@ -2039,7 +2087,7 @@ namespace gInk
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(767, 473);
+            this.tabPage2.Size = new System.Drawing.Size(767, 521);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Pens";
             // 
@@ -2136,51 +2184,16 @@ namespace gInk
             this.WidthAtPenSelCb.UseVisualStyleBackColor = true;
             this.WidthAtPenSelCb.CheckedChanged += new System.EventHandler(this.WidthAtPenSelCb_CheckedChanged);
             // 
-            // lbHkPenWidthPlus
+            // CaptStrokesOnlyCb
             // 
-            this.lbHkPenWidthPlus.AutoSize = true;
-            this.lbHkPenWidthPlus.Location = new System.Drawing.Point(497, 469);
-            this.lbHkPenWidthPlus.Name = "lbHkPenWidthPlus";
-            this.lbHkPenWidthPlus.Size = new System.Drawing.Size(66, 13);
-            this.lbHkPenWidthPlus.TabIndex = 56;
-            this.lbHkPenWidthPlus.Text = "Pen Width +";
-            // 
-            // hiPenWidthPlus
-            // 
-            this.hiPenWidthPlus.BackColor = System.Drawing.Color.White;
-            this.hiPenWidthPlus.ExternalConflictFlag = false;
-            this.hiPenWidthPlus.Hotkey = hotkey31;
-            this.hiPenWidthPlus.ImeMode = System.Windows.Forms.ImeMode.Disable;
-            this.hiPenWidthPlus.Location = new System.Drawing.Point(601, 466);
-            this.hiPenWidthPlus.Name = "hiPenWidthPlus";
-            this.hiPenWidthPlus.RequireModifier = false;
-            this.hiPenWidthPlus.Size = new System.Drawing.Size(120, 20);
-            this.hiPenWidthPlus.TabIndex = 57;
-            this.hiPenWidthPlus.Text = "None";
-            this.hiPenWidthPlus.OnHotkeyChanged += new System.EventHandler(this.hi_OnHotkeyChanged);
-            // 
-            // lbHkPenWidthMinus
-            // 
-            this.lbHkPenWidthMinus.AutoSize = true;
-            this.lbHkPenWidthMinus.Location = new System.Drawing.Point(497, 495);
-            this.lbHkPenWidthMinus.Name = "lbHkPenWidthMinus";
-            this.lbHkPenWidthMinus.Size = new System.Drawing.Size(63, 13);
-            this.lbHkPenWidthMinus.TabIndex = 58;
-            this.lbHkPenWidthMinus.Text = "Pen Width -";
-            // 
-            // hiPenWidthMinus
-            // 
-            this.hiPenWidthMinus.BackColor = System.Drawing.Color.White;
-            this.hiPenWidthMinus.ExternalConflictFlag = false;
-            this.hiPenWidthMinus.Hotkey = hotkey30;
-            this.hiPenWidthMinus.ImeMode = System.Windows.Forms.ImeMode.Disable;
-            this.hiPenWidthMinus.Location = new System.Drawing.Point(601, 492);
-            this.hiPenWidthMinus.Name = "hiPenWidthMinus";
-            this.hiPenWidthMinus.RequireModifier = false;
-            this.hiPenWidthMinus.Size = new System.Drawing.Size(120, 20);
-            this.hiPenWidthMinus.TabIndex = 59;
-            this.hiPenWidthMinus.Text = "None";
-            this.hiPenWidthMinus.OnHotkeyChanged += new System.EventHandler(this.hi_OnHotkeyChanged);
+            this.CaptStrokesOnlyCb.AutoSize = true;
+            this.CaptStrokesOnlyCb.Location = new System.Drawing.Point(458, 209);
+            this.CaptStrokesOnlyCb.Name = "CaptStrokesOnlyCb";
+            this.CaptStrokesOnlyCb.Size = new System.Drawing.Size(126, 17);
+            this.CaptStrokesOnlyCb.TabIndex = 53;
+            this.CaptStrokesOnlyCb.Text = "Capture Only Strokes";
+            this.CaptStrokesOnlyCb.UseVisualStyleBackColor = true;
+            this.CaptStrokesOnlyCb.CheckedChanged += new System.EventHandler(this.CaptStrokesOnlyCb_CheckedChanged);
             // 
             // FormOptions
             // 
@@ -2391,5 +2404,6 @@ namespace gInk
         private HotkeyInputBox hiPenWidthMinus;
         private System.Windows.Forms.Label lbHkPenWidthPlus;
         private HotkeyInputBox hiPenWidthPlus;
+        private System.Windows.Forms.CheckBox CaptStrokesOnlyCb;
     }
 }

@@ -113,6 +113,7 @@ OptionsGeneralDefaultTextBtn = "Select &Font && Size"
 OptionsGeneralDefaultArrHdBtn = "Default Arrow Head At Start"
 OptionsGeneralMagnetLbl = "Magnetic radius(%Scr) (<=0 = disabled)"
 OptionsGeneralSaveConfigToFile = "Save to Files"
+OptionsCaptureStrokesOnly = "Snapshot Strokes only"
 OptionsGeneralNotePenwidth = "Notes: (1)pen width panel overides each individual pen width settings\n  (2) Transparency and size of floating window to be modified directly in config.ini"
 
 OptionsPensShow = "Show"
