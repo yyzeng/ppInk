@@ -458,22 +458,23 @@ namespace gInk
             int dim4 = dim1 + dim3;
             int dim4s = dim1s + dim3;
 
+            int penSec = Root.PensOnTwoLines ? ((int)Math.Ceiling(nbPen / 2.0) * dim4s) : (nbPen * dim4);
             if (Root.ToolbarOrientation <= Orientation.Horizontal)
             {
                 gpButtons.Height = dim;
-                gpButtons.Width = (int)((dim1 * .5 + dim3) + (nbPen * dim4 + (Root.ToolsEnabled ? (6 * dim4s + dim4s) : 0) + (Root.EraserEnabled ? dim4 : 0) + (Root.PanEnabled ? dim4 : 0) + (Root.PointerEnabled ? dim4 : 0)
-                                                                         + (Root.PenWidthEnabled ? dim4 : 0) + (Root.InkVisibleEnabled ? dim4 : 0) + (Root.SnapEnabled ? dim4 : 0)
-                                                                         + (Root.UndoEnabled ? dim4 : 0) + (Root.ClearEnabled ? dim4 : 0) + (Root.LoadSaveEnabled ? dim4s : 0)
-                                                                         + ((Root.VideoRecordMode != VideoRecordMode.NoVideo) ? dim4 : 0)
+                gpButtons.Width = (int)((dim1 * .5 + dim3) + (penSec + (Root.ToolsEnabled ? (6 * dim4s + dim4s) : 0) + (Root.EraserEnabled ? dim4 : 0) + (Root.PanEnabled ? dim4 : 0) + (Root.PointerEnabled ? dim4 : 0)
+                                                                     + (Root.PenWidthEnabled ? dim4 : 0) + (Root.InkVisibleEnabled ? dim4 : 0) + (Root.SnapEnabled ? dim4 : 0)
+                                                                     + (Root.UndoEnabled ? dim4 : 0) + (Root.ClearEnabled ? dim4 : 0) + (Root.LoadSaveEnabled ? dim4s : 0)
+                                                                     + ((Root.VideoRecordMode != VideoRecordMode.NoVideo) ? dim4 : 0)
                                                                          + dim1));
             }
             else //Vertical
             {
                 gpButtons.Width = dim;
-                gpButtons.Height = (int)((dim1 * .5 + dim3) + (nbPen * dim4 + (Root.ToolsEnabled ? (6 * dim4s + dim4s) : 0) + (Root.EraserEnabled ? dim4 : 0) + (Root.PanEnabled ? dim4 : 0) + (Root.PointerEnabled ? dim4 : 0)
-                                                                            + (Root.PenWidthEnabled ? dim4 : 0) + (Root.InkVisibleEnabled ? dim4 : 0) + (Root.SnapEnabled ? dim4 : 0)
-                                                                            + (Root.UndoEnabled ? dim4 : 0) + (Root.ClearEnabled ? dim4 : 0) + (Root.LoadSaveEnabled ? dim4s : 0)
-                                                                            + ((Root.VideoRecordMode != VideoRecordMode.NoVideo) ? dim4 : 0)
+                gpButtons.Height = (int)((dim1 * .5 + dim3) + (penSec + (Root.ToolsEnabled ? (6 * dim4s + dim4s) : 0) + (Root.EraserEnabled ? dim4 : 0) + (Root.PanEnabled ? dim4 : 0) + (Root.PointerEnabled ? dim4 : 0)
+                                                                      + (Root.PenWidthEnabled ? dim4 : 0) + (Root.InkVisibleEnabled ? dim4 : 0) + (Root.SnapEnabled ? dim4 : 0)
+                                                                      + (Root.UndoEnabled ? dim4 : 0) + (Root.ClearEnabled ? dim4 : 0) + (Root.LoadSaveEnabled ? dim4s : 0)
+                                                                      + ((Root.VideoRecordMode != VideoRecordMode.NoVideo) ? dim4 : 0)
                                                                             + dim1));
             }
 
@@ -514,19 +515,40 @@ namespace gInk
 
             Button prev = btDock;
 
+            bool NextBelow = false;
             for (int b = 0; b < Root.MaxPenCount; b++)
             {
 
                 if (Root.PenEnabled[b])
                 {
-                    btPen[b].Width = dim1;
-                    btPen[b].Height = dim1;
+                    if(Root.PensOnTwoLines)
+                    {
+                        btPen[b].Width = dim1s;
+                        btPen[b].Height = dim1s;
 
-                    SetButtonPosition(prev, btPen[b], dim3);
-                    this.toolTip.SetToolTip(this.btPen[b], Root.Local.ButtonNamePen[b] + " (" + Root.Hotkey_Pens[b].ToString() + ")");
+                        if(NextBelow)
+                        {
+                            SetSmallButtonNext(prev, btPen[b], dim2s);
+                            NextBelow = false;
+                        }
+                        else
+                        {
+                            SetButtonPosition(prev, btPen[b], dim3);
+                            prev = btPen[b];
+                            NextBelow = true;
+                        }
+                    }
+                    else
+                    {
+                        btPen[b].Width = dim1;
+                        btPen[b].Height = dim1;
 
+                        SetButtonPosition(prev, btPen[b], dim3);
+                        prev = btPen[b];
+                    }
+
+                    toolTip.SetToolTip(btPen[b], Root.Local.ButtonNamePen[b] + " (" + Root.Hotkey_Pens[b].ToString() + ")");
                     btPen[b].Visible = true;
-                    prev = btPen[b];
                 }
                 else
                     btPen[b].Visible = false;

@@ -42,6 +42,7 @@ ButtonNameZoom = "Zoom"
 ButtonActivateDebug ="Fenêtre Debug"
 
 SubToolsBarCbText = "Activation de la barre d'outils secondaire"
+OptionPensOnTwoLinesCb = "Stylos sur deux lignes"
 
 StrokeFileExists = "{0} Existe\nVoulez-vous le remplacer?"
 FileCanNotWrite = "impossible d'écrire\n{0}"

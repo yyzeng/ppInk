@@ -50,6 +50,7 @@ namespace gInk
         public string ButtonActivateDebug = "Debug Window";
 
         public string SubToolsBarCbText = "Enable Secondary ToolBar";
+        public string OptionPensOnTwoLinesCb = "Pens on two lines";
 
         public string StrokeFileExists = "{0} Already Exists\nDo you want to override it?";
         public string FileCanNotWrite = "{0}\ncan not be written.";

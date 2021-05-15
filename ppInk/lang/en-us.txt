@@ -42,6 +42,7 @@ ButtonNameZoom = "Zoom"
 ButtonActivateDebug ="Debug Window"
 
 SubToolsBarCbText = "Enable Secondary ToolBar"
+OptionPensOnTwoLinesCb = "Pens on two lines"
 
 StrokeFileExists = "{0} Already Exists\nDo you want to override it?"
 FileCanNotWrite = "{0}\ncan not be written."

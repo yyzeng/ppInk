@@ -5,7 +5,6 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using System.Drawing;
-using System.Net;
 using System.Threading;
 using System.Runtime.InteropServices;
 using Microsoft.Ink;
@@ -143,6 +142,7 @@ namespace gInk
         // options
         public int ToolbarOrientation = Orientation.toLeft;
         public bool[] PenEnabled = new bool[MaxPenCount];
+        public bool PensOnTwoLines = true;
         public bool ToolsEnabled = true;
         public bool EraserEnabled = true;
         public bool PointerEnabled = true;
@@ -1020,6 +1020,13 @@ namespace gInk
                             Hotkey_PenWidthMinus.Parse(sPara);
                             break;
 
+                        case "PENS_ON_TWO_LINES":
+                            if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
+                                PensOnTwoLines = true;
+                            else
+                                PensOnTwoLines = false;
+                            break;
+
                         case "PENWIDTH_DELTA":
                             if (int.TryParse(sPara, out tempi))
                             {
@@ -1589,6 +1596,10 @@ namespace gInk
                             break;
                         case "PENWIDTH_DELTA":
                             sPara = PenWidth_Delta.ToString();
+                            break;
+
+                        case "PENS_ON_TWO_LINES":
+                            sPara = PensOnTwoLines? "True" : "False";
                             break;
 
                         case "WHITE_TRAY_ICON":

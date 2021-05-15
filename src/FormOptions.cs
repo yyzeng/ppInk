@@ -114,7 +114,7 @@ namespace gInk
                 Clip1Btn.BackgroundImage = FormCollection.getImgFromDiskOrRes("unknown");
             }
             SubToolsBar_cb.Checked = Root.SubToolsEnabled;
-
+            PensOnTwoLinesCb.Checked = Root.PensOnTwoLines;
             if (Root.EraserEnabled)
 				cbEraserEnabled.Checked = true;
 			if (Root.PointerEnabled)
@@ -310,6 +310,7 @@ namespace gInk
 			VideoTabCtrl.TabPages[1].Text = Root.Local.OptionsTabPens;
 			VideoTabCtrl.TabPages[2].Text = Root.Local.OptionsTabHotkeys;
             SubToolsBar_cb.Text = Root.Local.SubToolsBarCbText;
+            PensOnTwoLinesCb.Text = Root.Local.OptionPensOnTwoLinesCb;
             this.ToolBarColorLbl.Text = Root.Local.OptionsGeneralToolBarColorText;
             this.ClipartsSelBtn.Text = shortTxt(Root.Local.ButtonNameClipArt);
             this.AltTabActivateCb.Text = Root.Local.OptionsGeneralAltTabActivateText;
@@ -1095,6 +1096,11 @@ namespace gInk
         private void CaptStrokesOnlyCb_CheckedChanged(object sender, EventArgs e)
         {
             Root.StrokesOnlySnapshot = CaptStrokesOnlyCb.Checked;
+        }
+
+        private void PensOnTwoLinesCb_CheckedChanged(object sender, EventArgs e)
+        {
+            Root.PensOnTwoLines = PensOnTwoLinesCb.Checked;
         }
     }
 }
