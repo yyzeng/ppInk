@@ -376,6 +376,7 @@ namespace gInk
         public void Initialize()
         {
             Console.WriteLine("A=" + (DateTime.Now.Ticks / 1e7).ToString());
+            Root.Snapping = 0;
             FadingList.Clear();
             if (Root.WindowRect.Width <= 0 || Root.WindowRect.Height <= 0)
             {
