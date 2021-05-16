@@ -505,6 +505,7 @@ namespace gInk
         }
         public void StopInk()
 		{
+            FormCollection.Initializing = true;
             try { FormCollection.Hide(); FormCollection.tiSlide.Enabled = false; } catch { }
             try { FormDisplay.Hide(); FormDisplay.timer1.Enabled = false; } catch { }
 			try { FormButtonHitter.Hide(); FormButtonHitter.timer1.Enabled = false; } catch { }

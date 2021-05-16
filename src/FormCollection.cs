@@ -1119,14 +1119,14 @@ namespace gInk
         {
             if (msg.Msg == 0x001C) //WM_ACTIVATEAPP : generated through alt+tab
             {
+                if (Initializing)        // This is normally because we have not yet finish initialisation, we ignore the action...
+                    return;
                 if (Root.FormDisplay != null && Root.FormDisplay.Visible)
                 {
                     //Console.WriteLine(Root.FormDisplay.HasFocus() ? "WM_ACT" : "!WM");
                     Root.FormDisplay.DrawBorder(Root.FormDisplay.HasFocus());
                     Root.FormDisplay.UpdateFormDisplay(true);
                 }
-                else if (Initializing)        // This is normally because we have not yet finish initialisation, we ignore the action...
-                    return;
                 // else exception will be raised somewhere else if a problem is met
                 if (!Root.AltTabPointer)
                     return;
