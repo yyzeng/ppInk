@@ -3541,6 +3541,7 @@ namespace gInk
                 {
                     IC.Cursor = getCursFromDiskOrRes("cursorarrow", System.Windows.Forms.Cursors.NoMove2D);
                 }
+                System.Windows.Forms.Cursor.Position = new Point(System.Windows.Forms.Cursor.Position.X, System.Windows.Forms.Cursor.Position.Y);
             }
             else if (!(tempArrowCursor is null) && !AltKeyPressed())
             {
@@ -3548,6 +3549,7 @@ namespace gInk
                 {
                     IC.Cursor = tempArrowCursor;
                     tempArrowCursor = null;
+                    System.Windows.Forms.Cursor.Position = new Point(System.Windows.Forms.Cursor.Position.X, System.Windows.Forms.Cursor.Position.Y);
                 }
                 catch
                 {
@@ -4623,9 +4625,17 @@ namespace gInk
                 Root.ImageStamp = (ClipArtData)btClipSel;
                 i = Tools.ClipArt;
             }
+            int f = -1;
+            if(!AltKeyPressed() & (Root.PointerMode || Root.EraserEnabled||Root.PanMode) & SavedTool!=-1)
+            {
+                SavedPen = -1;
+                SavedTool = -1;
+                f = SavedFilled;
+                SavedFilled = -1;
+            }
             if (i >= Tools.Hand)
                 SelectPen(LastPenSelected);
-            SelectTool(i);
+            SelectTool(i,f);
         }
 
         public void btEraser_Click(object sender, EventArgs e)
