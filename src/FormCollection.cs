@@ -1045,25 +1045,16 @@ namespace gInk
         private void setPenWidthBarPosition()
         {
             SetSubBarPosition(gpPenWidth, btPenWidth);
-            /*if(Root.ToolbarOrientation <= Orientation.Horizontal)
-            {
-                gpPenWidth.Left = gpButtonsLeft + btPenWidth.Left; // gpButtonsLeft + btPenWidth.Left - gpPenWidth.Width / 2 + btPenWidth.Width / 2;
-                gpPenWidth.Top = gpButtonsTop - gpPenWidth.Height - 10;
-                if ( !(IsInsideVisibleScreen(gpPenWidth.Left, gpPenWidth.Top) && IsInsideVisibleScreen(gpPenWidth.Right, gpPenWidth.Bottom)))
-                    gpPenWidth.Top = gpButtonsTop + gpButtonsHeight + 10;
-            }
-            else
-            {
-                gpPenWidth.Top = gpButtonsTop + btPenWidth.Top;
-                gpPenWidth.Left = gpButtonsLeft - gpPenWidth.Width - 10; // gpButtonsLeft + btPenWidth.Left - gpPenWidth.Width / 2 + btPenWidth.Width / 2;
-                if (!(IsInsideVisibleScreen(gpPenWidth.Left, gpPenWidth.Top) && IsInsideVisibleScreen(gpPenWidth.Right, gpPenWidth.Bottom)))
-                    gpPenWidth.Left = gpButtonsLeft +gpButtonsWidth + 10;
-            }*/
         }
 
         private void setClipArtDlgPosition()
         {
-            if (Root.ToolbarOrientation <= Orientation.Horizontal)
+            if (Root.Docked)
+            {
+                ClipartsDlg.Left = Screen.PrimaryScreen.Bounds.Right - ClipartsDlg.Width - 1;
+                ClipartsDlg.Top = Screen.PrimaryScreen.Bounds.Bottom - ClipartsDlg.Height - 1;
+            }
+            else if (Root.ToolbarOrientation <= Orientation.Horizontal)
             {
                 ClipartsDlg.Left = gpButtons.Right - ClipartsDlg.Width - 1;
                 ClipartsDlg.Top = gpButtons.Top - ClipartsDlg.Height - 1;
