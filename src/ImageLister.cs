@@ -148,21 +148,30 @@ namespace gInk
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     //Get the path of specified file
-                    String fn = openFileDialog.FileName;
+                    LoadImage(openFileDialog.FileName);
 
-                    ImageListViewer.Items.Add(new ListViewItem(Path.GetFileNameWithoutExtension(fn), fn));
-                    Image img = Image.FromFile(fn);
-                    ImageListViewer.LargeImageList.Images.Add(fn, img);
-                    int j = ImageListViewer.LargeImageList.Images.IndexOfKey(fn);
-                    Originals.Add(fn, (Image)(img.Clone()));
-                    ImgSizes[j].X = img.Width;
-                    ImgSizes[j].Y = img.Height;
                     ImageListViewer.Items[ImageListViewer.Items.Count - 1].EnsureVisible();
                     ImageListViewer.SelectedIndices.Clear();
                     ImageListViewer.SelectedIndices.Add(ImageListViewer.Items.Count - 1);
                     ImageListViewer.Select();
                 }
             }
+        }
+
+        public string LoadImage(string fn)
+        {
+            string fn1 = Path.GetFileNameWithoutExtension(fn);
+            if (!Originals.ContainsKey(fn))
+            {
+                ImageListViewer.Items.Add(new ListViewItem(fn1, fn));
+                Image img = Image.FromFile(fn);
+                ImageListViewer.LargeImageList.Images.Add(fn, img);
+                int j = ImageListViewer.LargeImageList.Images.IndexOfKey(fn);
+                Originals.Add(fn, (Image)(img.Clone()));
+                ImgSizes[j].X = img.Width;
+                ImgSizes[j].Y = img.Height;
+            }       
+            return fn1;
         }
 
         private void DelBtn_Click(object sender, EventArgs e)
@@ -195,6 +204,19 @@ namespace gInk
             {
                 ;
             }
+        }
+
+        public ClipArtData getClipArtData(string fn,int fill=-2)
+        {
+            int ImgX, ImgY;
+            //ImageStamp = fn;
+            if (!fn.Contains("/"))
+                fn = ImageListViewer.FindItemWithText(fn).ImageKey;
+            if (fill == -2)
+                fill = Array.IndexOf(Root.Local.ListFillingsText.Split(';'), FillingCombo.Text) - 1;
+            ImgX = ImgSizes[ImageListViewer.LargeImageList.Images.IndexOfKey(fn)].X;
+            ImgY = ImgSizes[ImageListViewer.LargeImageList.Images.IndexOfKey(fn)].Y;
+            return new ClipArtData { ImageStamp = fn, X = ImgX, Y = ImgY, Filling = fill };
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)

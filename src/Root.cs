@@ -37,7 +37,7 @@ namespace gInk
         public const int WhiteFilled = 2;
         public const int BlackFilled = 3;
         public const int Modulo = 4;
-        public static readonly string[] Names = { "Empty", "Pen Colored", "White Colored", "Black Colored" };
+        public static readonly string[] Names = { "NoFrames","Empty", "Pen Colored", "White Colored", "Black Colored" };  //starting at -1
     } // applicable to Hand,Rect,Oval
 
     public class Orientation{
@@ -324,6 +324,8 @@ namespace gInk
 
         public string APIRestUrl="";
         public APIRest APIRest;
+        public bool APIRestCloseOnSnap = false;
+        public bool APIRestAltPressed = false;
 
         public bool StrokesOnlySnapshot=true;
         //public string ProgramFolder;
@@ -1957,10 +1959,17 @@ namespace gInk
             return relativePath;
         }
 
+        public void AppGetFocus()
+        {
+            SetForegroundWindow(Process.GetCurrentProcess().MainWindowHandle);
+        }
+
         [DllImport("user32.dll")]
 		private static extern int RegisterHotKey(IntPtr hwnd, int id, int fsModifiers, int vk);
 		[DllImport("user32.dll")]
 		private static extern int UnregisterHotKey(IntPtr hwnd, int id);
-	}
+        [DllImport("user32.dll")]
+        internal static extern IntPtr SetForegroundWindow(IntPtr hWnd);
+    }
 }
 

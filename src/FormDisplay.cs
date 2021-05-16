@@ -837,8 +837,9 @@ namespace gInk
                 SnapShot(Root.SnappingRect);
                 Root.UponBalloonSnap = true;
                 Root.UponTakingSnap = false;
-                if (!Root.FormCollection.SnapWithoutClosing && (Root.CloseOnSnap == "true" || (Root.CloseOnSnap == "blankonly" && Root.FormCollection.IC.Ink.Strokes.Count == 0)))
+                if (!Root.FormCollection.SnapWithoutClosing && (Root.APIRestCloseOnSnap || Root.CloseOnSnap == "true" || (Root.CloseOnSnap == "blankonly" && Root.FormCollection.IC.Ink.Strokes.Count == 0)))
                     Root.FormCollection.RetreatAndExit();
+                Root.FormCollection.SnapWithoutClosing = false;
                 /*
                 if (Root.CloseOnSnap == "true")
 				{
@@ -849,7 +850,7 @@ namespace gInk
 					if ((Root.FormCollection.IC.Ink.Strokes.Count == 0))
 						Root.FormCollection.RetreatAndExit();
 				}*/
-			}
+            }
 
 			else if (Root.Snapping == 2)
 			{

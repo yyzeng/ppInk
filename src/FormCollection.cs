@@ -19,7 +19,7 @@ using System.Drawing.Imaging;
 namespace gInk
 {
     public partial class FormCollection : Form
-	{
+    {
         [Flags, Serializable]
         public enum RegisterTouchFlags
         {
@@ -68,14 +68,14 @@ namespace gInk
         const int VK_RWIN = 0x5C;
         private PenModifyDlg PenModifyDlg;
         public Root Root;
-		public InkOverlay IC;
+        public InkOverlay IC;
 
-		public Button[] btPen;
-		public Bitmap image_exit, image_clear, image_undo, image_snap, image_penwidth;
-		public Bitmap image_dock, image_dockback;
-		//public Bitmap image_pencil, image_highlighter, image_pencil_act, image_highlighter_act;
-		public Bitmap image_pointer, image_pointer_act;
-		//public Bitmap[] image_pen;
+        public Button[] btPen;
+        public Bitmap image_exit, image_clear, image_undo, image_snap, image_penwidth;
+        public Bitmap image_dock, image_dockback;
+        //public Bitmap image_pencil, image_highlighter, image_pencil_act, image_highlighter_act;
+        public Bitmap image_pointer, image_pointer_act;
+        //public Bitmap[] image_pen;
         //public Bitmap[] image_pen_act;
         public Bitmap image_eraser_act, image_eraser;
         public Bitmap image_visible_not, image_visible;
@@ -95,10 +95,10 @@ namespace gInk
 
         public int PrimaryLeft, PrimaryTop;
 
-        private int LastPenSelected = 0;
-        private int SavedTool = -1;
-        private int SavedFilled = -1;
-        private int SavedPen = -1;
+        public int LastPenSelected = 0;
+        public int SavedTool = -1;
+        public int SavedFilled = -1;
+        public int SavedPen = -1;
         private int PolyLineLastX = Int32.MinValue;
         private int PolyLineLastY = Int32.MinValue;
         private Stroke PolyLineInProgress = null;
@@ -122,7 +122,7 @@ namespace gInk
 
         private List<Stroke> FadingList = new List<Stroke>();
 
-        private ZoomForm ZoomForm = new ZoomForm();
+        public ZoomForm ZoomForm = new ZoomForm();
         private Bitmap ZoomImage, ZoomImage2;
         int ZoomFormRePosX;
         int ZoomFormRePosY;
@@ -137,14 +137,14 @@ namespace gInk
         // http://www.csharp411.com/hide-form-from-alttab/
         protected override CreateParams CreateParams
         {
-			get
-			{
-				CreateParams cp = base.CreateParams;
-				// turn on WS_EX_TOOLWINDOW style bit
-				cp.ExStyle |= 0x80;
-				return cp;
-			}
-		}
+            get
+            {
+                CreateParams cp = base.CreateParams;
+                // turn on WS_EX_TOOLWINDOW style bit
+                cp.ExStyle |= 0x80;
+                return cp;
+            }
+        }
 
         static class NativeMethods
         {
@@ -264,7 +264,7 @@ namespace gInk
                 current.Left = previous.Left;
                 current.Top = previous.Top + incr;
             }
-            else 
+            else
             {
                 current.Left = previous.Left + incr;
                 current.Top = previous.Top;
@@ -367,7 +367,7 @@ namespace gInk
                 }
             }
             PenModifyDlg = new PenModifyDlg(Root); // It seems to be a little long to build so we prepare it.
-            
+
             Btn_SubTools = new Button[] { Btn_SubTool0, Btn_SubTool1, Btn_SubTool2, Btn_SubTool3, Btn_SubTool4, Btn_SubTool5, Btn_SubTool6, Btn_SubTool7 };
 
             Initialize();
@@ -399,7 +399,7 @@ namespace gInk
 
             try
             {
-                    ZoomImage?.Dispose();
+                ZoomImage?.Dispose();
             }
             catch { }
             finally
@@ -408,7 +408,7 @@ namespace gInk
             }
             try
             {
-                    ZoomImage2?.Dispose();
+                ZoomImage2?.Dispose();
             }
             catch { }
             finally
@@ -466,7 +466,7 @@ namespace gInk
                                                                      + (Root.PenWidthEnabled ? dim4 : 0) + (Root.InkVisibleEnabled ? dim4 : 0) + (Root.SnapEnabled ? dim4 : 0)
                                                                      + (Root.UndoEnabled ? dim4 : 0) + (Root.ClearEnabled ? dim4 : 0) + (Root.LoadSaveEnabled ? dim4s : 0)
                                                                      + ((Root.VideoRecordMode != VideoRecordMode.NoVideo) ? dim4 : 0)
-                                                                         + dim1));
+                                                                     + dim1));
             }
             else //Vertical
             {
@@ -475,7 +475,7 @@ namespace gInk
                                                                       + (Root.PenWidthEnabled ? dim4 : 0) + (Root.InkVisibleEnabled ? dim4 : 0) + (Root.SnapEnabled ? dim4 : 0)
                                                                       + (Root.UndoEnabled ? dim4 : 0) + (Root.ClearEnabled ? dim4 : 0) + (Root.LoadSaveEnabled ? dim4s : 0)
                                                                       + ((Root.VideoRecordMode != VideoRecordMode.NoVideo) ? dim4 : 0)
-                                                                            + dim1));
+                                                                      + dim1));
             }
 
             //
@@ -795,7 +795,7 @@ namespace gInk
                         catch { }
                         finally
                         {
-                            Root.ObsRecvTask = Task.Run(() => ReceiveObsMesgs(this));   
+                            Root.ObsRecvTask = Task.Run(() => ReceiveObsMesgs(this));
                         }
                     }
                     while (Root.VideoRecordWindowInProgress)
@@ -1157,7 +1157,7 @@ namespace gInk
             {
                 btVideo.BackgroundImage = getImgFromDiskOrRes("VidUnk", ImageExts);
                 //Console.WriteLine("VideoRecInProgress " + Root.VideoRecInProgress.ToString());
-                }
+            }
             Root.UponButtonsUpdate |= 0x2;
         }
 
@@ -1205,7 +1205,7 @@ namespace gInk
         private void btAllButtons_MouseDown(object sender, MouseEventArgs e)
         {
             MouseTimeDown = DateTime.Now;
-            MouseDownButtonObject = sender;            
+            MouseDownButtonObject = sender;
             longClickTimer.Start();
             longClickTimer.Tag = sender;
             //Console.WriteLine(string.Format("MD {0} {1}", DateTime.Now.Second, DateTime.Now.Millisecond));
@@ -1438,7 +1438,7 @@ namespace gInk
             setStrokeProperties(ref st, Filling.NoFrame);
             Root.FormCollection.IC.Ink.Strokes.Add(st);
             if (st.ExtendedProperties.Contains(Root.FADING_PEN))
-                    FadingList.Add(st);
+                FadingList.Add(st);
             return st;
         }
 
@@ -1881,18 +1881,18 @@ namespace gInk
         }
 
         private void SaveUndoStrokes()
-		{
-			Root.RedoDepth = 0;
-			if (Root.UndoDepth < Root.UndoStrokes.GetLength(0) - 1)
-				Root.UndoDepth++;
+        {
+            Root.RedoDepth = 0;
+            if (Root.UndoDepth < Root.UndoStrokes.GetLength(0) - 1)
+                Root.UndoDepth++;
 
-			Root.UndoP++;
-			if (Root.UndoP >= Root.UndoStrokes.GetLength(0))
-				Root.UndoP = 0;
+            Root.UndoP++;
+            if (Root.UndoP >= Root.UndoStrokes.GetLength(0))
+                Root.UndoP = 0;
 
-			if (Root.UndoStrokes[Root.UndoP] == null)
-				Root.UndoStrokes[Root.UndoP] = new Ink();
-			Root.UndoStrokes[Root.UndoP].DeleteStrokes();
+            if (Root.UndoStrokes[Root.UndoP] == null)
+                Root.UndoStrokes[Root.UndoP] = new Ink();
+            Root.UndoStrokes[Root.UndoP].DeleteStrokes();
             if (IC.Ink.Strokes.Count > 0)
             {
                 Rectangle r = IC.Ink.Strokes.GetBoundingBox();
@@ -1906,7 +1906,7 @@ namespace gInk
         private void IC_CursorDown(object sender, InkCollectorCursorDownEventArgs e)
         {
             if (ZoomCapturing)
-            {                
+            {
                 Screen scr = Screen.FromPoint(MousePosition);
                 ZoomScreenRatio = (float)(scr.Bounds.Width) / scr.Bounds.Height;
                 e.Stroke.ExtendedProperties.Add(Root.ISHIDDEN_GUID, true); // we set the ISTROKE_GUID in order to draw the inprogress as a line
@@ -1920,13 +1920,13 @@ namespace gInk
                 e.Stroke.ExtendedProperties.Add(Root.ISHIDDEN_GUID, true); // we set the ISTROKE_GUID in order to draw the inprogress as a line
 
             if (!Root.InkVisible && Root.Snapping <= 0)
-			{
-				Root.SetInkVisible(true);
-			}
+            {
+                Root.SetInkVisible(true);
+            }
 
-			Root.FormDisplay.ClearCanvus(Root.FormDisplay.gOneStrokeCanvus);
+            Root.FormDisplay.ClearCanvus(Root.FormDisplay.gOneStrokeCanvus);
             Root.FormDisplay.DrawStrokes(Root.FormDisplay.gOneStrokeCanvus);
-			Root.FormDisplay.DrawButtons(Root.FormDisplay.gOneStrokeCanvus, false);
+            Root.FormDisplay.DrawButtons(Root.FormDisplay.gOneStrokeCanvus, false);
             Point p;
             try
             {
@@ -1972,22 +1972,22 @@ namespace gInk
             if (Root.gpPenWidthVisible)
             {
                 Root.gpPenWidthVisible = false;
-				Root.UponSubPanelUpdate = true;
-			}
+                Root.UponSubPanelUpdate = true;
+            }
 
-			Root.FingerInAction = true;
-			if (Root.Snapping == 1)
-			{
-				Root.SnappingX = e.X;
-				Root.SnappingY = e.Y;
-				Root.SnappingRect = new Rectangle(e.X, e.Y, 0, 0);
-				Root.Snapping = 2;
-			}
+            Root.FingerInAction = true;
+            if (Root.Snapping == 1)
+            {
+                Root.SnappingX = e.X;
+                Root.SnappingY = e.Y;
+                Root.SnappingRect = new Rectangle(e.X, e.Y, 0, 0);
+                Root.Snapping = 2;
+            }
 
-			if (!Root.InkVisible && Root.Snapping <= 0)
-			{
-				Root.SetInkVisible(true);
-			}
+            if (!Root.InkVisible && Root.Snapping <= 0)
+            {
+                Root.SetInkVisible(true);
+            }
 
             LasteXY.X = e.X;
             LasteXY.Y = e.Y;
@@ -2065,25 +2065,25 @@ namespace gInk
 
             if (LasteXY.X == 0 && LasteXY.Y == 0)
             {
-				LasteXY.X = e.X;
-				LasteXY.Y = e.Y;
-				IC.Renderer.PixelToInkSpace(Root.FormDisplay.gOneStrokeCanvus, ref LasteXY);
-			}
-			Point currentxy = new Point(e.X, e.Y);
-			IC.Renderer.PixelToInkSpace(Root.FormDisplay.gOneStrokeCanvus, ref currentxy);
+                LasteXY.X = e.X;
+                LasteXY.Y = e.Y;
+                IC.Renderer.PixelToInkSpace(Root.FormDisplay.gOneStrokeCanvus, ref LasteXY);
+            }
+            Point currentxy = new Point(e.X, e.Y);
+            IC.Renderer.PixelToInkSpace(Root.FormDisplay.gOneStrokeCanvus, ref currentxy);
 
-			if (Root.Snapping == 2)
-			{
-				int left = Math.Min(Root.SnappingX, e.X);
-				int top = Math.Min(Root.SnappingY, e.Y);
-				int width = Math.Abs(Root.SnappingX - e.X);
-				int height = Math.Abs(Root.SnappingY - e.Y);
-				Root.SnappingRect = new Rectangle(left, top, width, height);
+            if (Root.Snapping == 2)
+            {
+                int left = Math.Min(Root.SnappingX, e.X);
+                int top = Math.Min(Root.SnappingY, e.Y);
+                int width = Math.Abs(Root.SnappingX - e.X);
+                int height = Math.Abs(Root.SnappingY - e.Y);
+                Root.SnappingRect = new Rectangle(left, top, width, height);
 
-				if (LasteXY != currentxy)
-					Root.MouseMovedUnderSnapshotDragging = true;
-			}
-			else if (Root.PanMode && Root.FingerInAction)
+                if (LasteXY != currentxy)
+                    Root.MouseMovedUnderSnapshotDragging = true;
+            }
+            else if (Root.PanMode && Root.FingerInAction)
             {
                 Root.Pan(currentxy.X - LasteXY.X, currentxy.Y - LasteXY.Y);
             }
@@ -2117,16 +2117,16 @@ namespace gInk
             }
 
             LasteXY = currentxy;
-		}
+        }
 
         private void IC_MouseUp(object sender, CancelMouseEventArgs e)
         {
             Root.FingerInAction = false;
-			if (Root.Snapping == 2)
-			{
-				int left = Math.Min(Root.SnappingX, e.X);
-				int top = Math.Min(Root.SnappingY, e.Y);
-				int width = Math.Abs(Root.SnappingX - e.X);
+            if (Root.Snapping == 2)
+            {
+                int left = Math.Min(Root.SnappingX, e.X);
+                int top = Math.Min(Root.SnappingY, e.Y);
+                int width = Math.Abs(Root.SnappingX - e.X);
                 int height = Math.Abs(Root.SnappingY - e.Y);
                 if (width < 5 || height < 5)
                 {
@@ -2152,22 +2152,22 @@ namespace gInk
             }
             else if (Root.PanMode)
             {
-				SaveUndoStrokes();
-			}
-			else
-			{
-				Root.UponAllDrawingUpdate = true;
-			}
+                SaveUndoStrokes();
+            }
+            else
+            {
+                Root.UponAllDrawingUpdate = true;
+            }
             Root.CursorX0 = int.MinValue;
             Root.CursorY0 = int.MinValue;
         }
 
         private void IC_CursorInRange(object sender, InkCollectorCursorInRangeEventArgs e)
-		{
-			if (e.Cursor.Inverted && Root.CurrentPen != -1)
-			{
-				EnterEraserMode(true);
-				/*
+        {
+            if (e.Cursor.Inverted && Root.CurrentPen != -1)
+            {
+                EnterEraserMode(true);
+                /*
 				// temperary eraser icon light
 				if (btEraser.Image == image_eraser)
 				{
@@ -2176,11 +2176,11 @@ namespace gInk
 					Root.FormDisplay.UpdateFormDisplay();
 				}
 				*/
-			}
-			else if (!e.Cursor.Inverted && Root.CurrentPen != -1)
-			{
-				EnterEraserMode(false);
-				/*
+            }
+            else if (!e.Cursor.Inverted && Root.CurrentPen != -1)
+            {
+                EnterEraserMode(false);
+                /*
 				if (btEraser.Image == image_eraser_act)
 				{
 					btEraser.Image = image_eraser;
@@ -2188,15 +2188,15 @@ namespace gInk
 					Root.FormDisplay.UpdateFormDisplay();
 				}
 				*/
-			}
-		}
+            }
+        }
 
-		public void ToTransparent()
-		{
-			UInt32 dwExStyle = GetWindowLong(this.Handle, -20);
-			SetWindowLong(this.Handle, -20, dwExStyle | 0x00080000);
-			SetLayeredWindowAttributes(this.Handle, 0x00FFFFFF, 1, 0x2);
-		}
+        public void ToTransparent()
+        {
+            UInt32 dwExStyle = GetWindowLong(this.Handle, -20);
+            SetWindowLong(this.Handle, -20, dwExStyle | 0x00080000);
+            SetLayeredWindowAttributes(this.Handle, 0x00FFFFFF, 1, 0x2);
+        }
 
         public void ToTopMost()
         {
@@ -2204,58 +2204,58 @@ namespace gInk
             SetWindowPos(this.Handle, (IntPtr)(-1), 0, 0, 0, 0, 0x0002 | 0x0001 | 0x0020);
         }
 
-		public void ToThrough()
-		{
-			UInt32 dwExStyle = GetWindowLong(this.Handle, -20);
-			//SetWindowLong(this.Handle, -20, dwExStyle | 0x00080000);
-			//SetWindowPos(this.Handle, (IntPtr)0, 0, 0, 0, 0, 0x0002 | 0x0001 | 0x0004 | 0x0010 | 0x0020);
-			//SetLayeredWindowAttributes(this.Handle, 0x00FFFFFF, 1, 0x2);
-			SetWindowLong(this.Handle, -20, dwExStyle | 0x00080000 | 0x00000020);
-			//SetWindowPos(this.Handle, (IntPtr)(1), 0, 0, 0, 0, 0x0002 | 0x0001 | 0x0010 | 0x0020);
-		}
+        public void ToThrough()
+        {
+            UInt32 dwExStyle = GetWindowLong(this.Handle, -20);
+            //SetWindowLong(this.Handle, -20, dwExStyle | 0x00080000);
+            //SetWindowPos(this.Handle, (IntPtr)0, 0, 0, 0, 0, 0x0002 | 0x0001 | 0x0004 | 0x0010 | 0x0020);
+            //SetLayeredWindowAttributes(this.Handle, 0x00FFFFFF, 1, 0x2);
+            SetWindowLong(this.Handle, -20, dwExStyle | 0x00080000 | 0x00000020);
+            //SetWindowPos(this.Handle, (IntPtr)(1), 0, 0, 0, 0, 0x0002 | 0x0001 | 0x0010 | 0x0020);
+        }
 
-		public void ToUnThrough()
-		{
-			UInt32 dwExStyle = GetWindowLong(this.Handle, -20);
-			//SetWindowLong(this.Handle, -20, (uint)(dwExStyle & ~0x00080000 & ~0x0020));
-			SetWindowLong(this.Handle, -20, (uint)(dwExStyle & ~0x0020));
+        public void ToUnThrough()
+        {
+            UInt32 dwExStyle = GetWindowLong(this.Handle, -20);
+            //SetWindowLong(this.Handle, -20, (uint)(dwExStyle & ~0x00080000 & ~0x0020));
+            SetWindowLong(this.Handle, -20, (uint)(dwExStyle & ~0x0020));
             //SetWindowPos(this.Handle, (IntPtr)(-2), 0, 0, 0, 0, 0x0002 | 0x0001 | 0x0010 | 0x0020);
 
             //dwExStyle = GetWindowLong(this.Handle, -20);
-			//SetWindowLong(this.Handle, -20, dwExStyle | 0x00080000);
-			//SetLayeredWindowAttributes(this.Handle, 0x00FFFFFF, 1, 0x2);
-			//SetWindowPos(this.Handle, (IntPtr)(-1), 0, 0, 0, 0, 0x0002 | 0x0001 | 0x0020);
-		}
+            //SetWindowLong(this.Handle, -20, dwExStyle | 0x00080000);
+            //SetLayeredWindowAttributes(this.Handle, 0x00FFFFFF, 1, 0x2);
+            //SetWindowPos(this.Handle, (IntPtr)(-1), 0, 0, 0, 0, 0x0002 | 0x0001 | 0x0020);
+        }
 
-		public void EnterEraserMode(bool enter)
-		{
-			int exceptiontick = 0;
-			bool exc;
-			do
-			{
-				exceptiontick++;
-				exc = false;
-				try
-				{
+        public void EnterEraserMode(bool enter)
+        {
+            int exceptiontick = 0;
+            bool exc;
+            do
+            {
+                exceptiontick++;
+                exc = false;
+                try
+                {
                     if (enter)
-					{
-						IC.EditingMode = InkOverlayEditingMode.Delete;
-						Root.EraserMode = true;
-					}
-					else
-					{
-						IC.EditingMode = InkOverlayEditingMode.Ink;
-						Root.EraserMode = false;
-					}
-				}
-				catch
-				{
-					Thread.Sleep(50);
-					exc = true;
-				}
-			}
-			while (exc && exceptiontick < 3);
-		}
+                    {
+                        IC.EditingMode = InkOverlayEditingMode.Delete;
+                        Root.EraserMode = true;
+                    }
+                    else
+                    {
+                        IC.EditingMode = InkOverlayEditingMode.Ink;
+                        Root.EraserMode = false;
+                    }
+                }
+                catch
+                {
+                    Thread.Sleep(50);
+                    exc = true;
+                }
+            }
+            while (exc && exceptiontick < 3);
+        }
 
         private readonly int[] applicableTool = { Tools.Hand, Tools.Line, Tools.Poly, Tools.Rect, Tools.Oval, Tools.NumberTag };
         public void SelectTool(int tool, int filled = -1)
@@ -2422,7 +2422,7 @@ namespace gInk
                     btNumb.BackgroundImage = getImgFromDiskOrRes("tool_numb_fillB", ImageExts);
                 try
                 {
-                IC.Cursor = cursorred;
+                    IC.Cursor = cursorred;
                 }
                 catch
                 {
@@ -2497,7 +2497,7 @@ namespace gInk
 
         public void SelectPen(int pen)
         // -3 = pan, -2 = pointer, -1 = erasor, >=0 = pens
-		{
+        {
             btEraser.BackgroundImage = image_eraser;
             btPointer.BackgroundImage = image_pointer;
             btPan.BackgroundImage = getImgFromDiskOrRes("pan", ImageExts);
@@ -2505,7 +2505,7 @@ namespace gInk
             //System.Diagnostics.StackTrace t = new System.Diagnostics.StackTrace();
             //Console.WriteLine(t.ToString());
             if (pen == -3)
-			{
+            {
                 if (AltKeyPressed() && SavedPen < 0)
                 {
                     SavedPen = LastPenSelected;
@@ -2517,21 +2517,21 @@ namespace gInk
                                                             Root.PenAttr[b].ExtendedProperties.Contains(Root.FADING_PEN));// image_pen[b];
                 btPan.BackgroundImage = getImgFromDiskOrRes("pan_act", ImageExts);
                 EnterEraserMode(false);
-				Root.UnPointer();
-				Root.PanMode = true;
+                Root.UnPointer();
+                Root.PanMode = true;
 
-				try
-				{
-					IC.SetWindowInputRectangle(new Rectangle(0, 0, 1, 1));
-				}
-				catch
-				{
-					Thread.Sleep(1); 
-					IC.SetWindowInputRectangle(new Rectangle(0, 0, 1, 1));
-				}
-			}
-			else if (pen == -2)
-			{
+                try
+                {
+                    IC.SetWindowInputRectangle(new Rectangle(0, 0, 1, 1));
+                }
+                catch
+                {
+                    Thread.Sleep(1);
+                    IC.SetWindowInputRectangle(new Rectangle(0, 0, 1, 1));
+                }
+            }
+            else if (pen == -2)
+            {
                 if (AltKeyPressed() && SavedPen < 0)
                 {
                     SavedPen = LastPenSelected;
@@ -2543,11 +2543,11 @@ namespace gInk
                                                             Root.PenAttr[b].ExtendedProperties.Contains(Root.FADING_PEN));// image_pen[b];
                 btPointer.BackgroundImage = image_pointer_act;
                 EnterEraserMode(false);
-				Root.Pointer();
-				Root.PanMode = false;
-			}
-			else if (pen == -1)
-			{
+                Root.Pointer();
+                Root.PanMode = false;
+            }
+            else if (pen == -1)
+            {
                 if (AltKeyPressed() && SavedPen < 0)
                 {
                     SavedPen = LastPenSelected;
@@ -2562,7 +2562,7 @@ namespace gInk
                                                             Root.PenAttr[b].ExtendedProperties.Contains(Root.FADING_PEN));// image_pen[b];
 
                 btEraser.BackgroundImage = image_eraser_act;
-				EnterEraserMode(true);
+                EnterEraserMode(true);
                 Root.UnPointer();
                 Root.PanMode = false;
                 // !!!!!!!!!!!!!!! random exception
@@ -2581,18 +2581,18 @@ namespace gInk
                     break;
                 }
 
-				try
-				{
-					IC.SetWindowInputRectangle(new Rectangle(0, 0, this.Width, this.Height));
-				}
-				catch
-				{
-					Thread.Sleep(1);
-					IC.SetWindowInputRectangle(new Rectangle(0, 0, this.Width, this.Height));
-				}
-			}
-			else if (pen >= 0)
-			{
+                try
+                {
+                    IC.SetWindowInputRectangle(new Rectangle(0, 0, this.Width, this.Height));
+                }
+                catch
+                {
+                    Thread.Sleep(1);
+                    IC.SetWindowInputRectangle(new Rectangle(0, 0, this.Width, this.Height));
+                }
+            }
+            else if (pen >= 0)
+            {
                 if (AltKeyPressed() && pen != LastPenSelected && SavedPen < 0)
                 {
                     SavedPen = LastPenSelected;
@@ -2644,18 +2644,18 @@ namespace gInk
                     SetWindowInputRectFlag = true;
                 }
             }
-			Root.CurrentPen = pen;
-			if (Root.gpPenWidthVisible)
-			{
-				Root.gpPenWidthVisible = false;
-				Root.UponSubPanelUpdate = true;
-			}
-			else
-				Root.UponButtonsUpdate |= 0x2;
+            Root.CurrentPen = pen;
+            if (Root.gpPenWidthVisible)
+            {
+                Root.gpPenWidthVisible = false;
+                Root.UponSubPanelUpdate = true;
+            }
+            else
+                Root.UponButtonsUpdate |= 0x2;
 
-			if (pen != -2)
-				Root.LastPen = pen;
-		}
+            if (pen != -2)
+                Root.LastPen = pen;
+        }
 
         public void RetreatAndExit()
         {
@@ -2680,17 +2680,17 @@ namespace gInk
             Root.ClearInk();
             SaveUndoStrokes();
             //Root.SaveOptions("config.ini");
-			Root.gpPenWidthVisible = false;
+            Root.gpPenWidthVisible = false;
+            Root.APIRestCloseOnSnap = false;
+            LastTickTime = DateTime.Now;
+            ButtonsEntering = -9;
+        }
 
-			LastTickTime = DateTime.Now;
-			ButtonsEntering = -9;
-		}
-
-		public void btDock_Click(object sender, EventArgs e)
-		{
-			if (ToolbarMoved)
-			{
-				ToolbarMoved = false;
+        public void btDock_Click(object sender, EventArgs e)
+        {
+            if (ToolbarMoved)
+            {
+                ToolbarMoved = false;
                 return;
             }
 
@@ -2699,7 +2699,7 @@ namespace gInk
             LastTickTime = DateTime.Now;
             if (!Root.Docked)
             {
-				Root.Dock();
+                Root.Dock();
             }
             else
             {
@@ -2808,23 +2808,23 @@ namespace gInk
         private void btPenWidth_Click(object sender, EventArgs e)
         {
             if (ToolbarMoved)
-			{
-				ToolbarMoved = false;
-				return;
-			}
+            {
+                ToolbarMoved = false;
+                return;
+            }
 
-			if (Root.PointerMode)
-				return;
+            if (Root.PointerMode)
+                return;
 
-			Root.gpPenWidthVisible = !Root.gpPenWidthVisible;
-			if (Root.gpPenWidthVisible)
+            Root.gpPenWidthVisible = !Root.gpPenWidthVisible;
+            if (Root.gpPenWidthVisible)
             {
                 pboxPenWidthIndicator.Left = (int)Math.Sqrt(IC.DefaultDrawingAttributes.Width * 30);
-				Root.UponButtonsUpdate |= 0x2;
+                Root.UponButtonsUpdate |= 0x2;
             }
             else
                 Root.UponSubPanelUpdate = true;
-		}
+        }
 
         public void btSnap_Click(object sender, EventArgs e)
         {
@@ -2849,16 +2849,16 @@ namespace gInk
                 return;
             PolyLineLastX = Int32.MinValue; PolyLineLastY = Int32.MinValue; PolyLineInProgress = null;
             cursorsnap = new System.Windows.Forms.Cursor(gInk.Properties.Resources.cursorsnap.Handle);
-			this.Cursor = cursorsnap;
+            this.Cursor = cursorsnap;
 
-			Root.gpPenWidthVisible = false;
+            Root.gpPenWidthVisible = false;
 
-			try
-			{
-				IC.SetWindowInputRectangle(new Rectangle(0, 0, 1, 1));
-			}
-			catch
-			{
+            try
+            {
+                IC.SetWindowInputRectangle(new Rectangle(0, 0, 1, 1));
+            }
+            catch
+            {
                 Thread.Sleep(1);
                 IC.SetWindowInputRectangle(new Rectangle(0, 0, 1, 1));
             }
@@ -2874,53 +2874,53 @@ namespace gInk
             Root.SnappingX = -1;
             Root.SnappingY = -1;
             Root.SnappingRect = new Rectangle(0, 0, 0, 0);
-			Root.Snapping = 1;
-			ButtonsEntering = -2;
-			Root.UnPointer();
-		}
+            Root.Snapping = 1;
+            ButtonsEntering = -2;
+            Root.UnPointer();
+        }
 
-		public void ExitSnapping()
-		{
-			try
-			{
-				IC.SetWindowInputRectangle(new Rectangle(0, 0, this.Width, this.Height));
-			}
-			catch
-			{
-				Thread.Sleep(1);
-				IC.SetWindowInputRectangle(new Rectangle(0, 0, this.Width, this.Height));
-			}
-			Root.SnappingX = -1;
-			Root.SnappingY = -1;
-			Root.Snapping = -60;
-			ButtonsEntering = 1;
-			Root.SelectPen(Root.CurrentPen);
+        public void ExitSnapping()
+        {
+            try
+            {
+                IC.SetWindowInputRectangle(new Rectangle(0, 0, this.Width, this.Height));
+            }
+            catch
+            {
+                Thread.Sleep(1);
+                IC.SetWindowInputRectangle(new Rectangle(0, 0, this.Width, this.Height));
+            }
+            Root.SnappingX = -1;
+            Root.SnappingY = -1;
+            Root.Snapping = -60;
+            ButtonsEntering = 1;
+            Root.SelectPen(Root.CurrentPen);
 
-			this.Cursor = System.Windows.Forms.Cursors.Default;
-		}
+            this.Cursor = System.Windows.Forms.Cursors.Default;
+        }
 
-		public void btStop_Click(object sender, EventArgs e)
-		{
-			if (ToolbarMoved)
-			{
-				ToolbarMoved = false;
-				return;
-			}
+        public void btStop_Click(object sender, EventArgs e)
+        {
+            if (ToolbarMoved)
+            {
+                ToolbarMoved = false;
+                return;
+            }
 
-			RetreatAndExit();
-		}
+            RetreatAndExit();
+        }
 
-		DateTime LastTickTime;
-		bool[] LastPenStatus = new bool[10];
+        DateTime LastTickTime;
+        bool[] LastPenStatus = new bool[10];
         bool LastFadingToggle = false;
         bool LastEraserStatus = false;
-		bool LastVisibleStatus = false;
-		bool LastPointerStatus = false;
-		bool LastPanStatus = false;
-		bool LastUndoStatus = false;
-		bool LastRedoStatus = false;
-		bool LastSnapStatus = false;
-		bool LastClearStatus = false;
+        bool LastVisibleStatus = false;
+        bool LastPointerStatus = false;
+        bool LastPanStatus = false;
+        bool LastUndoStatus = false;
+        bool LastRedoStatus = false;
+        bool LastSnapStatus = false;
+        bool LastClearStatus = false;
         bool LastVideoStatus = false;
         bool LastDockStatus = false;
         bool LastHandStatus = false;
@@ -2948,87 +2948,87 @@ namespace gInk
 
         private void gpPenWidth_MouseDown(object sender, MouseEventArgs e)
         {
-			gpPenWidth_MouseOn = true;
-		}
+            gpPenWidth_MouseOn = true;
+        }
 
-		private void gpPenWidth_MouseMove(object sender, MouseEventArgs e)
-		{
-			if (gpPenWidth_MouseOn)
-			{
-				if (e.X < 10 || gpPenWidth.Width - e.X < 10)
-					return;
+        private void gpPenWidth_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (gpPenWidth_MouseOn)
+            {
+                if (e.X < 10 || gpPenWidth.Width - e.X < 10)
+                    return;
 
-				Root.GlobalPenWidth = e.X * e.X / 30;
-				pboxPenWidthIndicator.Left = e.X - pboxPenWidthIndicator.Width / 2;
-				IC.DefaultDrawingAttributes.Width = Root.GlobalPenWidth;
-				Root.UponButtonsUpdate |= 0x2;
-			}
-		}
+                Root.GlobalPenWidth = e.X * e.X / 30;
+                pboxPenWidthIndicator.Left = e.X - pboxPenWidthIndicator.Width / 2;
+                IC.DefaultDrawingAttributes.Width = Root.GlobalPenWidth;
+                Root.UponButtonsUpdate |= 0x2;
+            }
+        }
 
-		private void gpPenWidth_MouseUp(object sender, MouseEventArgs e)
-		{
-			if (e.X >= 10 && gpPenWidth.Width - e.X >= 10)
-			{
-				Root.GlobalPenWidth = e.X * e.X / 30;
-				pboxPenWidthIndicator.Left = e.X - pboxPenWidthIndicator.Width / 2;
-				IC.DefaultDrawingAttributes.Width = Root.GlobalPenWidth;
-			}
+        private void gpPenWidth_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.X >= 10 && gpPenWidth.Width - e.X >= 10)
+            {
+                Root.GlobalPenWidth = e.X * e.X / 30;
+                pboxPenWidthIndicator.Left = e.X - pboxPenWidthIndicator.Width / 2;
+                IC.DefaultDrawingAttributes.Width = Root.GlobalPenWidth;
+            }
 
-			if (Root.CanvasCursor == 1)
-				SetPenTipCursor();
+            if (Root.CanvasCursor == 1)
+                SetPenTipCursor();
 
-			Root.gpPenWidthVisible = false;
-			Root.UponSubPanelUpdate = true;
-			gpPenWidth_MouseOn = false;
-		}
+            Root.gpPenWidthVisible = false;
+            Root.UponSubPanelUpdate = true;
+            gpPenWidth_MouseOn = false;
+        }
 
-		private void pboxPenWidthIndicator_MouseDown(object sender, MouseEventArgs e)
-		{
-			gpPenWidth_MouseOn = true;
-		}
+        private void pboxPenWidthIndicator_MouseDown(object sender, MouseEventArgs e)
+        {
+            gpPenWidth_MouseOn = true;
+        }
 
-		private void pboxPenWidthIndicator_MouseMove(object sender, MouseEventArgs e)
-		{
-			if (gpPenWidth_MouseOn)
-			{
-				int x = e.X + pboxPenWidthIndicator.Left;
-				if (x < 10 || gpPenWidth.Width - x < 10)
-					return;
+        private void pboxPenWidthIndicator_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (gpPenWidth_MouseOn)
+            {
+                int x = e.X + pboxPenWidthIndicator.Left;
+                if (x < 10 || gpPenWidth.Width - x < 10)
+                    return;
 
-				Root.GlobalPenWidth = x * x / 30;
-				pboxPenWidthIndicator.Left = x - pboxPenWidthIndicator.Width / 2;
-				IC.DefaultDrawingAttributes.Width = Root.GlobalPenWidth;
-				Root.UponButtonsUpdate |= 0x2;
-			}
-		}
+                Root.GlobalPenWidth = x * x / 30;
+                pboxPenWidthIndicator.Left = x - pboxPenWidthIndicator.Width / 2;
+                IC.DefaultDrawingAttributes.Width = Root.GlobalPenWidth;
+                Root.UponButtonsUpdate |= 0x2;
+            }
+        }
 
-		private void pboxPenWidthIndicator_MouseUp(object sender, MouseEventArgs e)
-		{
-			if (Root.CanvasCursor == 1)
-				SetPenTipCursor();
+        private void pboxPenWidthIndicator_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (Root.CanvasCursor == 1)
+                SetPenTipCursor();
 
-			Root.gpPenWidthVisible = false;
-			Root.UponSubPanelUpdate = true;
-			gpPenWidth_MouseOn = false;
-		}
+            Root.gpPenWidthVisible = false;
+            Root.UponSubPanelUpdate = true;
+            gpPenWidth_MouseOn = false;
+        }
 
-		private void SetPenTipCursor()
-		{
-			Bitmap bitmaptip = (Bitmap)(gInk.Properties.Resources._null).Clone();
-			Graphics g = Graphics.FromImage(bitmaptip);
-			DrawingAttributes dda = IC.DefaultDrawingAttributes;
-			Brush cbrush;
-			Point widt;
-			if (!Root.EraserMode)
-			{
-				cbrush = new SolidBrush(IC.DefaultDrawingAttributes.Color);
-				//Brush cbrush = new SolidBrush(Color.FromArgb(255 - dda.Transparency, dda.Color.R, dda.Color.G, dda.Color.B));
-				widt = new Point((int)IC.DefaultDrawingAttributes.Width, 0);
-			}
-			else
-			{
-				cbrush = new SolidBrush(Color.Black);
-				widt = new Point(60, 0);
+        private void SetPenTipCursor()
+        {
+            Bitmap bitmaptip = (Bitmap)(gInk.Properties.Resources._null).Clone();
+            Graphics g = Graphics.FromImage(bitmaptip);
+            DrawingAttributes dda = IC.DefaultDrawingAttributes;
+            Brush cbrush;
+            Point widt;
+            if (!Root.EraserMode)
+            {
+                cbrush = new SolidBrush(IC.DefaultDrawingAttributes.Color);
+                //Brush cbrush = new SolidBrush(Color.FromArgb(255 - dda.Transparency, dda.Color.R, dda.Color.G, dda.Color.B));
+                widt = new Point((int)IC.DefaultDrawingAttributes.Width, 0);
+            }
+            else
+            {
+                cbrush = new SolidBrush(Color.Black);
+                widt = new Point(60, 0);
             }
             try
             {
@@ -3040,29 +3040,29 @@ namespace gInk
                 return;
             }
 
-			IntPtr screenDc = GetDC(IntPtr.Zero);
-			const int VERTRES = 10;
-			const int DESKTOPVERTRES = 117;
-			int LogicalScreenHeight = GetDeviceCaps(screenDc, VERTRES);
-			int PhysicalScreenHeight = GetDeviceCaps(screenDc, DESKTOPVERTRES);
-			float ScreenScalingFactor = (float)PhysicalScreenHeight / (float)LogicalScreenHeight;
-			ReleaseDC(IntPtr.Zero, screenDc);
+            IntPtr screenDc = GetDC(IntPtr.Zero);
+            const int VERTRES = 10;
+            const int DESKTOPVERTRES = 117;
+            int LogicalScreenHeight = GetDeviceCaps(screenDc, VERTRES);
+            int PhysicalScreenHeight = GetDeviceCaps(screenDc, DESKTOPVERTRES);
+            float ScreenScalingFactor = (float)PhysicalScreenHeight / (float)LogicalScreenHeight;
+            ReleaseDC(IntPtr.Zero, screenDc);
 
-			int dia = Math.Max((int)(widt.X * ScreenScalingFactor), 2);
-			g.FillEllipse(cbrush, 64 - dia / 2, 64 - dia / 2, dia, dia);
-			if (dia <= 5)
-			{
-				Pen cpen = new Pen(Color.FromArgb(50, 128, 128, 128), 2);
-				dia += 6;
+            int dia = Math.Max((int)(widt.X * ScreenScalingFactor), 2);
+            g.FillEllipse(cbrush, 64 - dia / 2, 64 - dia / 2, dia, dia);
+            if (dia <= 5)
+            {
+                Pen cpen = new Pen(Color.FromArgb(50, 128, 128, 128), 2);
+                dia += 6;
                 g.DrawEllipse(cpen, 64 - dia / 2, 64 - dia / 2, dia, dia);
-            }            
+            }
             IC.Cursor = new System.Windows.Forms.Cursor(bitmaptip.GetHicon());
             System.Windows.Forms.Cursor.Position = new Point(System.Windows.Forms.Cursor.Position.X, System.Windows.Forms.Cursor.Position.Y);
         }
 
         short LastESCStatus = 0;
         int ZoomX = -1;
-        int ZoomY = -1;        
+        int ZoomY = -1;
 
         void RecomputeZoomPos(int ZoomX, int ZoomY, ref int ZoomFormRePosX, ref int ZoomFormRePosY)
         { int d0, d1;
@@ -3112,12 +3112,12 @@ namespace gInk
                 return true;
             else if (k == SnapInPointerKeys.Shift)
                 return (GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0;
-                else if (k == SnapInPointerKeys.Control)
+            else if (k == SnapInPointerKeys.Control)
                 return (GetAsyncKeyState(VK_CONTROL) & 0x8000) != 0;
-                else if (k == SnapInPointerKeys.Alt)
+            else if (k == SnapInPointerKeys.Alt)
                 return (GetAsyncKeyState(VK_MENU) & 0x8000) != 0;
-                else
-                    return false;
+            else
+                return false;
         }
 
         int Tick;
@@ -3133,7 +3133,7 @@ namespace gInk
                 ZoomForm.Top = MousePosition.Y + ZoomFormRePosY;
                 ZoomForm.Left = MousePosition.X + ZoomFormRePosX;
 
-                Bitmap img;              
+                Bitmap img;
                 img = (ZoomForm.pictureBox1.Visible) ? ZoomImage2 : ZoomImage; // this is setting img to point to the ZoomImage(2) : do not dispose it !
 
                 using (Graphics g = Graphics.FromImage(img))
@@ -3184,7 +3184,7 @@ namespace gInk
                 LastTickTime = DateTime.Now;
                 return;
             }
-            
+
             try
             {
                 //for (int i = IC.Ink.Strokes.Count - 1; i >= 0; i--)                
@@ -3201,12 +3201,12 @@ namespace gInk
                                 //IC.Ink.Strokes.RemoveAt(i);
                                 FadingList.Remove(st);
                                 IC.Ink.DeleteStroke(st);
-                        }
-                        else if (st.DrawingAttributes.Transparency > 245)
-                            st.DrawingAttributes.Transparency = 255;
-                        else
-                            st.DrawingAttributes.Transparency += 10;
-                        Root.UponAllDrawingUpdate = true;
+                            }
+                            else if (st.DrawingAttributes.Transparency > 245)
+                                st.DrawingAttributes.Transparency = 255;
+                            else
+                                st.DrawingAttributes.Transparency += 10;
+                            Root.UponAllDrawingUpdate = true;
                         }
                     }
                 }
@@ -3219,7 +3219,7 @@ namespace gInk
             {
                 AimedPos.X = gpButtons.Left; // stay at current location
                 AimedPos.Y = gpButtons.Top; // stay at current location
-                AimedSize.Width = VisibleToolbar.Width;            
+                AimedSize.Width = VisibleToolbar.Width;
                 AimedSize.Height = VisibleToolbar.Height;
             }
             else if (ButtonsEntering == -9)              // Full Folding is requested
@@ -3361,7 +3361,7 @@ namespace gInk
                 {
                     if ((Root.BoardAtOpening == 1) || (Root.BoardAtOpening == 4 && Root.BoardSelected == 1)) // White
                         AddBackGround(255, 255, 255, 255);
-                else if ((Root.BoardAtOpening == 2) || (Root.BoardAtOpening == 4 && Root.BoardSelected == 2)) // Customed
+                    else if ((Root.BoardAtOpening == 2) || (Root.BoardAtOpening == 4 && Root.BoardSelected == 2)) // Customed
                         AddBackGround(Root.Gray1[0], Root.Gray1[1], Root.Gray1[2], Root.Gray1[3]);
                     else if ((Root.BoardAtOpening == 3) || (Root.BoardAtOpening == 4 && Root.BoardSelected == 3)) // Black
                         AddBackGround(255, 0, 0, 0);
@@ -3378,16 +3378,16 @@ namespace gInk
 
 
             if (!Root.PointerMode && !this.TopMost)
-				ToTopMost();
+                ToTopMost();
 
-			// gpPenWidth status
+            // gpPenWidth status
 
-			if (Root.gpPenWidthVisible != gpPenWidth.Visible)
-				gpPenWidth.Visible = Root.gpPenWidthVisible;
+            if (Root.gpPenWidthVisible != gpPenWidth.Visible)
+                gpPenWidth.Visible = Root.gpPenWidthVisible;
 
-			bool pressed;
+            bool pressed;
 
-			if (!Root.PointerMode)
+            if (!Root.PointerMode)
             {
                 // customized close key or ESC in key : Exit
                 short retVal;
@@ -3401,15 +3401,15 @@ namespace gInk
                         if (Root.Snapping > 0)
                         {
                             ExitSnapping();
-					}
-					else if (Root.gpPenWidthVisible)
-					{
-						Root.gpPenWidthVisible = false;
-						Root.UponSubPanelUpdate = true;
-					}
-					else if (Root.Snapping == 0)
-						RetreatAndExit();
-				}
+                        }
+                        else if (Root.gpPenWidthVisible)
+                        {
+                            Root.gpPenWidthVisible = false;
+                            Root.UponSubPanelUpdate = true;
+                        }
+                        else if (Root.Snapping == 0)
+                            RetreatAndExit();
+                    }
                     LastESCStatus = retVal;
                     TextEdited = false;
                 }
@@ -3449,7 +3449,7 @@ namespace gInk
                             if (KeyCodeState(Root.SnapInPointerPressTwiceKey))
                                 SnappingPointerStep += 1;
                             // else wait for next key or should check for other keys
-                        }                            
+                        }
                         else
                             SnappingPointerStep = 0;
                         break;
@@ -3515,7 +3515,7 @@ namespace gInk
             }
             //Console.WriteLine("process Keys");
             //if (!AltKeyPressed() && !Root.PointerMode)//&& (SavedPen>=0 || SavedTool>=0))
-            if (!AltKeyPressed()) 
+            if (!AltKeyPressed())
             {
                 if (SavedPen >= 0)
                 {
@@ -3530,7 +3530,7 @@ namespace gInk
                 }
             }
 
-            if ((AltKeyPressed() && !Root.FingerInAction) && tempArrowCursor is null)
+            if (((AltKeyPressed() || Root.APIRestAltPressed) && !Root.FingerInAction) && tempArrowCursor is null)
             {
                 tempArrowCursor = IC.Cursor;
                 try
@@ -3543,7 +3543,7 @@ namespace gInk
                 }
                 System.Windows.Forms.Cursor.Position = new Point(System.Windows.Forms.Cursor.Position.X, System.Windows.Forms.Cursor.Position.Y);
             }
-            else if (!(tempArrowCursor is null) && !AltKeyPressed())
+            else if (!(tempArrowCursor is null) && !(AltKeyPressed() || Root.APIRestAltPressed))
             {
                 try
                 {
@@ -3630,36 +3630,36 @@ namespace gInk
 
                 pressed = (GetKeyState(Root.Hotkey_Eraser.Key) & 0x8000) == 0x8000;
                 if (pressed && !LastEraserStatus && Root.Hotkey_Eraser.ModifierMatch(control, alt, shift, win))
-				{
-					SelectPen(-1);
-				}
-				LastEraserStatus = pressed;
+                {
+                    SelectPen(-1);
+                }
+                LastEraserStatus = pressed;
 
-				pressed = (GetKeyState(Root.Hotkey_InkVisible.Key) & 0x8000) == 0x8000;
-				if (pressed && !LastVisibleStatus && Root.Hotkey_InkVisible.ModifierMatch(control, alt, shift, win))
-				{
-					btInkVisible_Click(null, null);
-				}
-				LastVisibleStatus = pressed;
+                pressed = (GetKeyState(Root.Hotkey_InkVisible.Key) & 0x8000) == 0x8000;
+                if (pressed && !LastVisibleStatus && Root.Hotkey_InkVisible.ModifierMatch(control, alt, shift, win))
+                {
+                    btInkVisible_Click(null, null);
+                }
+                LastVisibleStatus = pressed;
 
-				pressed = (GetKeyState(Root.Hotkey_Undo.Key) & 0x8000) == 0x8000;
-				if (pressed && !LastUndoStatus && Root.Hotkey_Undo.ModifierMatch(control, alt, shift, win))
-				{
-					if (!Root.InkVisible)
-						Root.SetInkVisible(true);
+                pressed = (GetKeyState(Root.Hotkey_Undo.Key) & 0x8000) == 0x8000;
+                if (pressed && !LastUndoStatus && Root.Hotkey_Undo.ModifierMatch(control, alt, shift, win))
+                {
+                    if (!Root.InkVisible)
+                        Root.SetInkVisible(true);
 
-					Root.UndoInk();
-				}
-				LastUndoStatus = pressed;
+                    Root.UndoInk();
+                }
+                LastUndoStatus = pressed;
 
-				pressed = (GetKeyState(Root.Hotkey_Redo.Key) & 0x8000) == 0x8000;
-				if (pressed && !LastRedoStatus && Root.Hotkey_Redo.ModifierMatch(control, alt, shift, win))
-				{
-					Root.RedoInk();
-				}
-				LastRedoStatus = pressed;
+                pressed = (GetKeyState(Root.Hotkey_Redo.Key) & 0x8000) == 0x8000;
+                if (pressed && !LastRedoStatus && Root.Hotkey_Redo.ModifierMatch(control, alt, shift, win))
+                {
+                    Root.RedoInk();
+                }
+                LastRedoStatus = pressed;
 
-				pressed = (GetKeyState(Root.Hotkey_Pointer.Key) & 0x8000) == 0x8000;
+                pressed = (GetKeyState(Root.Hotkey_Pointer.Key) & 0x8000) == 0x8000;
                 if (pressed && !LastPointerStatus && Root.Hotkey_Pointer.ModifierMatch(control, alt, shift, win))
                 {
                     //SelectPen(-2);
@@ -3671,12 +3671,12 @@ namespace gInk
                 }
                 LastPointerStatus = pressed;
 
-				pressed = (GetKeyState(Root.Hotkey_Pan.Key) & 0x8000) == 0x8000;
-				if (pressed && !LastPanStatus && Root.Hotkey_Pan.ModifierMatch(control, alt, shift, win))
-				{
+                pressed = (GetKeyState(Root.Hotkey_Pan.Key) & 0x8000) == 0x8000;
+                if (pressed && !LastPanStatus && Root.Hotkey_Pan.ModifierMatch(control, alt, shift, win))
+                {
                     btPan_Click(null, null);//SelectPen(-3);
                 }
-				LastPanStatus = pressed;
+                LastPanStatus = pressed;
 
                 pressed = (GetKeyState(Root.Hotkey_Clear.Key) & 0x8000) == 0x8000;
                 if (pressed && !LastClearStatus && Root.Hotkey_Clear.ModifierMatch(control, alt, shift, win))
@@ -4737,9 +4737,9 @@ namespace gInk
             if (ZoomCaptured)
             {
                 IC.Ink.DeleteStrokes();
-                    LoadStrokes(ZoomSaveStroke);
-                    Root.UponAllDrawingUpdate = true;
-                    Root.FormDisplay.timer1_Tick(null, null);
+                LoadStrokes(ZoomSaveStroke);
+                Root.UponAllDrawingUpdate = true;
+                Root.FormDisplay.timer1_Tick(null, null);
             }
             ZoomCapturing = false;
             ZoomCaptured = false;
@@ -5174,6 +5174,10 @@ namespace gInk
                             obj = float.Parse(st2);
                         else if (st.Contains("String"))
                             obj = st2.Replace('\a','\n');
+                        if(guid==Root.IMAGE_GUID && !ClipartsDlg.Originals.ContainsKey(st2))
+                        {
+                                try{ ClipartsDlg.LoadImage(st2); } catch { }
+                        }
                         stk.ExtendedProperties.Add(guid, obj);
                         do
                         {

@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net;
 using System.Drawing;
-using System.IO;
 using System.Diagnostics;
 
 namespace gInk
@@ -108,7 +107,7 @@ namespace gInk
                 foreach(string s in query.Substring(1).Split('&'))
                 {
                     r = s.Split(new char[] { '=' }, 2);
-                    lst.Add(r[0], r[1]);
+                    lst.Add(r[0], r.Length == 1?"":r[1]);
                 }
                 return lst;
             }
@@ -124,7 +123,7 @@ namespace gInk
                 {
                     ctx = await http.GetContextAsync();
                 }
-                catch (HttpListenerException e)
+                catch (HttpListenerException)
                 {
                     runServer = false;
                     break;
@@ -134,299 +133,561 @@ namespace gInk
                     runServer = false;
                     break;
                 }
-
                 // Peel out the requests and response objects
                 HttpListenerRequest req = ctx.Request;
                 HttpListenerResponse resp = ctx.Response;
-
-                // Print out some info about the request
-                Console.WriteLine("Request #: {0}", ++requestCount);
-                Console.WriteLine(req.Url.ToString());
-                Console.WriteLine(req.HttpMethod);
-                Console.WriteLine();
-
-                string ret="!!! unassigned ????";
-                resp.StatusCode = 200;
-                Dictionary<string, string> query = ParseQuery(req.Url.Query);
-                if (req.Url.AbsolutePath == "/Inking")
+                string ret = "!!! unassigned ????";
+                try
                 {
-                    string s;
-                    if (query.TryGetValue("S", out s))
+                    resp.StatusCode = 200;
+                    // Print out some info about the request
+                    Console.WriteLine("Request #: {0}", ++requestCount);
+                    Console.WriteLine(req.Url.ToString());
+                    Console.WriteLine(req.HttpMethod);
+                    Console.WriteLine();
+
+                    Dictionary<string, string> query = ParseQuery(Uri.UnescapeDataString(req.Url.Query));
+
+                    if (req.Url.AbsolutePath == "/Inking")
                     {
-                        s = s.ToLower();
-                        if (s=="true")
-                            Root.StartInk();
-                        else if (s == "false")
-                            Root.StopInk();
-                        else
+                        string s;
+                        if (query.TryGetValue("S", out s))
                         {
-                            resp.StatusCode = 400;
-                            ret = string.Format("!!!! Error in Query ({0}) - {1} ", req.HttpMethod, req.Url.AbsoluteUri);
+                            s = s.ToLower();
+                            if (s == "true")
+                                Root.StartInk();
+                            else if (s == "false")
+                                Root.StopInk();
+                            else
+                            {
+                                resp.StatusCode = 400;
+                                ret = string.Format("!!!! Error in Query ({0}) - {1} ", req.HttpMethod, req.Url.AbsoluteUri);
+                            }
                         }
+                        if (resp.StatusCode == 200)
+                            ret = " { \"Started\" : " + (Root.FormDisplay.Visible || Root.FormCollection.Visible).ToString() + " }";
                     }
-                    if(resp.StatusCode==200)
-                        ret = " { \"Started\" : " + (Root.FormDisplay.Visible || Root.FormCollection.Visible).ToString() + " }";
-                }
-                else if (req.Url.AbsolutePath == "/PenDef")
-                {
-                    string s;
-                    int i=0, r, g, b, w;
-                    byte t;
-                    float f;
-                    string ff="";
-                    if (query.TryGetValue("P", out s) && int.TryParse(s,out i) && 0<=i && i <= 9)
+
+
+                    else if (req.Url.AbsolutePath == "/PenDef")
                     {
-                        if (query.ContainsKey("R"))
+                        string s;
+                        int i = 0, r, g, b, w;
+                        byte t;
+                        float f;
+                        string ff = "";
+                        if (!(Root.FormDisplay.Visible || Root.FormCollection.Visible))
                         {
-                            if (query.TryGetValue("R", out s) && int.TryParse(s, out r) && 0 <= r && r <= 255 &&
-                                query.TryGetValue("G", out s) && int.TryParse(s, out g) && 0 <= g && g <= 255 &&
-                                query.TryGetValue("B", out s) && int.TryParse(s, out b) && 0 <= b && b <= 255)
-                                Root.PenAttr[i].Color = Color.FromArgb(r, g, b);
-                            else
-                                resp.StatusCode = 400;
+                            resp.StatusCode = 409;
+                            ret = "!!!!! Not in Inking mode";
                         }
-                        if (query.ContainsKey("T"))
+                        else if (query.TryGetValue("P", out s) && int.TryParse(s, out i) && -1 <= i && i <= 9)
                         {
-                            if (query.TryGetValue("T", out s) && byte.TryParse(s, out t) && 0 <= t && t <= 255)
-                                Root.PenAttr[i].Transparency = t;
-                            else
-                                resp.StatusCode = 400;
-                        }
-                        if (query.ContainsKey("W"))
-                        {
-                            if (query.TryGetValue("W", out s) && int.TryParse(s, out w) && 0 <= w && w <= 255)
-                                Root.PenAttr[i].Width = w;
-                            else
-                                resp.StatusCode = 400;
-                        }
-                        if (query.ContainsKey("F"))
-                        {
-                            query.TryGetValue("F", out ff);
-                            ff = ff.ToLower();
-                            if (ff == "false")
-                            { try { Root.PenAttr[i].ExtendedProperties.Remove(Root.FADING_PEN); } catch { }; }
-                            else if (ff == "true")
-                                Root.PenAttr[i].ExtendedProperties.Add(Root.FADING_PEN, Root.TimeBeforeFading);
-                            else if (float.TryParse(ff, out f))
-                                Root.PenAttr[i].ExtendedProperties.Add(Root.FADING_PEN, f);
-                            else
-                                resp.StatusCode = 400;
-                        }
-                        if (Root.FormCollection.Visible)
-                        {
+                            if (i == -1)
+                                i = Root.CurrentPen;
+                            if (query.ContainsKey("Browse"))
+                            {
+                                Root.FormCollection.btColor_LongClick(Root.FormCollection.btPen[i]);
+                            }
+                            if (query.ContainsKey("R"))
+                            {
+                                if (query.TryGetValue("R", out s) && int.TryParse(s, out r) && 0 <= r && r <= 255 &&
+                                    query.TryGetValue("G", out s) && int.TryParse(s, out g) && 0 <= g && g <= 255 &&
+                                    query.TryGetValue("B", out s) && int.TryParse(s, out b) && 0 <= b && b <= 255)
+                                    Root.PenAttr[i].Color = Color.FromArgb(r, g, b);
+                                else
+                                    resp.StatusCode = 400;
+                            }
+                            if (query.ContainsKey("T"))
+                            {
+                                if (query.TryGetValue("T", out s) && byte.TryParse(s, out t) && 0 <= t && t <= 255)
+                                    Root.PenAttr[i].Transparency = t;
+                                else
+                                    resp.StatusCode = 400;
+                            }
+                            if (query.ContainsKey("W"))
+                            {
+                                if (query.TryGetValue("W", out s) && int.TryParse(s, out w) && 0 <= w && w <= 255)
+                                    Root.PenAttr[i].Width = w;
+                                else
+                                    resp.StatusCode = 400;
+                            }
+                            if (query.ContainsKey("F"))
+                            {
+                                query.TryGetValue("F", out ff);
+                                ff = ff.ToLower();
+                                if (ff == "false")
+                                { try { Root.PenAttr[i].ExtendedProperties.Remove(Root.FADING_PEN); } catch { }; }
+                                else if (ff == "true")
+                                    Root.PenAttr[i].ExtendedProperties.Add(Root.FADING_PEN, Root.TimeBeforeFading);
+                                else if (float.TryParse(ff, out f))
+                                    Root.PenAttr[i].ExtendedProperties.Add(Root.FADING_PEN, f);
+                                else
+                                    resp.StatusCode = 400;
+                            }
+                            if(i== Root.CurrentPen)
+                            {
+                                Root.SelectPen(Root.CurrentPen);
+                            }
                             Root.FormCollection.btPen[i].BackgroundImage = Root.FormCollection.buildPenIcon(Root.PenAttr[i].Color, Root.PenAttr[i].Transparency, i == Root.CurrentPen,
                                                                                                             Root.PenAttr[i].ExtendedProperties.Contains(Root.FADING_PEN));
                             Root.UponButtonsUpdate |= 0x2;
                         }
-                    }
-                    if(resp.StatusCode==200)
-                    {
-                        if (Root.PenAttr[i].ExtendedProperties.Contains(Root.FADING_PEN))
+                        if (resp.StatusCode == 200)
                         {
-                            f = (float)(Root.PenAttr[i].ExtendedProperties[Root.FADING_PEN].Data);
-                            if (f == Root.TimeBeforeFading)
-                                ff = "true";
+                            if (Root.PenAttr[i].ExtendedProperties.Contains(Root.FADING_PEN))
+                            {
+                                f = (float)(Root.PenAttr[i].ExtendedProperties[Root.FADING_PEN].Data);
+                                if (f == Root.TimeBeforeFading)
+                                    ff = "true";
+                                else if (f <= 0)
+                                    ff = "false";
+                                else
+                                    ff = f.ToString();
+                            }
                             else
-                                ff = f.ToString();
+                                ff = "false";
+                            ret = string.Format("{{\"Pen\":{0},\n\"Red\":{1}, \"Green\":{2}, \"Blue\":{3}, \"Transparency\":{4},\n\"Width\":{5},\n\"Fading\":{6},\n\"Enabled\":{7}\n}}",
+                                                i, Root.PenAttr[i].Color.R, Root.PenAttr[i].Color.G, Root.PenAttr[i].Color.B, Root.PenAttr[i].Transparency,
+                                                Root.PenAttr[i].Width, ff, Root.PenEnabled[i]?"true":"false");
+                        }
+                        else if (resp.StatusCode == 400)
+                            ret = string.Format("!!!! Error in Query ({0}) - {1} ", req.HttpMethod, req.Url.AbsoluteUri);
+                    }
+
+
+                    else if (req.Url.AbsolutePath == "/CurrentPen")
+                    {
+                        string s;
+                        int i = 0;
+                        if (!(Root.FormDisplay.Visible || Root.FormCollection.Visible))
+                        {
+                            resp.StatusCode = 409;
+                            ret = "!!!!! Not in Inking mode";
+                        }
+                        else if (query.TryGetValue("P", out s) && int.TryParse(s, out i) && 0 <= i && i <= 9)
+                        {
+                            Root.SelectPen(i);
                         }
                         else
-                            ff = "false";
-                        ret = string.Format("{{\"Pen\":{0},\n\"Red\":{1}, \"Green\":{2}, \"Blue\":{3}, \"Transparency\":{4},\n\"Width\":{5},\n\"Fading\":{6}\n\"Enabled\":{7}\n}}",
-                                            i, Root.PenAttr[i].Color.R, Root.PenAttr[i].Color.G, Root.PenAttr[i].Color.B, Root.PenAttr[i].Transparency,
-                                            Root.PenAttr[i].Width, ff,Root.PenEnabled[i]);
-                    }
-                    else
-                        ret = string.Format("!!!! Error in Query ({0}) - {1} ", req.HttpMethod, req.Url.AbsoluteUri);
-                }
-                else if (req.Url.AbsolutePath == "/CurrentPen")
-                {
-                    string s;
-                    int i = 0;
-                    if (query.TryGetValue("P", out s) && int.TryParse(s, out i) && 0 <= i && i <= 9)
-                    {
-                        Root.SelectPen(i);
-                    }
-                    else
-                        resp.StatusCode = 400;
-                    if (resp.StatusCode == 200)
-                    {
-                        ret = string.Format("{{\"Pen\":{0} }}",i);
-                    }
-                    else
-                        ret = string.Format("!!!! Error in Query ({0}) - {1} ", req.HttpMethod, req.Url.AbsoluteUri);
-                }
-                else if (req.Url.AbsolutePath == "/CurrentTool")
-                {
-                    string s;
-                    int i = 0, f = 0;
-                    if (query.TryGetValue("T", out s) && int.TryParse(s, out i))
-                    {
-                        if (i == -3 || i == -2 || i == -1)
-                            Root.SelectPen(i);
-                        if (!query.ContainsKey("F"))
-                            f = -1;
-                        else if (!(query.TryGetValue("F", out s) && int.TryParse(s, out f) && 0 <= f && f<Filling.Modulo))
                             resp.StatusCode = 400;
-                        bool b = false;
-                        foreach(int j in Tools.All)
+
+                        if (resp.StatusCode == 200)
                         {
-                            if (j==i)
+                            ret = string.Format("{{\"Pen\":{0} }}", i);
+                        }
+                        else if(resp.StatusCode == 400)
+                            ret = string.Format("!!!! Error in Query ({0}) - {1} ", req.HttpMethod, req.Url.AbsoluteUri);
+                    }
+
+
+                    else if (req.Url.AbsolutePath == "/CurrentTool")
+                    {
+                        string s;
+                        int i = 0, f = 0;
+                        if (!(Root.FormDisplay.Visible || Root.FormCollection.Visible))
+                        {
+                            resp.StatusCode = 409;
+                            ret = "!!!!! Not in Inking mode";
+                        }
+                        else if (query.TryGetValue("T", out s) && int.TryParse(s, out i))
+                        {
+                            if (i == -3 || i == -2 || i == -1)
+                                Root.SelectPen(i);
+                            if (!query.ContainsKey("F"))
+                                f = -1;
+                            else if (!(query.TryGetValue("F", out s) && int.TryParse(s, out f) && -1 <= f && f < Filling.Modulo))
+                                resp.StatusCode = 400;
+                            if(i == Tools.ClipArt)
+                                if (query.TryGetValue("I", out s))
+                                {
+                                    if (s.Contains('\\'))
+                                        s = s.Replace('\\', '/');
+                                    if (s.Contains('/'))
+                                        s = Root.FormCollection.ClipartsDlg.LoadImage(s);
+                                    Root.ImageStamp = Root.FormCollection.ClipartsDlg.getClipArtData(s);
+                                }
+                                else
+                                {
+                                    Root.FormCollection.MouseTimeDown = DateTime.FromBinary(0);
+                                    Root.FormCollection.btTool_Click(Root.FormCollection.btClipArt, null);
+                                }
+                            bool b = false;
+                            foreach (int j in Tools.All)
                             {
-                                b = true;
-                                break;
+                                if (j == i)
+                                {
+                                    b = true;
+                                    break;
+                                }
+                            }
+
+                            if (b && resp.StatusCode == 200)
+                            {
+                                Root.FormCollection.SavedPen = -1;
+                                Root.FormCollection.SavedTool = -1;
+                                Root.FormCollection.SavedFilled = -1;
+                                if (i >= Tools.Hand)
+                                    Root.SelectPen(Root.FormCollection.LastPenSelected);
+                                Root.FormCollection.SelectTool(i, f);
+
+                            }
+
+                            if (Root.FormCollection.Visible)
+                                Root.UponButtonsUpdate |= 0x2;
+                        }
+                        if (resp.StatusCode == 200)
+                        {
+                            if (Root.EraserMode)
+                            {
+                                ret = string.Format("{{\"Tool\":{0},\"ToolInText\":\"{2}\", \"Filling\":{1}, \"FillingInText\":\"{3}\" }}", -1, -1, "Eraser", "-");
+                            }
+                            else if (Root.PointerMode)
+                            {
+                                ret = string.Format("{{\"Tool\":{0},\"ToolInText\":\"{2}\", \"Filling\":{1}, \"FillingInText\":\"{3}\" }}", -1, -1, "Pointer", "-");
+                            }
+                            else if (Root.PanMode)
+                            {
+                                ret = string.Format("{{\"Tool\":{0},\"ToolInText\":\"{2}\", \"Filling\":{1}, \"FillingInText\":\"{3}\" }}", -1, -1, "Pan", "-");
+                            }
+                            else
+                            {
+                                ret = string.Format("{{\"Tool\":{0},\"ToolInText\":\"{2}\", \"Filling\":{1}, \"FillingInText\":\"{3}\" }}", Root.ToolSelected, Root.FilledSelected, Tools.Names[Root.ToolSelected], Filling.Names[Root.FilledSelected+1]);
                             }
                         }
+                        else if (resp.StatusCode == 400)
+                            ret = string.Format("!!!! Error in Query ({0}) - {1} ", req.HttpMethod, req.Url.AbsoluteUri);
+                    }
 
-                        if (b && resp.StatusCode==200)
-                            Root.FormCollection.SelectTool(i,f);
 
-                        if (Root.FormCollection.Visible)
-                            Root.UponButtonsUpdate |= 0x2;
-                    }
-                    if (resp.StatusCode == 200)
+                    else if (req.Url.AbsolutePath == "/EnlargePen")
                     {
-                        if (Root.EraserMode)
-                            i = -1;
-                        else if (Root.PointerMode)
-                            i = -2;
-                        else if (Root.PanMode)
-                            i = -3;
+                        string s;
+                        int i;
+                        if (!(Root.FormDisplay.Visible || Root.FormCollection.Visible))
+                        {
+                            resp.StatusCode = 409;
+                            ret = "!!!!! Not in Inking mode";
+                        }
+                        else if (query.TryGetValue("D", out s) && int.TryParse(s, out i))
+                        {
+                            Root.FormCollection.PenWidth_Change(i);
+                        }
                         else
-                            i = Root.ToolSelected;
-                        f = Root.FilledSelected;
-                        ret = string.Format("{{\"Tool\":{0},\"ToolInText\":\"{2}\", \"Fading\":{1}, \"FadingInText\":\"{3}\" }}", i,f,Tools.Names[i],Filling.Names[i]);
+                        {
+                            resp.StatusCode = 400;
+                            ret = string.Format("!!!! Error in Query ({0}) - {1} ", req.HttpMethod, req.Url.AbsoluteUri);
+                        }
+                        if (resp.StatusCode == 200)
+                            ret = " { \"Width\" : " + Root.FormCollection.IC.DefaultDrawingAttributes.Width.ToString() + " }";
                     }
-                    else
-                        ret = string.Format("!!!! Error in Query ({0}) - {1} ", req.HttpMethod, req.Url.AbsoluteUri);
-                }
-                else if (req.Url.AbsolutePath == "/Magnet")
-                {
-                    string s;
-                    if (query.TryGetValue("M", out s))
+
+
+                    else if (req.Url.AbsolutePath == "/Magnet")
                     {
-                        s = s.ToLower();
-                        if (s == "true")
-                            Root.MagneticRadius = Math.Abs(Root.MagneticRadius);
-                        else if (s == "false")
-                            Root.MagneticRadius = -Math.Abs(Root.MagneticRadius);
+                        string s;
+                        if (!(Root.FormDisplay.Visible || Root.FormCollection.Visible))
+                        {
+                            resp.StatusCode = 409;
+                            ret = "!!!!! Not in Inking mode";
+                        }
+                        else if (query.TryGetValue("M", out s))
+                        {
+                            s = s.ToLower();
+                            if (s == "true")
+                                Root.MagneticRadius = Math.Abs(Root.MagneticRadius);
+                            else if (s == "false")
+                                Root.MagneticRadius = -Math.Abs(Root.MagneticRadius);
+                            else
+                            {
+                                resp.StatusCode = 400;
+                                ret = string.Format("!!!! Error in Query ({0}) - {1} ", req.HttpMethod, req.Url.AbsoluteUri);
+                            }
+                        }
+                        if (resp.StatusCode == 200)
+                            ret = " { \"Magnet\" : " + (Root.FormDisplay.Visible || Root.FormCollection.Visible).ToString() + " }";
+                    }
+
+
+                    else if (req.Url.AbsolutePath == "/VisibleInk")
+                    {
+                        string s;
+                        if (!(Root.FormDisplay.Visible || Root.FormCollection.Visible))
+                        {
+                            resp.StatusCode = 409;
+                            ret = "!!!!! Not in Inking mode";
+                        }
+                        else if (query.TryGetValue("V", out s))
+                        {
+                            s = s.ToLower();
+                            if (s == "true")
+                                Root.SetInkVisible(true);
+                            else if (s == "false")
+                                Root.SetInkVisible(false);
+                            else
+                            {
+                                resp.StatusCode = 400;
+                                ret = string.Format("!!!! Error in Query ({0}) - {1} ", req.HttpMethod, req.Url.AbsoluteUri);
+                            }
+                        }
+                        if (resp.StatusCode == 200)
+                            ret = " { \"VisibleInk\" : " + (Root.InkVisible?"true":"false") + " }";
+                    }
+
+
+                    else if (req.Url.AbsolutePath == "/Fold")
+                    {
+                        string s;
+                        if (!(Root.FormDisplay.Visible || Root.FormCollection.Visible))
+                        {
+                            resp.StatusCode = 409;
+                            ret = "!!!!! Not in Inking mode";
+                        }
+                        else if (query.TryGetValue("F", out s))
+                        {
+                            s = s.ToLower();
+                            if (s == "true")
+                                Root.Dock();
+                            else if (s == "false")
+                                Root.UnDock();
+                            else
+                            {
+                                resp.StatusCode = 400;
+                                ret = string.Format("!!!! Error in Query ({0}) - {1} ", req.HttpMethod, req.Url.AbsoluteUri);
+                            }
+                        }
+                        if (resp.StatusCode == 200)
+                            ret = " { \"Folded\" : " + (Root.Docked?"true":"false") + " }";
+                    }
+
+
+                    else if (req.Url.AbsolutePath == "/LoadStrokes")
+                    {
+                        string s;
+                        if (!(Root.FormDisplay.Visible || Root.FormCollection.Visible))
+                        {
+                            resp.StatusCode = 409;
+                            ret = "!!!!! Not in Inking mode";
+                        }
+                        else if (query.TryGetValue("F", out s))
+                        {
+                            if (s == "-")
+                            {
+                                Root.FormCollection.MouseTimeDown = DateTime.FromBinary(0);
+                                Root.FormCollection.btLoad_Click(Root.FormCollection.btLoad, null);
+                                ret = "{ \"OK\": true }";
+                            }
+                            try
+                            {
+                                Root.FormCollection.LoadStrokes(s);
+                                ret = "{ \"OK\": true }";
+                            }
+                            catch(Exception e)
+                            {
+                                resp.StatusCode = 500;
+                                ret = string.Format("!!!! error : "+e.Message);
+                            }
+                            Root.UponAllDrawingUpdate = true;
+                        }
                         else
                         {
                             resp.StatusCode = 400;
                             ret = string.Format("!!!! Error in Query ({0}) - {1} ", req.HttpMethod, req.Url.AbsoluteUri);
                         }
                     }
-                    if (resp.StatusCode == 200)
-                        ret = " { \"Magnet\" : " + (Root.FormDisplay.Visible || Root.FormCollection.Visible).ToString() + " }";
-                }
-                else if (req.Url.AbsolutePath == "/Visible")
-                {
-                    string s;
-                    if (query.TryGetValue("V", out s))
+
+
+                    else if (req.Url.AbsolutePath == "/SaveStrokes")
                     {
-                        s = s.ToLower();
-                        if (s == "true")
-                            Root.SetInkVisible(true);
-                        else if (s == "false")
-                            Root.SetInkVisible(false);
+                        string s;
+                        if (!(Root.FormDisplay.Visible || Root.FormCollection.Visible))
+                        {
+                            resp.StatusCode = 409;
+                            ret = "!!!!! Not in Inking mode";
+                        }
+                        else if (query.TryGetValue("F", out s))
+                        {
+                            if (s == "-")
+                            {
+                                Root.FormCollection.MouseTimeDown = DateTime.FromBinary(0);
+                                Root.FormCollection.btSave_Click(Root.FormCollection.btSave, null);
+                                ret = "{ \"OK\": true }";
+                            }
+                            else
+                            {
+                                Root.FormCollection.SaveStrokes(s);
+                                ret = "{ \"OK\": true }";
+                            }
+                        }
                         else
                         {
                             resp.StatusCode = 400;
                             ret = string.Format("!!!! Error in Query ({0}) - {1} ", req.HttpMethod, req.Url.AbsoluteUri);
                         }
-                    }
-                    if (resp.StatusCode == 200)
-                        ret = " { \"VisibleInk\" : " + (Root.FormDisplay.Visible || Root.FormCollection.Visible).ToString() + " }";
-                }
-                else if (req.Url.AbsolutePath == "/Visible")
-                {
-                    string s;
-                    if (query.TryGetValue("V", out s))
+                    }   
+
+
+                    else if (req.Url.AbsolutePath == "/ClearScreen")
                     {
-                        s = s.ToLower();
-                        if (s == "true")
-                            Root.SetInkVisible(true);
-                        else if (s == "false")
-                            Root.SetInkVisible(false);
-                        else
+                        string s;
+                        //int i = 0;
+                        if (!(Root.FormDisplay.Visible || Root.FormCollection.Visible))
                         {
-                            resp.StatusCode = 400;
+                            resp.StatusCode = 409;
+                            ret = "!!!!! Not in Inking mode";
+                        }
+                        else if (query.TryGetValue("B", out s))
+                        {
+                            Root.FormCollection.MouseTimeDown = DateTime.Now;
+                            s = s.ToLower();
+                            if (s == "tr")//Transparent
+                                Root.BoardSelected = 0;
+                            else if (s == "wh")//White
+                                Root.BoardSelected = 1;
+                            else if (s == "cu")//Customized
+                                Root.BoardSelected = 2;
+                            else if (s == "bk")//Black
+                                Root.BoardSelected = 3;
+                            else if (s == "me")//Menu
+                                Root.FormCollection.MouseTimeDown = DateTime.FromBinary(0);
+                            else
+                                resp.StatusCode = 400;
+                        }
+                        else
+                            Root.FormCollection.MouseTimeDown = DateTime.Now;
+
+                        if (resp.StatusCode == 200)
+                        {
+                            Root.FormCollection.btClear_Click(Root.FormCollection.btClear, null);
+                            ret = "{ \"OK\": true }";
+                        }
+                        else if(resp.StatusCode == 400)
                             ret = string.Format("!!!! Error in Query ({0}) - {1} ", req.HttpMethod, req.Url.AbsoluteUri);
-                        }
                     }
-                    if (resp.StatusCode == 200)
-                        ret = " { \"VisibleInk\" : " + (Root.FormDisplay.Visible || Root.FormCollection.Visible).ToString() + " }";
+
+
+                    else if (req.Url.AbsolutePath == "/Magnify")
+                    {
+                        string s;
+                        //int i = 0;
+                        if (!(Root.FormDisplay.Visible || Root.FormCollection.Visible))
+                        {
+                            resp.StatusCode = 409;
+                            ret = "!!!!! Not in Inking mode";
+                        }
+                        else if (query.TryGetValue("Z", out s))
+                        {
+                            s = s.ToLower();
+                            if (s == "no")//Stop magnify
+                                Root.FormCollection.StopAllZooms();
+                            else if (s == "dyn")//dynamic Magnifier
+                                Root.FormCollection.ActivateZoomDyn();
+                            else if (s == "capt")//Capture
+                                Root.FormCollection.StartZoomCapt();
+                            else
+                                resp.StatusCode = 400;
+                        }
+
+
+                        if (resp.StatusCode == 200)
+                        {
+                            if (Root.FormCollection.ZoomCaptured || Root.FormCollection.ZoomCaptured)
+                                s = "Capt";
+                            else if (Root.FormCollection.ZoomForm.Visible)
+                                s = "Dyn";
+                            else
+                                s = "No";
+                            ret = "{ \"Zoom\": \""+s+"\" }";
+                        }
+                        else if (resp.StatusCode == 400)
+                            ret = string.Format("!!!! Error in Query ({0}) - {1} ", req.HttpMethod, req.Url.AbsoluteUri);
+                    }
+
+
+                    else if (req.Url.AbsolutePath == "/Snapshot")
+                    {
+                        string s;
+                        if (!(Root.FormDisplay.Visible || Root.FormCollection.Visible))
+                        {
+                            resp.StatusCode = 409;
+                            ret = "!!!!! Not in Inking mode";
+                        }
+                        else if (query.TryGetValue("A", out s))
+                        {
+                            s = s.ToLower();
+                            if (s == "out")//Exit Inking after
+                            {
+                                Root.APIRestCloseOnSnap = true;
+                                Root.FormCollection.btSnap_Click(null, null);
+                            }
+                            else if (s == "end")//dynamic Magnifier
+                            {
+                                Root.FormCollection.btSnap_Click(null, null);
+                            }
+                            else if (s == "cont")//continue after
+                            {
+                                Root.FormCollection.MouseTimeDown = DateTime.FromBinary(0);
+                                Root.FormCollection.btSnap_Click(Root.FormCollection.btSnap, null);
+                            }
+                            else
+                                resp.StatusCode = 400;
+                        }
+
+
+                        if (resp.StatusCode == 200)
+                        {
+                            ret = "{ \"OK\": true }";
+                        }
+                        else if (resp.StatusCode == 400)
+                            ret = string.Format("!!!! Error in Query ({0}) - {1} ", req.HttpMethod, req.Url.AbsoluteUri);
+                    }
+
+
+                    else if (req.Url.AbsolutePath == "/ArrowCursor")
+                    {
+                        string s;
+                        if (!(Root.FormDisplay.Visible || Root.FormCollection.Visible))
+                        {
+                            resp.StatusCode = 409;
+                            ret = "!!!!! Not in Inking mode";
+                        }
+                        else if (query.TryGetValue("A", out s))
+                        {
+                            s = s.ToLower();
+                            if (s == "true")
+                                Root.APIRestAltPressed = true;
+                            else if (s == "false")
+                                Root.APIRestAltPressed = false;
+                            else
+                            {
+                                resp.StatusCode = 400;
+                                ret = string.Format("!!!! Error in Query ({0}) - {1} ", req.HttpMethod, req.Url.AbsoluteUri);
+                            }
+                            System.Windows.Forms.Cursor.Position = new Point(System.Windows.Forms.Cursor.Position.X, System.Windows.Forms.Cursor.Position.Y);
+                        }
+                        if (resp.StatusCode == 200)
+                            ret = " { \"ArrowForced\" : " + (Root.APIRestAltPressed ? "true" : "false") + " }";
+                    }
+
+
+                    else // unknow command...
+                    {
+                        resp.StatusCode = 404;
+                        ret = string.Format("!!!! unimplemented ({0}) - {1}", req.HttpMethod, req.Url.AbsoluteUri);
+                    }
+
                 }
-                else if (req.Url.AbsolutePath == "/LoadStrokes")
+                catch (Exception e)
                 {
-                    string s;
-                    if(!Root.FormCollection.Visible)
-                    {
-                        resp.StatusCode = 400;
-                        ret = string.Format("!!!! not inking");
-                    }
-                    else if (query.TryGetValue("F", out s))
-                    {
-                        if(s=="-")
-                        {
-                            Root.FormCollection.MouseTimeDown = DateTime.FromBinary(0);
-                            Root.FormCollection.btLoad_Click(Root.FormCollection.btLoad, null);
-                            ret = "{ \"OK\": true }";
-                        }
-                        else if(File.Exists(s))
-                        {
-                            Root.FormCollection.LoadStrokes(s);
-                            ret = "{ \"OK\": true }";
-                        }
-                        else
-                        {
-                            resp.StatusCode = 400;
-                            ret = string.Format("!!!! file not exists");
-                        }
-                        Root.UponAllDrawingUpdate = true;
-                    }
-                    else
-                    {
-                        resp.StatusCode = 400;
-                        ret = string.Format("!!!! Error in Query ({0}) - {1} ", req.HttpMethod, req.Url.AbsoluteUri);
-                    }
+                    resp.StatusCode = 500;
+                    ret = string.Format("!!!! Exception raised {0} ({1}) - {2} ", e.Message, req.HttpMethod, req.Url.AbsoluteUri);
                 }
-                else if (req.Url.AbsolutePath == "/SaveStrokes")
-                {
-                    string s;
-                    if (!Root.FormCollection.Visible)
-                    {
-                        resp.StatusCode = 400;
-                        ret = string.Format("!!!! not inking");
-                    }
-                    else if (query.TryGetValue("F", out s))
-                    {
-                        if (s == "-")
-                        {
-                            Root.FormCollection.MouseTimeDown = DateTime.FromBinary(0);
-                            Root.FormCollection.btSave_Click(Root.FormCollection.btSave, null);
-                            ret = "{ \"OK\": true }";
-                        }
-                        else
-                        {
-                            Root.FormCollection.SaveStrokes(s);
-                            ret = "{ \"OK\": true }";
-                        }
-                    }
-                    else
-                    {
-                        resp.StatusCode = 400;
-                        ret = string.Format("!!!! Error in Query ({0}) - {1} ", req.HttpMethod, req.Url.AbsoluteUri);
-                    }
-                }
-                else
-                {
-                    resp.StatusCode = 404;
-                    ret =string.Format("!!!! unimplemented ({0}) - {1} ~ {2}",req.HttpMethod, req.Url.AbsolutePath, req.Url);
-                }
+                if(resp.StatusCode==200)
+                    Root.AppGetFocus(); // force focus
 
                 // Write the response info
                 byte[] data = Encoding.UTF8.GetBytes(ret);
-                if(resp.StatusCode==200)
+                if (resp.StatusCode == 200)
                     resp.ContentType = "application/json";
                 else
                     resp.ContentType = "text/plain";
@@ -438,5 +699,6 @@ namespace gInk
                 resp.Close();
             }
         }
+
     }
 }
