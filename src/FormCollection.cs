@@ -4707,58 +4707,70 @@ namespace gInk
                 ToolbarMoved = false;
                 return;
             }
-            if (Root.CanvasCursor == 1)
-                SetPenTipCursor();
             if (ZoomForm.Visible)
             {
                 ZoomForm.Hide();
                 if ((Root.ZoomEnabled & 2) != 0)
                 {
-                    ZoomCapturing = true;
-                    btZoom.BackgroundImage = getImgFromDiskOrRes("ZoomWin_act");
-                    try
-                    {
-                        IC.Cursor = cursorred;
-                    }
-                    catch
-                    {
-                        IC.Cursor = getCursFromDiskOrRes("cursorarrow", System.Windows.Forms.Cursors.NoMove2D);
-                    }
+                    StartZoomCapt();
                 }
                 else
                 {
                     btZoom.BackgroundImage = getImgFromDiskOrRes("Zoom");
                 }
             }
-            else if ( ZoomCapturing || ZoomCaptured)
+            else if (ZoomCapturing || ZoomCaptured)
+                StopAllZooms();
+            else
             {
-                if (ZoomCaptured)
-                {
-                    IC.Ink.DeleteStrokes();
+                if ((Root.ZoomEnabled & 1) != 0)
+                    ActivateZoomDyn();
+                else // if((Root.ZoomEnabled & 2)!=0)
+                    StartZoomCapt();
+            }
+            Root.UponButtonsUpdate |= 0x2;
+        }
+
+        public void StopAllZooms()
+        {
+            ZoomForm.Hide();
+            if (ZoomCaptured)
+            {
+                IC.Ink.DeleteStrokes();
                     LoadStrokes(ZoomSaveStroke);
                     Root.UponAllDrawingUpdate = true;
                     Root.FormDisplay.timer1_Tick(null, null);
-                }
-                ZoomCapturing = false;
-                ZoomCaptured = false;
-                btZoom.BackgroundImage = getImgFromDiskOrRes("Zoom");
             }
-            else
+            ZoomCapturing = false;
+            ZoomCaptured = false;
+            if (Root.CanvasCursor == 1)
+                SetPenTipCursor();
+            btZoom.BackgroundImage = getImgFromDiskOrRes("Zoom");
+        }
+
+        public void StartZoomCapt()
+        {
+            ZoomForm.Hide();
+            ZoomCapturing = true;
+            try
             {
-                if((Root.ZoomEnabled & 1)!=0)
-                {
-                    ZoomForm.Width = (int)(Root.ZoomWidth * Root.ZoomScale);
-                    ZoomForm.Height = (int)(Root.ZoomHeight * Root.ZoomScale);
-                    ZoomForm.Show();
-                    btZoom.BackgroundImage = getImgFromDiskOrRes("Zoom_act");
-                }
-                else // if((Root.ZoomEnabled & 2)!=0)
-                {
-                    ZoomCapturing = true;
-                    btZoom.BackgroundImage = getImgFromDiskOrRes("ZoomWin_act");
-                }
+                IC.Cursor = cursorred;
             }
-            Root.UponButtonsUpdate |= 0x2;
+            catch
+            {
+                IC.Cursor = getCursFromDiskOrRes("cursorarrow", System.Windows.Forms.Cursors.NoMove2D);
+            }
+            btZoom.BackgroundImage = getImgFromDiskOrRes("ZoomWin_act");
+        }
+
+        public void ActivateZoomDyn()
+        {
+            if (Root.CanvasCursor == 1)
+                SetPenTipCursor();
+            ZoomForm.Width = (int)(Root.ZoomWidth * Root.ZoomScale);
+            ZoomForm.Height = (int)(Root.ZoomHeight * Root.ZoomScale);
+            ZoomForm.Show();
+            btZoom.BackgroundImage = getImgFromDiskOrRes("Zoom_act");
         }
 
         private void FormCollection_FormClosing(object sender, FormClosingEventArgs e)
