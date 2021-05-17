@@ -370,6 +370,7 @@ namespace gInk
 
             Btn_SubTools = new Button[] { Btn_SubTool0, Btn_SubTool1, Btn_SubTool2, Btn_SubTool3, Btn_SubTool4, Btn_SubTool5, Btn_SubTool6, Btn_SubTool7 };
 
+            ClipartsDlg.Initialize();
             Initialize();
         }
 
@@ -423,7 +424,7 @@ namespace gInk
             ZoomForm.Height = (int)(Root.ZoomHeight * Root.ZoomScale);
             ZoomSaveStroke = Path.GetFullPath(Environment.ExpandEnvironmentVariables("%temp%/ZoomSave.strokes.txt")).Replace('\\', '/');
 
-            ClipartsDlg.Initialize();
+            //ClipartsDlg.Initialize();
 
             //loading default params
             TextFont = Root.TextFont;
@@ -5199,7 +5200,14 @@ namespace gInk
                         string st2 = st.Substring(l + 1);
                         object obj=null;
                         if(st.Contains("Int"))
-                            obj = Int64.Parse(st2);
+                            try
+                            {
+                                obj = int.Parse(st2);
+                            }
+                            catch
+                            {
+                                obj = Int64.Parse(st2); // for Fading...
+                            }                           
                         else if (st.Contains("Bool"))
                             obj = bool.Parse(st2);
                         else if (st.Contains("Single"))

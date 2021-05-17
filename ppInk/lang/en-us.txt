@@ -39,6 +39,7 @@ SaveStroke = "Save Strokes\n(long =opendialog ; short = {0})"
 LoadStroke = "Load Strokes\n(long =opendialog ; short = {0})"
 ButtonNameZoom = "Zoom"
 
+QuestionClipArtUpdate = "Cliparts seems to have been updated during edition.\nDo you want to update le default list?"
 ButtonActivateDebug ="Debug Window"
 
 SubToolsBarCbText = "Enable Secondary ToolBar"

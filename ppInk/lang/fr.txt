@@ -39,6 +39,7 @@ SaveStroke = "Sauver Dessins\n(appui long = sélectionne fichier ; court = ouvre
 LoadStroke = "Charger Dessins\n(appui long = sélectionne fichier ; court = ouvre {0})"
 ButtonNameZoom = "Zoom"
 
+QuestionClipArtUpdate = "Les Cliparts semblent avoir été mis à jour durant l'édition.\nVoulez-vous mettre à jour la liste par défaut?"
 ButtonActivateDebug ="Fenêtre Debug"
 
 SubToolsBarCbText = "Activation de la barre d'outils secondaire"

@@ -77,6 +77,13 @@ namespace gInk
             //Root.UnsetHotkey();
             ToolbarDwg.BackColor = Color.FromArgb(Root.ToolbarBGColor[0], Root.ToolbarBGColor[1], Root.ToolbarBGColor[2], Root.ToolbarBGColor[3]);
             ToolbarOrientationBtn.BackgroundImage = ToolBarOrientationIcons[Root.ToolbarOrientation];
+            if(Root.StampFileNames.Count != Root.FormCollection.ClipartsDlg.ImageListViewer.Items.Count 
+                && MessageBox.Show(Root.Local.QuestionClipArtUpdate,"ppInk",MessageBoxButtons.YesNo)==DialogResult.Yes)
+            {
+                Root.StampFileNames.Clear();
+                foreach (ListViewItem it in Root.FormCollection.ClipartsDlg.ImageListViewer.Items)
+                    Root.StampFileNames.Add(it.ImageKey);// dlg.Images.Images.Keys[i]);
+            }
             Clip1Btn.BackColor = ToolbarDwg.BackColor;
             try
             {
@@ -885,6 +892,7 @@ namespace gInk
                 {
                     Root.StampFileNames.Add(it.ImageKey);// dlg.Images.Images.Keys[i]);
                 }
+                Root.FormCollection.ClipartsDlg.Initialize();
             }
             dlg.Dispose();
         }
