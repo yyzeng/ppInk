@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -165,7 +165,7 @@ namespace gInk
                             }
                         }
                         if (resp.StatusCode == 200)
-                            ret = " { \"Started\" : " + (Root.FormDisplay.Visible || Root.FormCollection.Visible).ToString() + " }";
+                            ret = " { \"Started\" : " + ((Root.FormDisplay.Visible || Root.FormCollection.Visible)?"true":"false") + " }";
                     }
 
 
@@ -306,6 +306,7 @@ namespace gInk
                                     if (s.Contains('/'))
                                         s = Root.FormCollection.ClipartsDlg.LoadImage(s);
                                     Root.ImageStamp = Root.FormCollection.ClipartsDlg.getClipArtData(s);
+                                    Root.ImageStamp.Filling = f;
                                 }
                                 else
                                 {
@@ -352,7 +353,12 @@ namespace gInk
                             }
                             else
                             {
-                                ret = string.Format("{{\"Tool\":{0},\"ToolInText\":\"{2}\", \"Filling\":{1}, \"FillingInText\":\"{3}\" }}", Root.ToolSelected, Root.FilledSelected, Tools.Names[Root.ToolSelected], Filling.Names[Root.FilledSelected+1]);
+                                string st_i="";
+                                if (Root.ToolSelected == Tools.ClipArt)
+                                    st_i = string.Format(",\n \"Image\":\"{0}\" ", Root.ImageStamp.ImageStamp);
+                                f = Root.ToolSelected == Tools.ClipArt ? Root.ImageStamp.Filling : Root.FilledSelected;
+                                ret = string.Format("{{\"Tool\":{0},\"ToolInText\":\"{2}\", \"Filling\":{1}, \"FillingInText\":\"{3}\"{4} }}",
+                                                        Root.ToolSelected, f , Tools.Names[Array.IndexOf(Tools.All,Root.ToolSelected)], Filling.Names[f+1],st_i);
                             }
                         }
                         else if (resp.StatusCode == 400)
@@ -405,7 +411,9 @@ namespace gInk
                             }
                         }
                         if (resp.StatusCode == 200)
-                            ret = " { \"Magnet\" : " + (Root.FormDisplay.Visible || Root.FormCollection.Visible).ToString() + " }";
+                        {
+                            ret = " { \"Magnet\" : " + (Root.MagneticRadius>0?"true":"false") + " }";
+                        }
                     }
 
 
