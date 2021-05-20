@@ -231,11 +231,11 @@ namespace gInk
             InverseWheelCb.Checked = Root.InverseMousewheel;
             FitToCurveEd.Checked = Root.FitToCurve;
 
-            cbAllowHotkeyInPointer.Top = (int)(this.Height * 0.18);
+            //cbAllowHotkeyInPointer.Top = (int)(this.Height * 0.18);
 
 			for (int p = 0; p < Root.MaxPenCount; p++)
 			{
-				int top = p * (int)(this.Height * 0.055) + (int)(this.Height * 0.24);
+				int top = p * (hiPan.Top - hiEraser.Top) + hiEraser.Top;
 				lbHotkeyPens[p].Left = 20;
 				lbHotkeyPens[p].Width = 80;
 				lbHotkeyPens[p].Top = top;
