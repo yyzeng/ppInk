@@ -1692,8 +1692,13 @@ namespace gInk
             }
         }
 
+        int dbgcpt = 0;
+
         private void IC_Stroke(object sender, InkCollectorStrokeEventArgs e)
         {
+            Rectangle r = e.Stroke.GetBoundingBox(BoundingBoxMode.PointsOnly);
+            bool HitTouch = Math.Max(r.Width, r.Height) < 2 * e.Stroke.DrawingAttributes.Width;    // To take into account PenWidth extension done by GetBoundingBox
+            Console.WriteLine(string.Format("IC_Stroke X0={0} X0=X{1} / Type{2} / Hit{3}", Root.CursorX0, (Root.CursorX0== Root.CursorX)&&(Root.CursorY0 == Root.CursorY), e.Cursor.Tablet.DeviceKind.ToString(),HitTouch));
             movedStroke = null; // reset the moving object
             Root.FingerInAction = false;        // this is done a little before MouseUp ; but it looks like the one from MouseUp is not always done...
             try { if (e.Stroke.ExtendedProperties.Contains(Root.ISSTROKE_GUID)) e.Stroke.ExtendedProperties.Remove(Root.ISSTROKE_GUID); } catch { } // the ISSTROKE set for drawin
@@ -1710,13 +1715,14 @@ namespace gInk
                 Root.FormDisplay.timer1_Tick(null, null);
                 Root.FormDisplay.Update();
                 */
-                if (Root.CursorX0 != Int32.MinValue)
+                //#if ((Root.CursorX0 == Int32.MinValue)|| ((Root.CursorX0 == Root.CursorX)&& (Root.CursorY0 == Root.CursorY)))
+                if (HitTouch || ((Root.CursorX0 == Root.CursorX) && (Root.CursorY0 == Root.CursorY)))
+                    return;
+                else
                 {
                     ZoomCapturing = false;
                     ZoomCaptured = true;
                 }
-                else
-                    return;
                 SaveStrokes(ZoomSaveStroke);
                 Bitmap capt = new Bitmap(Math.Abs(Root.CursorX0 - Root.CursorX), Math.Abs(Root.CursorY0 - Root.CursorY));
                 using (Graphics g = Graphics.FromImage(capt))
@@ -1746,6 +1752,7 @@ namespace gInk
             }
             else if (Root.ToolSelected == Tools.Hand)
             {
+                Console.WriteLine("Hand");
                 //Stroke st = e.Stroke;// IC.Ink.Strokes[IC.Ink.Strokes.Count-1];
                 Stroke st = e.Stroke;// IC.Ink.Strokes[IC.Ink.Strokes.Count-1];
                 try
@@ -1762,7 +1769,8 @@ namespace gInk
             }
             else
             {
-                if (Root.CursorX0 == Int32.MinValue) // process when clicking touchscreen with just a short press;
+                //#if (Root.CursorX0 == Int32.MinValue) // process when clicking touchscreen with just a short press;
+                if (HitTouch) // process when clicking touchscreen with just a short press;
                 {
                     Point p = System.Windows.Forms.Cursor.Position;
                     p = Root.FormDisplay.PointToClient(p);
@@ -1771,19 +1779,29 @@ namespace gInk
                 }
                 IC.Ink.DeleteStroke(e.Stroke); // the stroke that was just inserted has to be replaced.
 
-                if ((Root.ToolSelected == Tools.Line) && (Root.CursorX0 != Int32.MinValue))
-                    AddLineStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY);
-                else if ((Root.ToolSelected == Tools.Rect) && (Root.CursorX0 != Int32.MinValue))
+                //#if ((Root.ToolSelected == Tools.Line) && (Root.CursorX0 != Int32.MinValue))
+                if ((Root.ToolSelected == Tools.Line) && (!HitTouch))
+                {
+                    Console.WriteLine("Line");
+                    AddLineStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY);                    
+                }
+                //#else if ((Root.ToolSelected == Tools.Rect) && (Root.CursorX0 != Int32.MinValue))
+                else if ((Root.ToolSelected == Tools.Rect) && (!HitTouch))
+                {
+                    Console.WriteLine("Rect");
                     if ((CurrentMouseButton == MouseButtons.Right) || ((int)CurrentMouseButton == 2))
                         AddRectStroke(2 * Root.CursorX0 - Root.CursorX, 2 * Root.CursorY0 - Root.CursorY, Root.CursorX, Root.CursorY, Root.FilledSelected);
                     else
                         AddRectStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY, Root.FilledSelected);
+                }
                 else if (Root.ToolSelected == Tools.ClipArt)
                 {
+                    Console.WriteLine("ClipArt");
                     //int idx = ClipartsDlg.Images.Images.IndexOfKey(Root.ImageStamp.ImageStamp);
                     int w = Root.ImageStamp.X;
                     int h = Root.ImageStamp.Y;
-                    if ((Root.CursorX0 == Int32.MinValue) || ((Root.CursorX0 == Root.CursorX) && (Root.CursorY0 == Root.CursorY)))
+                    //#if ((Root.CursorX0 == Int32.MinValue) || ((Root.CursorX0 == Root.CursorX) && (Root.CursorY0 == Root.CursorY)))
+                    if (HitTouch || ((Root.CursorX0 == Root.CursorX) && (Root.CursorY0 == Root.CursorY)))
                     {
                         Root.CursorX0 = Root.CursorX;
                         Root.CursorY0 = Root.CursorY;
@@ -1802,16 +1820,24 @@ namespace gInk
                     }
                     AddImageStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY, Root.ImageStamp.ImageStamp);
                 }
-                else if ((Root.ToolSelected == Tools.Oval) && (Root.CursorX0 != Int32.MinValue))
+                //#else if ((Root.ToolSelected == Tools.Oval) && (Root.CursorX0 != Int32.MinValue))
+                else if ((Root.ToolSelected == Tools.Oval) && !HitTouch)
+                {
+                    Console.WriteLine("Oval");
                     if ((CurrentMouseButton == MouseButtons.Right) || ((int)CurrentMouseButton == 2))
                         AddEllipseStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY, Root.FilledSelected);
                     else
                         AddEllipseStroke((Root.CursorX0 + Root.CursorX) / 2, (Root.CursorY0 + Root.CursorY) / 2, Root.CursorX, Root.CursorY, Root.FilledSelected);
-                else if (((Root.ToolSelected == Tools.StartArrow) || (Root.ToolSelected == Tools.EndArrow)) && (Root.CursorX0 != Int32.MinValue))
+                }
+                //#else if (((Root.ToolSelected == Tools.StartArrow) || (Root.ToolSelected == Tools.EndArrow)) && (Root.CursorX0 != Int32.MinValue))
+                else if (((Root.ToolSelected == Tools.StartArrow) || (Root.ToolSelected == Tools.EndArrow)) && !HitTouch)
+                {
+                    Console.WriteLine("Arrow");
                     if (((CurrentMouseButton == MouseButtons.Right) || ((int)CurrentMouseButton == 2)) ^ (Root.ToolSelected == Tools.StartArrow))
                         AddArrowStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY);
                     else
                         AddArrowStroke(Root.CursorX, Root.CursorY, Root.CursorX0, Root.CursorY0);
+                }
                 else if (Root.ToolSelected == Tools.NumberTag)
                 {
                     Stroke st = AddNumberTagStroke(Root.CursorX, Root.CursorY, Root.CursorX, Root.CursorY, Root.TagNumbering.ToString());
@@ -1856,8 +1882,10 @@ namespace gInk
                 }
                 else if ((Root.ToolSelected == Tools.Move) || (Root.ToolSelected == Tools.Copy))// Move : do Nothing
                     movedStroke = null;
-                else if ((Root.ToolSelected == Tools.Poly) && ((Root.CursorX0 != Int32.MinValue) || (Math.Abs(Root.CursorY - PolyLineLastY) + Math.Abs(Root.CursorX - PolyLineLastX) < Root.MinMagneticRadius())))
+                //#else if ((Root.ToolSelected == Tools.Poly) && ((Root.CursorX0 != Int32.MinValue) || (Math.Abs(Root.CursorY - PolyLineLastY) + Math.Abs(Root.CursorX - PolyLineLastX) < Root.MinMagneticRadius())))
+                else if ((Root.ToolSelected == Tools.Poly) && (!HitTouch || (Math.Abs(Root.CursorY - PolyLineLastY) + Math.Abs(Root.CursorX - PolyLineLastX) < Root.MinMagneticRadius())))
                 {
+                    Console.WriteLine("Poly");
                     if (PolyLineLastX == Int32.MinValue)
                     {
                         PolyLineInProgress = AddLineStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY);
@@ -1888,6 +1916,7 @@ namespace gInk
             CurrentMouseButton = MouseButtons.None;
             Root.CursorX0 = Int32.MinValue;
             Root.CursorY0 = Int32.MinValue;
+            Console.WriteLine("------------------ "+(dbgcpt++).ToString());
         }
 
         public void ComputeTextBoxSize(ref Stroke st)
@@ -1943,8 +1972,10 @@ namespace gInk
         Stroke movedStroke = null;
 
         float ZoomScreenRatio;
+
         private void IC_CursorDown(object sender, InkCollectorCursorDownEventArgs e)
         {
+            Console.WriteLine("CursorDown :"+e.Cursor.Tablet.DeviceKind.ToString());
             if (ZoomCapturing)
             {
                 Screen scr = Screen.FromPoint(MousePosition);
@@ -2003,6 +2034,7 @@ namespace gInk
 
         private void IC_MouseDown(object sender, CancelMouseEventArgs e)
         {
+            Console.WriteLine("MouseDown");
             CurrentMouseButton = e.Button;
             if (gpSubTools.Visible && (int)(Btn_SubToolPin.Tag) != 1)
             {
@@ -2168,6 +2200,7 @@ namespace gInk
 
         private void IC_MouseUp(object sender, CancelMouseEventArgs e)
         {
+            Console.WriteLine("MouseUp");
             Root.FingerInAction = false;
             if (Root.Snapping == 2)
             {
@@ -2205,8 +2238,9 @@ namespace gInk
             {
                 Root.UponAllDrawingUpdate = true;
             }
-            Root.CursorX0 = int.MinValue;
-            Root.CursorY0 = int.MinValue;
+            // due to asynchronism, IC_MouseUp Could occur before IC_Stroke and then prevent the special strokes to be created
+            //Root.CursorX0 = int.MinValue;
+            //Root.CursorY0 = int.MinValue;
         }
 
         private void IC_CursorInRange(object sender, InkCollectorCursorInRangeEventArgs e)
