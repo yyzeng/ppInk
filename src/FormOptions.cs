@@ -151,6 +151,12 @@ namespace gInk
 
             AltTabActivateCb.Checked = Root.AltTabPointer;
 
+            MeasureEnabledCb.Checked = Root.MeasureEnabled;
+            Measure2ScaleEd.Text = Root.Measure2Scale.ToString();
+            Measure2DigEd.Text = Root.Measure2Digits.ToString();
+            Measure2UnitEd.Text = Root.Measure2Unit;
+            MeasureAngleCb.Checked = Root.MeasureAnglCounterClockwise;
+
             APIRestEd.Text = Root.APIRestUrl;
             APIRestEd.BackColor = Root.APIRest.IsListening() ? Color.White : Color.Orange;
 
@@ -687,12 +693,15 @@ namespace gInk
             Root.SaveOptions("hotkeys.ini");
         }
 
-        private void ArrHdFloat_Validating(object sender, CancelEventArgs e)
+        private void Float_Validating(object sender, CancelEventArgs e)
         {
             float tempf;
-            if (!float.TryParse(((TextBox)sender).Text.Replace(",","."), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out tempf))
+            if (float.TryParse(((TextBox)sender).Text.Replace(",","."), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out tempf))
+                ((TextBox)sender).BackColor = Color.White;
+            else
             {
                 e.Cancel = true;
+                ((TextBox)sender).BackColor = Color.Orange;
                 ((TextBox)sender).Select();
             }
         }
@@ -1109,6 +1118,45 @@ namespace gInk
         private void PensOnTwoLinesCb_CheckedChanged(object sender, EventArgs e)
         {
             Root.PensOnTwoLines = PensOnTwoLinesCb.Checked;
+        }
+
+        private void MeasureEnabledCb_CheckedChanged(object sender, EventArgs e)
+        {
+            Root.MeasureEnabled = MeasureEnabledCb.Checked;
+            MeasurementBox.Enabled = Root.MeasureEnabled;
+        }
+
+        private void Measure2ScaleEd_Validated(object sender, EventArgs e)
+        {
+            Root.Measure2Scale = Double.Parse(Measure2ScaleEd.Text);
+        }
+
+        private void Measure2DigEd_Validated(object sender, EventArgs e)
+        {
+            Root.Measure2Digits = int.Parse(Measure2DigEd.Text);
+        }
+
+        private void Measure2DigEd_Validating(object sender, CancelEventArgs e)
+        {
+            int tempi;
+            if ((int.TryParse(((TextBox)sender).Text.Replace(",", "."), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out tempi))&& tempi>=0 && tempi<=9)
+                ((TextBox)sender).BackColor = Color.White;
+            else
+            {
+                e.Cancel = true;
+                ((TextBox)sender).BackColor=Color.Orange;
+                ((TextBox)sender).Select();
+            }
+        }
+
+        private void Measure2UnitEd_TextChanged(object sender, EventArgs e)
+        {
+            Root.Measure2Unit = Measure2UnitEd.Text;
+        }
+
+        private void MeasureAngleCb_CheckedChanged(object sender, EventArgs e)
+        {
+            Root.MeasureAnglCounterClockwise = MeasureAngleCb.Checked;
         }
     }
 }

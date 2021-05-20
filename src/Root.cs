@@ -182,6 +182,14 @@ namespace gInk
         public int BoardAtOpening = 0;      // 0:Transparent/1:White/2:Customed/3:Black/4:AtSelection
         public int BoardSelected = 0;       // by default transparent
 
+        //measurement tools
+        public static bool MeasureEnabled = true;
+        public static double Measure2Scale = 1.0;
+        public static int Measure2Digits=1;
+        public static string Measure2Unit = "Pixel";
+        public static bool MeasureAnglCounterClockwise = true;
+
+
         // hotkey options
         public Hotkey Hotkey_Global = new Hotkey();
 		public Hotkey[] Hotkey_Pens = new Hotkey[10];
@@ -920,6 +928,7 @@ namespace gInk
 
 					int tempi = 0;
 					float tempf = 0;
+                    double tempd = 0;
                     string[] tab;
                     switch (sName)
                     {
@@ -1398,8 +1407,32 @@ namespace gInk
                             if (Int32.TryParse(sPara, out tempi))
                                 SnapInPointerPressTwiceKey = (SnapInPointerKeys)tempi;
                             break;
-                    }
-                }
+
+                        case "MEASURES_ENABLED":
+                            if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
+                                MeasureEnabled = true;
+                            else if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
+                                MeasureEnabled  = false;
+                            break;
+                        case "MEASURE_LEN_SCALE":
+                            if (Double.TryParse(sPara, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out tempd))
+                                Measure2Scale = tempd;
+                            break;
+                        case "MEASURE_LEN_DECIMALS":
+                            if (Int32.TryParse(sPara, out tempi))
+                                Measure2Digits = tempi;
+                            break;
+                        case "MEASURE_LEN_UNIT":                            
+                            Measure2Unit = sPara;
+                            break;
+                        case "MEASURE_ANGLE_DIR":
+                            if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
+                                MeasureAnglCounterClockwise = true;
+                            else if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
+                                MeasureAnglCounterClockwise = false;
+                            break;
+    }
+}
 			}
 			fini.Close();
 		}
@@ -1846,6 +1879,21 @@ namespace gInk
                             sPara = ((int)SnapInPointerPressTwiceKey).ToString();
                             break;
 
+                        case "MEASURES_ENABLED":
+                            sPara = MeasureEnabled? "True" : "False";
+                            break;
+                        case "MEASURE_LEN_SCALE":
+                            sPara = Measure2Scale.ToString(CultureInfo.InvariantCulture);
+                            break;
+                        case "MEASURE_LEN_DECIMALS":
+                            sPara = Measure2Digits.ToString();
+                            break;
+                        case "MEASURE_LEN_UNIT":
+                            sPara = Measure2Unit;
+                            break;
+                        case "MEASURE_ANGLE_DIR":
+                            sPara= MeasureAnglCounterClockwise?"True":"False";
+                            break;
                     }
                 }
 				if (sPara != "")
@@ -1957,6 +2005,11 @@ namespace gInk
             }
 
             return relativePath;
+        }
+
+        public double ConvertMeasureLength(double hl)
+        {
+            return hl * 0.037795280352161 * Measure2Scale;
         }
 
         public void AppGetFocus()

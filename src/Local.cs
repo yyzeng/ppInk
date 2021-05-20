@@ -76,8 +76,13 @@ namespace gInk
 
         public string OptionsZoomDim = "Dim.";
         public string OptionsZoomScale = "Scale";
-        public string OptionsZoomContinous = "Continous";   
+        public string OptionsZoomContinous = "Continous";
 
+        public string OptionMeasureGroup = "Measurement Tools";
+        public string OptionMeasureLenLabel = "1 pixel =";
+        public string OptionMeasureAngle = "Angle CounterClockwise";
+        public string FormatLength = "Length : {0:N1} {1}";
+        public string FormatAngle = "Angle : {0:N0}°";
 
         public string ButtonOkText = "&OK";
         public string ButtonCancelText = "&Cancel";

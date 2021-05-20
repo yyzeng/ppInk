@@ -186,6 +186,15 @@ namespace gInk
             this.cbWhiteIcon = new System.Windows.Forms.CheckBox();
             this.tbSnapPath = new System.Windows.Forms.TextBox();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.MeasureEnabledCb = new System.Windows.Forms.CheckBox();
+            this.MeasurementBox = new System.Windows.Forms.GroupBox();
+            this.Measure2DigEd = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.MeasureAngleCb = new System.Windows.Forms.CheckBox();
+            this.Measuse1Lbl = new System.Windows.Forms.Label();
+            this.Measure2UnitEd = new System.Windows.Forms.TextBox();
+            this.Measure2ScaleEd = new System.Windows.Forms.TextBox();
+            this.PensOnTwoLinesCb = new System.Windows.Forms.CheckBox();
             this.CaptStrokesOnlyCb = new System.Windows.Forms.CheckBox();
             this.APIRestLbl = new System.Windows.Forms.Label();
             this.APIRestEd = new System.Windows.Forms.TextBox();
@@ -230,7 +239,6 @@ namespace gInk
             this.lbcbPens = new System.Windows.Forms.Label();
             this.FadingTimeEd = new System.Windows.Forms.TextBox();
             this.WidthAtPenSelCb = new System.Windows.Forms.CheckBox();
-            this.PensOnTwoLinesCb = new System.Windows.Forms.CheckBox();
             this.tabPage3.SuspendLayout();
             this.SnapInPointerGrp.SuspendLayout();
             this.VideoTab.SuspendLayout();
@@ -238,6 +246,7 @@ namespace gInk
             this.BoardBx.SuspendLayout();
             this.panel2.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            this.MeasurementBox.SuspendLayout();
             this.ArrwGrp.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ToolbarDwg)).BeginInit();
             this.VideoTabCtrl.SuspendLayout();
@@ -328,7 +337,7 @@ namespace gInk
             // 
             this.AltAsOneCommandCb.AutoSize = true;
             this.AltAsOneCommandCb.Location = new System.Drawing.Point(25, 80);
-            this.AltAsOneCommandCb.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.AltAsOneCommandCb.Margin = new System.Windows.Forms.Padding(4);
             this.AltAsOneCommandCb.Name = "AltAsOneCommandCb";
             this.AltAsOneCommandCb.Size = new System.Drawing.Size(452, 21);
             this.AltAsOneCommandCb.TabIndex = 37;
@@ -431,9 +440,9 @@ namespace gInk
             this.tabPage3.Controls.Add(this.hiEraser);
             this.tabPage3.Controls.Add(this.hiGlobal);
             this.tabPage3.Location = new System.Drawing.Point(4, 25);
-            this.tabPage3.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPage3.Margin = new System.Windows.Forms.Padding(4);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(1025, 644);
+            this.tabPage3.Size = new System.Drawing.Size(1025, 700);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Hotkeys";
             // 
@@ -451,10 +460,10 @@ namespace gInk
             // 
             this.hiPenWidthMinus.BackColor = System.Drawing.Color.White;
             this.hiPenWidthMinus.ExternalConflictFlag = false;
-            this.hiPenWidthMinus.Hotkey = hotkey1;
+            this.hiPenWidthMinus.Hotkey = hotkey2;
             this.hiPenWidthMinus.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiPenWidthMinus.Location = new System.Drawing.Point(801, 606);
-            this.hiPenWidthMinus.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.hiPenWidthMinus.Margin = new System.Windows.Forms.Padding(4);
             this.hiPenWidthMinus.Name = "hiPenWidthMinus";
             this.hiPenWidthMinus.RequireModifier = false;
             this.hiPenWidthMinus.Size = new System.Drawing.Size(159, 22);
@@ -476,10 +485,10 @@ namespace gInk
             // 
             this.hiPenWidthPlus.BackColor = System.Drawing.Color.White;
             this.hiPenWidthPlus.ExternalConflictFlag = false;
-            this.hiPenWidthPlus.Hotkey = hotkey2;
+            this.hiPenWidthPlus.Hotkey = hotkey3;
             this.hiPenWidthPlus.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiPenWidthPlus.Location = new System.Drawing.Point(801, 574);
-            this.hiPenWidthPlus.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.hiPenWidthPlus.Margin = new System.Windows.Forms.Padding(4);
             this.hiPenWidthPlus.Name = "hiPenWidthPlus";
             this.hiPenWidthPlus.RequireModifier = false;
             this.hiPenWidthPlus.Size = new System.Drawing.Size(159, 22);
@@ -501,10 +510,10 @@ namespace gInk
             // 
             this.hiFadingToggle.BackColor = System.Drawing.Color.White;
             this.hiFadingToggle.ExternalConflictFlag = false;
-            this.hiFadingToggle.Hotkey = hotkey3;
+            this.hiFadingToggle.Hotkey = hotkey4;
             this.hiFadingToggle.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiFadingToggle.Location = new System.Drawing.Point(453, 542);
-            this.hiFadingToggle.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.hiFadingToggle.Margin = new System.Windows.Forms.Padding(4);
             this.hiFadingToggle.Name = "hiFadingToggle";
             this.hiFadingToggle.RequireModifier = false;
             this.hiFadingToggle.Size = new System.Drawing.Size(159, 22);
@@ -517,9 +526,9 @@ namespace gInk
             this.SnapInPointerGrp.Controls.Add(this.SnapInPointerHoldCb);
             this.SnapInPointerGrp.Controls.Add(this.SnapInPointerLbl);
             this.SnapInPointerGrp.Location = new System.Drawing.Point(592, 17);
-            this.SnapInPointerGrp.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.SnapInPointerGrp.Margin = new System.Windows.Forms.Padding(4);
             this.SnapInPointerGrp.Name = "SnapInPointerGrp";
-            this.SnapInPointerGrp.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.SnapInPointerGrp.Padding = new System.Windows.Forms.Padding(4);
             this.SnapInPointerGrp.Size = new System.Drawing.Size(381, 94);
             this.SnapInPointerGrp.TabIndex = 9;
             this.SnapInPointerGrp.TabStop = false;
@@ -535,7 +544,7 @@ namespace gInk
             "Control",
             "Alt"});
             this.SnapInPointerTwiceCb.Location = new System.Drawing.Point(203, 39);
-            this.SnapInPointerTwiceCb.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.SnapInPointerTwiceCb.Margin = new System.Windows.Forms.Padding(4);
             this.SnapInPointerTwiceCb.Name = "SnapInPointerTwiceCb";
             this.SnapInPointerTwiceCb.Size = new System.Drawing.Size(127, 24);
             this.SnapInPointerTwiceCb.TabIndex = 1;
@@ -551,7 +560,7 @@ namespace gInk
             "Control",
             "Alt"});
             this.SnapInPointerHoldCb.Location = new System.Drawing.Point(29, 39);
-            this.SnapInPointerHoldCb.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.SnapInPointerHoldCb.Margin = new System.Windows.Forms.Padding(4);
             this.SnapInPointerHoldCb.Name = "SnapInPointerHoldCb";
             this.SnapInPointerHoldCb.Size = new System.Drawing.Size(127, 24);
             this.SnapInPointerHoldCb.TabIndex = 1;
@@ -641,7 +650,7 @@ namespace gInk
             // 
             this.cbAllowHotkeyInPointer.AutoSize = true;
             this.cbAllowHotkeyInPointer.Location = new System.Drawing.Point(25, 107);
-            this.cbAllowHotkeyInPointer.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cbAllowHotkeyInPointer.Margin = new System.Windows.Forms.Padding(4);
             this.cbAllowHotkeyInPointer.Name = "cbAllowHotkeyInPointer";
             this.cbAllowHotkeyInPointer.Size = new System.Drawing.Size(474, 21);
             this.cbAllowHotkeyInPointer.TabIndex = 18;
@@ -753,10 +762,10 @@ namespace gInk
             // 
             this.hiZoom.BackColor = System.Drawing.Color.White;
             this.hiZoom.ExternalConflictFlag = false;
-            this.hiZoom.Hotkey = hotkey4;
+            this.hiZoom.Hotkey = hotkey5;
             this.hiZoom.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiZoom.Location = new System.Drawing.Point(453, 510);
-            this.hiZoom.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.hiZoom.Margin = new System.Windows.Forms.Padding(4);
             this.hiZoom.Name = "hiZoom";
             this.hiZoom.RequireModifier = false;
             this.hiZoom.Size = new System.Drawing.Size(159, 22);
@@ -768,10 +777,10 @@ namespace gInk
             // 
             this.hiToolClipArt3.BackColor = System.Drawing.Color.White;
             this.hiToolClipArt3.ExternalConflictFlag = false;
-            this.hiToolClipArt3.Hotkey = hotkey5;
+            this.hiToolClipArt3.Hotkey = hotkey6;
             this.hiToolClipArt3.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiToolClipArt3.Location = new System.Drawing.Point(801, 542);
-            this.hiToolClipArt3.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.hiToolClipArt3.Margin = new System.Windows.Forms.Padding(4);
             this.hiToolClipArt3.Name = "hiToolClipArt3";
             this.hiToolClipArt3.RequireModifier = false;
             this.hiToolClipArt3.Size = new System.Drawing.Size(159, 22);
@@ -783,10 +792,10 @@ namespace gInk
             // 
             this.hiToolClipArt2.BackColor = System.Drawing.Color.White;
             this.hiToolClipArt2.ExternalConflictFlag = false;
-            this.hiToolClipArt2.Hotkey = hotkey6;
+            this.hiToolClipArt2.Hotkey = hotkey7;
             this.hiToolClipArt2.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiToolClipArt2.Location = new System.Drawing.Point(801, 510);
-            this.hiToolClipArt2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.hiToolClipArt2.Margin = new System.Windows.Forms.Padding(4);
             this.hiToolClipArt2.Name = "hiToolClipArt2";
             this.hiToolClipArt2.RequireModifier = false;
             this.hiToolClipArt2.Size = new System.Drawing.Size(159, 22);
@@ -798,10 +807,10 @@ namespace gInk
             // 
             this.hiToolClipArt1.BackColor = System.Drawing.Color.White;
             this.hiToolClipArt1.ExternalConflictFlag = false;
-            this.hiToolClipArt1.Hotkey = hotkey7;
+            this.hiToolClipArt1.Hotkey = hotkey8;
             this.hiToolClipArt1.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiToolClipArt1.Location = new System.Drawing.Point(801, 478);
-            this.hiToolClipArt1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.hiToolClipArt1.Margin = new System.Windows.Forms.Padding(4);
             this.hiToolClipArt1.Name = "hiToolClipArt1";
             this.hiToolClipArt1.RequireModifier = false;
             this.hiToolClipArt1.Size = new System.Drawing.Size(159, 22);
@@ -813,10 +822,10 @@ namespace gInk
             // 
             this.hiToolClipArt.BackColor = System.Drawing.Color.White;
             this.hiToolClipArt.ExternalConflictFlag = false;
-            this.hiToolClipArt.Hotkey = hotkey8;
+            this.hiToolClipArt.Hotkey = hotkey9;
             this.hiToolClipArt.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiToolClipArt.Location = new System.Drawing.Point(801, 446);
-            this.hiToolClipArt.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.hiToolClipArt.Margin = new System.Windows.Forms.Padding(4);
             this.hiToolClipArt.Name = "hiToolClipArt";
             this.hiToolClipArt.RequireModifier = false;
             this.hiToolClipArt.Size = new System.Drawing.Size(159, 22);
@@ -828,10 +837,10 @@ namespace gInk
             // 
             this.hiClose.BackColor = System.Drawing.Color.White;
             this.hiClose.ExternalConflictFlag = false;
-            this.hiClose.Hotkey = hotkey9;
+            this.hiClose.Hotkey = hotkey10;
             this.hiClose.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiClose.Location = new System.Drawing.Point(453, 478);
-            this.hiClose.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.hiClose.Margin = new System.Windows.Forms.Padding(4);
             this.hiClose.Name = "hiClose";
             this.hiClose.RequireModifier = false;
             this.hiClose.Size = new System.Drawing.Size(159, 22);
@@ -843,10 +852,10 @@ namespace gInk
             // 
             this.hiDockUndock.BackColor = System.Drawing.Color.White;
             this.hiDockUndock.ExternalConflictFlag = false;
-            this.hiDockUndock.Hotkey = hotkey10;
+            this.hiDockUndock.Hotkey = hotkey11;
             this.hiDockUndock.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiDockUndock.Location = new System.Drawing.Point(453, 446);
-            this.hiDockUndock.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.hiDockUndock.Margin = new System.Windows.Forms.Padding(4);
             this.hiDockUndock.Name = "hiDockUndock";
             this.hiDockUndock.RequireModifier = false;
             this.hiDockUndock.Size = new System.Drawing.Size(159, 22);
@@ -858,10 +867,10 @@ namespace gInk
             // 
             this.hiVideo.BackColor = System.Drawing.Color.White;
             this.hiVideo.ExternalConflictFlag = false;
-            this.hiVideo.Hotkey = hotkey11;
+            this.hiVideo.Hotkey = hotkey12;
             this.hiVideo.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiVideo.Location = new System.Drawing.Point(453, 414);
-            this.hiVideo.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.hiVideo.Margin = new System.Windows.Forms.Padding(4);
             this.hiVideo.Name = "hiVideo";
             this.hiVideo.RequireModifier = false;
             this.hiVideo.Size = new System.Drawing.Size(159, 22);
@@ -873,10 +882,10 @@ namespace gInk
             // 
             this.hiToolMagnet.BackColor = System.Drawing.Color.White;
             this.hiToolMagnet.ExternalConflictFlag = false;
-            this.hiToolMagnet.Hotkey = hotkey12;
+            this.hiToolMagnet.Hotkey = hotkey13;
             this.hiToolMagnet.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiToolMagnet.Location = new System.Drawing.Point(801, 414);
-            this.hiToolMagnet.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.hiToolMagnet.Margin = new System.Windows.Forms.Padding(4);
             this.hiToolMagnet.Name = "hiToolMagnet";
             this.hiToolMagnet.RequireModifier = false;
             this.hiToolMagnet.Size = new System.Drawing.Size(159, 22);
@@ -888,10 +897,10 @@ namespace gInk
             // 
             this.hiToolEdit.BackColor = System.Drawing.Color.White;
             this.hiToolEdit.ExternalConflictFlag = false;
-            this.hiToolEdit.Hotkey = hotkey13;
+            this.hiToolEdit.Hotkey = hotkey14;
             this.hiToolEdit.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiToolEdit.Location = new System.Drawing.Point(801, 382);
-            this.hiToolEdit.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.hiToolEdit.Margin = new System.Windows.Forms.Padding(4);
             this.hiToolEdit.Name = "hiToolEdit";
             this.hiToolEdit.RequireModifier = false;
             this.hiToolEdit.Size = new System.Drawing.Size(159, 22);
@@ -903,10 +912,10 @@ namespace gInk
             // 
             this.HiToolText.BackColor = System.Drawing.Color.White;
             this.HiToolText.ExternalConflictFlag = false;
-            this.HiToolText.Hotkey = hotkey14;
+            this.HiToolText.Hotkey = hotkey15;
             this.HiToolText.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.HiToolText.Location = new System.Drawing.Point(801, 348);
-            this.HiToolText.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.HiToolText.Margin = new System.Windows.Forms.Padding(4);
             this.HiToolText.Name = "HiToolText";
             this.HiToolText.RequireModifier = false;
             this.HiToolText.Size = new System.Drawing.Size(159, 22);
@@ -918,10 +927,10 @@ namespace gInk
             // 
             this.hiToolNumb.BackColor = System.Drawing.Color.White;
             this.hiToolNumb.ExternalConflictFlag = false;
-            this.hiToolNumb.Hotkey = hotkey15;
+            this.hiToolNumb.Hotkey = hotkey16;
             this.hiToolNumb.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiToolNumb.Location = new System.Drawing.Point(801, 315);
-            this.hiToolNumb.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.hiToolNumb.Margin = new System.Windows.Forms.Padding(4);
             this.hiToolNumb.Name = "hiToolNumb";
             this.hiToolNumb.RequireModifier = false;
             this.hiToolNumb.Size = new System.Drawing.Size(159, 22);
@@ -933,10 +942,10 @@ namespace gInk
             // 
             this.hiToolArrow.BackColor = System.Drawing.Color.White;
             this.hiToolArrow.ExternalConflictFlag = false;
-            this.hiToolArrow.Hotkey = hotkey16;
+            this.hiToolArrow.Hotkey = hotkey17;
             this.hiToolArrow.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiToolArrow.Location = new System.Drawing.Point(801, 282);
-            this.hiToolArrow.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.hiToolArrow.Margin = new System.Windows.Forms.Padding(4);
             this.hiToolArrow.Name = "hiToolArrow";
             this.hiToolArrow.RequireModifier = false;
             this.hiToolArrow.Size = new System.Drawing.Size(159, 22);
@@ -948,10 +957,10 @@ namespace gInk
             // 
             this.hiToolOval.BackColor = System.Drawing.Color.White;
             this.hiToolOval.ExternalConflictFlag = false;
-            this.hiToolOval.Hotkey = hotkey17;
+            this.hiToolOval.Hotkey = hotkey18;
             this.hiToolOval.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiToolOval.Location = new System.Drawing.Point(801, 249);
-            this.hiToolOval.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.hiToolOval.Margin = new System.Windows.Forms.Padding(4);
             this.hiToolOval.Name = "hiToolOval";
             this.hiToolOval.RequireModifier = false;
             this.hiToolOval.Size = new System.Drawing.Size(159, 22);
@@ -963,10 +972,10 @@ namespace gInk
             // 
             this.hiToolRect.BackColor = System.Drawing.Color.White;
             this.hiToolRect.ExternalConflictFlag = false;
-            this.hiToolRect.Hotkey = hotkey18;
+            this.hiToolRect.Hotkey = hotkey19;
             this.hiToolRect.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiToolRect.Location = new System.Drawing.Point(801, 215);
-            this.hiToolRect.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.hiToolRect.Margin = new System.Windows.Forms.Padding(4);
             this.hiToolRect.Name = "hiToolRect";
             this.hiToolRect.RequireModifier = false;
             this.hiToolRect.Size = new System.Drawing.Size(159, 22);
@@ -978,10 +987,10 @@ namespace gInk
             // 
             this.hiToolLine.BackColor = System.Drawing.Color.White;
             this.hiToolLine.ExternalConflictFlag = false;
-            this.hiToolLine.Hotkey = hotkey19;
+            this.hiToolLine.Hotkey = hotkey20;
             this.hiToolLine.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiToolLine.Location = new System.Drawing.Point(801, 181);
-            this.hiToolLine.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.hiToolLine.Margin = new System.Windows.Forms.Padding(4);
             this.hiToolLine.Name = "hiToolLine";
             this.hiToolLine.RequireModifier = false;
             this.hiToolLine.Size = new System.Drawing.Size(159, 22);
@@ -993,10 +1002,10 @@ namespace gInk
             // 
             this.hiToolHand.BackColor = System.Drawing.Color.White;
             this.hiToolHand.ExternalConflictFlag = false;
-            this.hiToolHand.Hotkey = hotkey20;
+            this.hiToolHand.Hotkey = hotkey21;
             this.hiToolHand.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiToolHand.Location = new System.Drawing.Point(801, 148);
-            this.hiToolHand.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.hiToolHand.Margin = new System.Windows.Forms.Padding(4);
             this.hiToolHand.Name = "hiToolHand";
             this.hiToolHand.RequireModifier = false;
             this.hiToolHand.Size = new System.Drawing.Size(159, 22);
@@ -1008,10 +1017,10 @@ namespace gInk
             // 
             this.hiInkVisible.BackColor = System.Drawing.Color.White;
             this.hiInkVisible.ExternalConflictFlag = false;
-            this.hiInkVisible.Hotkey = hotkey21;
+            this.hiInkVisible.Hotkey = hotkey22;
             this.hiInkVisible.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiInkVisible.Location = new System.Drawing.Point(453, 249);
-            this.hiInkVisible.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.hiInkVisible.Margin = new System.Windows.Forms.Padding(4);
             this.hiInkVisible.Name = "hiInkVisible";
             this.hiInkVisible.RequireModifier = false;
             this.hiInkVisible.Size = new System.Drawing.Size(159, 22);
@@ -1023,10 +1032,10 @@ namespace gInk
             // 
             this.hiSnapshot.BackColor = System.Drawing.Color.White;
             this.hiSnapshot.ExternalConflictFlag = false;
-            this.hiSnapshot.Hotkey = hotkey22;
+            this.hiSnapshot.Hotkey = hotkey23;
             this.hiSnapshot.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiSnapshot.Location = new System.Drawing.Point(453, 282);
-            this.hiSnapshot.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.hiSnapshot.Margin = new System.Windows.Forms.Padding(4);
             this.hiSnapshot.Name = "hiSnapshot";
             this.hiSnapshot.RequireModifier = false;
             this.hiSnapshot.Size = new System.Drawing.Size(159, 22);
@@ -1038,10 +1047,10 @@ namespace gInk
             // 
             this.hiClear.BackColor = System.Drawing.Color.White;
             this.hiClear.ExternalConflictFlag = false;
-            this.hiClear.Hotkey = hotkey23;
+            this.hiClear.Hotkey = hotkey24;
             this.hiClear.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiClear.Location = new System.Drawing.Point(453, 382);
-            this.hiClear.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.hiClear.Margin = new System.Windows.Forms.Padding(4);
             this.hiClear.Name = "hiClear";
             this.hiClear.RequireModifier = false;
             this.hiClear.Size = new System.Drawing.Size(159, 22);
@@ -1053,10 +1062,10 @@ namespace gInk
             // 
             this.hiPan.BackColor = System.Drawing.Color.White;
             this.hiPan.ExternalConflictFlag = false;
-            this.hiPan.Hotkey = hotkey24;
+            this.hiPan.Hotkey = hotkey25;
             this.hiPan.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiPan.Location = new System.Drawing.Point(453, 181);
-            this.hiPan.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.hiPan.Margin = new System.Windows.Forms.Padding(4);
             this.hiPan.Name = "hiPan";
             this.hiPan.RequireModifier = false;
             this.hiPan.Size = new System.Drawing.Size(159, 22);
@@ -1068,10 +1077,10 @@ namespace gInk
             // 
             this.hiPointer.BackColor = System.Drawing.Color.White;
             this.hiPointer.ExternalConflictFlag = false;
-            this.hiPointer.Hotkey = hotkey25;
+            this.hiPointer.Hotkey = hotkey26;
             this.hiPointer.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiPointer.Location = new System.Drawing.Point(453, 215);
-            this.hiPointer.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.hiPointer.Margin = new System.Windows.Forms.Padding(4);
             this.hiPointer.Name = "hiPointer";
             this.hiPointer.RequireModifier = false;
             this.hiPointer.Size = new System.Drawing.Size(159, 22);
@@ -1084,10 +1093,10 @@ namespace gInk
             // 
             this.hiRedo.BackColor = System.Drawing.Color.White;
             this.hiRedo.ExternalConflictFlag = false;
-            this.hiRedo.Hotkey = hotkey26;
+            this.hiRedo.Hotkey = hotkey27;
             this.hiRedo.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiRedo.Location = new System.Drawing.Point(453, 348);
-            this.hiRedo.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.hiRedo.Margin = new System.Windows.Forms.Padding(4);
             this.hiRedo.Name = "hiRedo";
             this.hiRedo.RequireModifier = false;
             this.hiRedo.Size = new System.Drawing.Size(159, 22);
@@ -1099,10 +1108,10 @@ namespace gInk
             // 
             this.hiUndo.BackColor = System.Drawing.Color.White;
             this.hiUndo.ExternalConflictFlag = false;
-            this.hiUndo.Hotkey = hotkey27;
+            this.hiUndo.Hotkey = hotkey28;
             this.hiUndo.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiUndo.Location = new System.Drawing.Point(453, 315);
-            this.hiUndo.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.hiUndo.Margin = new System.Windows.Forms.Padding(4);
             this.hiUndo.Name = "hiUndo";
             this.hiUndo.RequireModifier = false;
             this.hiUndo.Size = new System.Drawing.Size(159, 22);
@@ -1114,10 +1123,10 @@ namespace gInk
             // 
             this.hiEraser.BackColor = System.Drawing.Color.White;
             this.hiEraser.ExternalConflictFlag = false;
-            this.hiEraser.Hotkey = hotkey28;
+            this.hiEraser.Hotkey = hotkey29;
             this.hiEraser.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiEraser.Location = new System.Drawing.Point(453, 148);
-            this.hiEraser.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.hiEraser.Margin = new System.Windows.Forms.Padding(4);
             this.hiEraser.Name = "hiEraser";
             this.hiEraser.RequireModifier = false;
             this.hiEraser.Size = new System.Drawing.Size(159, 22);
@@ -1129,10 +1138,10 @@ namespace gInk
             // 
             this.hiGlobal.BackColor = System.Drawing.Color.White;
             this.hiGlobal.ExternalConflictFlag = false;
-            this.hiGlobal.Hotkey = hotkey29;
+            this.hiGlobal.Hotkey = hotkey30;
             this.hiGlobal.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiGlobal.Location = new System.Drawing.Point(25, 48);
-            this.hiGlobal.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.hiGlobal.Margin = new System.Windows.Forms.Padding(4);
             this.hiGlobal.Name = "hiGlobal";
             this.hiGlobal.RequireModifier = true;
             this.hiGlobal.Size = new System.Drawing.Size(159, 22);
@@ -1147,7 +1156,7 @@ namespace gInk
             this.OptObsRecord.AutoSize = true;
             this.OptObsRecord.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.OptObsRecord.Location = new System.Drawing.Point(81, 65);
-            this.OptObsRecord.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.OptObsRecord.Margin = new System.Windows.Forms.Padding(4);
             this.OptObsRecord.Name = "OptObsRecord";
             this.OptObsRecord.Size = new System.Drawing.Size(140, 21);
             this.OptObsRecord.TabIndex = 0;
@@ -1160,7 +1169,7 @@ namespace gInk
             // 
             this.InverseWheelCb.AutoSize = true;
             this.InverseWheelCb.Location = new System.Drawing.Point(57, 482);
-            this.InverseWheelCb.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.InverseWheelCb.Margin = new System.Windows.Forms.Padding(4);
             this.InverseWheelCb.Name = "InverseWheelCb";
             this.InverseWheelCb.Size = new System.Drawing.Size(209, 55);
             this.InverseWheelCb.TabIndex = 17;
@@ -1235,7 +1244,7 @@ namespace gInk
             // FfmpegCmdTxt
             // 
             this.FfmpegCmdTxt.Location = new System.Drawing.Point(257, 342);
-            this.FfmpegCmdTxt.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.FfmpegCmdTxt.Margin = new System.Windows.Forms.Padding(4);
             this.FfmpegCmdTxt.Name = "FfmpegCmdTxt";
             this.FfmpegCmdTxt.Size = new System.Drawing.Size(684, 22);
             this.FfmpegCmdTxt.TabIndex = 11;
@@ -1254,7 +1263,7 @@ namespace gInk
             // WsPwdTxt
             // 
             this.WsPwdTxt.Location = new System.Drawing.Point(257, 170);
-            this.WsPwdTxt.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.WsPwdTxt.Margin = new System.Windows.Forms.Padding(4);
             this.WsPwdTxt.Name = "WsPwdTxt";
             this.WsPwdTxt.Size = new System.Drawing.Size(132, 22);
             this.WsPwdTxt.TabIndex = 9;
@@ -1276,7 +1285,7 @@ namespace gInk
             this.OptNoVideo.Checked = true;
             this.OptNoVideo.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.OptNoVideo.Location = new System.Drawing.Point(81, 21);
-            this.OptNoVideo.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.OptNoVideo.Margin = new System.Windows.Forms.Padding(4);
             this.OptNoVideo.Name = "OptNoVideo";
             this.OptNoVideo.Size = new System.Drawing.Size(174, 21);
             this.OptNoVideo.TabIndex = 7;
@@ -1300,7 +1309,7 @@ namespace gInk
             // WsUrlTxt
             // 
             this.WsUrlTxt.Location = new System.Drawing.Point(257, 138);
-            this.WsUrlTxt.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.WsUrlTxt.Margin = new System.Windows.Forms.Padding(4);
             this.WsUrlTxt.Name = "WsUrlTxt";
             this.WsUrlTxt.Size = new System.Drawing.Size(92, 22);
             this.WsUrlTxt.TabIndex = 5;
@@ -1320,7 +1329,7 @@ namespace gInk
             this.OptFfmpeg.AutoSize = true;
             this.OptFfmpeg.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.OptFfmpeg.Location = new System.Drawing.Point(81, 297);
-            this.OptFfmpeg.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.OptFfmpeg.Margin = new System.Windows.Forms.Padding(4);
             this.OptFfmpeg.Name = "OptFfmpeg";
             this.OptFfmpeg.Size = new System.Drawing.Size(165, 21);
             this.OptFfmpeg.TabIndex = 2;
@@ -1334,7 +1343,7 @@ namespace gInk
             this.OptObsBcast.AutoSize = true;
             this.OptObsBcast.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.OptObsBcast.Location = new System.Drawing.Point(81, 94);
-            this.OptObsBcast.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.OptObsBcast.Margin = new System.Windows.Forms.Padding(4);
             this.OptObsBcast.Name = "OptObsBcast";
             this.OptObsBcast.Size = new System.Drawing.Size(161, 21);
             this.OptObsBcast.TabIndex = 1;
@@ -1358,10 +1367,10 @@ namespace gInk
             this.VideoTab.Controls.Add(this.OptObsBcast);
             this.VideoTab.Controls.Add(this.OptObsRecord);
             this.VideoTab.Location = new System.Drawing.Point(4, 25);
-            this.VideoTab.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.VideoTab.Margin = new System.Windows.Forms.Padding(4);
             this.VideoTab.Name = "VideoTab";
-            this.VideoTab.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.VideoTab.Size = new System.Drawing.Size(1025, 644);
+            this.VideoTab.Padding = new System.Windows.Forms.Padding(4);
+            this.VideoTab.Size = new System.Drawing.Size(1025, 700);
             this.VideoTab.TabIndex = 3;
             this.VideoTab.Text = "Video";
             this.VideoTab.UseVisualStyleBackColor = true;
@@ -1387,7 +1396,7 @@ namespace gInk
             "2 - Frozen Area",
             "3 - Both"});
             this.ZoomEnabledCb.Location = new System.Drawing.Point(295, 96);
-            this.ZoomEnabledCb.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ZoomEnabledCb.Margin = new System.Windows.Forms.Padding(4);
             this.ZoomEnabledCb.Name = "ZoomEnabledCb";
             this.ZoomEnabledCb.Size = new System.Drawing.Size(43, 24);
             this.ZoomEnabledCb.TabIndex = 48;
@@ -1417,7 +1426,7 @@ namespace gInk
             // 
             this.ZoomContinousCb.AutoSize = true;
             this.ZoomContinousCb.Location = new System.Drawing.Point(143, 52);
-            this.ZoomContinousCb.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ZoomContinousCb.Margin = new System.Windows.Forms.Padding(4);
             this.ZoomContinousCb.Name = "ZoomContinousCb";
             this.ZoomContinousCb.Size = new System.Drawing.Size(93, 21);
             this.ZoomContinousCb.TabIndex = 4;
@@ -1429,7 +1438,7 @@ namespace gInk
             // ZoomScaleEd
             // 
             this.ZoomScaleEd.Location = new System.Drawing.Point(85, 48);
-            this.ZoomScaleEd.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ZoomScaleEd.Margin = new System.Windows.Forms.Padding(4);
             this.ZoomScaleEd.Name = "ZoomScaleEd";
             this.ZoomScaleEd.Size = new System.Drawing.Size(44, 22);
             this.ZoomScaleEd.TabIndex = 3;
@@ -1438,7 +1447,7 @@ namespace gInk
             // ZoomHeightEd
             // 
             this.ZoomHeightEd.Location = new System.Drawing.Point(163, 17);
-            this.ZoomHeightEd.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ZoomHeightEd.Margin = new System.Windows.Forms.Padding(4);
             this.ZoomHeightEd.Name = "ZoomHeightEd";
             this.ZoomHeightEd.Size = new System.Drawing.Size(68, 22);
             this.ZoomHeightEd.TabIndex = 2;
@@ -1457,7 +1466,7 @@ namespace gInk
             // ZoomWidthEd
             // 
             this.ZoomWidthEd.Location = new System.Drawing.Point(61, 17);
-            this.ZoomWidthEd.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ZoomWidthEd.Margin = new System.Windows.Forms.Padding(4);
             this.ZoomWidthEd.Name = "ZoomWidthEd";
             this.ZoomWidthEd.Size = new System.Drawing.Size(68, 22);
             this.ZoomWidthEd.TabIndex = 0;
@@ -1473,9 +1482,9 @@ namespace gInk
             this.ZoomBox.Controls.Add(this.label1);
             this.ZoomBox.Controls.Add(this.ZoomWidthEd);
             this.ZoomBox.Location = new System.Drawing.Point(611, 452);
-            this.ZoomBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ZoomBox.Margin = new System.Windows.Forms.Padding(4);
             this.ZoomBox.Name = "ZoomBox";
-            this.ZoomBox.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ZoomBox.Padding = new System.Windows.Forms.Padding(4);
             this.ZoomBox.Size = new System.Drawing.Size(260, 76);
             this.ZoomBox.TabIndex = 46;
             this.ZoomBox.TabStop = false;
@@ -1486,7 +1495,7 @@ namespace gInk
             this.ToolbarOrientationBtn.BackgroundImage = global::gInk.Properties.Resources.toolbar2Left;
             this.ToolbarOrientationBtn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ToolbarOrientationBtn.Location = new System.Drawing.Point(11, 100);
-            this.ToolbarOrientationBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ToolbarOrientationBtn.Margin = new System.Windows.Forms.Padding(4);
             this.ToolbarOrientationBtn.Name = "ToolbarOrientationBtn";
             this.ToolbarOrientationBtn.Size = new System.Drawing.Size(69, 64);
             this.ToolbarOrientationBtn.TabIndex = 45;
@@ -1497,7 +1506,7 @@ namespace gInk
             // 
             this.cbLoadSaveEnabled.AutoSize = true;
             this.cbLoadSaveEnabled.Location = new System.Drawing.Point(660, 100);
-            this.cbLoadSaveEnabled.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cbLoadSaveEnabled.Margin = new System.Windows.Forms.Padding(4);
             this.cbLoadSaveEnabled.Name = "cbLoadSaveEnabled";
             this.cbLoadSaveEnabled.Size = new System.Drawing.Size(18, 17);
             this.cbLoadSaveEnabled.TabIndex = 44;
@@ -1517,7 +1526,7 @@ namespace gInk
             // TagFontBtn
             // 
             this.TagFontBtn.Location = new System.Drawing.Point(861, 319);
-            this.TagFontBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.TagFontBtn.Margin = new System.Windows.Forms.Padding(4);
             this.TagFontBtn.Name = "TagFontBtn";
             this.TagFontBtn.Size = new System.Drawing.Size(148, 28);
             this.TagFontBtn.TabIndex = 42;
@@ -1532,7 +1541,7 @@ namespace gInk
             this.Clip3Btn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.Clip3Btn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.Clip3Btn.Location = new System.Drawing.Point(157, 59);
-            this.Clip3Btn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Clip3Btn.Margin = new System.Windows.Forms.Padding(4);
             this.Clip3Btn.Name = "Clip3Btn";
             this.Clip3Btn.Size = new System.Drawing.Size(35, 32);
             this.Clip3Btn.TabIndex = 41;
@@ -1549,7 +1558,7 @@ namespace gInk
             this.Clip2Btn.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Aqua;
             this.Clip2Btn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.Clip2Btn.Location = new System.Drawing.Point(157, 27);
-            this.Clip2Btn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Clip2Btn.Margin = new System.Windows.Forms.Padding(4);
             this.Clip2Btn.Name = "Clip2Btn";
             this.Clip2Btn.Size = new System.Drawing.Size(35, 32);
             this.Clip2Btn.TabIndex = 40;
@@ -1564,7 +1573,7 @@ namespace gInk
             this.Clip1Btn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.Clip1Btn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.Clip1Btn.Location = new System.Drawing.Point(124, 59);
-            this.Clip1Btn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Clip1Btn.Margin = new System.Windows.Forms.Padding(4);
             this.Clip1Btn.Name = "Clip1Btn";
             this.Clip1Btn.Size = new System.Drawing.Size(35, 32);
             this.Clip1Btn.TabIndex = 39;
@@ -1575,7 +1584,7 @@ namespace gInk
             // ClipartsSelBtn
             // 
             this.ClipartsSelBtn.Location = new System.Drawing.Point(128, 95);
-            this.ClipartsSelBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ClipartsSelBtn.Margin = new System.Windows.Forms.Padding(4);
             this.ClipartsSelBtn.Name = "ClipartsSelBtn";
             this.ClipartsSelBtn.Size = new System.Drawing.Size(64, 28);
             this.ClipartsSelBtn.TabIndex = 38;
@@ -1587,7 +1596,7 @@ namespace gInk
             // 
             this.AltTabActivateCb.AutoSize = true;
             this.AltTabActivateCb.Location = new System.Drawing.Point(611, 423);
-            this.AltTabActivateCb.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.AltTabActivateCb.Margin = new System.Windows.Forms.Padding(4);
             this.AltTabActivateCb.Name = "AltTabActivateCb";
             this.AltTabActivateCb.Size = new System.Drawing.Size(302, 21);
             this.AltTabActivateCb.TabIndex = 37;
@@ -1613,9 +1622,9 @@ namespace gInk
             this.BoardBx.Controls.Add(this.panel2);
             this.BoardBx.Controls.Add(this.BoardAtOpenLbl);
             this.BoardBx.Location = new System.Drawing.Point(65, 384);
-            this.BoardBx.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.BoardBx.Margin = new System.Windows.Forms.Padding(4);
             this.BoardBx.Name = "BoardBx";
-            this.BoardBx.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.BoardBx.Padding = new System.Windows.Forms.Padding(4);
             this.BoardBx.Size = new System.Drawing.Size(481, 91);
             this.BoardBx.TabIndex = 35;
             this.BoardBx.TabStop = false;
@@ -1632,7 +1641,7 @@ namespace gInk
             "Black",
             "Last Selected"});
             this.BoardAtOpenCombo.Location = new System.Drawing.Point(285, 17);
-            this.BoardAtOpenCombo.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.BoardAtOpenCombo.Margin = new System.Windows.Forms.Padding(4);
             this.BoardAtOpenCombo.Name = "BoardAtOpenCombo";
             this.BoardAtOpenCombo.Size = new System.Drawing.Size(175, 24);
             this.BoardAtOpenCombo.TabIndex = 38;
@@ -1653,7 +1662,7 @@ namespace gInk
             this.panel2.BackgroundImage = global::gInk.Properties.Resources.cellbackground;
             this.panel2.Controls.Add(this.BoardCustColorPnl);
             this.panel2.Location = new System.Drawing.Point(285, 55);
-            this.panel2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.panel2.Margin = new System.Windows.Forms.Padding(4);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(176, 32);
             this.panel2.TabIndex = 36;
@@ -1662,7 +1671,7 @@ namespace gInk
             // 
             this.BoardCustColorPnl.BackColor = System.Drawing.SystemColors.Highlight;
             this.BoardCustColorPnl.Location = new System.Drawing.Point(0, 0);
-            this.BoardCustColorPnl.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.BoardCustColorPnl.Margin = new System.Windows.Forms.Padding(4);
             this.BoardCustColorPnl.Name = "BoardCustColorPnl";
             this.BoardCustColorPnl.Size = new System.Drawing.Size(176, 32);
             this.BoardCustColorPnl.TabIndex = 0;
@@ -1686,7 +1695,7 @@ namespace gInk
             "Arrow",
             "Pen tip"});
             this.comboCanvasCursor.Location = new System.Drawing.Point(745, 178);
-            this.comboCanvasCursor.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.comboCanvasCursor.Margin = new System.Windows.Forms.Padding(4);
             this.comboCanvasCursor.Name = "comboCanvasCursor";
             this.comboCanvasCursor.Size = new System.Drawing.Size(263, 24);
             this.comboCanvasCursor.TabIndex = 6;
@@ -1696,7 +1705,7 @@ namespace gInk
             // 
             this.cbEraserEnabled.AutoSize = true;
             this.cbEraserEnabled.Location = new System.Drawing.Point(213, 100);
-            this.cbEraserEnabled.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cbEraserEnabled.Margin = new System.Windows.Forms.Padding(4);
             this.cbEraserEnabled.Name = "cbEraserEnabled";
             this.cbEraserEnabled.Size = new System.Drawing.Size(18, 17);
             this.cbEraserEnabled.TabIndex = 0;
@@ -1717,7 +1726,7 @@ namespace gInk
             // 
             this.cbWidthEnabled.AutoSize = true;
             this.cbWidthEnabled.Location = new System.Drawing.Point(397, 100);
-            this.cbWidthEnabled.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cbWidthEnabled.Margin = new System.Windows.Forms.Padding(4);
             this.cbWidthEnabled.Name = "cbWidthEnabled";
             this.cbWidthEnabled.Size = new System.Drawing.Size(18, 17);
             this.cbWidthEnabled.TabIndex = 0;
@@ -1727,7 +1736,7 @@ namespace gInk
             // lbNote
             // 
             this.lbNote.AutoSize = true;
-            this.lbNote.Location = new System.Drawing.Point(61, 514);
+            this.lbNote.Location = new System.Drawing.Point(59, 585);
             this.lbNote.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lbNote.Name = "lbNote";
             this.lbNote.Size = new System.Drawing.Size(418, 17);
@@ -1738,7 +1747,7 @@ namespace gInk
             // 
             this.cbPointerEnabled.AutoSize = true;
             this.cbPointerEnabled.Location = new System.Drawing.Point(351, 100);
-            this.cbPointerEnabled.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cbPointerEnabled.Margin = new System.Windows.Forms.Padding(4);
             this.cbPointerEnabled.Name = "cbPointerEnabled";
             this.cbPointerEnabled.Size = new System.Drawing.Size(18, 17);
             this.cbPointerEnabled.TabIndex = 0;
@@ -1760,7 +1769,7 @@ namespace gInk
             // 
             this.cbSnapEnabled.AutoSize = true;
             this.cbSnapEnabled.Location = new System.Drawing.Point(507, 100);
-            this.cbSnapEnabled.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cbSnapEnabled.Margin = new System.Windows.Forms.Padding(4);
             this.cbSnapEnabled.Name = "cbSnapEnabled";
             this.cbSnapEnabled.Size = new System.Drawing.Size(18, 17);
             this.cbSnapEnabled.TabIndex = 0;
@@ -1771,7 +1780,7 @@ namespace gInk
             // 
             this.cbUndoEnabled.AutoSize = true;
             this.cbUndoEnabled.Location = new System.Drawing.Point(565, 100);
-            this.cbUndoEnabled.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cbUndoEnabled.Margin = new System.Windows.Forms.Padding(4);
             this.cbUndoEnabled.Name = "cbUndoEnabled";
             this.cbUndoEnabled.Size = new System.Drawing.Size(18, 17);
             this.cbUndoEnabled.TabIndex = 0;
@@ -1782,7 +1791,7 @@ namespace gInk
             // 
             this.cbClearEnabled.AutoSize = true;
             this.cbClearEnabled.Location = new System.Drawing.Point(617, 100);
-            this.cbClearEnabled.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cbClearEnabled.Margin = new System.Windows.Forms.Padding(4);
             this.cbClearEnabled.Name = "cbClearEnabled";
             this.cbClearEnabled.Size = new System.Drawing.Size(18, 17);
             this.cbClearEnabled.TabIndex = 0;
@@ -1803,7 +1812,7 @@ namespace gInk
             // 
             this.cbWhiteIcon.AutoSize = true;
             this.cbWhiteIcon.Location = new System.Drawing.Point(611, 389);
-            this.cbWhiteIcon.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cbWhiteIcon.Margin = new System.Windows.Forms.Padding(4);
             this.cbWhiteIcon.Name = "cbWhiteIcon";
             this.cbWhiteIcon.Size = new System.Drawing.Size(149, 21);
             this.cbWhiteIcon.TabIndex = 0;
@@ -1814,7 +1823,7 @@ namespace gInk
             // tbSnapPath
             // 
             this.tbSnapPath.Location = new System.Drawing.Point(237, 219);
-            this.tbSnapPath.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tbSnapPath.Margin = new System.Windows.Forms.Padding(4);
             this.tbSnapPath.Name = "tbSnapPath";
             this.tbSnapPath.Size = new System.Drawing.Size(272, 22);
             this.tbSnapPath.TabIndex = 1;
@@ -1823,6 +1832,8 @@ namespace gInk
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.tabPage1.Controls.Add(this.MeasureEnabledCb);
+            this.tabPage1.Controls.Add(this.MeasurementBox);
             this.tabPage1.Controls.Add(this.PensOnTwoLinesCb);
             this.tabPage1.Controls.Add(this.CaptStrokesOnlyCb);
             this.tabPage1.Controls.Add(this.APIRestLbl);
@@ -1877,15 +1888,111 @@ namespace gInk
             this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Margin = new System.Windows.Forms.Padding(0);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Size = new System.Drawing.Size(1025, 644);
+            this.tabPage1.Size = new System.Drawing.Size(1025, 700);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "General";
+            // 
+            // MeasureEnabledCb
+            // 
+            this.MeasureEnabledCb.AutoSize = true;
+            this.MeasureEnabledCb.Location = new System.Drawing.Point(536, 482);
+            this.MeasureEnabledCb.Name = "MeasureEnabledCb";
+            this.MeasureEnabledCb.Size = new System.Drawing.Size(18, 17);
+            this.MeasureEnabledCb.TabIndex = 56;
+            this.MeasureEnabledCb.UseVisualStyleBackColor = true;
+            this.MeasureEnabledCb.CheckedChanged += new System.EventHandler(this.MeasureEnabledCb_CheckedChanged);
+            // 
+            // MeasurementBox
+            // 
+            this.MeasurementBox.Controls.Add(this.Measure2DigEd);
+            this.MeasurementBox.Controls.Add(this.label3);
+            this.MeasurementBox.Controls.Add(this.MeasureAngleCb);
+            this.MeasurementBox.Controls.Add(this.Measuse1Lbl);
+            this.MeasurementBox.Controls.Add(this.Measure2UnitEd);
+            this.MeasurementBox.Controls.Add(this.Measure2ScaleEd);
+            this.MeasurementBox.Location = new System.Drawing.Point(65, 483);
+            this.MeasurementBox.Name = "MeasurementBox";
+            this.MeasurementBox.Size = new System.Drawing.Size(480, 64);
+            this.MeasurementBox.TabIndex = 55;
+            this.MeasurementBox.TabStop = false;
+            this.MeasurementBox.Text = "Measurement  Tools";
+            // 
+            // Measure2DigEd
+            // 
+            this.Measure2DigEd.Location = new System.Drawing.Point(174, 25);
+            this.Measure2DigEd.Name = "Measure2DigEd";
+            this.Measure2DigEd.Size = new System.Drawing.Size(18, 22);
+            this.Measure2DigEd.TabIndex = 57;
+            this.Measure2DigEd.Text = "9";
+            this.Measure2DigEd.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.Measure2DigEd.Validating += new System.ComponentModel.CancelEventHandler(this.Measure2DigEd_Validating);
+            this.Measure2DigEd.Validated += new System.EventHandler(this.Measure2DigEd_Validated);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(162, 28);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(42, 17);
+            this.label3.TabIndex = 57;
+            this.label3.Text = "(      )";
+            // 
+            // MeasureAngleCb
+            // 
+            this.MeasureAngleCb.AutoSize = true;
+            this.MeasureAngleCb.Location = new System.Drawing.Point(286, 27);
+            this.MeasureAngleCb.Name = "MeasureAngleCb";
+            this.MeasureAngleCb.Size = new System.Drawing.Size(177, 21);
+            this.MeasureAngleCb.TabIndex = 3;
+            this.MeasureAngleCb.Text = "Angle counterclockwise";
+            this.MeasureAngleCb.UseVisualStyleBackColor = true;
+            this.MeasureAngleCb.CheckedChanged += new System.EventHandler(this.MeasureAngleCb_CheckedChanged);
+            // 
+            // Measuse1Lbl
+            // 
+            this.Measuse1Lbl.AutoSize = true;
+            this.Measuse1Lbl.Location = new System.Drawing.Point(10, 28);
+            this.Measuse1Lbl.Name = "Measuse1Lbl";
+            this.Measuse1Lbl.Size = new System.Drawing.Size(65, 17);
+            this.Measuse1Lbl.TabIndex = 2;
+            this.Measuse1Lbl.Text = "1 Pixel = ";
+            // 
+            // Measure2UnitEd
+            // 
+            this.Measure2UnitEd.Location = new System.Drawing.Point(208, 25);
+            this.Measure2UnitEd.Name = "Measure2UnitEd";
+            this.Measure2UnitEd.Size = new System.Drawing.Size(44, 22);
+            this.Measure2UnitEd.TabIndex = 1;
+            this.Measure2UnitEd.Text = "Pixel";
+            this.Measure2UnitEd.TextChanged += new System.EventHandler(this.Measure2UnitEd_TextChanged);
+            // 
+            // Measure2ScaleEd
+            // 
+            this.Measure2ScaleEd.Location = new System.Drawing.Point(92, 25);
+            this.Measure2ScaleEd.Name = "Measure2ScaleEd";
+            this.Measure2ScaleEd.Size = new System.Drawing.Size(70, 22);
+            this.Measure2ScaleEd.TabIndex = 0;
+            this.Measure2ScaleEd.Text = "000.000";
+            this.Measure2ScaleEd.Validating += new System.ComponentModel.CancelEventHandler(this.Float_Validating);
+            this.Measure2ScaleEd.Validated += new System.EventHandler(this.Measure2ScaleEd_Validated);
+            // 
+            // PensOnTwoLinesCb
+            // 
+            this.PensOnTwoLinesCb.AutoSize = true;
+            this.PensOnTwoLinesCb.Location = new System.Drawing.Point(101, 153);
+            this.PensOnTwoLinesCb.Margin = new System.Windows.Forms.Padding(4);
+            this.PensOnTwoLinesCb.Name = "PensOnTwoLinesCb";
+            this.PensOnTwoLinesCb.Size = new System.Drawing.Size(145, 21);
+            this.PensOnTwoLinesCb.TabIndex = 54;
+            this.PensOnTwoLinesCb.Text = "Pens on two Lines";
+            this.PensOnTwoLinesCb.UseVisualStyleBackColor = true;
+            this.PensOnTwoLinesCb.CheckedChanged += new System.EventHandler(this.PensOnTwoLinesCb_CheckedChanged);
             // 
             // CaptStrokesOnlyCb
             // 
             this.CaptStrokesOnlyCb.AutoSize = true;
             this.CaptStrokesOnlyCb.Location = new System.Drawing.Point(611, 257);
-            this.CaptStrokesOnlyCb.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.CaptStrokesOnlyCb.Margin = new System.Windows.Forms.Padding(4);
             this.CaptStrokesOnlyCb.Name = "CaptStrokesOnlyCb";
             this.CaptStrokesOnlyCb.Size = new System.Drawing.Size(165, 21);
             this.CaptStrokesOnlyCb.TabIndex = 53;
@@ -1896,7 +2003,7 @@ namespace gInk
             // APIRestLbl
             // 
             this.APIRestLbl.AutoSize = true;
-            this.APIRestLbl.Location = new System.Drawing.Point(61, 487);
+            this.APIRestLbl.Location = new System.Drawing.Point(607, 548);
             this.APIRestLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.APIRestLbl.Name = "APIRestLbl";
             this.APIRestLbl.Size = new System.Drawing.Size(109, 17);
@@ -1905,10 +2012,10 @@ namespace gInk
             // 
             // APIRestEd
             // 
-            this.APIRestEd.Location = new System.Drawing.Point(237, 482);
-            this.APIRestEd.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.APIRestEd.Location = new System.Drawing.Point(791, 545);
+            this.APIRestEd.Margin = new System.Windows.Forms.Padding(4);
             this.APIRestEd.Name = "APIRestEd";
-            this.APIRestEd.Size = new System.Drawing.Size(308, 22);
+            this.APIRestEd.Size = new System.Drawing.Size(219, 22);
             this.APIRestEd.TabIndex = 51;
             this.APIRestEd.Text = "http://localhost:7999";
             this.APIRestEd.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.APIRestEd_KeyPress);
@@ -1917,7 +2024,7 @@ namespace gInk
             // ActivateDbgWinBtn
             // 
             this.ActivateDbgWinBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ActivateDbgWinBtn.Location = new System.Drawing.Point(955, 550);
+            this.ActivateDbgWinBtn.Location = new System.Drawing.Point(952, 577);
             this.ActivateDbgWinBtn.Margin = new System.Windows.Forms.Padding(0);
             this.ActivateDbgWinBtn.Name = "ActivateDbgWinBtn";
             this.ActivateDbgWinBtn.Size = new System.Drawing.Size(68, 32);
@@ -1930,7 +2037,7 @@ namespace gInk
             // 
             this.SubToolsBar_cb.AutoSize = true;
             this.SubToolsBar_cb.Location = new System.Drawing.Point(101, 128);
-            this.SubToolsBar_cb.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.SubToolsBar_cb.Margin = new System.Windows.Forms.Padding(4);
             this.SubToolsBar_cb.Name = "SubToolsBar_cb";
             this.SubToolsBar_cb.Size = new System.Drawing.Size(200, 21);
             this.SubToolsBar_cb.TabIndex = 49;
@@ -1946,9 +2053,9 @@ namespace gInk
             this.ArrwGrp.Controls.Add(this.ArrHdLenLbl);
             this.ArrwGrp.Controls.Add(this.DefArrStartCb);
             this.ArrwGrp.Location = new System.Drawing.Point(63, 289);
-            this.ArrwGrp.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ArrwGrp.Margin = new System.Windows.Forms.Padding(4);
             this.ArrwGrp.Name = "ArrwGrp";
-            this.ArrwGrp.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ArrwGrp.Padding = new System.Windows.Forms.Padding(4);
             this.ArrwGrp.Size = new System.Drawing.Size(484, 87);
             this.ArrwGrp.TabIndex = 30;
             this.ArrwGrp.TabStop = false;
@@ -1957,13 +2064,13 @@ namespace gInk
             // ArrHdAperture
             // 
             this.ArrHdAperture.Location = new System.Drawing.Point(96, 23);
-            this.ArrHdAperture.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ArrHdAperture.Margin = new System.Windows.Forms.Padding(4);
             this.ArrHdAperture.Name = "ArrHdAperture";
             this.ArrHdAperture.Size = new System.Drawing.Size(48, 22);
             this.ArrHdAperture.TabIndex = 13;
             this.ArrHdAperture.Text = "12.1";
             this.ArrHdAperture.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ValidateOnEnter);
-            this.ArrHdAperture.Validating += new System.ComponentModel.CancelEventHandler(this.ArrHdFloat_Validating);
+            this.ArrHdAperture.Validating += new System.ComponentModel.CancelEventHandler(this.Float_Validating);
             this.ArrHdAperture.Validated += new System.EventHandler(this.ArrHdAperture_Validated);
             // 
             // ArrHdAptLbl
@@ -1979,13 +2086,13 @@ namespace gInk
             // ArrHdLength
             // 
             this.ArrHdLength.Location = new System.Drawing.Point(385, 23);
-            this.ArrHdLength.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ArrHdLength.Margin = new System.Windows.Forms.Padding(4);
             this.ArrHdLength.Name = "ArrHdLength";
             this.ArrHdLength.Size = new System.Drawing.Size(68, 22);
             this.ArrHdLength.TabIndex = 15;
             this.ArrHdLength.Text = "0.123456";
             this.ArrHdLength.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ValidateOnEnter);
-            this.ArrHdLength.Validating += new System.ComponentModel.CancelEventHandler(this.ArrHdFloat_Validating);
+            this.ArrHdLength.Validating += new System.ComponentModel.CancelEventHandler(this.Float_Validating);
             this.ArrHdLength.Validated += new System.EventHandler(this.ArrHdLength_Validated);
             // 
             // ArrHdLenLbl
@@ -2002,7 +2109,7 @@ namespace gInk
             // 
             this.DefArrStartCb.AutoSize = true;
             this.DefArrStartCb.Location = new System.Drawing.Point(8, 57);
-            this.DefArrStartCb.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.DefArrStartCb.Margin = new System.Windows.Forms.Padding(4);
             this.DefArrStartCb.Name = "DefArrStartCb";
             this.DefArrStartCb.Size = new System.Drawing.Size(203, 21);
             this.DefArrStartCb.TabIndex = 22;
@@ -2014,13 +2121,13 @@ namespace gInk
             // 
             this.ToolBarHeight.AcceptsReturn = true;
             this.ToolBarHeight.Location = new System.Drawing.Point(773, 44);
-            this.ToolBarHeight.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ToolBarHeight.Margin = new System.Windows.Forms.Padding(4);
             this.ToolBarHeight.Name = "ToolBarHeight";
             this.ToolBarHeight.Size = new System.Drawing.Size(68, 22);
             this.ToolBarHeight.TabIndex = 27;
             this.ToolBarHeight.Text = "0.123456";
             this.ToolBarHeight.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ValidateOnEnter);
-            this.ToolBarHeight.Validating += new System.ComponentModel.CancelEventHandler(this.ArrHdFloat_Validating);
+            this.ToolBarHeight.Validating += new System.ComponentModel.CancelEventHandler(this.Float_Validating);
             this.ToolBarHeight.Validated += new System.EventHandler(this.ToolBarHeight_Validated);
             // 
             // panel1
@@ -2028,7 +2135,7 @@ namespace gInk
             this.panel1.BackgroundImage = global::gInk.Properties.Resources.DblHeadArrowVert;
             this.panel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.panel1.Location = new System.Drawing.Point(740, 27);
-            this.panel1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.panel1.Margin = new System.Windows.Forms.Padding(4);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(25, 65);
             this.panel1.TabIndex = 26;
@@ -2037,7 +2144,7 @@ namespace gInk
             // 
             this.OpenIntoSnapCb.AutoSize = true;
             this.OpenIntoSnapCb.Location = new System.Drawing.Point(611, 225);
-            this.OpenIntoSnapCb.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.OpenIntoSnapCb.Margin = new System.Windows.Forms.Padding(4);
             this.OpenIntoSnapCb.Name = "OpenIntoSnapCb";
             this.OpenIntoSnapCb.Size = new System.Drawing.Size(400, 21);
             this.OpenIntoSnapCb.TabIndex = 25;
@@ -2048,13 +2155,13 @@ namespace gInk
             // Magnet_TB
             // 
             this.Magnet_TB.Location = new System.Drawing.Point(920, 358);
-            this.Magnet_TB.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Magnet_TB.Margin = new System.Windows.Forms.Padding(4);
             this.Magnet_TB.Name = "Magnet_TB";
             this.Magnet_TB.Size = new System.Drawing.Size(88, 22);
             this.Magnet_TB.TabIndex = 21;
             this.Magnet_TB.Text = "0.123456";
             this.Magnet_TB.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ValidateOnEnter);
-            this.Magnet_TB.Validating += new System.ComponentModel.CancelEventHandler(this.ArrHdFloat_Validating);
+            this.Magnet_TB.Validating += new System.ComponentModel.CancelEventHandler(this.Float_Validating);
             this.Magnet_TB.Validated += new System.EventHandler(this.Magnet_TB_Validated);
             // 
             // MagnetLbl
@@ -2071,7 +2178,7 @@ namespace gInk
             // 
             this.ShowFloatingWinCb.AutoSize = true;
             this.ShowFloatingWinCb.Location = new System.Drawing.Point(65, 257);
-            this.ShowFloatingWinCb.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ShowFloatingWinCb.Margin = new System.Windows.Forms.Padding(4);
             this.ShowFloatingWinCb.Name = "ShowFloatingWinCb";
             this.ShowFloatingWinCb.Size = new System.Drawing.Size(272, 21);
             this.ShowFloatingWinCb.TabIndex = 19;
@@ -2092,7 +2199,7 @@ namespace gInk
             // SaveConfigBtn
             // 
             this.SaveConfigBtn.Location = new System.Drawing.Point(880, 470);
-            this.SaveConfigBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.SaveConfigBtn.Margin = new System.Windows.Forms.Padding(4);
             this.SaveConfigBtn.Name = "SaveConfigBtn";
             this.SaveConfigBtn.Size = new System.Drawing.Size(131, 57);
             this.SaveConfigBtn.TabIndex = 17;
@@ -2103,7 +2210,7 @@ namespace gInk
             // DefaultFontBtn
             // 
             this.DefaultFontBtn.Location = new System.Drawing.Point(861, 283);
-            this.DefaultFontBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.DefaultFontBtn.Margin = new System.Windows.Forms.Padding(4);
             this.DefaultFontBtn.Name = "DefaultFontBtn";
             this.DefaultFontBtn.Size = new System.Drawing.Size(148, 28);
             this.DefaultFontBtn.TabIndex = 16;
@@ -2114,7 +2221,7 @@ namespace gInk
             // SaveWindowPosBtn
             // 
             this.SaveWindowPosBtn.Location = new System.Drawing.Point(351, 251);
-            this.SaveWindowPosBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.SaveWindowPosBtn.Margin = new System.Windows.Forms.Padding(4);
             this.SaveWindowPosBtn.Name = "SaveWindowPosBtn";
             this.SaveWindowPosBtn.Size = new System.Drawing.Size(196, 30);
             this.SaveWindowPosBtn.TabIndex = 10;
@@ -2126,7 +2233,7 @@ namespace gInk
             // 
             this.cbToolsEnabled.AutoSize = true;
             this.cbToolsEnabled.Location = new System.Drawing.Point(101, 100);
-            this.cbToolsEnabled.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cbToolsEnabled.Margin = new System.Windows.Forms.Padding(4);
             this.cbToolsEnabled.Name = "cbToolsEnabled";
             this.cbToolsEnabled.Size = new System.Drawing.Size(18, 17);
             this.cbToolsEnabled.TabIndex = 9;
@@ -2149,7 +2256,7 @@ namespace gInk
             this.ToolbarDwg.BackgroundImage = global::gInk.Properties.Resources.paneloption;
             this.ToolbarDwg.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ToolbarDwg.Location = new System.Drawing.Point(11, 27);
-            this.ToolbarDwg.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ToolbarDwg.Margin = new System.Windows.Forms.Padding(4);
             this.ToolbarDwg.Name = "ToolbarDwg";
             this.ToolbarDwg.Size = new System.Drawing.Size(721, 65);
             this.ToolbarDwg.TabIndex = 7;
@@ -2161,7 +2268,7 @@ namespace gInk
             this.comboLanguage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboLanguage.FormattingEnabled = true;
             this.comboLanguage.Location = new System.Drawing.Point(237, 182);
-            this.comboLanguage.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.comboLanguage.Margin = new System.Windows.Forms.Padding(4);
             this.comboLanguage.Name = "comboLanguage";
             this.comboLanguage.Size = new System.Drawing.Size(308, 24);
             this.comboLanguage.TabIndex = 6;
@@ -2171,7 +2278,7 @@ namespace gInk
             // 
             this.cbInkVisibleEnabled.AutoSize = true;
             this.cbInkVisibleEnabled.Location = new System.Drawing.Point(451, 100);
-            this.cbInkVisibleEnabled.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cbInkVisibleEnabled.Margin = new System.Windows.Forms.Padding(4);
             this.cbInkVisibleEnabled.Name = "cbInkVisibleEnabled";
             this.cbInkVisibleEnabled.Size = new System.Drawing.Size(18, 17);
             this.cbInkVisibleEnabled.TabIndex = 0;
@@ -2182,7 +2289,7 @@ namespace gInk
             // 
             this.cbPanEnabled.AutoSize = true;
             this.cbPanEnabled.Location = new System.Drawing.Point(259, 100);
-            this.cbPanEnabled.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cbPanEnabled.Margin = new System.Windows.Forms.Padding(4);
             this.cbPanEnabled.Name = "cbPanEnabled";
             this.cbPanEnabled.Size = new System.Drawing.Size(18, 17);
             this.cbPanEnabled.TabIndex = 0;
@@ -2193,7 +2300,7 @@ namespace gInk
             // 
             this.cbAllowDragging.AutoSize = true;
             this.cbAllowDragging.Location = new System.Drawing.Point(743, 102);
-            this.cbAllowDragging.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cbAllowDragging.Margin = new System.Windows.Forms.Padding(4);
             this.cbAllowDragging.Name = "cbAllowDragging";
             this.cbAllowDragging.Size = new System.Drawing.Size(264, 21);
             this.cbAllowDragging.TabIndex = 0;
@@ -2228,7 +2335,7 @@ namespace gInk
             this.VideoTabCtrl.Name = "VideoTabCtrl";
             this.VideoTabCtrl.Padding = new System.Drawing.Point(0, 0);
             this.VideoTabCtrl.SelectedIndex = 0;
-            this.VideoTabCtrl.Size = new System.Drawing.Size(1033, 673);
+            this.VideoTabCtrl.Size = new System.Drawing.Size(1033, 729);
             this.VideoTabCtrl.TabIndex = 8;
             // 
             // tabPage2
@@ -2254,10 +2361,10 @@ namespace gInk
             this.tabPage2.Controls.Add(this.FadingTimeEd);
             this.tabPage2.Controls.Add(this.WidthAtPenSelCb);
             this.tabPage2.Location = new System.Drawing.Point(4, 25);
-            this.tabPage2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPage2.Margin = new System.Windows.Forms.Padding(4);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.tabPage2.Size = new System.Drawing.Size(1025, 644);
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(4);
+            this.tabPage2.Size = new System.Drawing.Size(1025, 700);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Pens";
             // 
@@ -2265,7 +2372,7 @@ namespace gInk
             // 
             this.FitToCurveEd.AutoSize = true;
             this.FitToCurveEd.Location = new System.Drawing.Point(811, 498);
-            this.FitToCurveEd.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.FitToCurveEd.Margin = new System.Windows.Forms.Padding(4);
             this.FitToCurveEd.Name = "FitToCurveEd";
             this.FitToCurveEd.Size = new System.Drawing.Size(126, 21);
             this.FitToCurveEd.TabIndex = 18;
@@ -2346,7 +2453,7 @@ namespace gInk
             // FadingTimeEd
             // 
             this.FadingTimeEd.Location = new System.Drawing.Point(925, 18);
-            this.FadingTimeEd.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.FadingTimeEd.Margin = new System.Windows.Forms.Padding(4);
             this.FadingTimeEd.Name = "FadingTimeEd";
             this.FadingTimeEd.Size = new System.Drawing.Size(48, 22);
             this.FadingTimeEd.TabIndex = 1;
@@ -2356,7 +2463,7 @@ namespace gInk
             // 
             this.WidthAtPenSelCb.AutoSize = true;
             this.WidthAtPenSelCb.Location = new System.Drawing.Point(523, 490);
-            this.WidthAtPenSelCb.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.WidthAtPenSelCb.Margin = new System.Windows.Forms.Padding(4);
             this.WidthAtPenSelCb.Name = "WidthAtPenSelCb";
             this.WidthAtPenSelCb.Size = new System.Drawing.Size(216, 38);
             this.WidthAtPenSelCb.TabIndex = 0;
@@ -2364,27 +2471,15 @@ namespace gInk
             this.WidthAtPenSelCb.UseVisualStyleBackColor = true;
             this.WidthAtPenSelCb.CheckedChanged += new System.EventHandler(this.WidthAtPenSelCb_CheckedChanged);
             // 
-            // PensOnTwoLinesCb
-            // 
-            this.PensOnTwoLinesCb.AutoSize = true;
-            this.PensOnTwoLinesCb.Location = new System.Drawing.Point(101, 153);
-            this.PensOnTwoLinesCb.Margin = new System.Windows.Forms.Padding(4);
-            this.PensOnTwoLinesCb.Name = "PensOnTwoLinesCb";
-            this.PensOnTwoLinesCb.Size = new System.Drawing.Size(145, 21);
-            this.PensOnTwoLinesCb.TabIndex = 54;
-            this.PensOnTwoLinesCb.Text = "Pens on two Lines";
-            this.PensOnTwoLinesCb.UseVisualStyleBackColor = true;
-            this.PensOnTwoLinesCb.CheckedChanged += new System.EventHandler(this.PensOnTwoLinesCb_CheckedChanged);
-            // 
             // FormOptions
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.ClientSize = new System.Drawing.Size(1045, 683);
+            this.ClientSize = new System.Drawing.Size(1045, 738);
             this.Controls.Add(this.VideoTabCtrl);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.Name = "FormOptions";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -2404,6 +2499,8 @@ namespace gInk
             this.panel2.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
+            this.MeasurementBox.ResumeLayout(false);
+            this.MeasurementBox.PerformLayout();
             this.ArrwGrp.ResumeLayout(false);
             this.ArrwGrp.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ToolbarDwg)).EndInit();
@@ -2588,5 +2685,13 @@ namespace gInk
         private HotkeyInputBox hiPenWidthPlus;
         private System.Windows.Forms.CheckBox CaptStrokesOnlyCb;
         private System.Windows.Forms.CheckBox PensOnTwoLinesCb;
+        private System.Windows.Forms.GroupBox MeasurementBox;
+        private System.Windows.Forms.Label Measuse1Lbl;
+        private System.Windows.Forms.TextBox Measure2UnitEd;
+        private System.Windows.Forms.TextBox Measure2ScaleEd;
+        private System.Windows.Forms.CheckBox MeasureAngleCb;
+        private System.Windows.Forms.CheckBox MeasureEnabledCb;
+        private System.Windows.Forms.TextBox Measure2DigEd;
+        private System.Windows.Forms.Label label3;
     }
 }

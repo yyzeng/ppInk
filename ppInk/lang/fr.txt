@@ -54,6 +54,12 @@ OptionsZoomDim = "Dim."
 OptionsZoomScale = "Facteur"
 OptionsZoomContinous = "Continue"
 
+OptionMeasureGroup = "Outils de mesure"
+OptionMeasureLenLabel = "1 pixel ="
+OptionMeasureAngle = "sens trigonométrique"
+FormatLength = "Longueur : {0:N1} {1}"
+FormatAngle = "Angle : {0:N1}°"
+
 OptionsGeneralAPIRest = "URL Serveur REST"
 
 BoardTitle = "Effacer"

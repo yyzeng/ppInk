@@ -54,6 +54,11 @@ OptionsZoomDim = "Dim."
 OptionsZoomScale = "Scale"
 OptionsZoomContinous = "Continous"
 
+OptionMeasureGroup = "Measurement Tools"
+OptionMeasureLenLabel = "1 pixel ="
+OptionMeasureAngle = "Angle CounterClockwise"
+FormatLength = "Length : {0:N1} {1}"
+FormatAngle = "Angle : {0:N1}°"
 OptionsGeneralAPIRest = "REST server url"
 
 BoardTitle = "Clean Desktop"

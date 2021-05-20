@@ -15,6 +15,7 @@ using System.Text;
 using System.Security.Cryptography;
 using System.Reflection;
 using System.Drawing.Imaging;
+using System.Globalization;
 
 namespace gInk
 {
@@ -133,6 +134,8 @@ namespace gInk
         public List<string> PointerModeSnaps = new List<string>();
 
         public Button[] Btn_SubTools;
+
+        public ToolTip MetricToolTip = new ToolTip();
 
         // http://www.csharp411.com/hide-form-from-alttab/
         protected override CreateParams CreateParams
@@ -377,6 +380,10 @@ namespace gInk
         public void Initialize()
         {
             Console.WriteLine("A=" + (DateTime.Now.Ticks / 1e7).ToString());
+
+            MeasureNumberFormat = (NumberFormatInfo) NumberFormatInfo.CurrentInfo.Clone();
+            MeasureNumberFormat.NumberDecimalDigits = Root.Measure2Digits;
+
             Root.Snapping = 0;
             FadingList.Clear();
             if (Root.WindowRect.Width <= 0 || Root.WindowRect.Height <= 0)
@@ -522,12 +529,12 @@ namespace gInk
 
                 if (Root.PenEnabled[b])
                 {
-                    if(Root.PensOnTwoLines)
+                    if (Root.PensOnTwoLines)
                     {
                         btPen[b].Width = dim1s;
                         btPen[b].Height = dim1s;
 
-                        if(NextBelow)
+                        if (NextBelow)
                         {
                             SetSmallButtonNext(prev, btPen[b], dim2s);
                             NextBelow = false;
@@ -604,10 +611,10 @@ namespace gInk
                 SetSmallButtonNext(btClipArt, btClip1, dim2s);
                 try
                 {
-                    if((btClip1.Tag as ClipArtData).ImageStamp!= Root.ImageStamp1)
+                    if ((btClip1.Tag as ClipArtData).ImageStamp != Root.ImageStamp1)
                     {
                         btClip1.BackgroundImage.Dispose();
-                        throw(new Exception("Renew button"));
+                        throw (new Exception("Renew button"));
                     }
                 }
                 catch
@@ -2074,15 +2081,22 @@ namespace gInk
                     if (NearestStroke(new Point(e.X, e.Y), true, out Root.StrokeHovered, out pos, false) > Root.PixelToHiMetric(Root.MinMagneticRadius()))
                     {
                         Root.StrokeHovered = null;
+                        MetricToolTip.Hide(this);
                         return;
                     }
                     else
                     {
+                        if(Root.MeasureEnabled)
+                            MetricToolTip.Show(MeasureStroke(Root.StrokeHovered), this, e.Location.X, e.Location.Y -50);
                         return;
                     }
                 }
                 else
+                {
+                    MetricToolTip.Hide(this);
                     return;
+                }
+            MetricToolTip.Hide(this);
             //Console.WriteLine("Cursor {0},{1} - {2}", e.X, e.Y, e.Button);
             Root.CursorX = e.X;
             Root.CursorY = e.Y;
@@ -2222,6 +2236,36 @@ namespace gInk
 				}
 				*/
             }
+        }
+
+        NumberFormatInfo MeasureNumberFormat;
+        public string MeasureStroke(Stroke st)
+        {
+            int j;
+            Point pt,pt1;
+            Double sum=0.0F;
+            Double ang = Double.NaN;
+            string str = "";
+
+            pt = st.GetPoint(0);
+            j = st.GetPoints().Length;
+            for (int i = 1; i < j; i++)
+            {
+                pt1 = st.GetPoint(i);
+                sum += Math.Sqrt((1.0 * pt1.X - pt.X) * (pt1.X - pt.X) + (1.0 * pt1.Y - pt.Y) * (pt1.Y - pt.Y));
+                pt = pt1;
+            }
+            str = string.Format(MeasureNumberFormat, Root.Local.FormatLength, Root.ConvertMeasureLength(sum),Root.Measure2Unit);
+            if(j==3)
+            {
+                pt = st.GetPoint(1);
+                pt1 = st.GetPoint(0);
+                ang = Math.Atan2(pt1.Y - pt.Y, pt1.X - pt.X);
+                pt1 = st.GetPoint(2);
+                ang -= Math.Atan2(pt1.Y - pt.Y, pt1.X - pt.X);
+                str += string.Format("\n"+ Root.Local.FormatAngle, (Root.MeasureAnglCounterClockwise?1:-1) * ang / Math.PI * 180);
+            }
+            return str;
         }
 
         public void ToTransparent()
