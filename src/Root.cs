@@ -521,6 +521,7 @@ namespace gInk
             UndoDepth = 0;
             UndoP = 0;
 
+            SetForegroundWindow(FormCollection.Handle);
         }
         public void StopInk()
 		{
