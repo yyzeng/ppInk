@@ -678,6 +678,34 @@ namespace gInk
                     }
 
 
+                    else if (req.Url.AbsolutePath == "/PickupColor")
+                    {
+                        string s;
+                        if (!(Root.FormDisplay.Visible || Root.FormCollection.Visible))
+                        {
+                            resp.StatusCode = 409;
+                            ret = "!!!!! Not in Inking mode";
+                        }
+                        else if (query.TryGetValue("P", out s))
+                        {
+                            s = s.ToLower();
+                            if (s == "true")
+                                Root.FormCollection.StartStopPickUpColor(1);
+                            else if (s == "false")
+                                Root.FormCollection.StartStopPickUpColor(0);
+                            else
+                            {
+                                resp.StatusCode = 400;
+                                ret = string.Format("!!!! Error in Query ({0}) - {1} ", req.HttpMethod, req.Url.AbsoluteUri);
+                            }
+                        }
+                        if (resp.StatusCode == 200)
+                            ret = " { \"PickupMode\" : "+(Root.ColorPickerMode ? "true" : "false") + 
+                                  (!Root.ColorPickerMode?"}":string.Format(",\n\"Red\" : {0}, \"Green\" : {1}, \"Blue\" : {2}, \"Transparency\" : {3}  }}",
+                                                                           Root.PickupColor.R, Root.PickupColor.G, Root.PickupColor.B, Root.PickupTransparency));
+                    }
+
+
                     else // unknow command...
                     {
                         resp.StatusCode = 404;

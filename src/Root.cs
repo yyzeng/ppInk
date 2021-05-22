@@ -226,6 +226,8 @@ namespace gInk
         public Hotkey Hotkey_ClipArt2 = new Hotkey();
         public Hotkey Hotkey_ClipArt3 = new Hotkey();
         public Hotkey Hotkey_Zoom = new Hotkey();
+        public Hotkey Hotkey_ColorPickup = new Hotkey();
+        public Hotkey Hotkey_ColorEdit = new Hotkey();
 
         public float LongHKPressDelay = 2.5F;
 
@@ -338,6 +340,12 @@ namespace gInk
 
         public bool StrokesOnlySnapshot=true;
         //public string ProgramFolder;
+
+        public bool ColorPickerEnabled = true;
+        public bool ColorPickerMode = false;
+        public Color PickupColor;
+        public byte PickupTransparency;
+        
 
         public string ExpandVarCmd(string cmd, int x, int y, int w, int h)
         {
@@ -714,8 +722,9 @@ namespace gInk
 		{
 			if (PointerMode == true)
 				return;
-
-			PointerMode = true;
+            if (ColorPickerMode)
+                FormCollection.StartStopPickUpColor(0);
+            PointerMode = true;
             FormDisplay.DrawBorder(false);
 			FormCollection.ToThrough();
 			FormButtonHitter.Show();
@@ -734,6 +743,8 @@ namespace gInk
             FormCollection.ToTopMost();
 			FormCollection.Activate();
 			PointerMode = false;
+            if (ColorPickerMode)
+                FormCollection.StartStopPickUpColor(0);
 		}
 
 		public void SelectPen(int pen)
@@ -1032,7 +1043,12 @@ namespace gInk
                         case "HOTKEY_PENWIDTH_MINUS":
                             Hotkey_PenWidthMinus.Parse(sPara);
                             break;
-
+                        case "HOTKEY_COLORPICKUP":
+                            Hotkey_ColorPickup.Parse(sPara);
+                            break;
+                        case "HOTKEY_COLOREDIT":
+                            Hotkey_ColorEdit.Parse(sPara);
+                            break;
                         case "PENS_ON_TWO_LINES":
                             if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
                                 PensOnTwoLines = true;
@@ -1224,6 +1240,12 @@ namespace gInk
                         case "ZOOM_ICON":
                             if (int.TryParse(sPara, out tempi)&& tempi>=0 && tempi<=3)
                                 ZoomEnabled  = tempi;
+                            break;
+                        case "COLORPICKUP_ENABLED":
+                            if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
+                                ColorPickerEnabled = false;
+                            else if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
+                                ColorPickerEnabled = true;
                             break;
                         case "TOOLBAR_LEFT":
 							if (int.TryParse(sPara, out tempi))
@@ -1631,6 +1653,12 @@ namespace gInk
                         case "HOTKEY_PENWIDTH_MINUS":
                             sPara = Hotkey_PenWidthMinus.ToStringInvariant();
                             break;
+                        case "HOTKEY_COLORPICKUP":
+                            sPara = Hotkey_ColorPickup.ToStringInvariant();
+                            break;
+                        case "HOTKEY_COLOREDIT":
+                            sPara = Hotkey_ColorEdit.ToStringInvariant();
+                            break;
                         case "PENWIDTH_DELTA":
                             sPara = PenWidth_Delta.ToString();
                             break;
@@ -1757,6 +1785,9 @@ namespace gInk
                             break;
                         case "ZOOM_ICON":
                             sPara = ZoomEnabled.ToString();
+                            break;
+                        case "COLORPICKUP_ENABLED":
+                            sPara = ColorPickerEnabled.ToString();
                             break;
                         case "INKVISIBLE_ICON":
 							if (PanEnabled)

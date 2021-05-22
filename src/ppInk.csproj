@@ -321,6 +321,7 @@
     <None Include="toolbar2Right.png" />
     <None Include="toolbar2Up.png" />
     <None Include="pinned.png" />
+    <None Include="picker.png" />
     <Content Include="tool_edit.png" />
     <Content Include="tool_edit_act.png" />
     <Content Include="tool_enAr.png" />

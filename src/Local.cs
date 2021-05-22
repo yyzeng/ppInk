@@ -159,6 +159,8 @@ namespace gInk
 
         public string OptionsHotkeysPenWidthPlus = "Pen Width +";
         public string OptionsHotkeysPenWidthMinus = "Pen Width -";
+        public string OptionsHotkeysColorPicker = "Color Picker";
+        public string OptionsHotkeysColorEdit = "Color/Pen Edit";
 
         public string VideoTab="Video";
         public string OptNoVideo="No video recording";

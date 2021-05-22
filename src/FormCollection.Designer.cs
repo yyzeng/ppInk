@@ -113,6 +113,7 @@ namespace gInk
             this.gpButtons.Controls.Add(this.btUndo);
             this.gpButtons.Location = new System.Drawing.Point(24, 48);
             this.gpButtons.Margin = new System.Windows.Forms.Padding(2);
+            this.gpButtons.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.gpButtons.Name = "gpButtons";
             this.gpButtons.Size = new System.Drawing.Size(1343, 53);
             this.gpButtons.TabIndex = 3;
@@ -936,6 +937,7 @@ namespace gInk
             this.gpPenWidth.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.gpPenWidth.Controls.Add(this.pboxPenWidthIndicator);
             this.gpPenWidth.Location = new System.Drawing.Point(116, 217);
+            this.gpPenWidth.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.gpPenWidth.Name = "gpPenWidth";
             this.gpPenWidth.Size = new System.Drawing.Size(200, 53);
             this.gpPenWidth.TabIndex = 4;
@@ -978,6 +980,7 @@ namespace gInk
             this.gpSubTools.Controls.Add(this.Btn_SubTool2);
             this.gpSubTools.Controls.Add(this.Btn_SubTool1);
             this.gpSubTools.Location = new System.Drawing.Point(676, 217);
+            this.gpSubTools.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.gpSubTools.Name = "gpSubTools";
             this.gpSubTools.Size = new System.Drawing.Size(415, 53);
             this.gpSubTools.TabIndex = 5;

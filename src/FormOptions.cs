@@ -148,6 +148,7 @@ namespace gInk
 			if (Root.AllowHotkeyInPointerMode)
 				cbAllowHotkeyInPointer.Checked = true;
             cbLoadSaveEnabled.Checked = Root.LoadSaveEnabled;
+            ColorPickerEnaCb.Checked = Root.ColorPickerEnabled;
 
             AltTabActivateCb.Checked = Root.AltTabPointer;
 
@@ -281,6 +282,8 @@ namespace gInk
             hiZoom.Hotkey = Root.Hotkey_Zoom;
             hiPenWidthPlus.Hotkey = Root.Hotkey_PenWidthPlus;
             hiPenWidthMinus.Hotkey = Root.Hotkey_PenWidthMinus;
+            hiColorPickup.Hotkey = Root.Hotkey_ColorPickup;
+            hiColorEdit.Hotkey = Root.Hotkey_ColorEdit;
 
             WsUrlTxt.Text = Root.ObsUrl;
             WsPwdTxt.Text = Root.ObsPwd;
@@ -348,6 +351,7 @@ namespace gInk
             this.MagnetLbl.Text = Root.Local.OptionsGeneralMagnetLbl;
             this.SaveConfigBtn.Text = Root.Local.OptionsGeneralSaveConfigToFile;
             this.CaptStrokesOnlyCb.Text = Root.Local.OptionsCaptureStrokesOnly;
+            this.ColorPickerEnaCb.Text = Root.Local.OptionsHotkeysColorPicker;
 
             this.lbNote.Text = Root.Local.OptionsGeneralNotePenwidth;
 
@@ -407,6 +411,9 @@ namespace gInk
 
             this.lbHkPenWidthPlus.Text = Root.Local.OptionsHotkeysPenWidthPlus;
             this.lbHkPenWidthMinus.Text = Root.Local.OptionsHotkeysPenWidthMinus;
+
+            this.lbHkColorPickup.Text = Root.Local.OptionsHotkeysColorPicker;
+            this.lbHkColorEdit.Text = Root.Local.OptionsHotkeysColorEdit;
 
             this.lbGlobalHotkey.Text = Root.Local.OptionsHotkeysglobal;
             this.cbAllowHotkeyInPointer.Text = Root.Local.OptionsHotkeysEnableinpointer;
@@ -1157,6 +1164,11 @@ namespace gInk
         private void MeasureAngleCb_CheckedChanged(object sender, EventArgs e)
         {
             Root.MeasureAnglCounterClockwise = MeasureAngleCb.Checked;
+        }
+
+        private void ColorPickerEnaCb_CheckedChanged(object sender, EventArgs e)
+        {
+            Root.ColorPickerEnabled = ColorPickerEnaCb.Checked;
         }
     }
 }

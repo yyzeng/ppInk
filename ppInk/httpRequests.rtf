@@ -96,9 +96,14 @@ JSon field\par
 ArrowForced\tab\par
 {\highlight3\b{\field{\*\fldinst{HYPERLINK https://localhost:7999/Fold[?F=True|False }}{\fldrslt{https://localhost:7999/Fold[?F=True|False\ul0\cf0}}}}\highlight3\b\f0\fs22\lang1036 ]\highlight0\b0\par
 \i\lang12 Fold/Dock or Unfold/Undock the toolbar or get its status\par
-\i0 F=True/False ; optional (if not provided, will just return current magnetic status)\par
+\i0 F=True/False ; optional (if not provided, will just return current fold status)\par
 JSON fields:\par
 Folded\par
-\par
+{\highlight3\b{\field{\*\fldinst{HYPERLINK https://localhost:7999/PickupColor[?P=True|False }}{\fldrslt{https://localhost:7999/PickupColor[?P=True|False\ul0\cf0}}}}\highlight3\b\f0\fs22\lang1036 ]\highlight0\b0\par
+\i\lang12 Start/Exit Pickup Color Mode\par
+\i0 P=True/False ; optional (if not provided, will just return current Pickup mode status/color)\par
+JSON fields:\par
+PickupMode(True/False),\par
+Red(0-255),Green(0-255),Blue(0-255),Transparency(0-255)  \tab\tab (Optionals, only if pickupMode=true)\par
 }
  

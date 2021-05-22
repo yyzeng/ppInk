@@ -300,6 +300,57 @@ namespace gInk
             return img;
         }
 
+        public struct IconInfo
+        {
+            public bool fIcon;
+            public int xHotspot;
+            public int yHotspot;
+            public IntPtr hbmMask;
+            public IntPtr hbmColor;
+        }
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool GetIconInfo(IntPtr hIcon, ref IconInfo pIconInfo);
+        [DllImport("user32.dll")]
+        public static extern IntPtr CreateIconIndirect(ref IconInfo icon);
+
+        /// Create a cursor from a bitmap, with the hot spot in the middle
+        public static System.Windows.Forms.Cursor CreateCursorFromBitmap(Bitmap bmp)
+        {
+            IntPtr ptr = (bmp).GetHicon();
+            IconInfo tmp = new IconInfo();
+            GetIconInfo(ptr, ref tmp);
+            tmp.xHotspot = bmp.Width / 2;
+            tmp.yHotspot = bmp.Height / 2;
+            tmp.fIcon = false;
+            ptr = CreateIconIndirect(ref tmp);
+            System.Windows.Forms.Cursor cu = new System.Windows.Forms.Cursor(ptr);
+            cu.Tag = 2;
+            return cu;
+        }
+
+        public Bitmap buildColorPicker(Color col,int transparency)
+        {
+            Bitmap img,dest;
+            ImageAttributes imageAttributes = new ImageAttributes();
+
+            float[][] colorMatrixElements = {
+                       new float[] {col.R/255.0f,  0,  0,  0, 0},
+                       new float[] {0,  col.G / 255.0f,  0,  0, 0},
+                       new float[] {0,  0,  col.B / 255.0f,  0, 0},
+                       new float[] {0,  0,  0, (255 - transparency) / 255.0f, 0},
+                       new float[] {0,  0,  0,     0,  1}};
+            ColorMatrix colorMatrix = new ColorMatrix(colorMatrixElements);
+            imageAttributes.SetColorMatrix(colorMatrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+
+            img = getImgFromDiskOrRes("picker", ImageExts);
+            dest = new Bitmap(img.Width, img.Height,PixelFormat.Format32bppPArgb);
+            Graphics g = Graphics.FromImage(dest);
+            g.DrawImage(img, new Rectangle(0, 0, img.Width, img.Height), 0, 0, img.Width, img.Height, GraphicsUnit.Pixel, imageAttributes);
+            img.Dispose();
+            return dest;
+        }
+
         public FormCollection(Root root)
         {
             Root = root;
@@ -385,6 +436,7 @@ namespace gInk
             MeasureNumberFormat.NumberDecimalDigits = Root.Measure2Digits;
 
             Root.Snapping = 0;
+            Root.ColorPickerMode = false;
             FadingList.Clear();
             if (Root.WindowRect.Width <= 0 || Root.WindowRect.Height <= 0)
             {
@@ -611,7 +663,7 @@ namespace gInk
                 SetSmallButtonNext(btClipArt, btClip1, dim2s);
                 try
                 {
-                    if ((btClip1.Tag as ClipArtData).ImageStamp != Root.ImageStamp1)
+                    if ((btClip1.Tag as ClipArtData)?.ImageStamp != Root.ImageStamp1)
                     {
                         btClip1.BackgroundImage.Dispose();
                         throw (new Exception("Renew button"));
@@ -628,7 +680,7 @@ namespace gInk
                 SetButtonPosition(btClipArt, btClip2, dim3);
                 try
                 {
-                    if ((btClip2.Tag as ClipArtData).ImageStamp != Root.ImageStamp2)
+                    if ((btClip2.Tag as ClipArtData)?.ImageStamp != Root.ImageStamp2)
                     {
                         btClip2.BackgroundImage.Dispose();
                         throw (new Exception("Renew button"));
@@ -645,7 +697,7 @@ namespace gInk
                 SetSmallButtonNext(btClip2, btClip3, dim2s);
                 try
                 {
-                    if ((btClip3.Tag as ClipArtData).ImageStamp != Root.ImageStamp3)
+                    if ((btClip3.Tag as ClipArtData)?.ImageStamp != Root.ImageStamp3)
                     {
                         btClip3.BackgroundImage.Dispose();
                         throw (new Exception("Renew button"));
@@ -978,6 +1030,16 @@ namespace gInk
                 cursorerase = getCursFromDiskOrRes("cursoreraser", System.Windows.Forms.Cursors.No);
             }
 
+            try
+            {
+                cursorsnap?.Dispose();
+            }
+            catch { }
+            finally
+            {
+                cursorsnap = getCursFromDiskOrRes("cursorsnap", System.Windows.Forms.Cursors.Cross);
+            }
+
             IC.Enabled = true;
 
             LastTickTime = DateTime.Parse("1987-01-01");
@@ -1232,7 +1294,14 @@ namespace gInk
             }
             else
             {
-                PenWidth_Change(Root.PixelToHiMetric(e.Delta > 0 ? 2 : -2));
+                if(Root.ColorPickerMode)
+                {
+                    int i=Root.PickupTransparency + (e.Delta > 0 ? 2 : -2);
+                    Root.PickupTransparency = (byte)Math.Min(Math.Max(0, i), 255);
+                    this.Cursor = CreateCursorFromBitmap(buildColorPicker(Root.PickupColor, Root.PickupTransparency));
+                }
+                else
+                    PenWidth_Change(Root.PixelToHiMetric(e.Delta > 0 ? 5 : -5));
                 return;
             }
         }
@@ -2106,6 +2175,25 @@ namespace gInk
         {
             float pos;
             Root.StrokeHovered = null;
+            //Console.WriteLine("MouseMove");
+            if(Root.ColorPickerMode)
+            {
+                using (Bitmap bmp = new Bitmap(1, 1))
+                    try
+                    {
+                        Point p = new Point(MousePosition.X, MousePosition.Y);
+                        Graphics.FromImage(bmp).CopyFromScreen(p, Point.Empty, new Size(1, 1));
+                        Root.PickupColor = bmp.GetPixel(0, 0);
+                        try
+                        {
+                            if (this.Cursor?.Tag != null && (int)IC.Cursor?.Tag == 2)
+                                this.Cursor?.Dispose();
+                        }
+                        catch { }
+                        this.Cursor = CreateCursorFromBitmap(buildColorPicker(Root.PickupColor, Root.PickupTransparency));
+                    }
+                    catch { }
+            }
 
             if (e.Button == MouseButtons.None)
                 if (Root.EraserMode || Root.ToolSelected == Tools.Edit || Root.ToolSelected == Tools.Move || Root.ToolSelected == Tools.Copy)
@@ -2202,6 +2290,8 @@ namespace gInk
         {
             Console.WriteLine("MouseUp");
             Root.FingerInAction = false;
+            if (Root.ColorPickerMode)
+                StartStopPickUpColor(2);
             if (Root.Snapping == 2)
             {
                 int left = Math.Min(Root.SnappingX, e.X);
@@ -2300,6 +2390,32 @@ namespace gInk
                 str += string.Format("\n"+ Root.Local.FormatAngle, (Root.MeasureAnglCounterClockwise?1:-1) * ang / Math.PI * 180);
             }
             return str;
+        }
+
+        public void ActivateStrokesInput(bool active)
+        {
+            // note: the "rectangle" defines the area IC is covering : when active, the cursor is IC.Cursor but it is this.Cursor when not active
+            Rectangle rect;
+            if (active)
+                rect = new Rectangle(0, 0, 0, 0);  // full area
+            else
+                rect = new Rectangle(0, 0, 1, 1);  // only one pixel so inactive..
+            int i = 5;
+            while(i>0)
+                try
+                {
+
+                    IC.SetWindowInputRectangle(rect);
+                    return;
+                }
+                catch(Exception e)
+                {
+                    Console.WriteLine("SetWindowInputRect Exception :" + e.Message);
+                    Thread.Sleep(1);
+                    i--;
+                    if (i <= 0)
+                        throw (e);
+                }
         }
 
         public void ToTransparent()
@@ -2609,9 +2725,11 @@ namespace gInk
         public void SelectPen(int pen)
         // -3 = pan, -2 = pointer, -1 = erasor, >=0 = pens
         {
+                bool bb = Root.ColorPickerMode;
+
             btEraser.BackgroundImage = image_eraser;
             btPointer.BackgroundImage = image_pointer;
-            btPan.BackgroundImage = getImgFromDiskOrRes("pan", ImageExts);
+            btPan.BackgroundImage.Dispose();    // will be set after
             //Console.WriteLine("SelectPen : " + pen.ToString());
             //System.Diagnostics.StackTrace t = new System.Diagnostics.StackTrace();
             //Console.WriteLine(t.ToString());
@@ -2623,23 +2741,21 @@ namespace gInk
                 }
                 SelectTool(-1, 0);       // Alt will be processed inhere
                 for (int b = 0; b < Root.MaxPenCount; b++)
+                {
+                    try
+                    {
+                        btPen[b].BackgroundImage.Dispose();
+                    }
+                    catch { }
                     //btPen[b].Image = image_pen[b];
                     btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, false,
                                                             Root.PenAttr[b].ExtendedProperties.Contains(Root.FADING_PEN));// image_pen[b];
+                }
                 btPan.BackgroundImage = getImgFromDiskOrRes("pan_act", ImageExts);
                 EnterEraserMode(false);
                 Root.UnPointer();
                 Root.PanMode = true;
-
-                try
-                {
-                    IC.SetWindowInputRectangle(new Rectangle(0, 0, 1, 1));
-                }
-                catch
-                {
-                    Thread.Sleep(1);
-                    IC.SetWindowInputRectangle(new Rectangle(0, 0, 1, 1));
-                }
+                ActivateStrokesInput(false);
             }
             else if (pen == -2)
             {
@@ -2652,6 +2768,7 @@ namespace gInk
                     //btPen[b].Image = image_pen[b];
                     btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, false,
                                                             Root.PenAttr[b].ExtendedProperties.Contains(Root.FADING_PEN));// image_pen[b];
+                btPan.BackgroundImage = getImgFromDiskOrRes("pan", ImageExts);
                 btPointer.BackgroundImage = image_pointer_act;
                 EnterEraserMode(false);
                 Root.Pointer();
@@ -2672,6 +2789,7 @@ namespace gInk
                     btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, false,
                                                             Root.PenAttr[b].ExtendedProperties.Contains(Root.FADING_PEN));// image_pen[b];
 
+                btPan.BackgroundImage = getImgFromDiskOrRes("pan", ImageExts);
                 btEraser.BackgroundImage = image_eraser_act;
                 EnterEraserMode(true);
                 Root.UnPointer();
@@ -2692,24 +2810,18 @@ namespace gInk
                     break;
                 }
 
-                try
-                {
-                    IC.SetWindowInputRectangle(new Rectangle(0, 0, this.Width, this.Height));
-                }
-                catch
-                {
-                    Thread.Sleep(1);
-                    IC.SetWindowInputRectangle(new Rectangle(0, 0, this.Width, this.Height));
-                }
+                ActivateStrokesInput(true);
             }
             else if (pen >= 0)
             {
+                
+                btPan.BackgroundImage = getImgFromDiskOrRes("pan", ImageExts);
                 if (AltKeyPressed() && pen != LastPenSelected && SavedPen < 0)
                 {
                     SavedPen = LastPenSelected;
                 }
-                if (this.Cursor != System.Windows.Forms.Cursors.Default)
-                    this.Cursor = System.Windows.Forms.Cursors.Default;
+                if (this.Cursor != System.Windows.Forms.Cursors.Arrow)
+                    this.Cursor = System.Windows.Forms.Cursors.Arrow;
                 float w = IC.DefaultDrawingAttributes.Width;
                 IC.DefaultDrawingAttributes = Root.PenAttr[pen].Clone();
                 if (pen == LastPenSelected)
@@ -2729,8 +2841,19 @@ namespace gInk
                 EnterEraserMode(false);
                 Root.UnPointer();
                 Root.PanMode = false;
+                try
+                {
+                    ActivateStrokesInput(true);
+                }
+                catch
+                {
+                    // as a backup we assert the flag to do it later...
+                    SetWindowInputRectFlag = true;
+                }
 
-                if (Root.CanvasCursor == 0)
+                if (bb)
+                    StartStopPickUpColor(1);            
+                else if (Root.CanvasCursor == 0)
                 {
                     //cursorred = new System.Windows.Forms.Cursor(gInk.Properties.Resources.cursorred.Handle);
                     try
@@ -2744,16 +2867,7 @@ namespace gInk
                 }
                 else if (Root.CanvasCursor == 1)
                     SetPenTipCursor();
-                // !!!!! TODO problem re-entrant
-                try
-                {
-                    IC.SetWindowInputRectangle(new Rectangle(0, 0, this.Width, this.Height));
-                }
-                catch
-                {
-                    Console.WriteLine("!!excpt IC.SetWindowInputRectangle");
-                    SetWindowInputRectFlag = true;
-                }
+
             }
             Root.CurrentPen = pen;
             if (Root.gpPenWidthVisible)
@@ -2833,21 +2947,19 @@ namespace gInk
 
             PolyLineLastX = Int32.MinValue; PolyLineLastY = Int32.MinValue; PolyLineInProgress = null;
             Root.gpPenWidthVisible = false;
+            ActivateStrokesInput(false);
+            if (ZoomForm.Visible)
+                ZoomBtn_Click(btZoom, null);
             try
             {
-                IC.SetWindowInputRectangle(new Rectangle(0, 0, 1, 1));
+                this.Cursor = cursorred;
             }
             catch
             {
-                Thread.Sleep(1);
-                IC.SetWindowInputRectangle(new Rectangle(0, 0, 1, 1));
+                this.Cursor = getCursFromDiskOrRes("cursorred", System.Windows.Forms.Cursors.Cross);
+
             }
-            if (ZoomForm.Visible)
-                ZoomBtn_Click(btZoom, null);
-            cursorsnap = new System.Windows.Forms.Cursor(gInk.Properties.Resources.cursorsnap.Handle);
-            this.Cursor = cursorsnap;
             Root.ResizeDrawingWindow = true;
-            this.Cursor = cursorred;
             Root.SnappingX = -1;
             Root.SnappingY = -1;
             Root.SnappingRect = new Rectangle(0, 0, 0, 0);
@@ -2915,9 +3027,61 @@ namespace gInk
             }
         }
 
+        public void StartStopPickUpColor(int Active)  // Active : 1=Start ; 2 = Apply ; 0 = Cancel
+        {
+            if (!Root.ColorPickerEnabled || Root.CurrentPen<0)
+                Active = 0;     // we force to get it off
+            if(Active==1)
+            {
+                ActivateStrokesInput(false);
+                Root.ColorPickerMode = true;
+                Root.PickupTransparency = Root.PenAttr[Root.CurrentPen].Transparency;
+
+                this.Cursor = CreateCursorFromBitmap(buildColorPicker(Root.PickupColor, Root.PickupTransparency));
+                System.Windows.Forms.Cursor.Position = new Point(System.Windows.Forms.Cursor.Position.X, System.Windows.Forms.Cursor.Position.Y); // force cursor refresh
+
+                btPenWidth.BackgroundImage = getImgFromDiskOrRes("picker");
+                Root.UponButtonsUpdate |= 0x2;
+                return;
+            }
+            if (Active == 2)
+            {
+                Root.PenAttr[Root.CurrentPen].Transparency = Root.PickupTransparency;
+                Root.PenAttr[Root.CurrentPen].Color = Root.PickupColor;
+                btPen[Root.CurrentPen].BackgroundImage = buildPenIcon(Root.PenAttr[Root.CurrentPen].Color, Root.PenAttr[Root.CurrentPen].Transparency, true,
+                                                                      Root.PenAttr[Root.CurrentPen].ExtendedProperties.Contains(Root.FADING_PEN));
+                SelectPen(Root.CurrentPen);
+                Active = 0;
+            }
+            if (Active == 0)
+            {
+                ActivateStrokesInput(true);
+                if (Root.CanvasCursor == 1)
+                    SetPenTipCursor();
+                else
+                    try
+                    {
+                        IC.Cursor = cursorred;
+                    }
+                    catch
+                    {
+                        IC.Cursor = getCursFromDiskOrRes("cursorarrow", System.Windows.Forms.Cursors.NoMove2D);
+                    }
+                System.Windows.Forms.Cursor.Position = new Point(System.Windows.Forms.Cursor.Position.X, System.Windows.Forms.Cursor.Position.Y); // force cursor refresh
+                btPenWidth.BackgroundImage = getImgFromDiskOrRes("penwidth");
+                Root.UponButtonsUpdate |= 0x2;
+                Root.ColorPickerMode = false;
+            }
+        }
 
         private void btPenWidth_Click(object sender, EventArgs e)
         {
+            longClickTimer.Stop(); // for an unkown reason the mouse arrives later
+            if (sender is ContextMenu)
+            {
+                sender = (sender as ContextMenu).SourceControl;
+                MouseTimeDown = DateTime.FromBinary(0);
+            }
             if (ToolbarMoved)
             {
                 ToolbarMoved = false;
@@ -2927,14 +3091,25 @@ namespace gInk
             if (Root.PointerMode)
                 return;
 
-            Root.gpPenWidthVisible = !Root.gpPenWidthVisible;
-            if (Root.gpPenWidthVisible)
+            TimeSpan tsp = DateTime.Now - MouseTimeDown;
+
+            if (sender != null && tsp.TotalSeconds > Root.LongClickTime)
             {
+                StartStopPickUpColor(1);
+            }
+            else if(Root.ColorPickerMode)
+                    StartStopPickUpColor(0);
+            else
+            {
+                Root.gpPenWidthVisible = !Root.gpPenWidthVisible;
+                if (Root.gpPenWidthVisible)
+                {
                 pboxPenWidthIndicator.Left = (int)Math.Sqrt(IC.DefaultDrawingAttributes.Width * 30);
                 Root.UponButtonsUpdate |= 0x2;
             }
-            else
-                Root.UponSubPanelUpdate = true;
+                else
+                    Root.UponSubPanelUpdate = true;
+            }
         }
 
         public void btSnap_Click(object sender, EventArgs e)
@@ -2959,20 +3134,19 @@ namespace gInk
             if (Root.Snapping > 0)
                 return;
             PolyLineLastX = Int32.MinValue; PolyLineLastY = Int32.MinValue; PolyLineInProgress = null;
-            cursorsnap = new System.Windows.Forms.Cursor(gInk.Properties.Resources.cursorsnap.Handle);
-            this.Cursor = cursorsnap;
-
-            Root.gpPenWidthVisible = false;
-
             try
             {
-                IC.SetWindowInputRectangle(new Rectangle(0, 0, 1, 1));
+                this.Cursor = cursorsnap;
             }
             catch
             {
-                Thread.Sleep(1);
-                IC.SetWindowInputRectangle(new Rectangle(0, 0, 1, 1));
+                this.Cursor = getCursFromDiskOrRes("cursorsnap", System.Windows.Forms.Cursors.Cross);
             }
+
+            Root.gpPenWidthVisible = false;
+
+            ActivateStrokesInput(false);
+
             if (sender != null && tsp.TotalSeconds > Root.LongClickTime)
             {
                 SnapWithoutClosing = true;
@@ -2992,15 +3166,8 @@ namespace gInk
 
         public void ExitSnapping()
         {
-            try
-            {
-                IC.SetWindowInputRectangle(new Rectangle(0, 0, this.Width, this.Height));
-            }
-            catch
-            {
-                Thread.Sleep(1);
-                IC.SetWindowInputRectangle(new Rectangle(0, 0, this.Width, this.Height));
-            }
+            ActivateStrokesInput(true);
+
             Root.SnappingX = -1;
             Root.SnappingY = -1;
             Root.Snapping = -60;
@@ -3049,11 +3216,13 @@ namespace gInk
         bool LastClipArt1Status = false;
         bool LastClipArt2Status = false;
         bool LastClipArt3Status = false;
+        bool LastPenWidthPlus = false;
+        bool LastPenWidthMinus = false;
+        bool LastColorPickupStatus = false;
+        bool LastColorEditStatus = false;
 
         DateTime LongHkPress;
 
-        bool LastPenWidthPlus = false;
-        bool LastPenWidthMinus = false;
         int SnappingPointerStep = 0;
         DateTime SnappingPointerReset;
 
@@ -3167,7 +3336,14 @@ namespace gInk
                 dia += 6;
                 g.DrawEllipse(cpen, 64 - dia / 2, 64 - dia / 2, dia, dia);
             }
+            try
+            {
+                if (IC.Cursor?.Tag != null && (int)IC.Cursor?.Tag == 2)
+                    IC.Cursor?.Dispose();
+            }
+            catch { }
             IC.Cursor = new System.Windows.Forms.Cursor(bitmaptip.GetHicon());
+            IC.Cursor.Tag = 2;
             System.Windows.Forms.Cursor.Position = new Point(System.Windows.Forms.Cursor.Position.X, System.Windows.Forms.Cursor.Position.Y);
         }
 
@@ -3284,7 +3460,7 @@ namespace gInk
             try
             {
                 if (SetWindowInputRectFlag) // alternative to prevent some error when trying to call this function from WM_ACTIVATE event handler
-                    IC.SetWindowInputRectangle(new Rectangle(0, 0, this.Width, this.Height));
+                    ActivateStrokesInput(true);
                 SetWindowInputRectFlag = false;
             }
             catch { }
@@ -3951,6 +4127,25 @@ namespace gInk
                     PenWidth_Change(-Root.PenWidth_Delta);
                 }
                 LastPenWidthMinus = pressed;
+
+                pressed = (GetKeyState(Root.Hotkey_ColorPickup.Key) & 0x8000) == 0x8000;
+                if (pressed && !LastColorPickupStatus && Root.Hotkey_ColorPickup.ModifierMatch(control, alt, shift, win))
+                {
+                    if (!Root.ColorPickerMode)
+                        StartStopPickUpColor(1);
+                    else
+                        StartStopPickUpColor(0);
+                }
+                LastColorPickupStatus = pressed;
+
+                pressed = (GetKeyState(Root.Hotkey_ColorEdit.Key) & 0x8000) == 0x8000;
+                if (pressed && !LastColorEditStatus && Root.Hotkey_ColorEdit.ModifierMatch(control, alt, shift, win))
+                {
+                    if (Root.CurrentPen>=0)
+                        btColor_LongClick(btPen[Root.CurrentPen]);
+                }
+                LastColorEditStatus = pressed;
+
             }
 
             if (Root.Snapping < 0)

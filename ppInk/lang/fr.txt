@@ -148,6 +148,8 @@ OptionsHotkeysEnableinpointer = "Activer tous les raccourcis en mode curseur de 
 
 OptionsHotkeysPenWidthPlus = "Largeur Stylo +"
 OptionsHotkeysPenWidthMinus = "Largeur Stylo -"
+OptionsHotkeysColorPicker = "Pipette à couleur"
+OptionsHotkeysColorEdit = "Edit. couleur/Stylo"
 
 VideoTab="Video"
 OptNoVideo="Pas d'enregistrement video"
