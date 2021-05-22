@@ -389,13 +389,15 @@ namespace gInk
 
         // for an unknown reason drawing strokes through the graphics is not taking into account transparency
         // I've adapted DrawStrokes to Bitmap for snapshots
-        public void DrawStrokes(Bitmap bmp)
+        public void DrawStrokes(Bitmap bmp, bool IgnoreBackground=false)
         {
             Graphics g = Graphics.FromImage(bmp);
             if (Root.InkVisible)
             {
                 foreach (Stroke st in Root.FormCollection.IC.Ink.Strokes)
                 {
+                    if (IgnoreBackground && st.ExtendedProperties.Contains(Root.ISBACKGROUND_GUID))
+                        continue;
                     if (st.ExtendedProperties.Contains(Root.ISHIDDEN_GUID))
                         continue;
                     //else //Should not be drawn as a stroke : for the moment only filled values.
@@ -565,7 +567,7 @@ namespace gInk
                 if(Root.StrokesOnlySnapshot)
                 {
                     Bitmap temp2bmp = new Bitmap(this.Width, this.Height, PixelFormat.Format32bppArgb);
-                    DrawStrokes(temp2bmp); 
+                    DrawStrokes(temp2bmp,Root.SnapIgnoreBackgroundStroke); 
                     g.DrawImage(temp2bmp, new Rectangle(0, 0, rect.Width, rect.Height), rect, GraphicsUnit.Pixel);
                     temp2bmp.Dispose();
                 }

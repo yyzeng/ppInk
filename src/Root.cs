@@ -275,6 +275,7 @@ namespace gInk
         public bool FitToCurve = true;
 		public bool gpPenWidthVisible = false;
 		public string SnapshotFileFullPath = ""; // used to record the last snapshot file name, to select it when the balloon is clicked
+        public bool SnapIgnoreBackgroundStroke = true; // for the moment not customizable by user
 
         public int FormTop = 100, FormLeft = 100, FormWidth = 48, FormOpacity = -50; // negative opacity means that the window is not displayed
         public CallForm callForm = null;
