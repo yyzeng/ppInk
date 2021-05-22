@@ -840,7 +840,7 @@ namespace gInk
                 Root.UponBalloonSnap = true;
                 Root.UponTakingSnap = false;
                 if (!Root.FormCollection.SnapWithoutClosing && (Root.APIRestCloseOnSnap || Root.CloseOnSnap == "true" || (Root.CloseOnSnap == "blankonly" && Root.FormCollection.IC.Ink.Strokes.Count == 0)))
-                    Root.FormCollection.RetreatAndExit();
+                    Root.FormCollection.RetreatAndExit(true); // Quick exit
                 Root.FormCollection.SnapWithoutClosing = false;
                 /*
                 if (Root.CloseOnSnap == "true")

@@ -1012,7 +1012,7 @@ namespace gInk
 
             tempArrowCursor = null;
             try
-            {
+            {                
                 cursorred?.Dispose();
             }
             catch { }
@@ -1040,6 +1040,7 @@ namespace gInk
                 cursorsnap = getCursFromDiskOrRes("cursorsnap", System.Windows.Forms.Cursors.Cross);
             }
 
+            IC.Ink.Strokes.Clear();
             IC.Enabled = true;
 
             LastTickTime = DateTime.Parse("1987-01-01");
@@ -1116,6 +1117,7 @@ namespace gInk
 
             ToTransparent();
             ToTopMost();
+            StopAllZooms();
             Root.PointerMode = true; // will be set to false within SelectPen(0) below
             SelectPen(0);
             IC.DefaultDrawingAttributes.Width = Root.PenAttr[0].Width; //required to ensure width
@@ -1231,6 +1233,7 @@ namespace gInk
                         //Console.WriteLine("process ");
                         SavedTool = Root.ToolSelected;
                         SavedFilled = Root.FilledSelected;
+
                         SelectPen(-2);
                         Root.Dock();
                         return;
@@ -2882,7 +2885,7 @@ namespace gInk
                 Root.LastPen = pen;
         }
 
-        public void RetreatAndExit()
+        public void RetreatAndExit(bool Quick=false)
         {
             ToThrough();
             if (ZoomForm.Visible)
@@ -2907,8 +2910,13 @@ namespace gInk
             //Root.SaveOptions("config.ini");
             Root.gpPenWidthVisible = false;
             Root.APIRestCloseOnSnap = false;
-            LastTickTime = DateTime.Now;
-            ButtonsEntering = -9;
+            if(Quick)
+                Root.StopInk();
+            else
+            {
+                LastTickTime = DateTime.Now;
+                ButtonsEntering = -9;
+            }
         }
 
         public void btDock_Click(object sender, EventArgs e)
@@ -3104,9 +3112,9 @@ namespace gInk
                 Root.gpPenWidthVisible = !Root.gpPenWidthVisible;
                 if (Root.gpPenWidthVisible)
                 {
-                pboxPenWidthIndicator.Left = (int)Math.Sqrt(IC.DefaultDrawingAttributes.Width * 30);
-                Root.UponButtonsUpdate |= 0x2;
-            }
+                    pboxPenWidthIndicator.Left = (int)Math.Sqrt(IC.DefaultDrawingAttributes.Width * 30);
+                    Root.UponButtonsUpdate |= 0x2;
+                }
                 else
                     Root.UponSubPanelUpdate = true;
             }
