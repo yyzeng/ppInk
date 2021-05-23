@@ -3142,19 +3142,19 @@ namespace gInk
 
             if (Root.Snapping > 0)
                 return;
+            ActivateStrokesInput(false);
             PolyLineLastX = Int32.MinValue; PolyLineLastY = Int32.MinValue; PolyLineInProgress = null;
-            try
+            /*try
             {
                 this.Cursor = cursorsnap;
             }
-            catch
+            catch*/
             {
                 this.Cursor = getCursFromDiskOrRes("cursorsnap", System.Windows.Forms.Cursors.Cross);
             }
 
             Root.gpPenWidthVisible = false;
 
-            ActivateStrokesInput(false);
 
             if (sender != null && tsp.TotalSeconds > Root.LongClickTime)
             {
@@ -3181,9 +3181,11 @@ namespace gInk
             Root.SnappingY = -1;
             Root.Snapping = -60;
             ButtonsEntering = 1;
+            Root.CursorX0 = int.MinValue;
+            Root.CursorY0 = int.MinValue;
             Root.SelectPen(Root.CurrentPen);
 
-            this.Cursor = System.Windows.Forms.Cursors.Default;
+            this.Cursor = System.Windows.Forms.Cursors.Arrow;
         }
 
         public void btStop_Click(object sender, EventArgs e)
