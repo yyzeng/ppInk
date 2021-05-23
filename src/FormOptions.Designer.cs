@@ -1986,7 +1986,7 @@ namespace gInk
             this.MeasurementBox.Controls.Add(this.Measure2ScaleEd);
             this.MeasurementBox.Location = new System.Drawing.Point(65, 483);
             this.MeasurementBox.Name = "MeasurementBox";
-            this.MeasurementBox.Size = new System.Drawing.Size(480, 64);
+            this.MeasurementBox.Size = new System.Drawing.Size(480, 69);
             this.MeasurementBox.TabIndex = 55;
             this.MeasurementBox.TabStop = false;
             this.MeasurementBox.Text = "Measurement  Tools";
@@ -2014,6 +2014,7 @@ namespace gInk
             // MeasureAngleCb
             // 
             this.MeasureAngleCb.AutoSize = true;
+            this.MeasureAngleCb.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
             this.MeasureAngleCb.Location = new System.Drawing.Point(286, 27);
             this.MeasureAngleCb.Name = "MeasureAngleCb";
             this.MeasureAngleCb.Size = new System.Drawing.Size(177, 21);

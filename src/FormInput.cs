@@ -30,6 +30,7 @@ namespace gInk
             this.btOK.Text = rt.Local.ButtonOkText;
             this.btCancel.Text = rt.Local.ButtonCancelText;
             this.FontBtn.Text = rt.Local.ButtonFontText;
+            this.ColorBtn.Text = rt.Local.OptionsPensColor;
             boxingCb.Items.AddRange(rt.Local.TextFramingText.Split(';'));
 
             Text = caption;

@@ -1942,7 +1942,8 @@ namespace gInk
                 }
                 else if ((Root.ToolSelected == Tools.txtLeftAligned) || (Root.ToolSelected == Tools.txtRightAligned))  // new text
                 {
-                    Stroke st = AddTextStroke(Root.CursorX, Root.CursorY, Root.CursorX, Root.CursorY, "Text", (Root.ToolSelected == Tools.txtLeftAligned) ? StringAlignment.Near : StringAlignment.Far);
+                    Stroke st = AddTextStroke(Root.CursorX, Root.CursorY, Root.CursorX, Root.CursorY, Root.Local.ShortTxt(Root.Local.ButtonNameText),
+                                              (Root.ToolSelected == Tools.txtLeftAligned) ? StringAlignment.Near : StringAlignment.Far);
                     Root.FormDisplay.DrawStrokes();
                     Root.FormDisplay.UpdateFormDisplay(true);
                     if (ModifyTextInStroke(st, (string)(st.ExtendedProperties[Root.TEXT_GUID].Data)) == DialogResult.Cancel)

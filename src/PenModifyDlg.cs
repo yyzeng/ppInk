@@ -18,6 +18,11 @@ namespace gInk
             InitializeComponent();
             OkBtn.Text = Root.Local.ButtonOkText;
             CancelBtn.Text = Root.Local.ButtonCancelText;
+            this.Text = Root.Local.OptionsHotkeysColorEdit;
+            string sin = Root.Local.OptionsPensFading;
+            int i = sin.IndexOf("(");
+            if (i < 0) i = sin.Length;
+            FadingCB.Text = sin.Substring(0, i);
         }
 
         public void setColor(int alpha,Color c)

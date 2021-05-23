@@ -253,9 +253,17 @@ namespace gInk
 
 				fini.Close();
 			}
-		}
+        }
 
-		public List<string> GetLanguagenames()
+        public string ShortTxt(string sin)
+        {
+            int i = sin.IndexOf("(");
+            if (i < 0) i = sin.Length;
+            return sin.Substring(0, i);
+        }
+
+
+        public List<string> GetLanguagenames()
 		{
 			List<string> names = new List<string>();
 			foreach (KeyValuePair<string, string> pair in Languages)

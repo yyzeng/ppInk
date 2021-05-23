@@ -353,6 +353,10 @@ namespace gInk
             this.CaptStrokesOnlyCb.Text = Root.Local.OptionsCaptureStrokesOnly;
             this.ColorPickerEnaCb.Text = Root.Local.OptionsHotkeysColorPicker;
 
+            MeasurementBox.Text = Root.Local.OptionMeasureGroup;
+            Measuse1Lbl.Text = Root.Local.OptionMeasureLenLabel;
+            MeasureAngleCb.Text = Root.Local.OptionMeasureAngle;
+
             this.lbNote.Text = Root.Local.OptionsGeneralNotePenwidth;
 
             {
