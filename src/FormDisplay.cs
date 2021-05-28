@@ -319,7 +319,7 @@ namespace gInk
                         g.DrawLines(p, pts);
                     }
                 }
-                catch (Exception e)
+                catch 
                 {
                     /*
                     var sta = new StackTrace(e, true);

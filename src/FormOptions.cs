@@ -479,15 +479,16 @@ namespace gInk
 				lbPens[p].Text = Root.Local.ButtonNamePen[p];
 				lbHotkeyPens[p].Text = Root.Local.ButtonNamePen[p];
 
-				lbcbPens.Text = Root.Local.OptionsPensShow;
-				lbpboxPens.Text = Root.Local.OptionsPensColor;
-				lbcomboPensAlpha.Text = Root.Local.OptionsPensAlpha;
-				lbcomboPensWidth.Text = Root.Local.OptionsPensWidth;
-                lbcomboPensFading.Text = Root.Local.OptionsPensFading;
 			}
+            lbcbPens.Text = Root.Local.OptionsPensShow;
+            lbpboxPens.Text = Root.Local.OptionsPensColor;
+            lbcomboPensAlpha.Text = Root.Local.OptionsPensAlpha;
+            lbcomboPensWidth.Text = Root.Local.OptionsPensWidth;
+            lbcomboPensFading.Text = Root.Local.OptionsPensFading;
             WidthAtPenSelCb.Text = Root.Local.OptionsPensWidthAtSelection;
             InverseWheelCb.Text = Root.InverseMousewheel ? Root.Local.OptionsInverseMouseWheelChecked : Root.Local.OptionsInverseMouseWheel;
             FitToCurveEd.Text = Root.Local.OptionsFitToCurve;
+            lbLineStyle.Text = Root.Local.OptionsLineStyle;
 
             comboLanguage.Items.Clear();
 			List<string> langs = Root.Local.GetLanguagenames();

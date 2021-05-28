@@ -25,6 +25,7 @@ namespace gInk
             int i = sin.IndexOf("(");
             if (i < 0) i = sin.Length;
             FadingCB.Text = sin.Substring(0, i);
+            DashStyleGrp.Text = Root.Local.OptionsLineStyle;
         }
 
         public void setColor(int alpha,Color c)

@@ -2106,7 +2106,7 @@ namespace gInk
                 case "DASHDOTDOT":
                     return DashStyle.DashDotDot;
             }
-            return DashStyle.Custom; //default : original stroke
+            throw (new Exception("Unknown LineStyle String :" + s));
         }
 
         public string NextLineStyleString(string s)
