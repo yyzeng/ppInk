@@ -3240,6 +3240,7 @@ namespace gInk
         bool LastPenWidthMinus = false;
         bool LastColorPickupStatus = false;
         bool LastColorEditStatus = false;
+        bool LastLineStyleStatus = false;
 
         DateTime LongHkPress;
 
@@ -4166,6 +4167,14 @@ namespace gInk
                 }
                 LastColorEditStatus = pressed;
 
+                pressed = (GetKeyState(Root.Hotkey_LineStyle.Key) & 0x8000) == 0x8000;
+                if (pressed && !LastLineStyleStatus && Root.Hotkey_LineStyle.ModifierMatch(control, alt, shift, win))
+                {
+                    SelectNextLineStyle(btPen[Root.CurrentPen]);
+                }
+                LastLineStyleStatus = pressed;
+
+
             }
 
             if (Root.Snapping < 0)
@@ -4406,6 +4415,26 @@ namespace gInk
 
 			Root.UndoInk();
 		}
+
+        public void SelectNextLineStyle(object sender)
+        {   //!!!!!!!!!!!!!!!!!!!!!!
+            for (int b = 0; b < Root.MaxPenCount; b++)
+                if ((Button)sender == btPen[b])
+                {
+                    // inspired from FormOptions / comboPensLineStyle_Changed
+                    string s = Root.NextLineStyleString(Root.LineStyleToString(Root.PenAttr[b].ExtendedProperties));
+                    DashStyle ds = Root.LineStyleFromString(s);
+                    if (ds == DashStyle.Custom)
+                        try { Root.PenAttr[b].ExtendedProperties.Remove(Root.DASHED_LINE_GUID); } catch { }
+                    else
+                        Root.PenAttr[b].ExtendedProperties.Add(Root.DASHED_LINE_GUID, ds);
+                    btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, false,
+                                                            Root.PenAttr[b].ExtendedProperties.Contains(Root.FADING_PEN), Root.LineStyleToString(Root.PenAttr[b].ExtendedProperties));
+                    if(b==Root.CurrentPen)
+                        SelectPen(b);
+                    Root.UponButtonsUpdate |= 0x2;  // necessary in case b!= from CurrentPen
+                }
+        }
 
         public void btColor_LongClick(object sender)
         {

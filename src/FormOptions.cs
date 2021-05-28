@@ -298,6 +298,7 @@ namespace gInk
             hiPenWidthMinus.Hotkey = Root.Hotkey_PenWidthMinus;
             hiColorPickup.Hotkey = Root.Hotkey_ColorPickup;
             hiColorEdit.Hotkey = Root.Hotkey_ColorEdit;
+            hiLineStyle.Hotkey = Root.Hotkey_LineStyle;
 
             WsUrlTxt.Text = Root.ObsUrl;
             WsPwdTxt.Text = Root.ObsPwd;
@@ -427,6 +428,7 @@ namespace gInk
             this.lbHkClipart3.Text = shortTxt(Root.Local.ButtonNameClipArt) + " 3";
             this.lbHkZoom.Text = shortTxt(Root.Local.ButtonNameZoom);
 
+            this.lbHkLineStyle.Text = Root.Local.OptionsLineStyle;
             this.lbHkPenWidthPlus.Text = Root.Local.OptionsHotkeysPenWidthPlus;
             this.lbHkPenWidthMinus.Text = Root.Local.OptionsHotkeysPenWidthMinus;
 

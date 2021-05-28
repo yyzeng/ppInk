@@ -47,7 +47,7 @@ namespace gInk
         public string LoadStroke = "Load Strokes\n(long =opendialog ; short = {0})";
         public string ButtonNameZoom = "Zoom";
 
-        public string QuestionClipArtUpdate = "Cliparts seems to have been updated during edition.\nDo you want to update le default list?";
+        public string QuestionClipArtUpdate = "Cliparts seem to have been updated during edition.\nDo you want to update le default list?";
         public string ButtonActivateDebug = "Debug Window";
 
         public string SubToolsBarCbText = "Enable Secondary ToolBar";
@@ -161,6 +161,7 @@ namespace gInk
         public string OptionsHotkeysPenWidthMinus = "Pen Width -";
         public string OptionsHotkeysColorPicker = "Color Picker";
         public string OptionsHotkeysColorEdit = "Color/Pen Edit";
+        public string OptionsLineStyle = "Line Style";
 
         public string VideoTab="Video";
         public string OptNoVideo="No video recording";

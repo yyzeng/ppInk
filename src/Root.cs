@@ -230,6 +230,7 @@ namespace gInk
         public Hotkey Hotkey_Zoom = new Hotkey();
         public Hotkey Hotkey_ColorPickup = new Hotkey();
         public Hotkey Hotkey_ColorEdit = new Hotkey();
+        public Hotkey Hotkey_LineStyle = new Hotkey();
 
         public float LongHKPressDelay = 2.5F;
 
@@ -1060,6 +1061,10 @@ namespace gInk
                         case "HOTKEY_COLOREDIT":
                             Hotkey_ColorEdit.Parse(sPara);
                             break;
+                        case "HOTKEY_LINESTYLE":
+                            Hotkey_LineStyle.Parse(sPara);
+                            break;
+
                         case "PENS_ON_TWO_LINES":
                             if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
                                 PensOnTwoLines = true;
@@ -1674,12 +1679,16 @@ namespace gInk
                         case "HOTKEY_COLOREDIT":
                             sPara = Hotkey_ColorEdit.ToStringInvariant();
                             break;
-                        case "PENWIDTH_DELTA":
-                            sPara = PenWidth_Delta.ToString();
+                        case "HOTKEY_LINESTYLE":
+                            sPara = Hotkey_LineStyle.ToStringInvariant();
                             break;
+
 
                         case "PENS_ON_TWO_LINES":
                             sPara = PensOnTwoLines? "True" : "False";
+                            break;
+                        case "PENWIDTH_DELTA":
+                            sPara = PenWidth_Delta.ToString();
                             break;
 
                         case "WHITE_TRAY_ICON":

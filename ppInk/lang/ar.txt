@@ -150,6 +150,7 @@ OptionsHotkeysEnableinpointer = " تفعيل جميع مفاتيح الاختص�
 
 OptionsHotkeysPenWidthPlus = "سمك القلم +"
 OptionsHotkeysPenWidthMinus = "سمك القلم -"
+OptionsLineStyle = "أسلوب الخط"
 
 VideoTab="الفيديو"
 OptNoVideo="لا يوجد تسجيل للفيديو"

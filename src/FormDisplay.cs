@@ -284,7 +284,7 @@ namespace gInk
                 DA = st.DrawingAttributes;
             //if (st.ExtendedProperties.Contains(Root.DASHED_LINE_GUID)||DA.ExtendedProperties.Contains(Root.DASHED_LINE_GUID))
             if (DA.ExtendedProperties.Contains(Root.DASHED_LINE_GUID))
-                //try
+                try
                 {
                     Pen p = new Pen(DA.Color, Root.HiMetricToPixel(DA.Width));
                     //try
@@ -319,8 +319,9 @@ namespace gInk
                         g.DrawLines(p, pts);
                     }
                 }
-                /*catch (Exception e)
+                catch (Exception e)
                 {
+                    /*
                     var sta = new StackTrace(e, true);
                     var frame = sta.GetFrame(0);
                     Console.WriteLine(sta.ToString());
@@ -329,7 +330,8 @@ namespace gInk
                         Root.FormCollection.IC.Renderer.Draw(bmp, st);
                     else
                         Root.FormCollection.IC.Renderer.Draw(g, st);
-                }*/
+                    */
+                }
             else
             {
                 if (bmp != null)
