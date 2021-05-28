@@ -16,6 +16,7 @@ using System.Security.Cryptography;
 using System.Reflection;
 using System.Drawing.Imaging;
 using System.Globalization;
+using System.Drawing.Drawing2D;
 
 namespace gInk
 {
@@ -274,9 +275,9 @@ namespace gInk
             }
         }
 
-        public Bitmap buildPenIcon(Color col, int transparency, bool Sel, bool Fading)
+        public Bitmap buildPenIcon(Color col, int transparency, bool Sel, bool Fading, string LineStyle="Stroke")
         {
-            Bitmap fg, img, fadingOverlay;
+            Bitmap fg, img, Overlay;
             ImageAttributes imageAttributes = new ImageAttributes();
             bool Large = transparency >= 100;
 
@@ -291,12 +292,19 @@ namespace gInk
 
             img = getImgFromDiskOrRes((Large ? "Lpen" : "pen") + (Sel ? "S" : "") + "_bg", ImageExts);
             fg = getImgFromDiskOrRes((Large ? "Lpen" : "pen") + (Sel ? "S" : "") + "_col", ImageExts);
-            fadingOverlay = getImgFromDiskOrRes("fadingTag", ImageExts);
 
             Graphics g = Graphics.FromImage(img);
             g.DrawImage(fg, new Rectangle(0, 0, img.Width, img.Height), 0, 0, img.Width, img.Height, GraphicsUnit.Pixel, imageAttributes);
+
+            Overlay = getImgFromDiskOrRes("fadingTag", ImageExts);
             if (Fading)
-                g.DrawImage(fadingOverlay, new Rectangle(0, 0, img.Width, img.Height), 0, 0, img.Width, img.Height, GraphicsUnit.Pixel);
+                g.DrawImage(Overlay, new Rectangle(0, 0, img.Width, img.Height), 0, 0, img.Width, img.Height, GraphicsUnit.Pixel);
+
+            Overlay.Dispose();
+            Overlay = getImgFromDiskOrRes(LineStyle+"LSTag", ImageExts);
+            g.DrawImage(Overlay, new Rectangle(0, 0, img.Width, img.Height), 0, 0, img.Width, img.Height, GraphicsUnit.Pixel);
+            Overlay.Dispose();
+            fg.Dispose();
             return img;
         }
 
@@ -1372,7 +1380,8 @@ namespace gInk
                 // if the penattributes is not fading there is no properties and it will turn into an exception
                 if (st.DrawingAttributes.ExtendedProperties.Contains(Root.FADING_PEN))
                     st.ExtendedProperties.Add(Root.FADING_PEN, DateTime.Now.AddSeconds((float)(st.DrawingAttributes.ExtendedProperties[Root.FADING_PEN].Data)).Ticks);
-            } catch { };
+            }
+            catch { };
 
         }
 
@@ -2753,7 +2762,7 @@ namespace gInk
                     catch { }
                     //btPen[b].Image = image_pen[b];
                     btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, false,
-                                                            Root.PenAttr[b].ExtendedProperties.Contains(Root.FADING_PEN));// image_pen[b];
+                                                            Root.PenAttr[b].ExtendedProperties.Contains(Root.FADING_PEN),Root.LineStyleToString(Root.PenAttr[b].ExtendedProperties));// image_pen[b];
                 }
                 btPan.BackgroundImage = getImgFromDiskOrRes("pan_act", ImageExts);
                 EnterEraserMode(false);
@@ -2771,7 +2780,7 @@ namespace gInk
                 for (int b = 0; b < Root.MaxPenCount; b++)
                     //btPen[b].Image = image_pen[b];
                     btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, false,
-                                                            Root.PenAttr[b].ExtendedProperties.Contains(Root.FADING_PEN));// image_pen[b];
+                                                            Root.PenAttr[b].ExtendedProperties.Contains(Root.FADING_PEN),Root.LineStyleToString(Root.PenAttr[b].ExtendedProperties));// image_pen[b];
                 btPan.BackgroundImage = getImgFromDiskOrRes("pan", ImageExts);
                 btPointer.BackgroundImage = image_pointer_act;
                 EnterEraserMode(false);
@@ -2791,7 +2800,7 @@ namespace gInk
                 for (int b = 0; b < Root.MaxPenCount; b++)
                     //btPen[b].Image = image_pen[b];
                     btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, false,
-                                                            Root.PenAttr[b].ExtendedProperties.Contains(Root.FADING_PEN));// image_pen[b];
+                                                            Root.PenAttr[b].ExtendedProperties.Contains(Root.FADING_PEN), Root.LineStyleToString(Root.PenAttr[b].ExtendedProperties));// image_pen[b];
 
                 btPan.BackgroundImage = getImgFromDiskOrRes("pan", ImageExts);
                 btEraser.BackgroundImage = image_eraser_act;
@@ -2840,7 +2849,7 @@ namespace gInk
                 for (int b = 0; b < Root.MaxPenCount; b++)
                     //btPen[b].Image = image_pen[b];
                     btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, b == pen,
-                                                            Root.PenAttr[b].ExtendedProperties.Contains(Root.FADING_PEN));
+                                                            Root.PenAttr[b].ExtendedProperties.Contains(Root.FADING_PEN), Root.LineStyleToString(Root.PenAttr[b].ExtendedProperties));// image_pen[b];
                 //btPen[pen].Image = image_pen_act[pen];
                 EnterEraserMode(false);
                 Root.UnPointer();
@@ -3058,7 +3067,7 @@ namespace gInk
                 Root.PenAttr[Root.CurrentPen].Transparency = Root.PickupTransparency;
                 Root.PenAttr[Root.CurrentPen].Color = Root.PickupColor;
                 btPen[Root.CurrentPen].BackgroundImage = buildPenIcon(Root.PenAttr[Root.CurrentPen].Color, Root.PenAttr[Root.CurrentPen].Transparency, true,
-                                                                      Root.PenAttr[Root.CurrentPen].ExtendedProperties.Contains(Root.FADING_PEN));
+                                                            Root.PenAttr[Root.CurrentPen].ExtendedProperties.Contains(Root.FADING_PEN), Root.LineStyleToString(Root.PenAttr[Root.CurrentPen].ExtendedProperties));// image_pen[b];
                 SelectPen(Root.CurrentPen);
                 Active = 0;
             }
@@ -4417,9 +4426,8 @@ namespace gInk
                         //PreparePenImages(Root.PenAttr[b].Transparency, ref image_pen[b], ref image_pen_act[b]);
                         //btPen[b].Image = image_pen_act[b];
                         btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, false,
-                                                                Root.PenAttr[b].ExtendedProperties.Contains(Root.FADING_PEN));// image_pen[b];
-                        //btPen[b].BackColor = Root.PenAttr[b].Color;
-                        btPen[b].FlatAppearance.MouseDownBackColor = Root.PenAttr[b].Color;
+                                                                Root.PenAttr[b].ExtendedProperties.Contains(Root.FADING_PEN),Root.LineStyleToString(Root.PenAttr[b].ExtendedProperties));// image_pen[b];
+            btPen[b].FlatAppearance.MouseDownBackColor = Root.PenAttr[b].Color;
                         btPen[b].FlatAppearance.MouseOverBackColor = Root.PenAttr[b].Color;
                         SelectPen(b);
                         Root.UponButtonsUpdate |= 0x2;
@@ -5392,7 +5400,8 @@ namespace gInk
                     outp = "# boxed in " + r.Location.ToString() + " - " + r.Size.ToString()+"\n";
                     writeUtf(outp);
                     da = st.DrawingAttributes;
-                    writeUtf("DA = Color [A=255, R=" + da.Color.R.ToString() + ", G=" + da.Color.G.ToString() + ", B=" + da.Color.B.ToString() + "] T=" + da.Transparency + (da.FitToCurve ? ", Fit, W=" : ", NotFit, W=") + da.Width.ToString() + "\n");
+                    writeUtf("DA = Color [A=255, R=" + da.Color.R.ToString() + ", G=" + da.Color.G.ToString() + ", B=" + da.Color.B.ToString() + "] T=" + da.Transparency 
+                             + (da.FitToCurve ? ", Fit, W=" : ", NotFit, W=") + da.Width.ToString() + ", S="+Root.LineStyleToString(da.ExtendedProperties)+"\n");
                     outp = "";
                     foreach (ExtendedProperty pr in st.ExtendedProperties)
                     {
@@ -5466,8 +5475,22 @@ namespace gInk
                     stk.DrawingAttributes.Transparency = byte.Parse(st.Substring(j, l - j));
                     stk.DrawingAttributes.FitToCurve = !st.Contains("NotFit");
                     j = st.IndexOf("W=") + 2;
-                    l = st.Length;
-                    stk.DrawingAttributes.Width = Int32.Parse(st.Substring(j, l - j));
+                    l = st.IndexOf(",", j);
+                    stk.DrawingAttributes.Width = float.Parse(st.Substring(j, l - j));
+                    j = st.IndexOf("S=") + 2;
+                    if (j > 0)
+                    {
+                        l = st.Length;
+                        DashStyle ds = Root.LineStyleFromString(st.Substring(j, l - j));
+                        if (ds != DashStyle.Custom)
+                        {
+                            stk.DrawingAttributes.ExtendedProperties.Add(Root.DASHED_LINE_GUID, ds);
+                        }
+                        else
+                            try { stk.DrawingAttributes.ExtendedProperties.Remove(Root.DASHED_LINE_GUID); } catch { }
+                    }
+                    else
+                        try { stk.DrawingAttributes.ExtendedProperties.Remove(Root.DASHED_LINE_GUID); } catch { }
                     do
                     {
                         st = fileout.ReadLine();
@@ -5509,6 +5532,7 @@ namespace gInk
                         }
                         while (st.StartsWith("#"));
                     }
+                    stk.DrawingAttributes = stk.DrawingAttributes.Clone();
                     IC.Ink.Strokes.Add(stk);
                     do
                     {

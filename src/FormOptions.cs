@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Drawing.Drawing2D;
 
 namespace gInk
 {
@@ -19,6 +20,7 @@ namespace gInk
 		PictureBox[] pboxPens = new PictureBox[10];
 		ComboBox[] comboPensAlpha = new ComboBox[10];
 		ComboBox[] comboPensWidth = new ComboBox[10];
+        Panel [] comboPensLineStyle = new Panel[10];
         CheckBox[] comboPensFading = new CheckBox[10];
         //Label lbcbPens, lbpboxPens, lbcomboPensAlpha, lbcomboPensWidth, lbcomboPensFading;
 
@@ -53,6 +55,9 @@ namespace gInk
 				comboPensWidth[p] = new ComboBox();
 				comboPensWidth[p].TextChanged += comboPensWidth_TextChanged;
 
+                comboPensLineStyle[p] = new Panel();
+                comboPensLineStyle[p].Click += comboPensLineStyle_Changed;
+
                 comboPensFading[p] = new CheckBox();
                 comboPensFading[p].CheckedChanged += comboPensFading_Changed;
 
@@ -61,6 +66,7 @@ namespace gInk
 				tabPage2.Controls.Add(pboxPens[p]);
 				tabPage2.Controls.Add(comboPensAlpha[p]);
 				tabPage2.Controls.Add(comboPensWidth[p]);
+                tabPage2.Controls.Add(comboPensLineStyle[p]);
                 tabPage2.Controls.Add(comboPensFading[p]);
 
                 lbHotkeyPens[p] = new Label();
@@ -200,29 +206,37 @@ namespace gInk
 				lbPens[p].Width = 80;
 				lbPens[p].Top = top;*/
 
-				cbPens[p].Left = (int)(this.Width / 500.0 * 30);
+                cbPens[p].Left = lbcbPens.Left + 10;// (int)(this.Width / 500.0 * 30);
 				cbPens[p].Width = 25;
 				cbPens[p].Top = top - 5;
 				cbPens[p].Text = "";
 				cbPens[p].Checked = Root.PenEnabled[p];
 
-				pboxPens[p].Left = (int)(this.Width / 500.0 * 130);
+                pboxPens[p].Left = lbpboxPens.Left + 10;// (int)(this.Width / 500.0 * 130);
 				pboxPens[p].Top = top;
 				pboxPens[p].Width = 15;
 				pboxPens[p].Height = 15;
 				pboxPens[p].BackColor = Root.PenAttr[p].Color;
 
-				comboPensAlpha[p].Left = (int)(this.Width / 500.0 * 180);
+                comboPensAlpha[p].Left = lbcomboPensAlpha.Left;// (int)(this.Width / 500.0 * 180);
 				comboPensAlpha[p].Top = top - 2;
-				comboPensAlpha[p].Width = 80;
+				comboPensAlpha[p].Width = 60;
 				comboPensAlpha[p].Text = (255 - Root.PenAttr[p].Transparency).ToString();
 
-				comboPensWidth[p].Left = (int)(this.Width / 500.0 * 270);
+                comboPensWidth[p].Left = lbcomboPensWidth.Left;// (int)(this.Width / 500.0 * 270);
 				comboPensWidth[p].Top = top - 2;
-				comboPensWidth[p].Width = 80;
+				comboPensWidth[p].Width = 60;
 				comboPensWidth[p].Text = ((int)Root.PenAttr[p].Width).ToString();
 
-                comboPensFading[p].Left = (int)(this.Width / 500.0 * 380);
+                comboPensLineStyle[p].Left = lbLineStyle.Left+5;// (int)(this.Width / 500.0 * 270);
+                comboPensLineStyle[p].Top = top - 2;
+                comboPensLineStyle[p].Height = comboPensWidth[p].Height;
+                comboPensLineStyle[p].Width = comboPensWidth[p].Height*2;
+                comboPensLineStyle[p].BackgroundImageLayout = ImageLayout.Stretch;
+                comboPensLineStyle[p].BackgroundImage = FormCollection.getImgFromDiskOrRes("DashStyle"+ Root.LineStyleToString(Root.PenAttr[p].ExtendedProperties));
+                comboPensLineStyle[p].Tag = p;
+
+                comboPensFading[p].Left = lbcomboPensFading.Left+10;  // (int)(this.Width / 500.0 * 380);
                 comboPensFading[p].Top = top - 2;
                 comboPensFading[p].Width = 20;
                 comboPensFading[p].Checked = Root.PenAttr[p].ExtendedProperties.Contains(Root.FADING_PEN);
@@ -508,8 +522,8 @@ namespace gInk
 			for (int p = 0; p < Root.MaxPenCount; p++)
 				if ((ComboBox)sender == comboPensWidth[p])
 				{
-					int o;
-					if (int.TryParse(comboPensWidth[p].Text, out o) && o >= 30 && o <= 3000)
+					float o;
+					if (float.TryParse(comboPensWidth[p].Text, out o) && o > 0 && o <= 3000)
 					{
 						Root.PenAttr[p].Width = o;
 						comboPensWidth[p].BackColor = Color.White;
@@ -550,6 +564,7 @@ namespace gInk
                         comboPensAlpha[p].Text = string.Format("{0}", Root.PenAttr[p].Transparency);
                         comboPensWidth[p].Text = string.Format("{0}", Root.PenAttr[p].Width);
                         comboPensFading[p].Checked = Root.PenAttr[p].ExtendedProperties.Contains(Root.FADING_PEN);
+                        comboPensLineStyle[p].BackgroundImage = FormCollection.getImgFromDiskOrRes("DashStyle" + Root.LineStyleToString(Root.PenAttr[p].ExtendedProperties));
                     }
 				}
 		}
@@ -1173,6 +1188,18 @@ namespace gInk
         private void ColorPickerEnaCb_CheckedChanged(object sender, EventArgs e)
         {
             Root.ColorPickerEnabled = ColorPickerEnaCb.Checked;
+        }
+
+        private void comboPensLineStyle_Changed(object sender,EventArgs e)
+        {
+            Panel p = (Panel)sender;
+            string s = Root.NextLineStyleString(Root.LineStyleToString(Root.PenAttr[(int)p.Tag].ExtendedProperties));
+            p.BackgroundImage = FormCollection.getImgFromDiskOrRes("DashStyle" + s);
+            DashStyle ds = Root.LineStyleFromString(s);
+            if (ds == DashStyle.Custom)
+                try { Root.PenAttr[(int)p.Tag].ExtendedProperties.Remove(Root.DASHED_LINE_GUID); }catch { }
+            else
+                Root.PenAttr[(int)p.Tag].ExtendedProperties.Add(Root.DASHED_LINE_GUID, ds);
         }
     }
 }

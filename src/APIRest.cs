@@ -230,7 +230,7 @@ namespace gInk
                                 Root.SelectPen(Root.CurrentPen);
                             }
                             Root.FormCollection.btPen[i].BackgroundImage = Root.FormCollection.buildPenIcon(Root.PenAttr[i].Color, Root.PenAttr[i].Transparency, i == Root.CurrentPen,
-                                                                                                            Root.PenAttr[i].ExtendedProperties.Contains(Root.FADING_PEN));
+                                                                                                            Root.PenAttr[i].ExtendedProperties.Contains(Root.FADING_PEN),Root.LineStyleToString(Root.PenAttr[i].ExtendedProperties));
                             Root.UponButtonsUpdate |= 0x2;
                         }
                         if (resp.StatusCode == 200)
