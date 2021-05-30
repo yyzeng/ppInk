@@ -676,69 +676,92 @@ namespace gInk
 			}
 		}
 
-        public void DrawLineOnGraphic(Graphics g, int CursorX0, int CursorY0, int CursorX, int CursorY)
+        private Pen PenForDrawOn(DrawingAttributes dr, DashStyle st)
         {
-            //gOutCanvus.DrawLine(new Pen(Root.PenAttr[Root.CurrentPen].Color, Root.PenAttr[Root.CurrentPen].Width/ (float)26.45834),
-            //                        CursorX0, CursorY0 , CursorX, CursorY);
-            gOutCanvus.DrawLine(new Pen(Color.FromArgb (255- Root.FormCollection.IC.DefaultDrawingAttributes.Transparency,Root.FormCollection.IC.DefaultDrawingAttributes.Color),
-                                        Root.HiMetricToPixel(Root.FormCollection.IC.DefaultDrawingAttributes.Width)),
-                                    CursorX0, CursorY0 , CursorX, CursorY);
-        }
-        public void DrawRectOnGraphic(Graphics g, int CursorX0, int CursorY0, int CursorX, int CursorY,DrawingAttributes dr=null)
-        {
-            int dX = Math.Abs(CursorX - CursorX0);
-            int dY = Math.Abs(CursorY - CursorY0);
             if (dr == null)
                 dr = Root.FormCollection.IC.DefaultDrawingAttributes;
-            gOutCanvus.DrawRectangle(new Pen(Color.FromArgb(255 - dr.Transparency, dr.Color),
-                                        Root.HiMetricToPixel(dr.Width)),
-                                        Math.Min(CursorX0,CursorX), Math.Min(CursorY0, CursorY), dX, dY);
+            Pen p = new Pen(Color.FromArgb(255 - dr.Transparency, dr.Color), Root.HiMetricToPixel(dr.Width));
+            p.DashStyle = st != DashStyle.Custom ? st : DashStyle.Solid;
+
+            return p;
         }
-        public void DrawEllipseOnGraphic(Graphics g, int CursorX0, int CursorY0, int CursorX, int CursorY)
+
+        public void DrawLineOnGraphic(Graphics g, int CursorX0, int CursorY0, int CursorX, int CursorY, DrawingAttributes dr = null, DashStyle st = DashStyle.Solid)
+        {
+            Pen p = PenForDrawOn(dr, st);
+
+            gOutCanvus.DrawLine(p, CursorX0, CursorY0 , CursorX, CursorY);
+            p.Dispose();
+        }
+        public void DrawRectOnGraphic(Graphics g, int CursorX0, int CursorY0, int CursorX, int CursorY,DrawingAttributes dr=null, DashStyle st=DashStyle.Solid)
         {
             int dX = Math.Abs(CursorX - CursorX0);
             int dY = Math.Abs(CursorY - CursorY0);
 
-            gOutCanvus.DrawEllipse(new Pen(Color.FromArgb(255 - Root.FormCollection.IC.DefaultDrawingAttributes.Transparency, Root.FormCollection.IC.DefaultDrawingAttributes.Color),
-                                        Root.HiMetricToPixel(Root.FormCollection.IC.DefaultDrawingAttributes.Width)),
-                                        CursorX0 - dX, CursorY0 - dY, 2 * dX, 2 * dY);
+            Pen p = PenForDrawOn(dr, st);
+            gOutCanvus.DrawRectangle(p,Math.Min(CursorX0,CursorX), Math.Min(CursorY0, CursorY), dX, dY);
+            p.Dispose();
+
+        }
+        public void DrawEllipseOnGraphic(Graphics g, int CursorX0, int CursorY0, int CursorX, int CursorY, DrawingAttributes dr = null, DashStyle st = DashStyle.Solid)
+        {
+            int dX = Math.Abs(CursorX - CursorX0);
+            int dY = Math.Abs(CursorY - CursorY0);
+
+            Pen p = PenForDrawOn(dr, st);        
+            gOutCanvus.DrawEllipse(p, CursorX0 - dX, CursorY0 - dY, 2 * dX, 2 * dY);
+            p.Dispose();
         }
 
-        public void DrawArrowOnGraphic(Graphics g, int CursorX0, int CursorY0, int CursorX, int CursorY)
+        public void DrawArrowOnGraphic(Graphics g, int CursorX0, int CursorY0, int CursorX, int CursorY, DrawingAttributes dr = null, DashStyle st = DashStyle.Solid)
         {
             Point[] pts = new Point[5];
             double theta = Math.Atan2(CursorY - CursorY0, CursorX - CursorX0);
-            Pen p = new Pen(Color.FromArgb(255 - Root.FormCollection.IC.DefaultDrawingAttributes.Transparency, Root.FormCollection.IC.DefaultDrawingAttributes.Color),
-                                        Root.HiMetricToPixel(Root.FormCollection.IC.DefaultDrawingAttributes.Width));
+            Pen p = PenForDrawOn(dr, st);
 
             gOutCanvus.DrawLine(p,CursorX0, CursorY0, (int)(CursorX0 + Math.Cos(theta + Root.ArrowAngle) * Root.ArrowLen), (int)(CursorY0 + Math.Sin(theta + Root.ArrowAngle) * Root.ArrowLen));
             gOutCanvus.DrawLine(p, CursorX0, CursorY0, (int)(CursorX0 + Math.Cos(theta - Root.ArrowAngle) * Root.ArrowLen), (int)(CursorY0 + Math.Sin(theta - Root.ArrowAngle) * Root.ArrowLen));
             gOutCanvus.DrawLine(p, CursorX0, CursorY0, CursorX,CursorY);
+
+            p.Dispose();
         }
 
         public void DrawCustomOnGraphic(Graphics g, int CursorX0, int CursorY0, int CursorX, int CursorY)
         {
             if ((CursorX0 != int.MinValue) || (CursorY0 != int.MinValue))
             {
+                DrawingAttributes da = Root.FormCollection.IC.DefaultDrawingAttributes; ;
+                DashStyle ds;
+                try
+                {
+                    ds = Root.LineStyleFromString(Root.LineStyleToString(da.ExtendedProperties));
+                    if (ds == DashStyle.Custom) 
+                        ds = DashStyle.Solid;
+                }
+                catch
+                {
+                    ds = DashStyle.Solid;
+                }
                 if (Root.FormCollection.ZoomCapturing)
-                    DrawRectOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY,Root.FormCollection.IC.Ink.Strokes[Root.FormCollection.IC.Ink.Strokes.Count-1].DrawingAttributes);
-                else if((Root.ToolSelected == Tools.Line)|| (Root.ToolSelected == Tools.Poly))
-                    DrawLineOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY);
-                else if ((Root.ToolSelected == Tools.Rect)|| (Root.ToolSelected == Tools.ClipArt))
+                    DrawRectOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY, da, ds);
+                //DrawRectOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY,Root.FormCollection.IC.Ink.Strokes[Root.FormCollection.IC.Ink.Strokes.Count-1].DrawingAttributes);
+                else if ((Root.ToolSelected == Tools.Line) || (Root.ToolSelected == Tools.Poly))
+                    DrawLineOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY, da, ds);
+                else if ((Root.ToolSelected == Tools.Rect) || (Root.ToolSelected == Tools.ClipArt))
                     if ((Root.FormCollection.CurrentMouseButton == MouseButtons.Right) || ((int)(Root.FormCollection.CurrentMouseButton) == 2))
-                        DrawRectOnGraphic(g, 2*CursorX0-CursorX, 2*CursorY0-CursorY, CursorX, CursorY);
+                        DrawRectOnGraphic(g, 2 * CursorX0 - CursorX, 2 * CursorY0 - CursorY, CursorX, CursorY, da, ds);
                     else
-                        DrawRectOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY);
+                        DrawRectOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY, da, ds);
                 else if (Root.ToolSelected == Tools.Oval)
                     if ((Root.FormCollection.CurrentMouseButton == MouseButtons.Right) || ((int)(Root.FormCollection.CurrentMouseButton) == 2))
-                        DrawEllipseOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY);
+                        DrawEllipseOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY, da, ds);
                     else
-                        DrawEllipseOnGraphic(g,(CursorX0+ CursorX)/2,(CursorY0+ CursorY)/2, CursorX, CursorY);
-                else if ((Root.ToolSelected == Tools.StartArrow)|| (Root.ToolSelected == Tools.EndArrow))
+                        DrawEllipseOnGraphic(g, (CursorX0 + CursorX) / 2, (CursorY0 + CursorY) / 2, CursorX, CursorY, da, ds);
+                else if ((Root.ToolSelected == Tools.StartArrow) || (Root.ToolSelected == Tools.EndArrow))
                     if ((Root.ToolSelected == Tools.StartArrow) ^ ((Root.FormCollection.CurrentMouseButton == MouseButtons.Right) || ((int)(Root.FormCollection.CurrentMouseButton) == 2)))
-                        DrawArrowOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY);
+                        DrawArrowOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY, da, ds);
                     else
-                        DrawArrowOnGraphic(g, CursorX, CursorY, CursorX0, CursorY0);
+                        DrawArrowOnGraphic(g, CursorX, CursorY, CursorX0, CursorY0, da, ds);
             }
         }
 
