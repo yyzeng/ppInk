@@ -148,6 +148,7 @@ OptionsHotkeysEnableinpointer = "允許在 滑鼠游標 下使用下列快捷鍵
 
 OptionsHotkeysPenWidthPlus = "筆寬度 +"
 OptionsHotkeysPenWidthMinus = "筆寬度 -"
+OptionsLineStyle = "劇情風格"
 
 VideoTab="視頻"
 OptNoVideo="無視頻記錄"

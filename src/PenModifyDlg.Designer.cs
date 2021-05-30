@@ -41,10 +41,24 @@
             this.colorEditorManager = new Cyotek.Windows.Forms.ColorEditorManager();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.FadingCB = new System.Windows.Forms.CheckBox();
+            this.StyleStrokeRd = new System.Windows.Forms.RadioButton();
+            this.DashStyleGrp = new System.Windows.Forms.GroupBox();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.StyleDashDotDotRd = new System.Windows.Forms.RadioButton();
+            this.StyleDotRd = new System.Windows.Forms.RadioButton();
+            this.StyleSolidRd = new System.Windows.Forms.RadioButton();
+            this.StyleDashDotRd = new System.Windows.Forms.RadioButton();
+            this.StyleDashRd = new System.Windows.Forms.RadioButton();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.panel3 = new System.Windows.Forms.Panel();
+            this.panel4 = new System.Windows.Forms.Panel();
+            this.panel5 = new System.Windows.Forms.Panel();
+            this.panel6 = new System.Windows.Forms.Panel();
             this.previewPanel.SuspendLayout();
             this.gpPenWidth.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pboxPenWidthIndicator)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.DashStyleGrp.SuspendLayout();
             this.SuspendLayout();
             // 
             // lightnessColorSlider
@@ -99,9 +113,9 @@
             // 
             this.previewPanel.BackgroundImage = global::gInk.Properties.Resources.cellbackground;
             this.previewPanel.Controls.Add(this.gpPenWidth);
-            this.previewPanel.Location = new System.Drawing.Point(347, 254);
+            this.previewPanel.Location = new System.Drawing.Point(319, 291);
             this.previewPanel.Name = "previewPanel";
-            this.previewPanel.Size = new System.Drawing.Size(200, 53);
+            this.previewPanel.Size = new System.Drawing.Size(160, 53);
             this.previewPanel.TabIndex = 26;
             // 
             // gpPenWidth
@@ -113,7 +127,7 @@
             this.gpPenWidth.ForeColor = System.Drawing.SystemColors.ControlText;
             this.gpPenWidth.Location = new System.Drawing.Point(0, 0);
             this.gpPenWidth.Name = "gpPenWidth";
-            this.gpPenWidth.Size = new System.Drawing.Size(200, 53);
+            this.gpPenWidth.Size = new System.Drawing.Size(159, 53);
             this.gpPenWidth.TabIndex = 30;
             this.gpPenWidth.MouseDown += new System.Windows.Forms.MouseEventHandler(this.gpPenWidth_MouseDown);
             this.gpPenWidth.MouseMove += new System.Windows.Forms.MouseEventHandler(this.gpPenWidth_MouseMove);
@@ -135,7 +149,7 @@
             // CancelBtn
             // 
             this.CancelBtn.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.CancelBtn.Location = new System.Drawing.Point(472, 344);
+            this.CancelBtn.Location = new System.Drawing.Point(502, 370);
             this.CancelBtn.Name = "CancelBtn";
             this.CancelBtn.Size = new System.Drawing.Size(75, 23);
             this.CancelBtn.TabIndex = 28;
@@ -145,7 +159,7 @@
             // OkBtn
             // 
             this.OkBtn.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.OkBtn.Location = new System.Drawing.Point(352, 344);
+            this.OkBtn.Location = new System.Drawing.Point(382, 370);
             this.OkBtn.Name = "OkBtn";
             this.OkBtn.Size = new System.Drawing.Size(75, 24);
             this.OkBtn.TabIndex = 29;
@@ -173,12 +187,146 @@
             // FadingCB
             // 
             this.FadingCB.AutoSize = true;
-            this.FadingCB.Location = new System.Drawing.Point(347, 321);
+            this.FadingCB.Location = new System.Drawing.Point(319, 254);
             this.FadingCB.Name = "FadingCB";
             this.FadingCB.Size = new System.Drawing.Size(58, 17);
             this.FadingCB.TabIndex = 32;
             this.FadingCB.Text = "Fading";
             this.FadingCB.UseVisualStyleBackColor = true;
+            // 
+            // StyleStrokeRd
+            // 
+            this.StyleStrokeRd.AutoSize = true;
+            this.StyleStrokeRd.Location = new System.Drawing.Point(6, 19);
+            this.StyleStrokeRd.Name = "StyleStrokeRd";
+            this.StyleStrokeRd.Size = new System.Drawing.Size(14, 13);
+            this.StyleStrokeRd.TabIndex = 33;
+            this.StyleStrokeRd.TabStop = true;
+            this.StyleStrokeRd.UseVisualStyleBackColor = true;
+            // 
+            // DashStyleGrp
+            // 
+            this.DashStyleGrp.Controls.Add(this.panel6);
+            this.DashStyleGrp.Controls.Add(this.panel5);
+            this.DashStyleGrp.Controls.Add(this.panel4);
+            this.DashStyleGrp.Controls.Add(this.panel3);
+            this.DashStyleGrp.Controls.Add(this.panel2);
+            this.DashStyleGrp.Controls.Add(this.panel1);
+            this.DashStyleGrp.Controls.Add(this.StyleDashDotDotRd);
+            this.DashStyleGrp.Controls.Add(this.StyleDotRd);
+            this.DashStyleGrp.Controls.Add(this.StyleSolidRd);
+            this.DashStyleGrp.Controls.Add(this.StyleDashDotRd);
+            this.DashStyleGrp.Controls.Add(this.StyleDashRd);
+            this.DashStyleGrp.Controls.Add(this.StyleStrokeRd);
+            this.DashStyleGrp.Location = new System.Drawing.Point(485, 254);
+            this.DashStyleGrp.Name = "DashStyleGrp";
+            this.DashStyleGrp.Size = new System.Drawing.Size(100, 100);
+            this.DashStyleGrp.TabIndex = 34;
+            this.DashStyleGrp.TabStop = false;
+            // 
+            // panel1
+            // 
+            this.panel1.BackgroundImage = global::gInk.Properties.Resources.DashStyleStroke;
+            this.panel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.panel1.Location = new System.Drawing.Point(22, 19);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(25, 12);
+            this.panel1.TabIndex = 35;
+            // 
+            // StyleDashDotDotRd
+            // 
+            this.StyleDashDotDotRd.AutoSize = true;
+            this.StyleDashDotDotRd.Location = new System.Drawing.Point(51, 77);
+            this.StyleDashDotDotRd.Name = "StyleDashDotDotRd";
+            this.StyleDashDotDotRd.Size = new System.Drawing.Size(14, 13);
+            this.StyleDashDotDotRd.TabIndex = 38;
+            this.StyleDashDotDotRd.TabStop = true;
+            this.StyleDashDotDotRd.UseVisualStyleBackColor = true;
+            // 
+            // StyleDotRd
+            // 
+            this.StyleDotRd.AutoSize = true;
+            this.StyleDotRd.Location = new System.Drawing.Point(51, 48);
+            this.StyleDotRd.Name = "StyleDotRd";
+            this.StyleDotRd.Size = new System.Drawing.Size(14, 13);
+            this.StyleDotRd.TabIndex = 37;
+            this.StyleDotRd.TabStop = true;
+            this.StyleDotRd.UseVisualStyleBackColor = true;
+            // 
+            // StyleSolidRd
+            // 
+            this.StyleSolidRd.AutoSize = true;
+            this.StyleSolidRd.Location = new System.Drawing.Point(51, 19);
+            this.StyleSolidRd.Name = "StyleSolidRd";
+            this.StyleSolidRd.Size = new System.Drawing.Size(14, 13);
+            this.StyleSolidRd.TabIndex = 36;
+            this.StyleSolidRd.TabStop = true;
+            this.StyleSolidRd.UseVisualStyleBackColor = true;
+            // 
+            // StyleDashDotRd
+            // 
+            this.StyleDashDotRd.AutoSize = true;
+            this.StyleDashDotRd.Location = new System.Drawing.Point(6, 77);
+            this.StyleDashDotRd.Name = "StyleDashDotRd";
+            this.StyleDashDotRd.Size = new System.Drawing.Size(14, 13);
+            this.StyleDashDotRd.TabIndex = 35;
+            this.StyleDashDotRd.TabStop = true;
+            this.StyleDashDotRd.UseVisualStyleBackColor = true;
+            // 
+            // StyleDashRd
+            // 
+            this.StyleDashRd.AutoSize = true;
+            this.StyleDashRd.Location = new System.Drawing.Point(6, 48);
+            this.StyleDashRd.Name = "StyleDashRd";
+            this.StyleDashRd.Size = new System.Drawing.Size(14, 13);
+            this.StyleDashRd.TabIndex = 34;
+            this.StyleDashRd.TabStop = true;
+            this.StyleDashRd.UseVisualStyleBackColor = true;
+            // 
+            // panel2
+            // 
+            this.panel2.BackgroundImage = global::gInk.Properties.Resources.DashStyleSolid;
+            this.panel2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.panel2.Location = new System.Drawing.Point(67, 20);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(25, 12);
+            this.panel2.TabIndex = 36;
+            // 
+            // panel3
+            // 
+            this.panel3.BackgroundImage = global::gInk.Properties.Resources.DashStyleDash;
+            this.panel3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.panel3.Location = new System.Drawing.Point(22, 49);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(25, 12);
+            this.panel3.TabIndex = 39;
+            // 
+            // panel4
+            // 
+            this.panel4.BackgroundImage = global::gInk.Properties.Resources.DashStyleDot;
+            this.panel4.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.panel4.Location = new System.Drawing.Point(67, 49);
+            this.panel4.Name = "panel4";
+            this.panel4.Size = new System.Drawing.Size(25, 12);
+            this.panel4.TabIndex = 37;
+            // 
+            // panel5
+            // 
+            this.panel5.BackgroundImage = global::gInk.Properties.Resources.DashStyleDashDot;
+            this.panel5.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.panel5.Location = new System.Drawing.Point(22, 77);
+            this.panel5.Name = "panel5";
+            this.panel5.Size = new System.Drawing.Size(25, 12);
+            this.panel5.TabIndex = 37;
+            // 
+            // panel6
+            // 
+            this.panel6.BackgroundImage = global::gInk.Properties.Resources.DashStyleDashDotDot;
+            this.panel6.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.panel6.Location = new System.Drawing.Point(67, 77);
+            this.panel6.Name = "panel6";
+            this.panel6.Size = new System.Drawing.Size(25, 12);
+            this.panel6.TabIndex = 37;
             // 
             // PenModifyDlg
             // 
@@ -186,7 +334,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.CancelBtn;
-            this.ClientSize = new System.Drawing.Size(591, 379);
+            this.ClientSize = new System.Drawing.Size(595, 402);
+            this.Controls.Add(this.DashStyleGrp);
             this.Controls.Add(this.FadingCB);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.OkBtn);
@@ -205,6 +354,8 @@
             this.gpPenWidth.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pboxPenWidthIndicator)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.DashStyleGrp.ResumeLayout(false);
+            this.DashStyleGrp.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -225,5 +376,18 @@
         public Cyotek.Windows.Forms.ColorEditor colorEditor;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.CheckBox FadingCB;
+        private System.Windows.Forms.RadioButton StyleStrokeRd;
+        private System.Windows.Forms.GroupBox DashStyleGrp;
+        private System.Windows.Forms.RadioButton StyleDashDotDotRd;
+        private System.Windows.Forms.RadioButton StyleDotRd;
+        private System.Windows.Forms.RadioButton StyleSolidRd;
+        private System.Windows.Forms.RadioButton StyleDashDotRd;
+        private System.Windows.Forms.RadioButton StyleDashRd;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel panel6;
+        private System.Windows.Forms.Panel panel5;
+        private System.Windows.Forms.Panel panel4;
+        private System.Windows.Forms.Panel panel3;
+        private System.Windows.Forms.Panel panel2;
     }
 }

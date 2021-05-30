@@ -39,7 +39,7 @@ SaveStroke = "Save Strokes\n(long =opendialog ; short = {0})"
 LoadStroke = "Load Strokes\n(long =opendialog ; short = {0})"
 ButtonNameZoom = "Zoom"
 
-QuestionClipArtUpdate = "Cliparts seems to have been updated during edition.\nDo you want to update le default list?"
+QuestionClipArtUpdate = "Cliparts seem to have been updated during edition.\nDo you want to update le default list?"
 ButtonActivateDebug ="Debug Window"
 
 SubToolsBarCbText = "Enable Secondary ToolBar"
@@ -61,6 +61,7 @@ FormatLength = "Length : {0:N1} {1}"
 FormatAngle = "Angle : {0:N1}°"
 OptionsHotkeysColorPicker = "Color Picker"
 OptionsHotkeysColorEdit = "Color/Pen Edit"
+OptionsLineStyle = "Line Style"
 
 OptionsGeneralAPIRest = "REST server url"
 

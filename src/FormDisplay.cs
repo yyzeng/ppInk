@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using Microsoft.Ink;
 using System.Drawing.Imaging;
 using System.Diagnostics;
+using System.Drawing.Drawing2D;
 
 namespace gInk
 {
@@ -277,10 +278,73 @@ namespace gInk
             }
         }
 
+        public void DrawOneStroke(Graphics g,Stroke st,DrawingAttributes DA=null,Bitmap bmp=null)
+        {
+            if (DA == null)
+                DA = st.DrawingAttributes;
+            //if (st.ExtendedProperties.Contains(Root.DASHED_LINE_GUID)||DA.ExtendedProperties.Contains(Root.DASHED_LINE_GUID))
+            if (DA.ExtendedProperties.Contains(Root.DASHED_LINE_GUID))
+                try
+                {
+                    Pen p = new Pen(DA.Color, Root.HiMetricToPixel(DA.Width));
+                    //try
+                    //{
+                        p.DashStyle = (DashStyle)(int)(DA.ExtendedProperties[Root.DASHED_LINE_GUID].Data);
+                    //}
+                    //catch
+                    //{
+                    //p.DashStyle = (DashStyle)(int)(st.ExtendedProperties[Root.DASHED_LINE_GUID].Data);
+                    //}
+                    g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+                    if (DA.FitToCurve)
+                    {
+                        Point[] pts = st.GetPoints();
+                        //Root.FormCollection.IC.Renderer.InkSpaceToPixel(gOneStrokeCanvus, ref pts);
+                        //Console.WriteLine(pts.ToString());
+                        pts = st.GetFlattenedBezierPoints(5);
+                        //pts = st.GetPoints();
+                        Root.FormCollection.IC.Renderer.InkSpaceToPixel(gOneStrokeCanvus, ref pts);                   
+                        g.DrawCurve(p, pts, .5F);
+                        /*using (StreamWriter f = File.AppendText("strokes.log"))
+                        {
+                            foreach (Point pp in pts)
+                                f.Write(pp.X.ToString() + "," + pp.Y.ToString() + " ");
+                            f.WriteLine();
+                        }*/
+                    }
+                    else
+                    {
+                        Point[] pts = st.GetPoints();
+                        Root.FormCollection.IC.Renderer.InkSpaceToPixel(gOneStrokeCanvus, ref pts);
+                        g.DrawLines(p, pts);
+                    }
+                }
+                catch 
+                {
+                    /*
+                    var sta = new StackTrace(e, true);
+                    var frame = sta.GetFrame(0);
+                    Console.WriteLine(sta.ToString());
+                    Console.WriteLine(frame.GetFileLineNumber().ToString() + " / " + e.Message);
+                    if (bmp != null)
+                        Root.FormCollection.IC.Renderer.Draw(bmp, st);
+                    else
+                        Root.FormCollection.IC.Renderer.Draw(g, st);
+                    */
+                }
+            else
+            {
+                if (bmp != null)
+                    Root.FormCollection.IC.Renderer.Draw(bmp, st);
+                else
+                    Root.FormCollection.IC.Renderer.Draw(g, st);
+            }
+        }
+
         public void DrawStrokes()
 		{
             DrawStrokes(gCanvus);
-		}
+		}        
 
 		public void DrawStrokes(Graphics g)
 		{
@@ -367,7 +431,7 @@ namespace gInk
                     }
                     /*else */
                     if (st.ExtendedProperties.Contains(Root.ISSTROKE_GUID))
-                        Root.FormCollection.IC.Renderer.Draw(g, st);
+                        DrawOneStroke(g, st, null);
 
                     if (st.ExtendedProperties.Contains(Root.TEXT_GUID))
                     {
@@ -378,9 +442,9 @@ namespace gInk
                         stf.LineAlignment = (System.Drawing.StringAlignment)(st.ExtendedProperties[Root.TEXTVALIGN_GUID].Data);
                         g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
                         g.DrawString((string)(st.ExtendedProperties[Root.TEXT_GUID].Data),
-                                     new Font((string)st.ExtendedProperties[Root.TEXTFONT_GUID].Data,(float)st.ExtendedProperties[Root.TEXTFONTSIZE_GUID].Data,
+                                     new Font((string)st.ExtendedProperties[Root.TEXTFONT_GUID].Data, (float)st.ExtendedProperties[Root.TEXTFONTSIZE_GUID].Data,
                                         (System.Drawing.FontStyle)(int)st.ExtendedProperties[Root.TEXTFONTSTYLE_GUID].Data),
-                                     new SolidBrush(Color.FromArgb(255-st.DrawingAttributes.Transparency, st.DrawingAttributes.Color)), pt.X, pt.Y, stf);
+                                     new SolidBrush(Color.FromArgb(255 - st.DrawingAttributes.Transparency, st.DrawingAttributes.Color)), pt.X, pt.Y, stf);
 
                     }
                 }
@@ -464,7 +528,8 @@ namespace gInk
                     }
                     /*else */
                     if (st.ExtendedProperties.Contains(Root.ISSTROKE_GUID))
-                        Root.FormCollection.IC.Renderer.Draw(bmp, st);
+                        DrawOneStroke(g, st, null, bmp);
+                        //Root.FormCollection.IC.Renderer.Draw(bmp, st);
 
                     if (st.ExtendedProperties.Contains(Root.TEXT_GUID))
                     {
@@ -611,69 +676,92 @@ namespace gInk
 			}
 		}
 
-        public void DrawLineOnGraphic(Graphics g, int CursorX0, int CursorY0, int CursorX, int CursorY)
+        private Pen PenForDrawOn(DrawingAttributes dr, DashStyle st)
         {
-            //gOutCanvus.DrawLine(new Pen(Root.PenAttr[Root.CurrentPen].Color, Root.PenAttr[Root.CurrentPen].Width/ (float)26.45834),
-            //                        CursorX0, CursorY0 , CursorX, CursorY);
-            gOutCanvus.DrawLine(new Pen(Color.FromArgb (255- Root.FormCollection.IC.DefaultDrawingAttributes.Transparency,Root.FormCollection.IC.DefaultDrawingAttributes.Color),
-                                        Root.HiMetricToPixel(Root.FormCollection.IC.DefaultDrawingAttributes.Width)),
-                                    CursorX0, CursorY0 , CursorX, CursorY);
-        }
-        public void DrawRectOnGraphic(Graphics g, int CursorX0, int CursorY0, int CursorX, int CursorY,DrawingAttributes dr=null)
-        {
-            int dX = Math.Abs(CursorX - CursorX0);
-            int dY = Math.Abs(CursorY - CursorY0);
             if (dr == null)
                 dr = Root.FormCollection.IC.DefaultDrawingAttributes;
-            gOutCanvus.DrawRectangle(new Pen(Color.FromArgb(255 - dr.Transparency, dr.Color),
-                                        Root.HiMetricToPixel(dr.Width)),
-                                        Math.Min(CursorX0,CursorX), Math.Min(CursorY0, CursorY), dX, dY);
+            Pen p = new Pen(Color.FromArgb(255 - dr.Transparency, dr.Color), Root.HiMetricToPixel(dr.Width));
+            p.DashStyle = st != DashStyle.Custom ? st : DashStyle.Solid;
+
+            return p;
         }
-        public void DrawEllipseOnGraphic(Graphics g, int CursorX0, int CursorY0, int CursorX, int CursorY)
+
+        public void DrawLineOnGraphic(Graphics g, int CursorX0, int CursorY0, int CursorX, int CursorY, DrawingAttributes dr = null, DashStyle st = DashStyle.Solid)
+        {
+            Pen p = PenForDrawOn(dr, st);
+
+            gOutCanvus.DrawLine(p, CursorX0, CursorY0 , CursorX, CursorY);
+            p.Dispose();
+        }
+        public void DrawRectOnGraphic(Graphics g, int CursorX0, int CursorY0, int CursorX, int CursorY,DrawingAttributes dr=null, DashStyle st=DashStyle.Solid)
         {
             int dX = Math.Abs(CursorX - CursorX0);
             int dY = Math.Abs(CursorY - CursorY0);
 
-            gOutCanvus.DrawEllipse(new Pen(Color.FromArgb(255 - Root.FormCollection.IC.DefaultDrawingAttributes.Transparency, Root.FormCollection.IC.DefaultDrawingAttributes.Color),
-                                        Root.HiMetricToPixel(Root.FormCollection.IC.DefaultDrawingAttributes.Width)),
-                                        CursorX0 - dX, CursorY0 - dY, 2 * dX, 2 * dY);
+            Pen p = PenForDrawOn(dr, st);
+            gOutCanvus.DrawRectangle(p,Math.Min(CursorX0,CursorX), Math.Min(CursorY0, CursorY), dX, dY);
+            p.Dispose();
+
+        }
+        public void DrawEllipseOnGraphic(Graphics g, int CursorX0, int CursorY0, int CursorX, int CursorY, DrawingAttributes dr = null, DashStyle st = DashStyle.Solid)
+        {
+            int dX = Math.Abs(CursorX - CursorX0);
+            int dY = Math.Abs(CursorY - CursorY0);
+
+            Pen p = PenForDrawOn(dr, st);        
+            gOutCanvus.DrawEllipse(p, CursorX0 - dX, CursorY0 - dY, 2 * dX, 2 * dY);
+            p.Dispose();
         }
 
-        public void DrawArrowOnGraphic(Graphics g, int CursorX0, int CursorY0, int CursorX, int CursorY)
+        public void DrawArrowOnGraphic(Graphics g, int CursorX0, int CursorY0, int CursorX, int CursorY, DrawingAttributes dr = null, DashStyle st = DashStyle.Solid)
         {
             Point[] pts = new Point[5];
             double theta = Math.Atan2(CursorY - CursorY0, CursorX - CursorX0);
-            Pen p = new Pen(Color.FromArgb(255 - Root.FormCollection.IC.DefaultDrawingAttributes.Transparency, Root.FormCollection.IC.DefaultDrawingAttributes.Color),
-                                        Root.HiMetricToPixel(Root.FormCollection.IC.DefaultDrawingAttributes.Width));
+            Pen p = PenForDrawOn(dr, st);
 
             gOutCanvus.DrawLine(p,CursorX0, CursorY0, (int)(CursorX0 + Math.Cos(theta + Root.ArrowAngle) * Root.ArrowLen), (int)(CursorY0 + Math.Sin(theta + Root.ArrowAngle) * Root.ArrowLen));
             gOutCanvus.DrawLine(p, CursorX0, CursorY0, (int)(CursorX0 + Math.Cos(theta - Root.ArrowAngle) * Root.ArrowLen), (int)(CursorY0 + Math.Sin(theta - Root.ArrowAngle) * Root.ArrowLen));
             gOutCanvus.DrawLine(p, CursorX0, CursorY0, CursorX,CursorY);
+
+            p.Dispose();
         }
 
         public void DrawCustomOnGraphic(Graphics g, int CursorX0, int CursorY0, int CursorX, int CursorY)
         {
             if ((CursorX0 != int.MinValue) || (CursorY0 != int.MinValue))
             {
+                DrawingAttributes da = Root.FormCollection.IC.DefaultDrawingAttributes; ;
+                DashStyle ds;
+                try
+                {
+                    ds = Root.LineStyleFromString(Root.LineStyleToString(da.ExtendedProperties));
+                    if (ds == DashStyle.Custom) 
+                        ds = DashStyle.Solid;
+                }
+                catch
+                {
+                    ds = DashStyle.Solid;
+                }
                 if (Root.FormCollection.ZoomCapturing)
-                    DrawRectOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY,Root.FormCollection.IC.Ink.Strokes[Root.FormCollection.IC.Ink.Strokes.Count-1].DrawingAttributes);
-                else if((Root.ToolSelected == Tools.Line)|| (Root.ToolSelected == Tools.Poly))
-                    DrawLineOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY);
-                else if ((Root.ToolSelected == Tools.Rect)|| (Root.ToolSelected == Tools.ClipArt))
+                    DrawRectOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY, da, ds);
+                //DrawRectOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY,Root.FormCollection.IC.Ink.Strokes[Root.FormCollection.IC.Ink.Strokes.Count-1].DrawingAttributes);
+                else if ((Root.ToolSelected == Tools.Line) || (Root.ToolSelected == Tools.Poly))
+                    DrawLineOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY, da, ds);
+                else if ((Root.ToolSelected == Tools.Rect) || (Root.ToolSelected == Tools.ClipArt))
                     if ((Root.FormCollection.CurrentMouseButton == MouseButtons.Right) || ((int)(Root.FormCollection.CurrentMouseButton) == 2))
-                        DrawRectOnGraphic(g, 2*CursorX0-CursorX, 2*CursorY0-CursorY, CursorX, CursorY);
+                        DrawRectOnGraphic(g, 2 * CursorX0 - CursorX, 2 * CursorY0 - CursorY, CursorX, CursorY, da, ds);
                     else
-                        DrawRectOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY);
+                        DrawRectOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY, da, ds);
                 else if (Root.ToolSelected == Tools.Oval)
                     if ((Root.FormCollection.CurrentMouseButton == MouseButtons.Right) || ((int)(Root.FormCollection.CurrentMouseButton) == 2))
-                        DrawEllipseOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY);
+                        DrawEllipseOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY, da, ds);
                     else
-                        DrawEllipseOnGraphic(g,(CursorX0+ CursorX)/2,(CursorY0+ CursorY)/2, CursorX, CursorY);
-                else if ((Root.ToolSelected == Tools.StartArrow)|| (Root.ToolSelected == Tools.EndArrow))
+                        DrawEllipseOnGraphic(g, (CursorX0 + CursorX) / 2, (CursorY0 + CursorY) / 2, CursorX, CursorY, da, ds);
+                else if ((Root.ToolSelected == Tools.StartArrow) || (Root.ToolSelected == Tools.EndArrow))
                     if ((Root.ToolSelected == Tools.StartArrow) ^ ((Root.FormCollection.CurrentMouseButton == MouseButtons.Right) || ((int)(Root.FormCollection.CurrentMouseButton) == 2)))
-                        DrawArrowOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY);
+                        DrawArrowOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY, da, ds);
                     else
-                        DrawArrowOnGraphic(g, CursorX, CursorY, CursorX0, CursorY0);
+                        DrawArrowOnGraphic(g, CursorX, CursorY, CursorX0, CursorY0, da, ds);
             }
         }
 
@@ -877,7 +965,8 @@ namespace gInk
 					if ((!stroke.Deleted) && (!Root.FormCollection.ZoomCapturing)&&(Root.ToolSelected == Tools.Hand))
                     {
                         BitBlt(OutcanvusDc, 0, 0, this.Width, this.Height, canvusDc, 0, 0, 0x00CC0020);
-                        Root.FormCollection.IC.Renderer.Draw(gOutCanvus, stroke, Root.FormCollection.IC.DefaultDrawingAttributes);
+                        //Root.FormCollection.IC.Renderer.Draw(gOutCanvus, stroke, Root.FormCollection.IC.DefaultDrawingAttributes);
+                        DrawOneStroke(gOutCanvus, stroke, Root.FormCollection.IC.DefaultDrawingAttributes);
                     }
                     UpdateFormDisplay(true, Root.ToolSelected == Tools.Hand && (!Root.FormCollection.ZoomCapturing));
                 }

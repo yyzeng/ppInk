@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Net.WebSockets;
 using System.Collections.Specialized;
+using System.Drawing.Drawing2D;
 
 namespace gInk
 {
@@ -137,6 +138,7 @@ namespace gInk
         public static Guid ISBACKGROUND_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 11);
 
         public static Guid FADING_PEN = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 3, 1);
+        public static Guid DASHED_LINE_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 3, 2);        // will contain DashStyle style
 
         public static int MIN_MAGNETIC = 25;
         // options
@@ -228,6 +230,7 @@ namespace gInk
         public Hotkey Hotkey_Zoom = new Hotkey();
         public Hotkey Hotkey_ColorPickup = new Hotkey();
         public Hotkey Hotkey_ColorEdit = new Hotkey();
+        public Hotkey Hotkey_LineStyle = new Hotkey();
 
         public float LongHKPressDelay = 2.5F;
 
@@ -918,16 +921,24 @@ namespace gInk
 									PenAttr[penid].Width = penc;
 								}
                             }
+                            if (sName.EndsWith("_LINESTYLE"))
+                            {
+                                DashStyle ds = LineStyleFromString(sPara);
+                                if(ds==DashStyle.Custom)
+                                    try { PenAttr[penid].ExtendedProperties.Remove(DASHED_LINE_GUID); }catch { }
+                                else
+                                    PenAttr[penid].ExtendedProperties.Add(DASHED_LINE_GUID,ds);
+                            }
                             if (sName.EndsWith("_FADING"))
                             {
                                 float k;
-                                if (sPara.ToUpper() == "Y") 
-                                     k = TimeBeforeFading;
+                                if (sPara.ToUpper() == "Y")
+                                    k = TimeBeforeFading;
                                 if (sPara.ToUpper() == "N")
                                     k = -1;
                                 else if (!float.TryParse(sPara, out k))
                                     k = TimeBeforeFading;
-                                if(k>0)
+                                if (k > 0)
                                     PenAttr[penid].ExtendedProperties.Add(FADING_PEN, k);
                             }
 
@@ -1050,6 +1061,10 @@ namespace gInk
                         case "HOTKEY_COLOREDIT":
                             Hotkey_ColorEdit.Parse(sPara);
                             break;
+                        case "HOTKEY_LINESTYLE":
+                            Hotkey_LineStyle.Parse(sPara);
+                            break;
+
                         case "PENS_ON_TWO_LINES":
                             if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
                                 PensOnTwoLines = true;
@@ -1504,33 +1519,37 @@ namespace gInk
 						int penid = 0;
 						if (int.TryParse(sName.Substring(3, 1), out penid) && penid >= 0 && penid < MaxPenCount)
 						{
-							if (sName.EndsWith("_ENABLED"))
-							{
-								if (PenEnabled[penid])
-									sPara = "True";
-								else
-									sPara = "False";
-							}
-							else if (sName.EndsWith("_RED"))
-							{
-								sPara = PenAttr[penid].Color.R.ToString();
-							}
-							else if (sName.EndsWith("_GREEN"))
-							{
-								sPara = PenAttr[penid].Color.G.ToString();
-							}
-							else if (sName.EndsWith("_BLUE"))
-							{
-								sPara = PenAttr[penid].Color.B.ToString();
-							}
-							else if (sName.EndsWith("_ALPHA"))
-							{
-								sPara = (255 - PenAttr[penid].Transparency).ToString();
-							}
-							else if (sName.EndsWith("_WIDTH"))
-							{
-								sPara = ((int)PenAttr[penid].Width).ToString();
-							}
+                            if (sName.EndsWith("_ENABLED"))
+                            {
+                                if (PenEnabled[penid])
+                                    sPara = "True";
+                                else
+                                    sPara = "False";
+                            }
+                            else if (sName.EndsWith("_RED"))
+                            {
+                                sPara = PenAttr[penid].Color.R.ToString();
+                            }
+                            else if (sName.EndsWith("_GREEN"))
+                            {
+                                sPara = PenAttr[penid].Color.G.ToString();
+                            }
+                            else if (sName.EndsWith("_BLUE"))
+                            {
+                                sPara = PenAttr[penid].Color.B.ToString();
+                            }
+                            else if (sName.EndsWith("_ALPHA"))
+                            {
+                                sPara = (255 - PenAttr[penid].Transparency).ToString();
+                            }
+                            else if (sName.EndsWith("_WIDTH"))
+                            {
+                                sPara = ((int)PenAttr[penid].Width).ToString();
+                            }
+                            else if (sName.EndsWith("_LINESTYLE"))
+                            {
+                                sPara = LineStyleToString(PenAttr[penid].ExtendedProperties);
+                            }
                             else if (sName.EndsWith("_FADING"))
                             {
                                 if (PenAttr[penid].ExtendedProperties.Contains(FADING_PEN))
@@ -1546,9 +1565,9 @@ namespace gInk
                                     sPara = "N";
                             }
                             else if (sName.EndsWith("_HOTKEY"))
-							{
-								sPara = Hotkey_Pens[penid].ToStringInvariant();
-							}
+                            {
+                                sPara = Hotkey_Pens[penid].ToStringInvariant();
+                            }
 						}
 
 					}
@@ -1660,12 +1679,16 @@ namespace gInk
                         case "HOTKEY_COLOREDIT":
                             sPara = Hotkey_ColorEdit.ToStringInvariant();
                             break;
-                        case "PENWIDTH_DELTA":
-                            sPara = PenWidth_Delta.ToString();
+                        case "HOTKEY_LINESTYLE":
+                            sPara = Hotkey_LineStyle.ToStringInvariant();
                             break;
+
 
                         case "PENS_ON_TWO_LINES":
                             sPara = PensOnTwoLines? "True" : "False";
+                            break;
+                        case "PENWIDTH_DELTA":
+                            sPara = PenWidth_Delta.ToString();
                             break;
 
                         case "WHITE_TRAY_ICON":
@@ -2044,6 +2067,68 @@ namespace gInk
         {
             return hl * 0.037795280352161 * Measure2Scale;
         }
+
+        public string LineStyleToString(ExtendedProperties props)
+        {
+            if (!props.Contains(DASHED_LINE_GUID))
+                return "Stroke";
+            else
+                switch ((DashStyle)(props[DASHED_LINE_GUID].Data))
+                {
+                    case DashStyle.Solid:
+                        return "Solid";
+                    case DashStyle.Dash:
+                        return "Dash";
+                    case DashStyle.Dot:
+                        return "Dot";
+                    case DashStyle.DashDot:
+                        return "DashDot";
+                    case DashStyle.DashDotDot:
+                        return "DashDotDot";
+                }
+            return "Stroke"; //by default
+        }
+
+        public DashStyle LineStyleFromString(string s)
+        {
+            switch (s.ToUpper())
+            {
+                case "STROKE":
+                    return DashStyle.Custom;
+                case "SOLID":
+                    return DashStyle.Solid;
+                case "DASH":
+                    return DashStyle.Dash;
+                case "DOT":
+                    return DashStyle.Dot;
+                case "DASHDOT":
+                    return DashStyle.DashDot;
+                case "DASHDOTDOT":
+                    return DashStyle.DashDotDot;
+            }
+            throw (new Exception("Unknown LineStyle String :" + s));
+        }
+
+        public string NextLineStyleString(string s)
+        {
+            switch (s.ToUpper())
+            {
+                case "STROKE":
+                    return "Solid";
+                case "SOLID":
+                    return "Dash";
+                case "DASH":
+                    return "Dot";
+                case "DOT":
+                    return "DashDot";
+                case "DASHDOT":
+                    return "DashDotDot";
+                case "DASHDOTDOT":
+                    return "Stroke";
+            }
+            return "Stroke"; //default : original stroke
+        }
+
 
         public void AppGetFocus()
         {

@@ -150,6 +150,7 @@ OptionsHotkeysPenWidthPlus = "Largeur Stylo +"
 OptionsHotkeysPenWidthMinus = "Largeur Stylo -"
 OptionsHotkeysColorPicker = "Pipette à couleur"
 OptionsHotkeysColorEdit = "Edit. couleur/Stylo"
+OptionsLineStyle = "Style de tracé"
 
 VideoTab="Video"
 OptNoVideo="Pas d'enregistrement video"

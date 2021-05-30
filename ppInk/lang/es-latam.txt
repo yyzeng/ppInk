@@ -148,6 +148,7 @@ OptionsHotKeyAltAsOneCommand = "Procesa Alt como comando temporal (Alt será ign
 OptionsHotkeysglobal = "Teclas de atajo globales (comienza a dibujar, cambia entre apuntador y dibujar)"
 OptionsHotkeysEnableinpointer = "Habilita todas las teclas de atajo a continuación en modo apuntador (puede causar un desorden)"
 
+OptionsLineStyle ="Estilo de linea"
 OptionsHotkeysPenWidthPlus = "Anch. de bolí. +"
 OptionsHotkeysPenWidthMinus = "Anch. de bolí. -"
 

@@ -302,6 +302,17 @@
     <None Include="dockbackV.png" />
     <None Include="dockV.png" />
     <None Include="fadingTag.png" />
+    <None Include="DashStyleDash.png" />
+    <None Include="DashStyleDashDot.png" />
+    <None Include="DashStyleDashDotDot.png" />
+    <None Include="DashStyleDot.png" />
+    <None Include="DashStylePressure.png" />
+    <None Include="DashStyleSolid.png" />
+    <None Include="DashStyleStroke.png" />
+    <None Include="DashDotDotLSTag.png" />
+    <None Include="DashDotLSTag.png" />
+    <None Include="DotLSTag.png" />
+    <None Include="DashLSTag.png" />
     <Content Include="Magnetic.png" />
     <Content Include="Magnetic_act.png" />
     <None Include="pan1_act.png" />
@@ -322,6 +333,8 @@
     <None Include="toolbar2Up.png" />
     <None Include="pinned.png" />
     <None Include="picker.png" />
+    <None Include="SolidLSTag.png" />
+    <None Include="StrokeLSTag.png" />
     <Content Include="tool_edit.png" />
     <Content Include="tool_edit_act.png" />
     <Content Include="tool_enAr.png" />

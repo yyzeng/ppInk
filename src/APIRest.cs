@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Drawing;
 using System.Diagnostics;
+using System.Drawing.Drawing2D;
 
 namespace gInk
 {
@@ -172,10 +173,11 @@ namespace gInk
                     else if (req.Url.AbsolutePath == "/PenDef")
                     {
                         string s;
-                        int i = 0, r, g, b, w;
+                        int i=-1, r, g, b, w;
                         byte t;
                         float f;
                         string ff = "";
+
                         if (!(Root.FormDisplay.Visible || Root.FormCollection.Visible))
                         {
                             resp.StatusCode = 409;
@@ -215,7 +217,6 @@ namespace gInk
                             if (query.ContainsKey("F"))
                             {
                                 query.TryGetValue("F", out ff);
-                                ff = ff.ToLower();
                                 if (ff == "false")
                                 { try { Root.PenAttr[i].ExtendedProperties.Remove(Root.FADING_PEN); } catch { }; }
                                 else if (ff == "true")
@@ -225,15 +226,30 @@ namespace gInk
                                 else
                                     resp.StatusCode = 400;
                             }
-                            if(i== Root.CurrentPen)
+                            if (query.ContainsKey("L"))
+                            {
+                                query.TryGetValue("L", out ff);
+                                DashStyle ds = Root.LineStyleFromString(ff);
+                                if (ds.ToString().ToUpper() != ff.ToUpper())
+                                    resp.StatusCode = 400;
+                                else if (ds == DashStyle.Custom)
+                                    Root.PenAttr[i].ExtendedProperties.Remove(Root.DASHED_LINE_GUID);
+                                else
+                                    Root.PenAttr[i].ExtendedProperties.Add(Root.DASHED_LINE_GUID,ds);
+                            }
+                            if (i == Root.CurrentPen)
                             {
                                 Root.SelectPen(Root.CurrentPen);
                             }
                             Root.FormCollection.btPen[i].BackgroundImage = Root.FormCollection.buildPenIcon(Root.PenAttr[i].Color, Root.PenAttr[i].Transparency, i == Root.CurrentPen,
-                                                                                                            Root.PenAttr[i].ExtendedProperties.Contains(Root.FADING_PEN));
+                                                                                                            Root.PenAttr[i].ExtendedProperties.Contains(Root.FADING_PEN), Root.LineStyleToString(Root.PenAttr[i].ExtendedProperties));
                             Root.UponButtonsUpdate |= 0x2;
                         }
-                        if (resp.StatusCode == 200)
+                        else
+                        {
+                            resp.StatusCode = 400;
+                        }
+                            if (resp.StatusCode == 200)
                         {
                             if (Root.PenAttr[i].ExtendedProperties.Contains(Root.FADING_PEN))
                             {
@@ -250,6 +266,88 @@ namespace gInk
                             ret = string.Format("{{\"Pen\":{0},\n\"Red\":{1}, \"Green\":{2}, \"Blue\":{3}, \"Transparency\":{4},\n\"Width\":{5},\n\"Fading\":{6},\n\"Enabled\":{7}\n}}",
                                                 i, Root.PenAttr[i].Color.R, Root.PenAttr[i].Color.G, Root.PenAttr[i].Color.B, Root.PenAttr[i].Transparency,
                                                 Root.PenAttr[i].Width, ff, Root.PenEnabled[i]?"true":"false");
+                        }
+                        else if (resp.StatusCode == 400)
+                            ret = string.Format("!!!! Error in Query ({0}) - {1} ", req.HttpMethod, req.Url.AbsoluteUri);
+                    }
+
+
+                    else if (req.Url.AbsolutePath == "/ToggleFading")
+                    {
+                        string s;
+                        int i=-1;
+                        float f;
+                        string ff = "";
+
+                        if (!(Root.FormDisplay.Visible || Root.FormCollection.Visible))
+                        {
+                            resp.StatusCode = 409;
+                            ret = "!!!!! Not in Inking mode";
+                        }
+                        else if (query.TryGetValue("P", out s) && int.TryParse(s, out i) && -1 <= i && i <= 9)
+                        {
+                            if (i == -1)
+                                i = Root.CurrentPen;
+                            if (Root.PenAttr[i].ExtendedProperties.Contains(Root.FADING_PEN))
+                                Root.PenAttr[i].ExtendedProperties.Remove(Root.FADING_PEN);
+                            else
+                                Root.PenAttr[i].ExtendedProperties.Add(Root.FADING_PEN,Root.TimeBeforeFading);
+                            if (i == Root.CurrentPen)
+                            {
+                                Root.SelectPen(Root.CurrentPen);
+                            }
+                            Root.FormCollection.btPen[i].BackgroundImage = Root.FormCollection.buildPenIcon(Root.PenAttr[i].Color, Root.PenAttr[i].Transparency, i == Root.CurrentPen,
+                                                                                                            Root.PenAttr[i].ExtendedProperties.Contains(Root.FADING_PEN), Root.LineStyleToString(Root.PenAttr[i].ExtendedProperties));
+                            Root.UponButtonsUpdate |= 0x2;
+                        }
+                        else
+                        {
+                            resp.StatusCode = 400;
+                        }
+                        if (resp.StatusCode == 200)
+                        {
+                            if (Root.PenAttr[i].ExtendedProperties.Contains(Root.FADING_PEN))
+                            {
+                                f = (float)(Root.PenAttr[i].ExtendedProperties[Root.FADING_PEN].Data);
+                                if (f == Root.TimeBeforeFading)
+                                    ff = "true";
+                                else if (f <= 0)
+                                    ff = "false";
+                                else
+                                    ff = f.ToString();
+                            }
+                            else
+                                ff = "false";
+                            ret = string.Format("{{\"Pen\":{0},\n\"Fading\":\"{1}\" }}", i, ff);
+                        }
+                        else if (resp.StatusCode == 400)
+                            ret = string.Format("!!!! Error in Query ({0}) - {1} ", req.HttpMethod, req.Url.AbsoluteUri);
+                    }
+
+
+                    else if (req.Url.AbsolutePath == "/NextLineStyle")
+                    {
+                        string s;
+                        int i = -1;
+
+                        if (!(Root.FormDisplay.Visible || Root.FormCollection.Visible))
+                        {
+                            resp.StatusCode = 409;
+                            ret = "!!!!! Not in Inking mode";
+                        }
+                        else if (query.TryGetValue("P", out s) && int.TryParse(s, out i) && -1 <= i && i <= 9)
+                        {
+                            if (i == -1)
+                                i = Root.CurrentPen;
+                            Root.FormCollection.SelectNextLineStyle(Root.FormCollection.btPen[i]);
+                        }
+                        else
+                        {
+                            resp.StatusCode = 400;
+                        }
+                        if (resp.StatusCode == 200)
+                        {
+                            ret = string.Format("{{\"Pen\":{0},\n\"LineStyle\":\"{1}\" }}", i, Root.LineStyleToString(Root.PenAttr[i].ExtendedProperties));
                         }
                         else if (resp.StatusCode == 400)
                             ret = string.Format("!!!! Error in Query ({0}) - {1} ", req.HttpMethod, req.Url.AbsoluteUri);
