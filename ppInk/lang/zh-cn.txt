@@ -125,7 +125,7 @@ OptionsGeneralDefaultArrHdBtn = "默认箭头在开始处"
 OptionsGeneralMagnetLbl = "磁性半径 (小于0则禁用)"
 OptionsGeneralSaveConfigToFile = "保存配置到文件"
 OptionsCaptureStrokesOnly = "快照仅保存墨迹"
-OptionsGeneralNotePenwidth = "注：工具栏的笔刷宽度设置会忽略config.ini中的宽度设置"
+OptionsGeneralNotePenwidth = "注意：\n（1）笔刷面板中的笔宽设置会覆盖 画笔 设置中的 宽度\n（2）浮动窗口的透明度和大小需要在config.ini修改"
 
 OptionsPensShow = "显示"
 OptionsPensColor = "颜色"
@@ -161,7 +161,7 @@ LblWsPwd="密码"
 LblObsNote = "注意：请在启用录制之前启动OBS. OBS应安装Websocket插件，并配置端口和密码"
 OptFfmpeg="FFmpeg 录制"
 LblFfmpegCmd="命令行"
-LblFfmpegNote= "注意 :命令行可用的替换语句\n            $xx$ $yy$                        : 左上角\n            $ww$ $hh$                        : 捕获的宽度和高度\n            $DD$ $MM$ $YY$ $YYYY$                        : 日期\n            $H$ $M$ $S$                        : 时间\n            %DD% %MM% %YY% %YYYY%                        : ppInk的启动日期\n            %H% %M% %S%                        : ppInk的启动时间\n            $nn$                        : 计数器（ppink重启后重置为1）\n            %VAR%                        : 使用环境变量VAR"
+LblFfmpegNote= "注意 :命令行可用的替换语句\n            $xx$ $yy$                        : 左上角\n            $ww$ $hh$                        : 捕获的宽度和高度\n            $DD$ $MM$ $YY$ $YYYY$            : 日期\n            $H$ $M$ $S$                      : 时间\n            %DD% %MM% %YY% %YYYY%            : ppInk的启动日期\n            %H% %M% %S%                      : ppInk的启动时间\n            $nn$                             : 计数器（ppink重启后重置为1）\n            %VAR%                            : 使用环境变量VAR"
 
 NotificationSnapshot = "快照已保存，单击此处浏览快照... "
 
