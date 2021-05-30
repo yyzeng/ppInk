@@ -1,4 +1,26 @@
-p1.5 (in progress)
+p1.6 (in progress)	
+=================
+
+---> RC1
+* new : add LineStyle (Stroke(taking into accountDash/Dot/Dash)
+* new : add measures indications upon move / erase buttons
+* new : add color picker (including transparency adjustment through mouse wheel)
+* new : add option to display pens on two lines
+* enh : prevent background moving in pan (still possible in move 1 stroke)
+* new : Add shortcuts to edit pens
+* new : Add option/capability to snapshot only strokes and ignore the background
+* new : Add Shortcut to increase/decrease pen width
+* new : option to disable smoothing (mainly for use with pen or touchscreen)
+* New : add REST interface to control ppInk from remote programs/tools(Streamdesk / Matric / Touchportal...)
+* New : add solution to exit a crash and add debug window to ease support
+* New : add option to display secondary toolbar (to access all fillings)
+* New : add fading shortcut and indication on keys
+* Upg : Escape exit inking independant of shortcut setup
+* Upg : Move to x64
+* Major Fix : memory leak
+* fix : multiple fixes, see commits history
+
+	p1.5 (RC2)
 =================
 ---> RC2
 * new : Add multiple snapshots in pointer mode for advanced drawings with configurable keys (between alt/shift/control)
