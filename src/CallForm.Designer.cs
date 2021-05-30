@@ -28,7 +28,16 @@ namespace gInk
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CallForm));
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
+            // 
+            // timer1
+            // 
+            this.timer1.Enabled = true;
+            this.timer1.Interval = 20;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // CallForm
             // 
@@ -42,6 +51,7 @@ namespace gInk
             this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 3F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "CallForm";
@@ -53,13 +63,16 @@ namespace gInk
             this.Text = "ppInk";
             this.TopMost = true;
             this.TransparencyKey = System.Drawing.Color.White;
-            this.Click += new System.EventHandler(this._Click);
-            this.Enter += new System.EventHandler(this._Click);
+            this.Activated += new System.EventHandler(this.CallForm_Activated);
+            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CallForm_KeyPress);
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this._MouseMove);
+            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.CallForm_MouseUp);
             this.ResumeLayout(false);
 
         }
 
         #endregion
+
+        private System.Windows.Forms.Timer timer1;
     }
 }

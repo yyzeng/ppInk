@@ -22,18 +22,32 @@ namespace gInk
         [DllImport("user32")]
         private static extern int RegisterWindowMessage(string message);
         #endregion Dll Imports
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern int AllocConsole();
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern int FreeConsole();
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern IntPtr GetConsoleWindow();
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool ShowWindow(IntPtr hwnd, int nCmdShow);
+
         public static int StartInkingMsg = RegisterWindowMessage("START_INKING");
 
-		/// <summary>
-		/// The main entry point for the application.
-		/// </summary>
-		[STAThread]
+
+        public static CallForm frm;
+
+        /// <summary>
+        /// The main entry point for the application.
+        /// </summary>
+        [STAThread]
 		static void Main()
 		{
-            CallForm frm;
-
             if (!EnsureSingleInstance()) return;
 
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            AllocConsole();
+            ShowWindow(GetConsoleWindow(), 0);
             Application.ThreadException += new ThreadExceptionEventHandler(UIThreadException);
 			Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
 			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledException);
@@ -63,7 +77,18 @@ namespace gInk
             frm.Opacity = frm.Root.FormOpacity / 100.0;
             if (Environment.CommandLine.IndexOf("--StartInking", StringComparison.OrdinalIgnoreCase) >= 0 )
                 PostMessage((IntPtr)HWND_BROADCAST, StartInkingMsg, (IntPtr)null, (IntPtr)null); // to Myself
+            foreach (ProcessModule module in Process.GetCurrentProcess().Modules)
+            {
+                Console.WriteLine(string.Format("Loaded: {0}", module.FileName));                
+            }
+            Console.WriteLine("-----------");
+            foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                Console.WriteLine(string.Format("Found: {0} - {1}", a.FullName,a.Location));
+            }
+
             Application.Run();
+            FreeConsole();
 		}
 
         private static void UIThreadException(object sender, ThreadExceptionEventArgs t)
@@ -80,7 +105,7 @@ namespace gInk
 				errorMsg += "Stack Trace:\r\n" + ex.StackTrace + "\r\n\r\n";
 				WriteErrorLog(errorMsg);
 
-				errorMsg += "!!! PLEASE PRESS ESC KEY TO EXIT IF YOU FEEL YOUR MOUSE CLICK IS BLOCKED BY SOMETHING";
+				errorMsg += "\r\n!!! Do you want to Quit ?";
 				ShowErrorDialog("UIThreadException", errorMsg);
 			}
 			catch
@@ -112,8 +137,9 @@ namespace gInk
 				errorMsg += ex.Message + "\r\n\r\n";
 				errorMsg += "Stack Trace:\r\n" + ex.StackTrace + "\r\n\r\n";
 				WriteErrorLog(errorMsg);
+                errorMsg += "\r\n!!! Do you want to Quit ?";
 
-				ShowErrorDialog("UnhandledException", errorMsg);
+                ShowErrorDialog("UnhandledException", errorMsg);
 
 				if (!EventLog.SourceExists("UnhandledException"))
 				{
@@ -161,10 +187,24 @@ namespace gInk
 
         private static DialogResult ShowErrorDialog(string title, string errormsg)
 		{
-			return MessageBox.Show(errormsg, title, MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Stop);
+			DialogResult rst = MessageBox.Show(errormsg, title, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+            if(rst==DialogResult.Yes)
+            {
+                try
+                {
+                    if (frm.Root.FormCollection != null && frm.Root.FormCollection.Visible)
+                        frm.Root.FormCollection.SaveStrokes("AutoSave.strokes.txt");
+                }
+                catch { }
+                finally
+                {
+                    Application.Exit();
+                }
+            }
+            return rst;
 		}
 
-		private static void WriteErrorLog(string errormsg)
+		public static void WriteErrorLog(string errormsg)
 		{
 			try
 			{

@@ -11,8 +11,9 @@
     <AssemblyName>ppInk</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <TargetFrameworkProfile />
+    <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -21,13 +22,13 @@
     <IntermediateOutputPath>$(BaseIntermediateOutputPath)$(Configuration)\</IntermediateOutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>..\bin</OutputPath>
+    <OutputPath>..\ppink\</OutputPath>
     <BaseIntermediateOutputPath>..\build\obj\</BaseIntermediateOutputPath>
     <IntermediateOutputPath>$(BaseIntermediateOutputPath)$(Configuration)\</IntermediateOutputPath>
     <DefineConstants>
@@ -47,14 +48,32 @@
   <PropertyGroup>
     <ApplicationManifest>ppInk.exe.manifest</ApplicationManifest>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\ppink\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>..\ppink\</OutputPath>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Cyotek.Windows.Forms.ColorPicker, Version=1.0.0.0, Culture=neutral, PublicKeyToken=58daa28b0b2de221, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ppInk\Cyotek.Windows.Forms.ColorPicker.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Ink, Version=6.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=x86">
+    <Reference Include="Microsoft.Ink.64, Version=6.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\Microsoft.Ink.dll</HintPath>
+      <HintPath>..\ppInk\Microsoft.Ink.64.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -76,6 +95,19 @@
     </Compile>
     <Compile Include="CallForm.Designer.cs">
       <DependentUpon>CallForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="APIRest.cs" />
+    <Compile Include="zoomForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="zoomForm.Designer.cs">
+      <DependentUpon>zoomForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ImageLister.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ImageLister.Designer.cs">
+      <DependentUpon>ImageLister.cs</DependentUpon>
     </Compile>
     <Compile Include="PenModifyDlg.cs">
       <SubType>Form</SubType>
@@ -132,6 +164,12 @@
     <Compile Include="Root.cs" />
     <EmbeddedResource Include="CallForm.resx">
       <DependentUpon>CallForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="zoomForm.resx">
+      <DependentUpon>zoomForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ImageLister.resx">
+      <DependentUpon>ImageLister.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PenModifyDlg.resx">
       <DependentUpon>PenModifyDlg.cs</DependentUpon>
@@ -241,8 +279,13 @@
     <Content Include="..\ppInk\lang\en-us.txt" />
     <Content Include="..\ppInk\config.ini" />
     <Content Include="..\ppInk\hotkeys.ini" />
-    <Content Include="..\ppInk\pen.ini" />
+    <Content Include="..\ppInk\pens.ini" />
     <Content Include="..\readme.md" />
+    <None Include="unpinned.png" />
+    <None Include="ZoomWin_act.png" />
+    <None Include="Zoom_act.png" />
+    <None Include="Zoom.png" />
+    <None Include="unknown.png" />
     <None Include="VidDead.png" />
     <None Include="VidUnk.png" />
     <None Include="VidStop.png" />
@@ -254,6 +297,22 @@
     <None Include="cellbackground.png" />
     <None Include="blackboard.png" />
     <None Include="eraser.ico" />
+    <None Include="clipart.png" />
+    <None Include="clipart_act.png" />
+    <None Include="dockbackV.png" />
+    <None Include="dockV.png" />
+    <None Include="fadingTag.png" />
+    <None Include="DashStyleDash.png" />
+    <None Include="DashStyleDashDot.png" />
+    <None Include="DashStyleDashDotDot.png" />
+    <None Include="DashStyleDot.png" />
+    <None Include="DashStylePressure.png" />
+    <None Include="DashStyleSolid.png" />
+    <None Include="DashStyleStroke.png" />
+    <None Include="DashDotDotLSTag.png" />
+    <None Include="DashDotLSTag.png" />
+    <None Include="DotLSTag.png" />
+    <None Include="DashLSTag.png" />
     <Content Include="Magnetic.png" />
     <Content Include="Magnetic_act.png" />
     <None Include="pan1_act.png" />
@@ -265,6 +324,17 @@
     <None Include="Resources\Lpen_col.png" />
     <None Include="Resources\LpenS_bg.png" />
     <None Include="Resources\LpenS_col.png" />
+    <None Include="pan_copy.png" />
+    <None Include="Open.png" />
+    <None Include="save.png" />
+    <None Include="toolbar2Down.png" />
+    <None Include="toolbar2Left.png" />
+    <None Include="toolbar2Right.png" />
+    <None Include="toolbar2Up.png" />
+    <None Include="pinned.png" />
+    <None Include="picker.png" />
+    <None Include="SolidLSTag.png" />
+    <None Include="StrokeLSTag.png" />
     <Content Include="tool_edit.png" />
     <Content Include="tool_edit_act.png" />
     <Content Include="tool_enAr.png" />
@@ -273,6 +343,10 @@
     <None Include="tool_hand_filledC.png" />
     <None Include="tool_hand_filledW.png" />
     <Content Include="tool_line_act.png" />
+    <None Include="tool_mlines.png" />
+    <None Include="tool_mlines_filledB.png" />
+    <None Include="tool_mlines_filledC.png" />
+    <None Include="tool_mlines_filledW.png" />
     <Content Include="tool_numb.png" />
     <Content Include="tool_numb_act.png" />
     <Content Include="tool_numb_fillB.png" />

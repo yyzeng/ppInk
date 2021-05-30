@@ -35,13 +35,15 @@ namespace gInk
             this.captionLbl = new System.Windows.Forms.Label();
             this.FontBtn = new System.Windows.Forms.Button();
             this.FontDlg = new System.Windows.Forms.FontDialog();
+            this.ColorBtn = new System.Windows.Forms.Button();
+            this.boxingCb = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // btOK
             // 
             this.btOK.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.btOK.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btOK.Location = new System.Drawing.Point(313, 125);
+            this.btOK.Location = new System.Drawing.Point(395, 125);
             this.btOK.Name = "btOK";
             this.btOK.Size = new System.Drawing.Size(75, 42);
             this.btOK.TabIndex = 0;
@@ -52,12 +54,13 @@ namespace gInk
             // 
             this.btCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btCancel.Location = new System.Drawing.Point(394, 125);
+            this.btCancel.Location = new System.Drawing.Point(476, 125);
             this.btCancel.Name = "btCancel";
             this.btCancel.Size = new System.Drawing.Size(75, 42);
             this.btCancel.TabIndex = 1;
             this.btCancel.Text = "&Cancel";
             this.btCancel.UseVisualStyleBackColor = true;
+            this.btCancel.Click += new System.EventHandler(this.btCancel_Click);
             // 
             // InputML
             // 
@@ -66,18 +69,19 @@ namespace gInk
             this.InputML.Location = new System.Drawing.Point(18, 26);
             this.InputML.Multiline = true;
             this.InputML.Name = "InputML";
-            this.InputML.Size = new System.Drawing.Size(450, 93);
+            this.InputML.Size = new System.Drawing.Size(533, 93);
             this.InputML.TabIndex = 2;
             this.InputML.Text = "inputML\r\nline2";
             this.InputML.Visible = false;
             this.InputML.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TB_CtrlAPressed);
+            this.InputML.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.FormInput_PreviewKeyDown);
             // 
             // InputSL
             // 
             this.InputSL.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.InputSL.Location = new System.Drawing.Point(18, 62);
             this.InputSL.Name = "InputSL";
-            this.InputSL.Size = new System.Drawing.Size(450, 26);
+            this.InputSL.Size = new System.Drawing.Size(533, 26);
             this.InputSL.TabIndex = 3;
             this.InputSL.Text = "inputSL";
             this.InputSL.Visible = false;
@@ -109,13 +113,38 @@ namespace gInk
             // 
             this.FontDlg.FontMustExist = true;
             // 
+            // ColorBtn
+            // 
+            this.ColorBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ColorBtn.Location = new System.Drawing.Point(99, 125);
+            this.ColorBtn.Name = "ColorBtn";
+            this.ColorBtn.Size = new System.Drawing.Size(75, 42);
+            this.ColorBtn.TabIndex = 6;
+            this.ColorBtn.Text = "Color";
+            this.ColorBtn.UseVisualStyleBackColor = true;
+            this.ColorBtn.Visible = false;
+            this.ColorBtn.Click += new System.EventHandler(this.ColorBtn_Click);
+            // 
+            // boxingCb
+            // 
+            this.boxingCb.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.boxingCb.FormattingEnabled = true;
+            this.boxingCb.Location = new System.Drawing.Point(180, 125);
+            this.boxingCb.Name = "boxingCb";
+            this.boxingCb.Size = new System.Drawing.Size(209, 21);
+            this.boxingCb.TabIndex = 7;
+            this.boxingCb.Visible = false;
+            this.boxingCb.TextChanged += new System.EventHandler(this.boxingCb_TextChanged);
+            // 
             // FormInput
             // 
             this.AcceptButton = this.btOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btCancel;
-            this.ClientSize = new System.Drawing.Size(481, 179);
+            this.ClientSize = new System.Drawing.Size(563, 179);
+            this.Controls.Add(this.boxingCb);
+            this.Controls.Add(this.ColorBtn);
             this.Controls.Add(this.FontBtn);
             this.Controls.Add(this.captionLbl);
             this.Controls.Add(this.InputSL);
@@ -142,5 +171,7 @@ namespace gInk
         public  System.Windows.Forms.Label captionLbl;
         public System.Windows.Forms.Button FontBtn;
         public System.Windows.Forms.FontDialog FontDlg;
+        public System.Windows.Forms.Button ColorBtn;
+        private System.Windows.Forms.ComboBox boxingCb;
     }
 }

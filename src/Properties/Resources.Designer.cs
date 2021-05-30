@@ -123,6 +123,96 @@ namespace gInk.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap DashDotDotLSTag {
+            get {
+                object obj = ResourceManager.GetObject("DashDotDotLSTag", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap DashDotLSTag {
+            get {
+                object obj = ResourceManager.GetObject("DashDotLSTag", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap DashLSTag {
+            get {
+                object obj = ResourceManager.GetObject("DashLSTag", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap DashStyleDash {
+            get {
+                object obj = ResourceManager.GetObject("DashStyleDash", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap DashStyleDashDot {
+            get {
+                object obj = ResourceManager.GetObject("DashStyleDashDot", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap DashStyleDashDotDot {
+            get {
+                object obj = ResourceManager.GetObject("DashStyleDashDotDot", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap DashStyleDot {
+            get {
+                object obj = ResourceManager.GetObject("DashStyleDot", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap DashStyleSolid {
+            get {
+                object obj = ResourceManager.GetObject("DashStyleSolid", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap DashStyleStroke {
+            get {
+                object obj = ResourceManager.GetObject("DashStyleStroke", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap DblHeadArrowVert {
             get {
                 object obj = ResourceManager.GetObject("DblHeadArrowVert", resourceCulture);
@@ -146,6 +236,36 @@ namespace gInk.Properties {
         public static System.Drawing.Bitmap dockback {
             get {
                 object obj = ResourceManager.GetObject("dockback", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap dockbackV {
+            get {
+                object obj = ResourceManager.GetObject("dockbackV", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap dockV {
+            get {
+                object obj = ResourceManager.GetObject("dockV", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap DotLSTag {
+            get {
+                object obj = ResourceManager.GetObject("DotLSTag", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -196,6 +316,16 @@ namespace gInk.Properties {
         public static System.Drawing.Bitmap eyedropper {
             get {
                 object obj = ResourceManager.GetObject("eyedropper", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap fadingTag {
+            get {
+                object obj = ResourceManager.GetObject("fadingTag", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -323,6 +453,16 @@ namespace gInk.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap open {
+            get {
+                object obj = ResourceManager.GetObject("open", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap pan {
             get {
                 object obj = ResourceManager.GetObject("pan", resourceCulture);
@@ -336,6 +476,16 @@ namespace gInk.Properties {
         public static System.Drawing.Bitmap pan_act {
             get {
                 object obj = ResourceManager.GetObject("pan_act", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap pan_copy {
+            get {
+                object obj = ResourceManager.GetObject("pan_copy", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -443,6 +593,26 @@ namespace gInk.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap picker {
+            get {
+                object obj = ResourceManager.GetObject("picker", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap pinned {
+            get {
+                object obj = ResourceManager.GetObject("pinned", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap pointer {
             get {
                 object obj = ResourceManager.GetObject("pointer", resourceCulture);
@@ -463,9 +633,59 @@ namespace gInk.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap save {
+            get {
+                object obj = ResourceManager.GetObject("save", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap snap {
             get {
                 object obj = ResourceManager.GetObject("snap", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap SolidLSTag {
+            get {
+                object obj = ResourceManager.GetObject("SolidLSTag", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap StrokeLSTag {
+            get {
+                object obj = ResourceManager.GetObject("StrokeLSTag", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap tool_clipart {
+            get {
+                object obj = ResourceManager.GetObject("tool_clipart", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap tool_clipart_act {
+            get {
+                object obj = ResourceManager.GetObject("tool_clipart_act", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -576,6 +796,46 @@ namespace gInk.Properties {
         public static System.Drawing.Bitmap tool_line_act {
             get {
                 object obj = ResourceManager.GetObject("tool_line_act", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap tool_mlines {
+            get {
+                object obj = ResourceManager.GetObject("tool_mlines", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap tool_mlines_filledB {
+            get {
+                object obj = ResourceManager.GetObject("tool_mlines_filledB", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap tool_mlines_filledC {
+            get {
+                object obj = ResourceManager.GetObject("tool_mlines_filledC", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap tool_mlines_filledW {
+            get {
+                object obj = ResourceManager.GetObject("tool_mlines_filledW", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -793,9 +1053,69 @@ namespace gInk.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap toolbar2Down {
+            get {
+                object obj = ResourceManager.GetObject("toolbar2Down", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap toolbar2Left {
+            get {
+                object obj = ResourceManager.GetObject("toolbar2Left", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap toolbar2Right {
+            get {
+                object obj = ResourceManager.GetObject("toolbar2Right", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap toolbar2Up {
+            get {
+                object obj = ResourceManager.GetObject("toolbar2Up", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap undo {
             get {
                 object obj = ResourceManager.GetObject("undo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap unknown {
+            get {
+                object obj = ResourceManager.GetObject("unknown", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap unpinned {
+            get {
+                object obj = ResourceManager.GetObject("unpinned", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -876,6 +1196,36 @@ namespace gInk.Properties {
         public static System.Drawing.Bitmap visible_not {
             get {
                 object obj = ResourceManager.GetObject("visible_not", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Zoom {
+            get {
+                object obj = ResourceManager.GetObject("Zoom", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Zoom_act {
+            get {
+                object obj = ResourceManager.GetObject("Zoom_act", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap ZoomWin_act {
+            get {
+                object obj = ResourceManager.GetObject("ZoomWin_act", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

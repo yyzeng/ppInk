@@ -5,18 +5,65 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using System.Drawing;
-using System.Net;
 using System.Threading;
 using System.Runtime.InteropServices;
 using Microsoft.Ink;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Net.WebSockets;
+using System.Collections.Specialized;
+using System.Drawing.Drawing2D;
 
 namespace gInk
 {
+    public static class Global
+    {
+        public static string ProgramFolder = "";
+    }
+
+    public class Tools
+    {
+        public const int Invalid = -1;
+        public const int Hand = 0; public const int Line = 1; public const int Rect = 2; public const int Oval = 3;
+        public const int StartArrow = 4; public const int EndArrow = 5; public const int NumberTag = 6;
+        public const int Edit = 7; public const int txtLeftAligned = 8; public const int txtRightAligned = 9;
+        public const int Move = 10; public const int Copy = 11; public const int Poly = 21; public const int ClipArt = 22;
+        public static readonly int[] All = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 21, 22 };
+        public static readonly string[] Names = { "Hand", "Line", "Rect", "Oval", "StartArrow", "EndArrow", "Numbering", "Edit", "Text Left Aligned", "Text Right Aligned", "Move", "Copy", "PolyLine", "ClipArt" };
+    }
+    public class Filling {
+        public const int NoFrame = -1;      // for Stamps
+        public const int Empty = 0;
+        public const int PenColorFilled = 1;
+        public const int WhiteFilled = 2;
+        public const int BlackFilled = 3;
+        public const int Modulo = 4;
+        public static readonly string[] Names = { "NoFrames","Empty", "Pen Colored", "White Colored", "Black Colored" };  //starting at -1
+    } // applicable to Hand,Rect,Oval
+
+    public class Orientation{
+        public const int min = 0;
+        public const int toLeft = 0;    // original
+        public const int toRight = 1;
+        public const int Horizontal = 1;
+        public const int Vertical = 2;
+        public const int toUp = 2;
+        public const int toDown = 3;
+        public const int max = 3;
+    }
+
+    public class ClipArtData
+    {
+        public string ImageStamp;
+        public int X;
+        public int Y;
+        public int Filling;
+    };
+
     public enum VideoRecordMode {NoVideo=0 , OBSRec=1 , OBSBcst=2 , FfmpegRec=3 };
     public enum VideoRecInProgress { Stopped=0, Starting=1, Recording=2, Stopping = 3, Pausing=4, Paused=5, Resuming=6, Streaming = 7 };
+
+    public enum SnapInPointerKeys { None=0, Shift=1, Control=2, Alt=3 };
 
     public class TestMessageFilter : IMessageFilter
 	{
@@ -34,7 +81,7 @@ namespace gInk
                 //Keys key = (Keys)(((int)m.LParam >> 16) & 0xFFFF);                  // The key of the hotkey that was pressed.
                 //int modifier = (int)m.LParam & 0xFFFF;       // The modifier of the hotkey that was pressed.
                 //int id = m.WParam.ToInt32();                                        // The id of the hotkey that was pressed.
-                bool activePointer = (m.Msg == 0x0312 && Root.FormCollection != null);
+                bool activePointer = (m.Msg == 0x0312 && (Root.FormCollection != null && Root.FormCollection.Visible));
                 Root.callshortcut();
                 if (activePointer)           // StartInkingMsg is received twice, therefore we have to froce pointerMode at that time...
                 {
@@ -82,11 +129,22 @@ namespace gInk
         public static Guid ISFILLEDCOLOR_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 1);
         public static Guid ISFILLEDWHITE_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 2);
         public static Guid ISFILLEDBLACK_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 3);
-        public static Guid ISHIDDEN_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 4);
+        public static Guid IMAGE_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 4);
+        public static Guid IMAGE_X_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 5);
+        public static Guid IMAGE_Y_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 6);
+        public static Guid IMAGE_W_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 7);
+        public static Guid IMAGE_H_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 8);
+        public static Guid ISHIDDEN_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 10);
+        public static Guid ISBACKGROUND_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 11);
+
+        public static Guid FADING_PEN = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 3, 1);
+        public static Guid DASHED_LINE_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 3, 2);        // will contain DashStyle style
 
         public static int MIN_MAGNETIC = 25;
         // options
+        public int ToolbarOrientation = Orientation.toLeft;
         public bool[] PenEnabled = new bool[MaxPenCount];
+        public bool PensOnTwoLines = true;
         public bool ToolsEnabled = true;
         public bool EraserEnabled = true;
         public bool PointerEnabled = true;
@@ -96,6 +154,7 @@ namespace gInk
         public bool SnapEnabled = true;
         public bool UndoEnabled = true;
         public bool ClearEnabled = true;
+        public bool LoadSaveEnabled = true;
         public bool PanEnabled = true;
         public bool InkVisibleEnabled = true;
         public DrawingAttributes[] PenAttr = new DrawingAttributes[MaxPenCount];
@@ -125,10 +184,23 @@ namespace gInk
         public int BoardAtOpening = 0;      // 0:Transparent/1:White/2:Customed/3:Black/4:AtSelection
         public int BoardSelected = 0;       // by default transparent
 
+        //measurement tools
+        public static bool MeasureEnabled = true;
+        public static double Measure2Scale = 1.0;
+        public static int Measure2Digits=1;
+        public static string Measure2Unit = "Pixel";
+        public static bool MeasureAnglCounterClockwise = true;
+
+
         // hotkey options
         public Hotkey Hotkey_Global = new Hotkey();
 		public Hotkey[] Hotkey_Pens = new Hotkey[10];
-		public Hotkey Hotkey_Eraser = new Hotkey();
+        public Hotkey Hotkey_FadingToggle = new Hotkey();
+
+        public Hotkey Hotkey_PenWidthPlus = new Hotkey();
+        public Hotkey Hotkey_PenWidthMinus = new Hotkey();
+
+        public Hotkey Hotkey_Eraser = new Hotkey();
 		public Hotkey Hotkey_InkVisible = new Hotkey();
 		public Hotkey Hotkey_Pointer = new Hotkey();
 		public Hotkey Hotkey_Pan = new Hotkey();
@@ -139,6 +211,7 @@ namespace gInk
         public Hotkey Hotkey_Video = new Hotkey();
         public Hotkey Hotkey_DockUndock = new Hotkey();
         public Hotkey Hotkey_Close = new Hotkey();
+        public Hotkey Hotkey_SnapClose = new Hotkey(); // to keep Esc to close in snapping;
 
         public Hotkey Hotkey_Hand = new Hotkey();
         public Hotkey Hotkey_Line = new Hotkey();
@@ -150,8 +223,18 @@ namespace gInk
         public Hotkey Hotkey_Edit = new Hotkey();
         public Hotkey Hotkey_Move = new Hotkey();
         public Hotkey Hotkey_Magnet = new Hotkey();
+        public Hotkey Hotkey_ClipArt = new Hotkey();
+        public Hotkey Hotkey_ClipArt1 = new Hotkey();
+        public Hotkey Hotkey_ClipArt2 = new Hotkey();
+        public Hotkey Hotkey_ClipArt3 = new Hotkey();
+        public Hotkey Hotkey_Zoom = new Hotkey();
+        public Hotkey Hotkey_ColorPickup = new Hotkey();
+        public Hotkey Hotkey_ColorEdit = new Hotkey();
+        public Hotkey Hotkey_LineStyle = new Hotkey();
 
-        public int ToolSelected = 0;        // indicates which tool (Hand,Line,...) is currently selected
+        public float LongHKPressDelay = 2.5F;
+
+        public int ToolSelected = Tools.Hand;        // indicates which tool (Hand,Line,...) is currently selected
         public int FilledSelected = 0;      // indicates which filling (None, Selected color, ...) is currently select
         public bool EraserMode = false;
 		public bool Docked = false;
@@ -166,11 +249,16 @@ namespace gInk
 		public bool UponSubPanelUpdate = false;
 		public bool UponAllDrawingUpdate = false;
 		public bool MouseMovedUnderSnapshotDragging = false; // used to pause re-drawing when mouse is not moving during dragging to take a screenshot
+        public int PenWidth_Delta = 5;
 
-		public bool PanMode = false;
+        public bool PanMode = false;
 		public bool InkVisible = true;
         public int MagneticRadius= MIN_MAGNETIC;        // Magnet Radius; <=0 means off;
         public int MinMagneticRadius() { return Math.Max(Math.Abs(MagneticRadius), MIN_MAGNETIC); }
+        public Stroke StrokeHovered;            // contains the "selection" for edit/move/copy/erase else is null
+        public Pen SelectionFramePen = new Pen(Color.Red, 1);
+
+        public bool SubToolsEnabled = true;
 
         public bool DefaultArrow_start = true;
 
@@ -189,8 +277,10 @@ namespace gInk
 		public int CurrentPen = 1;  // defaut pen
 		public int LastPen = 1;
 		public int GlobalPenWidth = 80;
+        public bool FitToCurve = true;
 		public bool gpPenWidthVisible = false;
 		public string SnapshotFileFullPath = ""; // used to record the last snapshot file name, to select it when the balloon is clicked
+        public bool SnapIgnoreBackgroundStroke = true; // for the moment not customizable by user
 
         public int FormTop = 100, FormLeft = 100, FormWidth = 48, FormOpacity = -50; // negative opacity means that the window is not displayed
         public CallForm callForm = null;
@@ -200,6 +290,10 @@ namespace gInk
         public double ArrowLen = 0.0185 * System.Windows.SystemParameters.PrimaryScreenWidth; // == 1.85% of screen width
 
         public int TagNumbering = 1;
+        public int TagSize = 25;
+        public string TagFont = "";
+        public bool TagItalic = false;
+        public bool TagBold = false;
         public int TextSize = 25;
         public string TextFont = "Arial";
         public bool TextItalic = false;
@@ -217,7 +311,44 @@ namespace gInk
         public Task ObsRecvTask;
         public CancellationTokenSource ObsCancel = new CancellationTokenSource();
 
-        public string ProgramFolder;
+        public int StampSize = 128;
+        public StringCollection StampFileNames = new StringCollection();
+        public ClipArtData ImageStamp = new ClipArtData { ImageStamp = "", X = -1, Y = -1, Filling = (int)(Filling.NoFrame) };
+        public float StampScaleRatio = .1F;
+        public int ImageStampFilling = 0;
+        public string ImageStamp1 = "";
+        public string ImageStamp2 = "";
+        public string ImageStamp3 = "";
+
+        public float TimeBeforeFading = 5.0F;     //5s default
+
+        public int ZoomWidth = 100;
+        public int ZoomHeight = 100;
+        public float ZoomScale = 3.0F;
+        public bool ZoomContinous = false;
+        public int ZoomEnabled = 3;
+
+        public Rectangle WindowRect = new Rectangle(Int32.MinValue, Int32.MinValue, -1, -1);
+        public bool ResizeDrawingWindow = false;
+
+        public SnapInPointerKeys SnapInPointerHoldKey = SnapInPointerKeys.Shift;
+        public SnapInPointerKeys SnapInPointerPressTwiceKey = SnapInPointerKeys.Control;
+        
+        public bool InverseMousewheel=false;
+
+        public string APIRestUrl="";
+        public APIRest APIRest;
+        public bool APIRestCloseOnSnap = false;
+        public bool APIRestAltPressed = false;
+
+        public bool StrokesOnlySnapshot=true;
+        //public string ProgramFolder;
+
+        public bool ColorPickerEnabled = true;
+        public bool ColorPickerMode = false;
+        public Color PickupColor;
+        public byte PickupTransparency;
+        
 
         public string ExpandVarCmd(string cmd, int x, int y, int w, int h)
         {
@@ -241,6 +372,10 @@ namespace gInk
 
         public Root()
 		{
+            Global.ProgramFolder = Path.GetDirectoryName(Path.GetFullPath(Environment.GetCommandLineArgs()[0])).Replace('\\','/');
+            SelectionFramePen.DashPattern = new float[]{4,4};       // dashed red line for selection drawing
+            if (Global.ProgramFolder[Global.ProgramFolder.Length - 1] != '/')
+                Global.ProgramFolder += '/';
 			for (int p = 0; p < MaxPenCount; p++)
 				Hotkey_Pens[p] = new Hotkey();
 
@@ -252,10 +387,18 @@ namespace gInk
 
 			SetDefaultPens();
 			SetDefaultConfig();
-			ReadOptions("pens.ini");
 			ReadOptions("config.ini");
+			ReadOptions("pens.ini");
 			ReadOptions("hotkeys.ini");
-            ProgramFolder = Path.GetDirectoryName(Path.GetFullPath(Environment.GetCommandLineArgs()[0]));
+            Hotkey_SnapClose.Parse("Escape");
+
+            if (TagFont=="")     // if no options, we apply text parameters
+            {
+                TagFont = TextFont;
+                TagBold = TextBold;
+                TagItalic = TextItalic;
+                TagSize = TextSize;
+            }
             
             Size size = SystemInformation.SmallIconSize;
 			trayIcon = new NotifyIcon();
@@ -272,23 +415,24 @@ namespace gInk
 			TestMessageFilter mf = new TestMessageFilter(this);
 			Application.AddMessageFilter(mf);
 
-			FormCollection = null;
-			FormDisplay = null;
+			//FormCollection = null;
+			//FormDisplay = null;
+            FormCollection = new FormCollection(this);
+            FormButtonHitter = new FormButtonHitter(this);
+            FormDisplay = new FormDisplay(this);  // FormDisplay is created at the end to ensure other objects are created.
+            UndoStrokes = new Ink[8];
 
-            // to be done once only
-            //ReadOptions("pens.ini");
-            //ReadOptions("config.ini");
-            //ReadOptions("hotkeys.ini");
+            APIRest = new APIRest(this);
 
         }
 
         public void callshortcut()
         {
             TagNumbering = 1; //reset tag counter 
-            if (FormCollection == null && FormDisplay == null)
+            if ((FormCollection == null || !FormCollection.Visible) && (FormDisplay == null || !FormDisplay.Visible))
             {
-                //if (FormOpacity > 0) callForm.Hide();
-                if (FormOpacity > 0) callForm.Close();
+                if (FormOpacity > 0) callForm.Hide();
+                //if (FormOpacity > 0) callForm.Close();
                 StartInk();
                 if (OpenIntoSnapMode)
                     FormCollection.btSnap_Click(null,null);
@@ -321,7 +465,7 @@ namespace gInk
 			if (e.Button == MouseButtons.Left)
 			{
 
-                if (FormDisplay == null && FormCollection == null)
+                if ((FormDisplay == null || !FormDisplay.Visible) && (FormCollection == null || !FormCollection.Visible))
 				{
                     callshortcut();
                     //ReadOptions("pens.ini");
@@ -336,13 +480,27 @@ namespace gInk
 
 		public void StartInk()
 		{
-			if (FormDisplay != null || FormCollection != null)
+            /*
+            if (FormCollection == null)
+                FormCollection = new FormCollection(this);
+            if (FormButtonHitter == null)
+                FormButtonHitter = new FormButtonHitter(this);
+            if (FormDisplay == null)
+                FormDisplay = new FormDisplay(this);  // FormDisplay is created at the end to ensure other objects are created.
+            if (UndoStrokes == null)
+                UndoStrokes = new Ink[8];
+            */
+            if (FormDisplay.Visible|| FormCollection.Visible)
 				return;
+            FormCollection.Initialize();
+            FormButtonHitter.Initialize();
+            FormDisplay.Initialize();
 
-			//Docked = false;
-            FormCollection = new FormCollection(this);
-			FormButtonHitter = new FormButtonHitter(this);
-			FormDisplay = new FormDisplay(this);  // FormDisplay is created at the end to ensure other objects are created.
+            Docked = false;
+            PointerMode = false; // we have to reset pointer mode when starting drawing;
+            ResizeDrawingWindow = false;
+            UponTakingSnap = false;
+
 			if (CurrentPen < 0)
 				CurrentPen = 0;
 			if (!PenEnabled[CurrentPen])
@@ -360,43 +518,66 @@ namespace gInk
 			FormCollection.Show();
 			FormDisplay.DrawButtons(true);
 
-			if (UndoStrokes == null)
-			{
-				UndoStrokes = new Ink[8];
-				UndoStrokes[0] = FormCollection.IC.Ink.Clone();
-				UndoDepth = 0;
-				UndoP = 0;
-			}
+            for (int i = 0; i < UndoStrokes.Length; i++)
+                UndoStrokes[i] = null;
+            UndoStrokes[0] = FormCollection.IC.Ink.Clone();
+            UndoDepth = 0;
+            UndoP = 0;
 
-			//UponUndoStrokes = FormCollection.IC.Ink.Clone();
-		}
-		public void StopInk()
+            SetForegroundWindow(FormCollection.Handle);
+        }
+        public void StopInk()
 		{
-			FormCollection.Close();
-			FormDisplay.Close();
-			FormButtonHitter.Close();
-			//FormCollection.Dispose();
-			//FormDisplay.Dispose();
-			GC.Collect();
+            FormCollection.Initializing = true;
+            try { FormCollection.Hide(); FormCollection.tiSlide.Enabled = false; } catch { }
+            try { FormDisplay.Hide(); FormDisplay.timer1.Enabled = false; } catch { }
+			try { FormButtonHitter.Hide(); FormButtonHitter.timer1.Enabled = false; } catch { }
 
-            FormCollection = null;
+
+            //FormCollection = null;
             //  The FormCollection is destroyed, therefore all following calls to the form and its controls will not hit
-            ObsCancel.Cancel();
-            ObsRecvTask = null;
-            ObsWs = null;
-            ObsCancel = new CancellationTokenSource();
+            try
+            {                
+                ObsRecvTask?.Dispose();
+            }
+            catch { }
+            finally
+            {
+                ObsRecvTask = null;
+            }
+            try
+            {
+                ObsWs?.Dispose();
+            }
+            catch { }
+            finally
+            {
+                ObsWs = null;
+            }
+            try
+            {
+                ObsCancel.Cancel();
+                ObsCancel.Dispose();
+            }
+            catch { }
+            finally
+            {
+                ObsCancel = new CancellationTokenSource();
+            }
 
-            FormDisplay = null;
+            //FormDisplay = null;
+            //FormButtonHitter = null;
 
-			if (UponBalloonSnap)
+            if (UponBalloonSnap)
 			{
 				ShowBalloonSnapshot();
 				UponBalloonSnap = false;
 			}
             //if (FormOpacity > 0) callForm.Show();
-            if (FormOpacity > 0)
+            if (FormOpacity > 0 && !ResizeDrawingWindow)
             {
-                callForm = new CallForm(this);
+                if (callForm == null)
+                    callForm = new CallForm(this);
                 callForm.Show();
                 callForm.Top = FormTop;
                 callForm.Left = FormLeft;
@@ -404,9 +585,11 @@ namespace gInk
                 callForm.Height = FormWidth;
                 callForm.Opacity = FormOpacity / 100.0;
             }
+
+            GC.Collect();
         }
 
-            public void ClearInk()
+        public void ClearInk()
 		{
 			FormCollection.IC.Ink.DeleteStrokes();
             FormDisplay.ClearCanvus();
@@ -435,8 +618,11 @@ namespace gInk
 			RedoDepth++;
 			FormCollection.IC.Ink.DeleteStrokes();
 			if (UndoStrokes[UndoP].Strokes.Count > 0)
+            {
 				FormCollection.IC.Ink.AddStrokesAtRectangle(UndoStrokes[UndoP].Strokes, UndoStrokes[UndoP].Strokes.GetBoundingBox());
-
+                if (ToolSelected == Tools.Poly)
+                    FormCollection.RestorePolylineData(FormCollection.IC.Ink.Strokes[FormCollection.IC.Ink.Strokes.Count-1]);
+            }
 			FormDisplay.ClearCanvus();
 			FormDisplay.DrawStrokes();
 			FormDisplay.DrawButtons(true);
@@ -448,10 +634,13 @@ namespace gInk
 			if (x == 0 && y == 0)
 				return;
 
-			FormCollection.IC.Ink.Strokes.Move(x, y);
+			//FormCollection.IC.Ink.Strokes.Move(x, y);
             // for texts
             foreach(Stroke st in FormCollection.IC.Ink.Strokes)
             {
+                if (st.ExtendedProperties.Contains(ISBACKGROUND_GUID))
+                    continue;
+                st.Move(x, y);
                 if (st.ExtendedProperties.Contains(TEXTX_GUID))
                 {
                     st.ExtendedProperties.Add(TEXTX_GUID, (int)(st.ExtendedProperties[TEXTX_GUID].Data) + x);
@@ -500,23 +689,35 @@ namespace gInk
 
 		public void Dock()
 		{
-			if (FormDisplay == null || FormCollection == null)
+            if ((FormDisplay == null || !FormDisplay.Visible) || (FormCollection == null || !FormCollection.Visible)) 
 				return;
 
 			Docked = true;
 			gpPenWidthVisible = false;
-			FormCollection.btDock.BackgroundImage = gInk.Properties.Resources.dockback;
-			FormCollection.ButtonsEntering = -1;
+            switch(ToolbarOrientation)
+            {
+                case Orientation.toLeft: FormCollection.btDock.BackgroundImage = gInk.Properties.Resources.dockback; break;
+                case Orientation.toRight: FormCollection.btDock.BackgroundImage = gInk.Properties.Resources.dock; break;
+                case Orientation.toUp: FormCollection.btDock.BackgroundImage = gInk.Properties.Resources.dockbackV ; break;
+                case Orientation.toDown: FormCollection.btDock.BackgroundImage = gInk.Properties.Resources.dockV; break;
+            }
+            FormCollection.ButtonsEntering = -1;
 			UponButtonsUpdate |= 0x2;
 		}
 
 		public void UnDock()
 		{
-			if (FormDisplay == null || FormCollection == null)
+            if ((FormDisplay == null || !FormDisplay.Visible) || (FormCollection == null || !FormCollection.Visible))
 				return;
 
 			Docked = false;
-			FormCollection.btDock.BackgroundImage = gInk.Properties.Resources.dock;
+            switch (ToolbarOrientation)
+            {
+                case Orientation.toLeft: FormCollection.btDock.BackgroundImage = gInk.Properties.Resources.dock; break;
+                case Orientation.toRight: FormCollection.btDock.BackgroundImage = gInk.Properties.Resources.dockback; break;
+                case Orientation.toUp: FormCollection.btDock.BackgroundImage = gInk.Properties.Resources.dockV; break;
+                case Orientation.toDown: FormCollection.btDock.BackgroundImage = gInk.Properties.Resources.dockbackV; break;
+            }
 			FormCollection.ButtonsEntering = 1;
 			UponButtonsUpdate |= 0x2;
 		}
@@ -525,9 +726,11 @@ namespace gInk
 		{
 			if (PointerMode == true)
 				return;
-
-			PointerMode = true;
-			FormCollection.ToThrough();     
+            if (ColorPickerMode)
+                FormCollection.StartStopPickUpColor(0);
+            PointerMode = true;
+            FormDisplay.DrawBorder(false);
+			FormCollection.ToThrough();
 			FormButtonHitter.Show();
             FormButtonHitter.timer1_Tick(null,null); // Force Size recomputation for alt+tab processing
         }
@@ -536,12 +739,16 @@ namespace gInk
 		{
 			if (PointerMode == false)
 				return;
-
+            if (FormCollection == null)
+                return;
+            FormCollection.AddPointerSnaps();
 			FormButtonHitter.Hide();
 			FormCollection.ToUnThrough();
-			FormCollection.ToTopMost();
+            FormCollection.ToTopMost();
 			FormCollection.Activate();
 			PointerMode = false;
+            if (ColorPickerMode)
+                FormCollection.StartStopPickUpColor(0);
 		}
 
 		public void SelectPen(int pen)
@@ -713,9 +920,29 @@ namespace gInk
 								{
 									PenAttr[penid].Width = penc;
 								}
-							}
+                            }
+                            if (sName.EndsWith("_LINESTYLE"))
+                            {
+                                DashStyle ds = LineStyleFromString(sPara);
+                                if(ds==DashStyle.Custom)
+                                    try { PenAttr[penid].ExtendedProperties.Remove(DASHED_LINE_GUID); }catch { }
+                                else
+                                    PenAttr[penid].ExtendedProperties.Add(DASHED_LINE_GUID,ds);
+                            }
+                            if (sName.EndsWith("_FADING"))
+                            {
+                                float k;
+                                if (sPara.ToUpper() == "Y")
+                                    k = TimeBeforeFading;
+                                if (sPara.ToUpper() == "N")
+                                    k = -1;
+                                else if (!float.TryParse(sPara, out k))
+                                    k = TimeBeforeFading;
+                                if (k > 0)
+                                    PenAttr[penid].ExtendedProperties.Add(FADING_PEN, k);
+                            }
 
-							if (sName.EndsWith("_HOTKEY"))
+                            if (sName.EndsWith("_HOTKEY"))
 							{
 								Hotkey_Pens[penid].Parse(sPara);
 							}
@@ -725,12 +952,13 @@ namespace gInk
 
 					int tempi = 0;
 					float tempf = 0;
+                    double tempd = 0;
                     string[] tab;
                     switch (sName)
-					{
-						case "LANGUAGE_FILE":
-							ChangeLanguage(sPara);
-							break;
+                    {
+                        case "LANGUAGE_FILE":
+                            ChangeLanguage(sPara);
+                            break;
                         case "ALT_AS_TEMPORARY_COMMAND":
                             if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
                                 AltAsOneCommand = true;
@@ -738,32 +966,35 @@ namespace gInk
                                 AltAsOneCommand = false;
                             break;
                         case "HOTKEY_GLOBAL":
-							Hotkey_Global.Parse(sPara);
-							break;
-						case "HOTKEY_ERASER":
-							Hotkey_Eraser.Parse(sPara);
-							break;
-						case "HOTKEY_INKVISIBLE":
-							Hotkey_InkVisible.Parse(sPara);
-							break;
-						case "HOTKEY_POINTER":
-							Hotkey_Pointer.Parse(sPara);
-							break;
-						case "HOTKEY_PAN":
-							Hotkey_Pan.Parse(sPara);
-							break;
-						case "HOTKEY_UNDO":
-							Hotkey_Undo.Parse(sPara);
-							break;
-						case "HOTKEY_REDO":
-							Hotkey_Redo.Parse(sPara);
-							break;
-						case "HOTKEY_SNAPSHOT":
-							Hotkey_Snap.Parse(sPara);
-							break;
-						case "HOTKEY_CLEAR":
-							Hotkey_Clear.Parse(sPara);
-							break;
+                            Hotkey_Global.Parse(sPara);
+                            break;
+                        case "HOTKEY_TOGGLEFADING":
+                            Hotkey_FadingToggle.Parse(sPara);
+                            break;                            
+                        case "HOTKEY_ERASER":
+                            Hotkey_Eraser.Parse(sPara);
+                            break;
+                        case "HOTKEY_INKVISIBLE":
+                            Hotkey_InkVisible.Parse(sPara);
+                            break;
+                        case "HOTKEY_POINTER":
+                            Hotkey_Pointer.Parse(sPara);
+                            break;
+                        case "HOTKEY_PAN":
+                            Hotkey_Pan.Parse(sPara);
+                            break;
+                        case "HOTKEY_UNDO":
+                            Hotkey_Undo.Parse(sPara);
+                            break;
+                        case "HOTKEY_REDO":
+                            Hotkey_Redo.Parse(sPara);
+                            break;
+                        case "HOTKEY_SNAPSHOT":
+                            Hotkey_Snap.Parse(sPara);
+                            break;
+                        case "HOTKEY_CLEAR":
+                            Hotkey_Clear.Parse(sPara);
+                            break;
                         case "HOTKEY_VIDEOREC":
                             Hotkey_Video.Parse(sPara);
                             break;
@@ -803,13 +1034,56 @@ namespace gInk
                         case "HOTKEY_MAGNET":
                             Hotkey_Magnet.Parse(sPara);
                             break;
+                        case "HOTKEY_CLIPART":
+                            Hotkey_ClipArt.Parse(sPara);
+                            break;
+                        case "HOTKEY_CLIPART1":
+                            Hotkey_ClipArt1.Parse(sPara);
+                            break;
+                        case "HOTKEY_CLIPART2":
+                            Hotkey_ClipArt2.Parse(sPara);
+                            break;
+                        case "HOTKEY_CLIPART3":
+                            Hotkey_ClipArt3.Parse(sPara);
+                            break;
+                        case "HOTKEY_ZOOM":
+                            Hotkey_Zoom.Parse(sPara);
+                            break;
+                        case "HOTKEY_PENWIDTH_PLUS":
+                            Hotkey_PenWidthPlus.Parse(sPara);
+                            break;
+                        case "HOTKEY_PENWIDTH_MINUS":
+                            Hotkey_PenWidthMinus.Parse(sPara);
+                            break;
+                        case "HOTKEY_COLORPICKUP":
+                            Hotkey_ColorPickup.Parse(sPara);
+                            break;
+                        case "HOTKEY_COLOREDIT":
+                            Hotkey_ColorEdit.Parse(sPara);
+                            break;
+                        case "HOTKEY_LINESTYLE":
+                            Hotkey_LineStyle.Parse(sPara);
+                            break;
 
-						case "WHITE_TRAY_ICON":
-							if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
-								WhiteTrayIcon = true;
-							else
-								WhiteTrayIcon = false;
-							break;
+                        case "PENS_ON_TWO_LINES":
+                            if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
+                                PensOnTwoLines = true;
+                            else
+                                PensOnTwoLines = false;
+                            break;
+
+                        case "PENWIDTH_DELTA":
+                            if (int.TryParse(sPara, out tempi))
+                            {
+                                PenWidth_Delta=tempi;
+                            }
+                            break;
+                        case "WHITE_TRAY_ICON":
+                            if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
+                                WhiteTrayIcon = true;
+                            else
+                                WhiteTrayIcon = false;
+                            break;
                         case "HIDE_IN_ALTTAB":
                             if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
                                 globalRoot.HideInAltTab = true;
@@ -817,12 +1091,12 @@ namespace gInk
                                 globalRoot.HideInAltTab = false;
                             break;
                         case "SNAPSHOT_PATH":
-							SnapshotBasePath = sPara;
-							if (!SnapshotBasePath.EndsWith("/") && !SnapshotBasePath.EndsWith("\\"))
-								SnapshotBasePath += "/";
-							break;
+                            SnapshotBasePath = sPara;
+                            if (!SnapshotBasePath.EndsWith("/") && !SnapshotBasePath.EndsWith("\\"))
+                                SnapshotBasePath += "/";
+                            break;
                         case "OPEN_INTO_SNAP":
-                            if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "OFF")
+                            if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
                                 OpenIntoSnapMode = true;
                             else
                                 OpenIntoSnapMode = false;
@@ -831,36 +1105,63 @@ namespace gInk
                             if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
                                 ToolsEnabled = false;
                             break;
+                        case "FITTOCURVE":
+                            if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
+                                FitToCurve = false;
+                            else if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
+                                FitToCurve = true;
+                            break;
                         case "ARROW":           // angle in degrees, len in % of the screen width
                             tab = sPara.Split(',');
                             if (tab.Length != 2) break;
-                            if (float.TryParse(tab[0],NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out tempf))
+                            if (float.TryParse(tab[0], NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out tempf))
                                 ArrowAngle = tempf * Math.PI / 180;
                             if (float.TryParse(tab[1], NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out tempf))
                                 ArrowLen = tempf / 100.0 * System.Windows.SystemParameters.PrimaryScreenWidth;
                             break;
                         case "DEFAULT_ARROW":
-                            if (sPara.ToUpper() == "START" )
+                            if (sPara.ToUpper() == "START")
                                 DefaultArrow_start = true;
                             if (sPara.ToUpper() == "END")
                                 DefaultArrow_start = false;
                             break;
                         case "TEXT":           // Font(string),italique(boolean),Bold(boolean),size(float) of the text in % of the screen, also defines the size of the
-                            tab = sPara.Split(',');
-                            if (tab.Length != 4) break;
-                            TextFont = tab[0];
-                            string s = tab[1];
-                            if (s.ToUpper() == "FALSE" || s == "0" || s.ToUpper() == "OFF")
-                                TextItalic = false;
-                            else if (s.ToUpper() == "TRUE" || s == "1" || s.ToUpper() == "ON")
-                                TextItalic = true;
-                            s = tab[2];
-                            if (s.ToUpper() == "FALSE" || s == "0" || s.ToUpper() == "OFF")
-                                TextBold = false;
-                            else if (s.ToUpper() == "TRUE" || s == "1" || s.ToUpper() == "ON")
-                                TextBold = true;
-                            if (float.TryParse(tab[3], NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out tempf))
-                                TextSize = (int)(tempf / 100.0 * System.Windows.SystemParameters.PrimaryScreenWidth);
+                            {
+                                tab = sPara.Split(',');
+                                if (tab.Length != 4) break;
+                                TextFont = tab[0];
+                                string s = tab[1];
+                                if (s.ToUpper() == "FALSE" || s == "0" || s.ToUpper() == "OFF")
+                                    TextItalic = false;
+                                else if (s.ToUpper() == "TRUE" || s == "1" || s.ToUpper() == "ON")
+                                    TextItalic = true;
+                                s = tab[2];
+                                if (s.ToUpper() == "FALSE" || s == "0" || s.ToUpper() == "OFF")
+                                    TextBold = false;
+                                else if (s.ToUpper() == "TRUE" || s == "1" || s.ToUpper() == "ON")
+                                    TextBold = true;
+                                if (float.TryParse(tab[3], NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out tempf))
+                                    TextSize = (int)(tempf / 100.0 * System.Windows.SystemParameters.PrimaryScreenWidth);
+                            }
+                            break;
+                        case "NUMBERS":           // Font(string),italique(boolean),Bold(boolean),size(float) of the text in % of the screen, also defines the size of the
+                            {
+                                tab = sPara.Split(',');
+                                if (tab.Length != 4) break;
+                                TagFont = tab[0];
+                                string s = tab[1];
+                                if (s.ToUpper() == "FALSE" || s == "0" || s.ToUpper() == "OFF")
+                                    TagItalic = false;
+                                else if (s.ToUpper() == "TRUE" || s == "1" || s.ToUpper() == "ON")
+                                    TagItalic = true;
+                                s = tab[2];
+                                if (s.ToUpper() == "FALSE" || s == "0" || s.ToUpper() == "OFF")
+                                    TagBold = false;
+                                else if (s.ToUpper() == "TRUE" || s == "1" || s.ToUpper() == "ON")
+                                    TagBold = true;
+                                if (float.TryParse(tab[3], NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out tempf))
+                                    TagSize = (int)(tempf / 100.0 * System.Windows.SystemParameters.PrimaryScreenWidth);
+                            }
                             break;
                         case "MAGNET":
                             if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
@@ -896,11 +1197,23 @@ namespace gInk
 							else if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
 								PenWidthEnabled = true;
 							break;
-						case "SNAPSHOT_ICON":
+                        case "SUBTOOLSBAR_ENABLED":
+                            if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
+                                SubToolsEnabled = false;
+                            else if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
+                                SubToolsEnabled = true;
+                            break;
+                        case "SNAPSHOT_ICON":
 							if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
 								SnapEnabled = false;
 							break;
-						case "CLOSE_ON_SNAP":
+                        case "SNAPSHOT_STROKESONLY":
+                            if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
+                                StrokesOnlySnapshot = false;
+                            else if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
+                                StrokesOnlySnapshot = true;
+                                break;
+                        case "CLOSE_ON_SNAP":
 							if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
 								CloseOnSnap = "false";
 							else if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
@@ -924,7 +1237,11 @@ namespace gInk
 							if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
 								PanEnabled = false;
 							break;
-						case "INKVISIBLE_ICON":
+                        case "LOADSAVE_ICON":
+                            if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
+                                LoadSaveEnabled = false;
+                            break;
+                        case "INKVISIBLE_ICON":
 							if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
 								InkVisibleEnabled = false;
 							break;
@@ -936,7 +1253,17 @@ namespace gInk
 							if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
 								AllowHotkeyInPointerMode = false;
 							break;
-						case "TOOLBAR_LEFT":
+                        case "ZOOM_ICON":
+                            if (int.TryParse(sPara, out tempi)&& tempi>=0 && tempi<=3)
+                                ZoomEnabled  = tempi;
+                            break;
+                        case "COLORPICKUP_ENABLED":
+                            if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
+                                ColorPickerEnabled = false;
+                            else if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
+                                ColorPickerEnabled = true;
+                            break;
+                        case "TOOLBAR_LEFT":
 							if (int.TryParse(sPara, out tempi))
 								gpButtonsLeft = tempi;
 							break;
@@ -944,7 +1271,7 @@ namespace gInk
 							if (int.TryParse(sPara, out tempi))
 								gpButtonsTop = tempi;
 							break;
-						case "TOOLBAR_HEIGHT":
+                        case "TOOLBAR_HEIGHT":
 							if (float.TryParse(sPara, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out tempf))
 								ToolbarHeight = tempf;
 							break;
@@ -960,6 +1287,22 @@ namespace gInk
 							if (tab.Length >= 3 ) { FormWidth = Int32.Parse(tab[2]); }
 							if (tab.Length >= 4) { FormOpacity = Int32.Parse(tab[3]); }
 							break;
+                        case "INKING_AREA": // 4 integers
+                            tab = sPara.Split(',');
+                            if (tab.Length <= 4)
+                            {
+                                int a, b, c, d;
+                                if (Int32.TryParse(tab[0], out a) && Int32.TryParse(tab[1], out b) && Int32.TryParse(tab[2], out c) && Int32.TryParse(tab[3], out d))
+                                {
+                                    if (c > 0 && d > 0) // else default value ie full screen;
+                                    {
+                                        a = a < 0 ? -1 : (Math.Min(Math.Max(SystemInformation.VirtualScreen.Left, a), SystemInformation.VirtualScreen.Right - c));
+                                        b = b < 0 ? -1 : (Math.Min(Math.Max(SystemInformation.VirtualScreen.Top, b), SystemInformation.VirtualScreen.Bottom - d));
+                                        WindowRect = new Rectangle(a, b, c, d);
+                                    }
+                                }
+                            }
+                            break;
                         case "GRAY_BOARD1": // if not defined, no window else 2 to 4 integers Top,Left,[Width/Height,[Opacity]]
                             tab = sPara.Split(',');
                             if (tab.Length == 4)
@@ -1012,6 +1355,121 @@ namespace gInk
                         case "FFMPEG_CMD":
                             FFMpegCmd = sPara;
                             break;
+                        case "RESTSERVER_URL":
+                            APIRestUrl = sPara;
+                            break;
+                        case "IMAGESTAMP_SIZE":
+                            if (int.TryParse(sPara, out tempi))
+                                StampSize = tempi;
+                            break;
+                        case "IMAGESTAMP_FILLING":
+                            if (int.TryParse(sPara, out tempi))
+                                ImageStampFilling = tempi;
+                            break;
+                        case "IMAGESTAMP_FILENAMES":
+                            if (sPara.Length == 0) break;
+                            string[] st = sPara.Replace('\\', '/').Trim(';').Split(';');
+                            foreach(string st1 in st)
+                            {
+                                string st2;
+                                //if (!Path.IsPathFullyQualified(st1))
+                                if (!Path.IsPathRooted(st1))
+                                    st2 = Global.ProgramFolder + st1;
+                                else
+                                    st2 = st1;
+                                if (!StampFileNames.Contains(st2))
+                                    StampFileNames.Insert(StampFileNames.Count,st2);
+                            }
+                            break;
+                        case "IMAGESTAMP1":
+                            if (sPara.Length == 0)
+                                sPara="";
+                            else if (!Path.IsPathRooted(sPara))
+                                    sPara = Global.ProgramFolder + sPara;
+                            if (!StampFileNames.Contains(sPara))        // to ensure the files are within the stamfiles;
+                                StampFileNames.Insert(StampFileNames.Count, sPara);
+                            ImageStamp1 = sPara;
+                            break;
+                        case "IMAGESTAMP2":
+                            if (sPara.Length == 0)
+                                sPara = "";
+                            else if (!Path.IsPathRooted(sPara))
+                                sPara = Global.ProgramFolder + sPara;
+                            if (!StampFileNames.Contains(sPara))
+                                StampFileNames.Insert(StampFileNames.Count, sPara);
+                            ImageStamp2 = sPara;
+                            break;
+                        case "IMAGESTAMP3":
+                            if (sPara.Length == 0)
+                                sPara = "";
+                            else if (!Path.IsPathRooted(sPara))
+                                sPara = Global.ProgramFolder + sPara;
+                            if (!StampFileNames.Contains(sPara))
+                                StampFileNames.Insert(StampFileNames.Count, sPara);
+                            ImageStamp3 = sPara;
+                            break;
+                        case "TOOLBAR_DIRECTION":
+                            if (sPara.ToUpper() == "LEFT")
+                                ToolbarOrientation = Orientation.toLeft;
+                            if (sPara.ToUpper() == "RIGHT")
+                                ToolbarOrientation = Orientation.toRight;
+                            if (sPara.ToUpper() == "UP")
+                                ToolbarOrientation = Orientation.toUp;
+                            if (sPara.ToUpper() == "DOWN")
+                                ToolbarOrientation = Orientation.toDown;
+                            break;
+                        case "FADING_TIME":
+                            if (float.TryParse(sPara, out tempf))
+                                TimeBeforeFading = tempf;
+                            break;
+                        case "ZOOM":     // Width;Height;scale(f);Continuous(Y/N)
+                            if (sPara.Length == 0) break;
+                            try
+                            {
+                                string[] stt = sPara.Split(';');
+                                Int32.TryParse(stt[0], out ZoomWidth);
+                                Int32.TryParse(stt[1], out ZoomHeight);
+                                float.TryParse(stt[2], NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out ZoomScale);
+                                if (stt[3].ToUpper() == "TRUE" || stt[3] == "1" || stt[3].ToUpper() == "ON" || stt[3].ToUpper() == "Y")
+                                    ZoomContinous = true;
+                            }
+                            catch { }
+                            break;
+                        case "INVERSE_MOUSEWHEEL_CONTROL":
+                            InverseMousewheel = (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON");
+                            break;
+                        case "SNAP_IN_POINTER_HOLD_KEY": //directly the int value; expected to be in hotkey.ini
+                            if (Int32.TryParse(sPara, out tempi))
+                                SnapInPointerHoldKey=(SnapInPointerKeys)tempi;
+                            break;
+                        case "SNAP_IN_POINTER_PRESSTWICE_KEY": //directly the int value; expected to be in hotkey.ini
+                            if (Int32.TryParse(sPara, out tempi))
+                                SnapInPointerPressTwiceKey = (SnapInPointerKeys)tempi;
+                            break;
+
+                        case "MEASURES_ENABLED":
+                            if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
+                                MeasureEnabled = true;
+                            else if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
+                                MeasureEnabled  = false;
+                            break;
+                        case "MEASURE_LEN_SCALE":
+                            if (Double.TryParse(sPara, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out tempd))
+                                Measure2Scale = tempd;
+                            break;
+                        case "MEASURE_LEN_DECIMALS":
+                            if (Int32.TryParse(sPara, out tempi))
+                                Measure2Digits = tempi;
+                            break;
+                        case "MEASURE_LEN_UNIT":                            
+                            Measure2Unit = sPara;
+                            break;
+                        case "MEASURE_ANGLE_DIR":
+                            if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
+                                MeasureAnglCounterClockwise = true;
+                            else if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
+                                MeasureAnglCounterClockwise = false;
+                            break;
     }
 }
 			}
@@ -1020,6 +1478,7 @@ namespace gInk
 
 		public void SaveOptions(string file)
 		{
+            bool StampFileNamesAlreadyFilled = false;
 			if (!File.Exists(file))
 				file = AppDomain.CurrentDomain.BaseDirectory + file;
 			if (!File.Exists(file))
@@ -1060,37 +1519,55 @@ namespace gInk
 						int penid = 0;
 						if (int.TryParse(sName.Substring(3, 1), out penid) && penid >= 0 && penid < MaxPenCount)
 						{
-							if (sName.EndsWith("_ENABLED"))
-							{
-								if (PenEnabled[penid])
-									sPara = "True";
-								else
-									sPara = "False";
-							}
-							else if (sName.EndsWith("_RED"))
-							{
-								sPara = PenAttr[penid].Color.R.ToString();
-							}
-							else if (sName.EndsWith("_GREEN"))
-							{
-								sPara = PenAttr[penid].Color.G.ToString();
-							}
-							else if (sName.EndsWith("_BLUE"))
-							{
-								sPara = PenAttr[penid].Color.B.ToString();
-							}
-							else if (sName.EndsWith("_ALPHA"))
-							{
-								sPara = (255 - PenAttr[penid].Transparency).ToString();
-							}
-							else if (sName.EndsWith("_WIDTH"))
-							{
-								sPara = ((int)PenAttr[penid].Width).ToString();
-							}
-							else if (sName.EndsWith("_HOTKEY"))
-							{
-								sPara = Hotkey_Pens[penid].ToString();
-							}
+                            if (sName.EndsWith("_ENABLED"))
+                            {
+                                if (PenEnabled[penid])
+                                    sPara = "True";
+                                else
+                                    sPara = "False";
+                            }
+                            else if (sName.EndsWith("_RED"))
+                            {
+                                sPara = PenAttr[penid].Color.R.ToString();
+                            }
+                            else if (sName.EndsWith("_GREEN"))
+                            {
+                                sPara = PenAttr[penid].Color.G.ToString();
+                            }
+                            else if (sName.EndsWith("_BLUE"))
+                            {
+                                sPara = PenAttr[penid].Color.B.ToString();
+                            }
+                            else if (sName.EndsWith("_ALPHA"))
+                            {
+                                sPara = (255 - PenAttr[penid].Transparency).ToString();
+                            }
+                            else if (sName.EndsWith("_WIDTH"))
+                            {
+                                sPara = ((int)PenAttr[penid].Width).ToString();
+                            }
+                            else if (sName.EndsWith("_LINESTYLE"))
+                            {
+                                sPara = LineStyleToString(PenAttr[penid].ExtendedProperties);
+                            }
+                            else if (sName.EndsWith("_FADING"))
+                            {
+                                if (PenAttr[penid].ExtendedProperties.Contains(FADING_PEN))
+                                {
+                                    float f = (float)(PenAttr[penid].ExtendedProperties[FADING_PEN].Data);
+                                    if (f == TimeBeforeFading)
+                                        sPara = "Y";
+                                    else
+                                        sPara = f.ToString();
+
+                                }
+                                else
+                                    sPara = "N";
+                            }
+                            else if (sName.EndsWith("_HOTKEY"))
+                            {
+                                sPara = Hotkey_Pens[penid].ToStringInvariant();
+                            }
 						}
 
 					}
@@ -1107,70 +1584,111 @@ namespace gInk
 							sPara = Local.CurrentLanguageFile;
 							break;
 						case "HOTKEY_GLOBAL":
-							sPara = Hotkey_Global.ToString();
+							sPara = Hotkey_Global.ToStringInvariant();
 							break;
-						case "HOTKEY_ERASER":
-							sPara = Hotkey_Eraser.ToString();
+                        case "HOTKEY_TOGGLEFADING":
+                            sPara = Hotkey_FadingToggle.ToStringInvariant();                            
+                            break;
+                        case "HOTKEY_ERASER":
+							sPara = Hotkey_Eraser.ToStringInvariant();
 							break;
 						case "HOTKEY_INKVISIBLE":
-							sPara = Hotkey_InkVisible.ToString();
+							sPara = Hotkey_InkVisible.ToStringInvariant();
 							break;
 						case "HOTKEY_POINTER":
-							sPara = Hotkey_Pointer.ToString();
+							sPara = Hotkey_Pointer.ToStringInvariant();
 							break;
 						case "HOTKEY_PAN":
-							sPara = Hotkey_Pan.ToString();
+							sPara = Hotkey_Pan.ToStringInvariant();
 							break;
 						case "HOTKEY_UNDO":
-							sPara = Hotkey_Undo.ToString();
+							sPara = Hotkey_Undo.ToStringInvariant();
 							break;
 						case "HOTKEY_REDO":
-							sPara = Hotkey_Redo.ToString();
+							sPara = Hotkey_Redo.ToStringInvariant();
 							break;
 						case "HOTKEY_SNAPSHOT":
-							sPara = Hotkey_Snap.ToString();
+							sPara = Hotkey_Snap.ToStringInvariant();
 							break;
 						case "HOTKEY_CLEAR":
-							sPara = Hotkey_Clear.ToString();
+							sPara = Hotkey_Clear.ToStringInvariant();
 							break;
                         case "HOTKEY_VIDEOREC":
-                            sPara = Hotkey_Video.ToString();
+                            sPara = Hotkey_Video.ToStringInvariant();
                             break;
                         case "HOTKEY_DOCKUNDOCK":
-                            sPara = Hotkey_DockUndock.ToString();
+                            sPara = Hotkey_DockUndock.ToStringInvariant();
                             break;
                         case "HOTKEY_CLOSE":
-                            sPara = Hotkey_Close.ToString();
+                            sPara = Hotkey_Close.ToStringInvariant();
                             break;
                         case "HOTKEY_HAND":
-                            sPara = Hotkey_Hand.ToString();
+                            sPara = Hotkey_Hand.ToStringInvariant();
                             break;
                         case "HOTKEY_LINE":
-                            sPara = Hotkey_Line.ToString();
+                            sPara = Hotkey_Line.ToStringInvariant();
                             break;
                         case "HOTKEY_RECT":
-                            sPara = Hotkey_Rect.ToString();
+                            sPara = Hotkey_Rect.ToStringInvariant();
                             break;
                         case "HOTKEY_OVAL":
-                            sPara = Hotkey_Oval.ToString();
+                            sPara = Hotkey_Oval.ToStringInvariant();
                             break;
                         case "HOTKEY_ARROW":
-                            sPara = Hotkey_Arrow.ToString();
+                            sPara = Hotkey_Arrow.ToStringInvariant();
                             break;
                         case "HOTKEY_TEXT":
-                            sPara = Hotkey_Text.ToString();
+                            sPara = Hotkey_Text.ToStringInvariant();
                             break;
                         case "HOTKEY_NUMBCHIP":
-                            sPara = Hotkey_Numb.ToString();
+                            sPara = Hotkey_Numb.ToStringInvariant();
                             break;
                         case "HOTKEY_EDIT":
-                            sPara = Hotkey_Edit.ToString();
+                            sPara = Hotkey_Edit.ToStringInvariant();
                             break;
                         case "HOTKEY_MOVE":
-                            sPara = Hotkey_Move.ToString();
+                            sPara = Hotkey_Move.ToStringInvariant();
                             break;
                         case "HOTKEY_MAGNET":
-                            sPara = Hotkey_Magnet.ToString();
+                            sPara = Hotkey_Magnet.ToStringInvariant();
+                            break;
+                        case "HOTKEY_CLIPART":
+                            sPara = Hotkey_ClipArt.ToStringInvariant();
+                            break;
+                        case "HOTKEY_CLIPART1":
+                            sPara = Hotkey_ClipArt1.ToStringInvariant();
+                            break;
+                        case "HOTKEY_CLIPART2":
+                            sPara = Hotkey_ClipArt2.ToStringInvariant();
+                            break;
+                        case "HOTKEY_CLIPART3":
+                            sPara = Hotkey_ClipArt3.ToStringInvariant();
+                            break;
+                        case "HOTKEY_ZOOM":
+                            sPara = Hotkey_Zoom.ToStringInvariant();
+                            break;
+                        case "HOTKEY_PENWIDTH_PLUS":
+                            sPara = Hotkey_PenWidthPlus.ToStringInvariant();
+                            break;
+                        case "HOTKEY_PENWIDTH_MINUS":
+                            sPara = Hotkey_PenWidthMinus.ToStringInvariant();
+                            break;
+                        case "HOTKEY_COLORPICKUP":
+                            sPara = Hotkey_ColorPickup.ToStringInvariant();
+                            break;
+                        case "HOTKEY_COLOREDIT":
+                            sPara = Hotkey_ColorEdit.ToStringInvariant();
+                            break;
+                        case "HOTKEY_LINESTYLE":
+                            sPara = Hotkey_LineStyle.ToStringInvariant();
+                            break;
+
+
+                        case "PENS_ON_TWO_LINES":
+                            sPara = PensOnTwoLines? "True" : "False";
+                            break;
+                        case "PENWIDTH_DELTA":
+                            sPara = PenWidth_Delta.ToString();
                             break;
 
                         case "WHITE_TRAY_ICON":
@@ -1197,6 +1715,9 @@ namespace gInk
                             else
                                 sPara = "False";
                             break;
+                        case "FITTOCURVE":
+                            sPara = FitToCurve?"True":"False";
+                            break;
                         case "ARROW":           // angle in degrees, len in % of the screen width
                             sPara = (ArrowAngle / Math.PI * 180.0).ToString(CultureInfo.InvariantCulture) +","+ (ArrowLen / System.Windows.SystemParameters.PrimaryScreenWidth * 100.0).ToString(CultureInfo.InvariantCulture);
                             break;
@@ -1205,6 +1726,9 @@ namespace gInk
                             break;
                         case "TEXT":           // size of the tag in % of the screen
                             sPara = TextFont+","+(TextItalic?"True":"False")+","+ (TextBold ? "True" : "False")+","+(TextSize / System.Windows.SystemParameters.PrimaryScreenWidth *100.0).ToString(CultureInfo.InvariantCulture);
+                            break;
+                        case "NUMBERS":           // size of the tag in % of the screen
+                            sPara = TagFont + "," + (TagItalic ? "True" : "False") + "," + (TagBold ? "True" : "False") + "," + (TagSize / System.Windows.SystemParameters.PrimaryScreenWidth * 100.0).ToString(CultureInfo.InvariantCulture);
                             break;
                         case "MAGNET":
                             sPara = (MagneticRadius / System.Windows.SystemParameters.PrimaryScreenWidth * 100.0).ToString(CultureInfo.InvariantCulture);
@@ -1233,13 +1757,19 @@ namespace gInk
 							else
 								sPara = "False";
 							break;
-						case "SNAPSHOT_ICON":
+                        case "SUBTOOLSBAR_ENABLED":
+                            sPara = SubToolsEnabled ? "True" : "False";
+                            break;
+                        case "SNAPSHOT_ICON":
 							if (SnapEnabled)
 								sPara = "True";
 							else
 								sPara = "False";
 							break;
-						case "CLOSE_ON_SNAP":
+                        case "SNAPSHOT_STROKESONLY":
+                            sPara = StrokesOnlySnapshot ? "True" : "False";
+                            break;
+                        case "CLOSE_ON_SNAP":
 							if (CloseOnSnap == "true")
 								sPara = "True";
 							else if (CloseOnSnap == "false")
@@ -1265,13 +1795,25 @@ namespace gInk
 							else
 								sPara = "False";
 							break;
-						case "PAN_ICON":
-							if (PanEnabled)
-								sPara = "True";
-							else
-								sPara = "False";
-							break;
-						case "INKVISIBLE_ICON":
+                        case "PAN_ICON":
+                            if (PanEnabled)
+                                sPara = "True";
+                            else
+                                sPara = "False";
+                            break;
+                        case "LOADSAVE_ICON":
+                            if (LoadSaveEnabled)
+                                sPara = "True";
+                            else
+                                sPara = "False";
+                            break;
+                        case "ZOOM_ICON":
+                            sPara = ZoomEnabled.ToString();
+                            break;
+                        case "COLORPICKUP_ENABLED":
+                            sPara = ColorPickerEnabled.ToString();
+                            break;
+                        case "INKVISIBLE_ICON":
 							if (PanEnabled)
 								sPara = "True";
 							else
@@ -1307,6 +1849,12 @@ namespace gInk
                         case "GRAYBOARD1": 
                             sPara = Gray1[0].ToString() + "," + Gray1[1].ToString() + "," + Gray1[2].ToString() + "," + Gray1[3].ToString();
                             break;
+                        case "INKING_AREA": // 4 integers
+                            if (WindowRect.Width <= 0 || WindowRect.Height <= 0)
+                                sPara = "-1,-1,-1,-1";
+                            else
+                                sPara = WindowRect.Left.ToString() + "," + WindowRect.Top.ToString() + "," + WindowRect.Width.ToString() + "," + WindowRect.Height.ToString();
+                            break;
                         case "GRAYBOARD2":
                             sPara = Gray2[0].ToString() + "," + Gray2[1].ToString() + "," + Gray2[2].ToString() + "," + Gray2[3].ToString();
                             break;
@@ -1327,6 +1875,80 @@ namespace gInk
                             break;
                         case "FFMPEG_CMD":
                             sPara = FFMpegCmd;
+                            break;
+                        case "RESTSERVER_URL":
+                            sPara = APIRestUrl;
+                            break;
+                        case "IMAGESTAMP_SIZE":
+                            sPara = StampSize.ToString();
+                            break;
+                        case "IMAGESTAMP_FILLING":
+                            sPara = ImageStampFilling.ToString();
+                            break;
+                        case "IMAGESTAMP_FILENAMES":
+                            if (!StampFileNamesAlreadyFilled)
+                            {
+                                sPara = "";
+                                foreach (string st1 in StampFileNames)
+                                    sPara += MakeRelativePath(Global.ProgramFolder, st1).Replace('\\','/') + ";";
+                                if (sPara.Length>1)
+                                    sPara = sPara.Remove(sPara.Length - 1, 1); // to suppress last ;
+                                else //if(sPara.Length <=1)
+                                    sPara = " ";
+                                StampFileNamesAlreadyFilled = true;
+                            }
+                            else
+                                sPara = " ";
+                            break;
+                        case "IMAGESTAMP1":
+                            sPara = MakeRelativePath(Global.ProgramFolder, ImageStamp1);
+                            break;
+                        case "IMAGESTAMP2":
+                            sPara = MakeRelativePath(Global.ProgramFolder, ImageStamp2);
+                            break;
+                        case "IMAGESTAMP3":
+                            sPara = MakeRelativePath(Global.ProgramFolder, ImageStamp3);
+                            break;
+                        case "TOOLBAR_DIRECTION":
+                            if (ToolbarOrientation == Orientation.toLeft)
+                                sPara = "Left";
+                            if (ToolbarOrientation == Orientation.toRight)
+                                sPara = "Right";
+                            if (ToolbarOrientation == Orientation.toUp)
+                                sPara = "Up";
+                            if (ToolbarOrientation == Orientation.toDown)
+                                sPara = "Down";
+                            break;
+                        case "FADING_TIME":
+                            sPara = TimeBeforeFading.ToString();
+                            break;
+                        case "ZOOM":     // Width;Height;scale(f);Continuous(Y/N)
+                            sPara = ZoomWidth.ToString() + ";" + ZoomHeight.ToString() + ";" + ZoomScale.ToString() + ";" + (ZoomContinous ? "Y" : "N");
+                            break;
+                        case "INVERSE_MOUSEWHEEL_CONTROL":
+                            sPara = InverseMousewheel ? "True" : "False";
+                            break;
+                        case "SNAP_IN_POINTER_HOLD_KEY": //directly the int value; expected to be in hotkey.ini
+                            sPara = ((int)SnapInPointerHoldKey).ToString();
+                            break;
+                        case "SNAP_IN_POINTER_PRESSTWICE_KEY": //directly the int value; expected to be in hotkey.ini
+                            sPara = ((int)SnapInPointerPressTwiceKey).ToString();
+                            break;
+
+                        case "MEASURES_ENABLED":
+                            sPara = MeasureEnabled? "True" : "False";
+                            break;
+                        case "MEASURE_LEN_SCALE":
+                            sPara = Measure2Scale.ToString(CultureInfo.InvariantCulture);
+                            break;
+                        case "MEASURE_LEN_DECIMALS":
+                            sPara = Measure2Digits.ToString();
+                            break;
+                        case "MEASURE_LEN_UNIT":
+                            sPara = Measure2Unit;
+                            break;
+                        case "MEASURE_ANGLE_DIR":
+                            sPara= MeasureAnglCounterClockwise?"True":"False";
                             break;
                     }
                 }
@@ -1361,11 +1983,11 @@ namespace gInk
             //ReadOptions("pens.ini");
             //ReadOptions("config.ini");
             //ReadOptions("hotkeys.ini");
-            if (FormOptions != null)
+            if (FormOptions == null)
+                FormOptions = new FormOptions(this);
+            //if (FormDisplay != null || FormCollection != null)
+            if (FormDisplay.Visible|| FormCollection.Visible)
                 return;
-            if (FormDisplay != null || FormCollection != null)
-                return;
-            FormOptions = new FormOptions(this);
 			FormOptions.Show();
 		}
 
@@ -1420,10 +2042,105 @@ namespace gInk
             return Convert.ToInt32(pi / 0.037795280352161);
         }
 
-		[DllImport("user32.dll")]
+        public static String MakeRelativePath(String fromPath, String toPath)
+        {
+            if (String.IsNullOrEmpty(fromPath)) throw new ArgumentNullException("fromPath");
+            if (String.IsNullOrEmpty(toPath)) throw new ArgumentNullException("toPath");
+
+            Uri fromUri = new Uri(fromPath);
+            Uri toUri = new Uri(toPath);
+
+            if (fromUri.Scheme != toUri.Scheme) { return toPath; } // path can't be made relative.
+
+            Uri relativeUri = fromUri.MakeRelativeUri(toUri);
+            String relativePath = Uri.UnescapeDataString(relativeUri.ToString());
+
+            if (toUri.Scheme.Equals("file", StringComparison.InvariantCultureIgnoreCase))
+            {
+                relativePath = relativePath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+            }
+
+            return relativePath;
+        }
+
+        public double ConvertMeasureLength(double hl)
+        {
+            return hl * 0.037795280352161 * Measure2Scale;
+        }
+
+        public string LineStyleToString(ExtendedProperties props)
+        {
+            if (!props.Contains(DASHED_LINE_GUID))
+                return "Stroke";
+            else
+                switch ((DashStyle)(props[DASHED_LINE_GUID].Data))
+                {
+                    case DashStyle.Solid:
+                        return "Solid";
+                    case DashStyle.Dash:
+                        return "Dash";
+                    case DashStyle.Dot:
+                        return "Dot";
+                    case DashStyle.DashDot:
+                        return "DashDot";
+                    case DashStyle.DashDotDot:
+                        return "DashDotDot";
+                }
+            return "Stroke"; //by default
+        }
+
+        public DashStyle LineStyleFromString(string s)
+        {
+            switch (s.ToUpper())
+            {
+                case "STROKE":
+                    return DashStyle.Custom;
+                case "SOLID":
+                    return DashStyle.Solid;
+                case "DASH":
+                    return DashStyle.Dash;
+                case "DOT":
+                    return DashStyle.Dot;
+                case "DASHDOT":
+                    return DashStyle.DashDot;
+                case "DASHDOTDOT":
+                    return DashStyle.DashDotDot;
+            }
+            throw (new Exception("Unknown LineStyle String :" + s));
+        }
+
+        public string NextLineStyleString(string s)
+        {
+            switch (s.ToUpper())
+            {
+                case "STROKE":
+                    return "Solid";
+                case "SOLID":
+                    return "Dash";
+                case "DASH":
+                    return "Dot";
+                case "DOT":
+                    return "DashDot";
+                case "DASHDOT":
+                    return "DashDotDot";
+                case "DASHDOTDOT":
+                    return "Stroke";
+            }
+            return "Stroke"; //default : original stroke
+        }
+
+
+        public void AppGetFocus()
+        {
+            SetForegroundWindow(Process.GetCurrentProcess().MainWindowHandle);
+        }
+
+        [DllImport("user32.dll")]
 		private static extern int RegisterHotKey(IntPtr hwnd, int id, int fsModifiers, int vk);
 		[DllImport("user32.dll")]
 		private static extern int UnregisterHotKey(IntPtr hwnd, int id);
-	}
+        [DllImport("user32.dll")]
+        internal static extern IntPtr SetForegroundWindow(IntPtr hWnd);
+    }
 }
 

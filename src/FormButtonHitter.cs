@@ -33,11 +33,18 @@ namespace gInk
 			FC = Root.FormCollection;
 			InitializeComponent();
 
-			this.Left = FC.gpButtons.Left + FC.Left;
-			this.Top = FC.gpButtons.Top + FC.Top;
-			this.Width = FC.gpButtons.Width;
-			this.Height = FC.gpButtons.Height;
+            Initialize();
+
 		}
+
+        public void Initialize()
+        {
+            Left = FC.gpButtons.Left + FC.Left;
+            Top = FC.gpButtons.Top + FC.Top;
+            Width = FC.gpButtons.Width;
+            Height = FC.gpButtons.Height;
+            timer1.Enabled = true;
+        }
 
         protected override void WndProc(ref Message msg)
         {
@@ -77,6 +84,7 @@ namespace gInk
 
 		public void ToTopMost()
 		{
+            TopMost = true;
 			UInt32 dwExStyle = GetWindowLong(this.Handle, -20);
 			SetWindowLong(this.Handle, -20, dwExStyle | 0x00080000);
 			//SetLayeredWindowAttributes(this.Handle, 0x00FFFFFF, 200, 0x2);
@@ -89,8 +97,9 @@ namespace gInk
 			{
 				this.Left = FC.gpButtons.Left + FC.Left;
 				this.Top = FC.gpButtons.Top + FC.Top;
-				this.Width = FC.gpButtons.Width;
-				this.Height = FC.gpButtons.Height;
+                Size s = FC.VisibleToolbar;
+                this.Width = s.Width;
+				this.Height = s.Height;
 			}
 		}
 

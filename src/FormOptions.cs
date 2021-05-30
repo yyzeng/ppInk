@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Drawing.Drawing2D;
 
 namespace gInk
 {
@@ -19,22 +20,115 @@ namespace gInk
 		PictureBox[] pboxPens = new PictureBox[10];
 		ComboBox[] comboPensAlpha = new ComboBox[10];
 		ComboBox[] comboPensWidth = new ComboBox[10];
-		Label lbcbPens, lbpboxPens, lbcomboPensAlpha, lbcomboPensWidth;
+        Panel [] comboPensLineStyle = new Panel[10];
+        CheckBox[] comboPensFading = new CheckBox[10];
+        //Label lbcbPens, lbpboxPens, lbcomboPensAlpha, lbcomboPensWidth, lbcomboPensFading;
 
 		Label[] lbHotkeyPens = new Label[10];
 		HotkeyInputBox[] hiPens = new HotkeyInputBox[10];
 
-		public FormOptions(Root root)
+        Bitmap[] ToolBarOrientationIcons = { gInk.Properties.Resources.toolbar2Left, gInk.Properties.Resources.toolbar2Right,
+                                             gInk.Properties.Resources.toolbar2Up, gInk.Properties.Resources.toolbar2Down };
+
+        public FormOptions(Root root)
 		{
 			Root = root;
 			InitializeComponent();
-		}
+            for (int p = 0; p < Root.MaxPenCount; p++)
+			{
+				//int top = p * (int)(this.Height * 0.075) + (int)(this.Height * 0.09);
+                int top = lbPens0.Top + p * (lbPens1.Top-lbPens0.Top);
+                /*lbPens[p] = new Label();
+				lbPens[p].Left = (int)(this.Width / 500.0 * 60);
+				lbPens[p].Width = 80;
+				lbPens[p].Top = top;*/
 
-		private void FormOptions_Load(object sender, EventArgs e)
+				cbPens[p] = new CheckBox();
+				cbPens[p].CheckedChanged += cbPens_CheckedChanged;
+
+				pboxPens[p] = new PictureBox();
+				pboxPens[p].Click += pboxPens_Click;
+
+				comboPensAlpha[p] = new ComboBox();
+				comboPensAlpha[p].TextChanged += comboPensAlpha_TextChanged;
+
+				comboPensWidth[p] = new ComboBox();
+				comboPensWidth[p].TextChanged += comboPensWidth_TextChanged;
+
+                comboPensLineStyle[p] = new Panel();
+                comboPensLineStyle[p].Click += comboPensLineStyle_Changed;
+
+                comboPensFading[p] = new CheckBox();
+                comboPensFading[p].CheckedChanged += comboPensFading_Changed;
+
+                tabPage2.Controls.Add(lbPens[p]);
+				tabPage2.Controls.Add(cbPens[p]);
+				tabPage2.Controls.Add(pboxPens[p]);
+				tabPage2.Controls.Add(comboPensAlpha[p]);
+				tabPage2.Controls.Add(comboPensWidth[p]);
+                tabPage2.Controls.Add(comboPensLineStyle[p]);
+                tabPage2.Controls.Add(comboPensFading[p]);
+
+                lbHotkeyPens[p] = new Label();
+                hiPens[p] = new HotkeyInputBox();
+                hiPens[p].OnHotkeyChanged += hi_OnHotkeyChanged;
+
+                tabPage3.Controls.Add(lbHotkeyPens[p]);
+                tabPage3.Controls.Add(hiPens[p]);
+            }
+        }
+
+        private void FormOptions_Load(object sender, EventArgs e)
 		{
-			Root.UnsetHotkey();
+            //Root.UnsetHotkey();
             ToolbarDwg.BackColor = Color.FromArgb(Root.ToolbarBGColor[0], Root.ToolbarBGColor[1], Root.ToolbarBGColor[2], Root.ToolbarBGColor[3]);
-			if (Root.EraserEnabled)
+            ToolbarOrientationBtn.BackgroundImage = ToolBarOrientationIcons[Root.ToolbarOrientation];
+            if(Root.StampFileNames.Count != Root.FormCollection.ClipartsDlg.ImageListViewer.Items.Count 
+                && MessageBox.Show(Root.Local.QuestionClipArtUpdate,"ppInk",MessageBoxButtons.YesNo)==DialogResult.Yes)
+            {
+                Root.StampFileNames.Clear();
+                foreach (ListViewItem it in Root.FormCollection.ClipartsDlg.ImageListViewer.Items)
+                    Root.StampFileNames.Add(it.ImageKey);// dlg.Images.Images.Keys[i]);
+            }
+            Clip1Btn.BackColor = ToolbarDwg.BackColor;
+            try
+            {
+                if (Clip1Btn.BackgroundImage != null)
+                    Clip1Btn.BackgroundImage.Dispose();
+                Clip1Btn.BackgroundImage = FormCollection.getImgFromDiskOrRes(Root.ImageStamp1);
+            }
+            catch
+            {
+                Program.WriteErrorLog(string.Format("File {0} found but can not be loaded:{1} \n", "Stamp1", Root.ImageStamp1));
+                Clip1Btn.BackgroundImage = FormCollection.getImgFromDiskOrRes("unknown");
+            }
+            Clip2Btn.BackColor = ToolbarDwg.BackColor;
+            try
+            {
+                if (Clip2Btn.BackgroundImage != null)
+                    Clip2Btn.BackgroundImage.Dispose();
+                Clip2Btn.BackgroundImage = FormCollection.getImgFromDiskOrRes(Root.ImageStamp2);
+            }
+            catch
+            {
+                Program.WriteErrorLog(string.Format("File {0} found but can not be loaded:{1} \n", "Stamp2", Root.ImageStamp2));
+                Clip1Btn.BackgroundImage = FormCollection.getImgFromDiskOrRes("unknown");
+            }
+            Clip3Btn.BackColor = ToolbarDwg.BackColor;
+            try
+            {
+                if (Clip3Btn.BackgroundImage != null)
+                    Clip3Btn.BackgroundImage.Dispose();
+                Clip3Btn.BackgroundImage = FormCollection.getImgFromDiskOrRes(Root.ImageStamp3);
+            }
+            catch
+            {
+                Program.WriteErrorLog(string.Format("File {0} found but can not be loaded:{1} \n", "Stamp3", Root.ImageStamp3));
+                Clip1Btn.BackgroundImage = FormCollection.getImgFromDiskOrRes("unknown");
+            }
+            SubToolsBar_cb.Checked = Root.SubToolsEnabled;
+            PensOnTwoLinesCb.Checked = Root.PensOnTwoLines;
+            if (Root.EraserEnabled)
 				cbEraserEnabled.Checked = true;
 			if (Root.PointerEnabled)
 				cbPointerEnabled.Checked = true;
@@ -59,8 +153,19 @@ namespace gInk
 				cbAllowDragging.Checked = true;
 			if (Root.AllowHotkeyInPointerMode)
 				cbAllowHotkeyInPointer.Checked = true;
+            cbLoadSaveEnabled.Checked = Root.LoadSaveEnabled;
+            ColorPickerEnaCb.Checked = Root.ColorPickerEnabled;
 
             AltTabActivateCb.Checked = Root.AltTabPointer;
+
+            MeasureEnabledCb.Checked = Root.MeasureEnabled;
+            Measure2ScaleEd.Text = Root.Measure2Scale.ToString();
+            Measure2DigEd.Text = Root.Measure2Digits.ToString();
+            Measure2UnitEd.Text = Root.Measure2Unit;
+            MeasureAngleCb.Checked = Root.MeasureAnglCounterClockwise;
+
+            APIRestEd.Text = Root.APIRestUrl;
+            APIRestEd.BackColor = Root.APIRest.IsListening() ? Color.White : Color.Orange;
 
             ToolBarHeight.Text = string.Format("{0:F1}", Root.ToolbarHeight * 100);
             //MoveToolBarCb.Checked = Root.AllowDraggingToolbar;
@@ -78,105 +183,92 @@ namespace gInk
             ArrHdLength.Text = (Root.ArrowLen / System.Windows.SystemParameters.PrimaryScreenWidth *100.0).ToString("#0.0000",CultureInfo.InvariantCulture);
             Magnet_TB.Text = (Root.MagneticRadius / System.Windows.SystemParameters.PrimaryScreenWidth * 100.0).ToString("#0.0000", CultureInfo.InvariantCulture);
             DefArrStartCb.Checked = Root.DefaultArrow_start;
+
+            ZoomEnabledCb.SelectedIndex = Root.ZoomEnabled;
+            ZoomWidthEd.Text = Root.ZoomWidth.ToString();
+            ZoomHeightEd.Text = Root.ZoomHeight.ToString();
+            ZoomScaleEd.Text = Root.ZoomScale.ToString();
+            ZoomContinousCb.Checked = Root.ZoomContinous;
+
+            CaptStrokesOnlyCb.Checked = Root.StrokesOnlySnapshot;
+
             lbNote.ForeColor = Color.Black;
 
-			lbcbPens = new Label();
-			lbcbPens.Left = (int)(this.Width / 500.0 * 25);
-			lbcbPens.Width = 100;
-			lbcbPens.Top = 15;
-			
-			tabPage2.Controls.Add(lbcbPens);
-			lbpboxPens = new Label();
-			lbpboxPens.Left = (int)(this.Width / 500.0 * 140);
-			lbpboxPens.Width = 60;
-			lbpboxPens.Top = 15;
-			
-			tabPage2.Controls.Add(lbpboxPens);
-			lbcomboPensAlpha = new Label();
-			lbcomboPensAlpha.Left = (int)(this.Width / 500.0 * 200);
-			lbcomboPensAlpha.Width = 100;
-			lbcomboPensAlpha.Top = 15;
-			
-			tabPage2.Controls.Add(lbcomboPensAlpha);
-			lbcomboPensWidth = new Label();
-			lbcomboPensWidth.Left = (int)(this.Width / 500.0 * 325);
-			lbcomboPensWidth.Width = 100;
-			lbcomboPensWidth.Top = 15;
-			
-			tabPage2.Controls.Add(lbcomboPensWidth);
+            lbPens[0] = lbPens0; lbPens[1] = lbPens1; lbPens[2] = lbPens2; lbPens[3] = lbPens3; lbPens[4] = lbPens4;
+            lbPens[5] = lbPens5; lbPens[6] = lbPens6; lbPens[7] = lbPens7; lbPens[8] = lbPens8; lbPens[9] = lbPens9;
 
-			for (int p = 0; p < Root.MaxPenCount; p++)
+            for (int p = 0; p < Root.MaxPenCount; p++)
 			{
-				int top = p * (int)(this.Height * 0.075) + (int)(this.Height * 0.09);
-				lbPens[p] = new Label();
+				//int top = p * (int)(this.Height * 0.075) + (int)(this.Height * 0.09);
+                int top = lbPens0.Top + p * (lbPens1.Top-lbPens0.Top);
+                /*lbPens[p] = new Label();
 				lbPens[p].Left = (int)(this.Width / 500.0 * 60);
 				lbPens[p].Width = 80;
-				lbPens[p].Top = top;
+				lbPens[p].Top = top;*/
 
-				cbPens[p] = new CheckBox();
-				cbPens[p].Left = (int)(this.Width / 500.0 * 30);
+                cbPens[p].Left = lbcbPens.Left + 10;// (int)(this.Width / 500.0 * 30);
 				cbPens[p].Width = 25;
 				cbPens[p].Top = top - 5;
 				cbPens[p].Text = "";
 				cbPens[p].Checked = Root.PenEnabled[p];
-				cbPens[p].CheckedChanged += cbPens_CheckedChanged;
 
-				pboxPens[p] = new PictureBox();
-				pboxPens[p].Left = (int)(this.Width / 500.0 * 145);
+                pboxPens[p].Left = lbpboxPens.Left + 10;// (int)(this.Width / 500.0 * 130);
 				pboxPens[p].Top = top;
 				pboxPens[p].Width = 15;
 				pboxPens[p].Height = 15;
 				pboxPens[p].BackColor = Root.PenAttr[p].Color;
-				pboxPens[p].Click += pboxPens_Click;
 
-				comboPensAlpha[p] = new ComboBox();
-				
-				comboPensAlpha[p].Left = (int)(this.Width / 500.0 * 205);
+                comboPensAlpha[p].Left = lbcomboPensAlpha.Left;// (int)(this.Width / 500.0 * 180);
 				comboPensAlpha[p].Top = top - 2;
-				comboPensAlpha[p].Width = 100;
+				comboPensAlpha[p].Width = 60;
 				comboPensAlpha[p].Text = (255 - Root.PenAttr[p].Transparency).ToString();
-				comboPensAlpha[p].TextChanged += comboPensAlpha_TextChanged;
 
-				comboPensWidth[p] = new ComboBox();
-				
-				comboPensWidth[p].Left = (int)(this.Width / 500.0 * 330);
+                comboPensWidth[p].Left = lbcomboPensWidth.Left;// (int)(this.Width / 500.0 * 270);
 				comboPensWidth[p].Top = top - 2;
-				comboPensWidth[p].Width = 100;
+				comboPensWidth[p].Width = 60;
 				comboPensWidth[p].Text = ((int)Root.PenAttr[p].Width).ToString();
-				comboPensWidth[p].TextChanged += comboPensWidth_TextChanged;
 
-				tabPage2.Controls.Add(lbPens[p]);
-				tabPage2.Controls.Add(cbPens[p]);
-				tabPage2.Controls.Add(pboxPens[p]);
-				tabPage2.Controls.Add(comboPensAlpha[p]);
-				tabPage2.Controls.Add(comboPensWidth[p]);
-			}
+                comboPensLineStyle[p].Left = lbLineStyle.Left+5;// (int)(this.Width / 500.0 * 270);
+                comboPensLineStyle[p].Top = top - 2;
+                comboPensLineStyle[p].Height = comboPensWidth[p].Height;
+                comboPensLineStyle[p].Width = comboPensWidth[p].Height*2;
+                comboPensLineStyle[p].BackgroundImageLayout = ImageLayout.Stretch;
+                comboPensLineStyle[p].BackgroundImage = FormCollection.getImgFromDiskOrRes("DashStyle"+ Root.LineStyleToString(Root.PenAttr[p].ExtendedProperties));
+                comboPensLineStyle[p].Tag = p;
 
-			cbAllowHotkeyInPointer.Top = (int)(this.Height * 0.18);
+                comboPensFading[p].Left = lbcomboPensFading.Left+10;  // (int)(this.Width / 500.0 * 380);
+                comboPensFading[p].Top = top - 2;
+                comboPensFading[p].Width = 20;
+                comboPensFading[p].Checked = Root.PenAttr[p].ExtendedProperties.Contains(Root.FADING_PEN);
+            }
+
+            FadingTimeEd.Text = Root.TimeBeforeFading.ToString();
+            InverseWheelCb.Checked = Root.InverseMousewheel;
+            FitToCurveEd.Checked = Root.FitToCurve;
+
+            //cbAllowHotkeyInPointer.Top = (int)(this.Height * 0.18);
 
 			for (int p = 0; p < Root.MaxPenCount; p++)
 			{
-				int top = p * (int)(this.Height * 0.055) + (int)(this.Height * 0.24);
-				lbHotkeyPens[p] = new Label();
+				int top = p * (hiPan.Top - hiEraser.Top) + hiEraser.Top;
 				lbHotkeyPens[p].Left = 20;
 				lbHotkeyPens[p].Width = 80;
 				lbHotkeyPens[p].Top = top;
 
-				hiPens[p] = new HotkeyInputBox();
 				hiPens[p].Hotkey = Root.Hotkey_Pens[p];
 				hiPens[p].Left = 100;
 				hiPens[p].Width = 120;
 				hiPens[p].Top = top;
-				hiPens[p].OnHotkeyChanged += hi_OnHotkeyChanged;
-
-				tabPage3.Controls.Add(lbHotkeyPens[p]);
-				tabPage3.Controls.Add(hiPens[p]);
 			}
 
             AltAsOneCommandCb.Checked = Root.AltAsOneCommand;
 
-			hiGlobal.Hotkey = Root.Hotkey_Global;
-			hiEraser.Hotkey = Root.Hotkey_Eraser;
+            SnapInPointerHoldCb.SelectedIndex = (int)(Root.SnapInPointerHoldKey);
+            SnapInPointerTwiceCb.SelectedIndex = (int)(Root.SnapInPointerPressTwiceKey);
+
+            hiGlobal.Hotkey = Root.Hotkey_Global;
+            hiFadingToggle.Hotkey = Root.Hotkey_FadingToggle;
+            hiEraser.Hotkey = Root.Hotkey_Eraser;
 			hiPan.Hotkey = Root.Hotkey_Pan;
 			hiInkVisible.Hotkey = Root.Hotkey_InkVisible;
 			hiPointer.Hotkey = Root.Hotkey_Pointer;
@@ -197,6 +289,16 @@ namespace gInk
             HiToolText.Hotkey = Root.Hotkey_Text;
             hiToolEdit.Hotkey = Root.Hotkey_Edit;
             hiToolMagnet.Hotkey = Root.Hotkey_Magnet;
+            hiToolClipArt.Hotkey = Root.Hotkey_ClipArt;
+            hiToolClipArt1.Hotkey = Root.Hotkey_ClipArt1;
+            hiToolClipArt2.Hotkey = Root.Hotkey_ClipArt2;
+            hiToolClipArt3.Hotkey = Root.Hotkey_ClipArt3;
+            hiZoom.Hotkey = Root.Hotkey_Zoom;
+            hiPenWidthPlus.Hotkey = Root.Hotkey_PenWidthPlus;
+            hiPenWidthMinus.Hotkey = Root.Hotkey_PenWidthMinus;
+            hiColorPickup.Hotkey = Root.Hotkey_ColorPickup;
+            hiColorEdit.Hotkey = Root.Hotkey_ColorEdit;
+            hiLineStyle.Hotkey = Root.Hotkey_LineStyle;
 
             WsUrlTxt.Text = Root.ObsUrl;
             WsPwdTxt.Text = Root.ObsPwd;
@@ -222,18 +324,26 @@ namespace gInk
             FormOptions_LocalReload();
 		}
 
-		private void FormOptions_LocalReload()
+        private void FormOptions_Shown(object sender, EventArgs e)
+        {
+            FormOptions_Load(sender, e);
+        }
+
+        private void FormOptions_LocalReload()
 		{   string shortTxt(string sin)
             {
                 int i = sin.IndexOf("(");
                 if (i < 0) i = sin.Length;
                 return sin.Substring(0, i);
             }
-			this.Text = Root.Local.MenuEntryOptions + " - gInk";
+			this.Text = Root.Local.MenuEntryOptions + " - ppInk";
 			VideoTabCtrl.TabPages[0].Text = Root.Local.OptionsTabGeneral;
 			VideoTabCtrl.TabPages[1].Text = Root.Local.OptionsTabPens;
 			VideoTabCtrl.TabPages[2].Text = Root.Local.OptionsTabHotkeys;
+            SubToolsBar_cb.Text = Root.Local.SubToolsBarCbText;
+            PensOnTwoLinesCb.Text = Root.Local.OptionPensOnTwoLinesCb;
             this.ToolBarColorLbl.Text = Root.Local.OptionsGeneralToolBarColorText;
+            this.ClipartsSelBtn.Text = shortTxt(Root.Local.ButtonNameClipArt);
             this.AltTabActivateCb.Text = Root.Local.OptionsGeneralAltTabActivateText;
             this.lblToolbarHeight.Text = Root.Local.OptionsGeneralToolbarHeight;
 			this.lbLanguage.Text = Root.Local.OptionsGeneralLanguage;
@@ -242,19 +352,54 @@ namespace gInk
             this.OpenIntoSnapCb.Text = Root.Local.OptionsGeneralOpenIntoSnapMode;
             this.cbWhiteIcon.Text = Root.Local.OptionsGeneralWhitetrayicon;
 			this.cbAllowDragging.Text = Root.Local.OptionsGeneralAllowdragging;
+            this.APIRestLbl.Text = Root.Local.OptionsGeneralAPIRest;
             this.ShowFloatingWinCb.Text = Root.Local.OptionsGeneralShowFloatingWindow;
             this.SaveWindowPosBtn.Text = Root.Local.OptionsGeneralSaveFloatingWindowPos;
             this.ArrwGrp.Text = Root.Local.OptionsGeneralArrowHead;
             this.ArrHdAptLbl.Text = Root.Local.OptionsGeneralArrowHeadApt;
             this.ArrHdLenLbl.Text = Root.Local.OptionsGeneralArrowHeadLen;
-            this.DefTxtLbl.Text = Root.Local.OptionsGeneralDefaultTextLbl;
+            this.DefTxtLbl.Text = shortTxt(Root.Local.ButtonNameText) + " - " + Root.Local.OptionsGeneralDefaultTextLbl;
             this.DefaultFontBtn.Text = Root.Local.OptionsGeneralDefaultTextBtn;
+            this.DefTagLbl.Text = shortTxt(Root.Local.ButtonNameNumb)+" - "+Root.Local.OptionsGeneralDefaultTextLbl;
+            this.TagFontBtn.Text = Root.Local.OptionsGeneralDefaultTextBtn;
             this.DefArrStartCb.Text = Root.Local.OptionsGeneralDefaultArrHdBtn;
             this.MagnetLbl.Text = Root.Local.OptionsGeneralMagnetLbl;
             this.SaveConfigBtn.Text = Root.Local.OptionsGeneralSaveConfigToFile;
-			this.lbNote.Text = Root.Local.OptionsGeneralNotePenwidth;
+            this.CaptStrokesOnlyCb.Text = Root.Local.OptionsCaptureStrokesOnly;
+            this.ColorPickerEnaCb.Text = Root.Local.OptionsHotkeysColorPicker;
+
+            MeasurementBox.Text = Root.Local.OptionMeasureGroup;
+            Measuse1Lbl.Text = Root.Local.OptionMeasureLenLabel;
+            MeasureAngleCb.Text = Root.Local.OptionMeasureAngle;
+
+            this.lbNote.Text = Root.Local.OptionsGeneralNotePenwidth;
+
+            {
+                int i = 0;
+                foreach(string st in Root.Local.OptionsZoomEnabled.Split('\n'))
+                    this.ZoomEnabledCb.Items[i++]=st;
+            }
+            this.ZoomBox.Text = Root.Local.ButtonNameZoom;
+            this.ZoomDimLbl.Text = Root.Local.OptionsZoomDim;
+            this.ZoomScaleLbl.Text = Root.Local.OptionsZoomScale;
+            this.ZoomContinousCb.Text = Root.Local.OptionsZoomContinous;
+
+            this.ActivateDbgWinBtn.Text = Root.Local.ButtonActivateDebug;
+
+            this.SnapInPointerGrp.Text = Root.Local.OptionsHotKeySnapInPointerGrp;
+            this.SnapInPointerLbl.Text = Root.Local.OptionsHotKeySnapInPointerLbl;
+
+            {
+                int i = 0;
+                foreach(string st in Root.Local.OptionsHotKeySnapInPointerKeys.Split('\n'))
+                {
+                    this.SnapInPointerHoldCb.Items[i] = st;
+                    this.SnapInPointerTwiceCb.Items[i++] = st;
+                }
+            }
 
             this.AltAsOneCommandCb.Text = Root.Local.OptionsHotKeyAltAsOneCommand;
+            this.lbHkFadingToggle.Text = Root.Local.ButtonNameToogle;
 			this.lbHkClear.Text = shortTxt(Root.Local.ButtonNameClear);
             this.lbHkVideo.Text = shortTxt(Root.Local.ButtonNameVideo);
 			this.lbHkEraser.Text = shortTxt(Root.Local.ButtonNameErasor);
@@ -277,9 +422,27 @@ namespace gInk
             this.lbHkText.Text = shortTxt(Root.Local.ButtonNameText);
             this.lbHkEdit.Text = shortTxt(Root.Local.ButtonNameEdit);
             this.lbHkMagn.Text = shortTxt(Root.Local.ButtonNameMagn);
+            this.lbHkClipart.Text = shortTxt(Root.Local.ButtonNameClipArt);
+            this.lbHkClipart1.Text = shortTxt(Root.Local.ButtonNameClipArt) + " 1";
+            this.lbHkClipart2.Text = shortTxt(Root.Local.ButtonNameClipArt) + " 2";
+            this.lbHkClipart3.Text = shortTxt(Root.Local.ButtonNameClipArt) + " 3";
+            this.lbHkZoom.Text = shortTxt(Root.Local.ButtonNameZoom);
+
+            this.lbHkLineStyle.Text = Root.Local.OptionsLineStyle;
+            this.lbHkPenWidthPlus.Text = Root.Local.OptionsHotkeysPenWidthPlus;
+            this.lbHkPenWidthMinus.Text = Root.Local.OptionsHotkeysPenWidthMinus;
+
+            this.lbHkColorPickup.Text = Root.Local.OptionsHotkeysColorPicker;
+            this.lbHkColorEdit.Text = Root.Local.OptionsHotkeysColorEdit;
 
             this.lbGlobalHotkey.Text = Root.Local.OptionsHotkeysglobal;
             this.cbAllowHotkeyInPointer.Text = Root.Local.OptionsHotkeysEnableinpointer;
+
+            foreach(Control ct in this.tabPage3.Controls)
+            {
+                if (ct.GetType() == typeof(HotkeyInputBox))
+                    ((HotkeyInputBox)ct).UpdateText();
+            }
 
 			this.comboCanvasCursor.Items[0] = Root.Local.OptionsGeneralCanvascursorArrow;
 			this.comboCanvasCursor.Items[1] = Root.Local.OptionsGeneralCanvascursorPentip;
@@ -316,14 +479,18 @@ namespace gInk
 				lbPens[p].Text = Root.Local.ButtonNamePen[p];
 				lbHotkeyPens[p].Text = Root.Local.ButtonNamePen[p];
 
-				lbcbPens.Text = Root.Local.OptionsPensShow;
-				lbpboxPens.Text = Root.Local.OptionsPensColor;
-				lbcomboPensAlpha.Text = Root.Local.OptionsPensAlpha;
-				lbcomboPensWidth.Text = Root.Local.OptionsPensWidth;
 			}
+            lbcbPens.Text = Root.Local.OptionsPensShow;
+            lbpboxPens.Text = Root.Local.OptionsPensColor;
+            lbcomboPensAlpha.Text = Root.Local.OptionsPensAlpha;
+            lbcomboPensWidth.Text = Root.Local.OptionsPensWidth;
+            lbcomboPensFading.Text = Root.Local.OptionsPensFading;
             WidthAtPenSelCb.Text = Root.Local.OptionsPensWidthAtSelection;
+            InverseWheelCb.Text = Root.InverseMousewheel ? Root.Local.OptionsInverseMouseWheelChecked : Root.Local.OptionsInverseMouseWheel;
+            FitToCurveEd.Text = Root.Local.OptionsFitToCurve;
+            lbLineStyle.Text = Root.Local.OptionsLineStyle;
 
-				comboLanguage.Items.Clear();
+            comboLanguage.Items.Clear();
 			List<string> langs = Root.Local.GetLanguagenames();
 			foreach (string languagename in langs)
 			{
@@ -358,8 +525,8 @@ namespace gInk
 			for (int p = 0; p < Root.MaxPenCount; p++)
 				if ((ComboBox)sender == comboPensWidth[p])
 				{
-					int o;
-					if (int.TryParse(comboPensWidth[p].Text, out o) && o >= 30 && o <= 3000)
+					float o;
+					if (float.TryParse(comboPensWidth[p].Text, out o) && o > 0 && o <= 3000)
 					{
 						Root.PenAttr[p].Width = o;
 						comboPensWidth[p].BackColor = Color.White;
@@ -371,7 +538,24 @@ namespace gInk
 				}
 		}
 
-		private void pboxPens_Click(object sender, EventArgs e)
+        private void comboPensFading_Changed(object sender, EventArgs e)
+        {
+            for (int p = 0; p < Root.MaxPenCount; p++)
+                if ((CheckBox)sender == comboPensFading[p])
+                {
+                    if (((CheckBox)sender).Checked)
+                    {
+                        Root.PenAttr[p].ExtendedProperties.Add(Root.FADING_PEN, Root.TimeBeforeFading);
+                    }
+                    else
+                    {
+                        try{ Root.PenAttr[p].ExtendedProperties.Remove(Root.FADING_PEN); }catch { };
+                    }
+                }
+        }
+
+
+        private void pboxPens_Click(object sender, EventArgs e)
 		{
 			for (int p = 0; p < Root.MaxPenCount; p++)
 				if ((PictureBox)sender == pboxPens[p])
@@ -382,6 +566,8 @@ namespace gInk
                         (sender as PictureBox).BackColor = Color.FromArgb(255, Root.PenAttr[p].Color);
                         comboPensAlpha[p].Text = string.Format("{0}", Root.PenAttr[p].Transparency);
                         comboPensWidth[p].Text = string.Format("{0}", Root.PenAttr[p].Width);
+                        comboPensFading[p].Checked = Root.PenAttr[p].ExtendedProperties.Contains(Root.FADING_PEN);
+                        comboPensLineStyle[p].BackgroundImage = FormCollection.getImgFromDiskOrRes("DashStyle" + Root.LineStyleToString(Root.PenAttr[p].ExtendedProperties));
                     }
 				}
 		}
@@ -395,15 +581,23 @@ namespace gInk
 
 		private void FormOptions_FormClosing(object sender, FormClosingEventArgs e)
 		{
-			Root.SetHotkey();
-
-            // Save button added
-            //Root.SaveOptions("pens.ini");
-            //Root.SaveOptions("config.ini");
-            //Root.SaveOptions("hotkeys.ini");
-
-            Root.FormOptions = null;
-
+            try
+            {
+                ActiveControl.SelectNextControl(ActiveControl, true, true, false, true);
+                ActiveControl.SelectNextControl(ActiveControl, false, true, false, true);
+            }
+            catch { }
+            try
+            {
+                Root.SetHotkey();
+            }
+            catch { }
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                e.Cancel = true;
+                Hide();
+            }
+            GC.Collect();
         }
 
         private void cbWidthEnabled_CheckedChanged(object sender, EventArgs e)
@@ -528,12 +722,15 @@ namespace gInk
             Root.SaveOptions("hotkeys.ini");
         }
 
-        private void ArrHdFloat_Validating(object sender, CancelEventArgs e)
+        private void Float_Validating(object sender, CancelEventArgs e)
         {
             float tempf;
-            if (!float.TryParse(((TextBox)sender).Text.Replace(",","."), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out tempf))
+            if (float.TryParse(((TextBox)sender).Text.Replace(",","."), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out tempf))
+                ((TextBox)sender).BackColor = Color.White;
+            else
             {
                 e.Cancel = true;
+                ((TextBox)sender).BackColor = Color.Orange;
                 ((TextBox)sender).Select();
             }
         }
@@ -550,6 +747,20 @@ namespace gInk
                 Root.TextSize = (int)FontDlg.Font.Size;
             }
         }
+
+        private void TagFontBtn_Click(object sender, EventArgs e)
+        {
+            FontDlg.Font = new Font(Root.TagFont, (float)Root.TagSize,
+                                        (Root.TagItalic ? FontStyle.Italic : FontStyle.Regular) | (Root.TagBold ? FontStyle.Bold : FontStyle.Regular));
+            if (FontDlg.ShowDialog() == DialogResult.OK)
+            {
+                Root.TagFont = FontDlg.Font.Name;
+                Root.TagItalic = (FontDlg.Font.Style & FontStyle.Italic) != 0;
+                Root.TagBold = (FontDlg.Font.Style & FontStyle.Bold) != 0;
+                Root.TagSize = (int)FontDlg.Font.Size;
+            }
+        }
+
 
         private void ArrHdAperture_Validated(object sender, EventArgs e)
         {
@@ -572,7 +783,8 @@ namespace gInk
             }
             if (Root.FormOpacity > 0)
             {
-                Root.callForm = new CallForm(Root);
+                if(Root.callForm == null)
+                    Root.callForm = new CallForm(Root);
                 Root.callForm.Show();
                 Root.callForm.Top = Root.FormTop;
                 Root.callForm.Left = Root.FormLeft;
@@ -582,7 +794,7 @@ namespace gInk
             }
             else
             {
-                Root.callForm.Close();
+                Root.callForm.Hide();
             }
         }
 
@@ -611,10 +823,6 @@ namespace gInk
             Root.WidthAtPenSel = WidthAtPenSelCb.Checked;
         }
 
-        private void ToolBarHeight_TextChanged(object sender, EventArgs e)
-        {
-        }
-
         private void ToolBarHeight_Validated(object sender, EventArgs e)
         {
             Root.ToolbarHeight = float.Parse(ToolBarHeight.Text.Replace(",", "."), CultureInfo.InvariantCulture) / 100;
@@ -628,11 +836,6 @@ namespace gInk
                 (sender as TextBox).Select();
                 e.Handled = true;
             }
-        }
-
-        private void MoveToolBarCb_CheckedChanged(object sender, EventArgs e)
-        {
-            Root.AllowDraggingToolbar = MoveToolBarCb.Checked;
         }
 
         private void BoardAtOpenCombo_SelectedIndexChanged(object sender, EventArgs e)
@@ -658,6 +861,7 @@ namespace gInk
                 Root.Gray1[3] = at.Color.B;
                 BoardCustColorPnl.BackColor = Color.FromArgb(Root.Gray1[0], at.Color);
             }
+            dlg.Dispose();
         }
 
         private void WsUrlTxt_TextChanged(object sender, EventArgs e)
@@ -698,12 +902,140 @@ namespace gInk
                 Root.ToolbarBGColor[2] = at.Color.G;
                 Root.ToolbarBGColor[3] = at.Color.B;
                 ToolbarDwg.BackColor = Color.FromArgb(Root.ToolbarBGColor[0], at.Color);
+                Clip1Btn.BackColor = ToolbarDwg.BackColor;
+                Clip2Btn.BackColor = ToolbarDwg.BackColor;
+                Clip3Btn.BackColor = ToolbarDwg.BackColor;
             }
+            dlg.Dispose();
         }
 
         private void AltTabActivateCb_CheckedChanged(object sender, EventArgs e)
         {
             Root.AltTabPointer = AltTabActivateCb.Checked;
+        }
+
+        private void ClipartsSelBtn_Click(object sender, EventArgs e)
+        {
+            ImageLister dlg = new ImageLister(Root);
+            dlg.FromClpBtn.Visible = false;
+            dlg.InsertBtn.Text = Root.Local.ButtonOkText;
+            dlg.AutoCloseCb.Visible = false;
+
+            if(dlg.ShowDialog() == DialogResult.OK)
+            {
+                Root.ImageStampFilling = dlg.ImageStampFilling;
+                Root.StampFileNames.Clear();
+//                for(int i=0;i<dlg.Images.Images.Count;i++)
+                foreach(ListViewItem it in dlg.ImageListViewer.Items)
+                {
+                    Root.StampFileNames.Add(it.ImageKey);// dlg.Images.Images.Keys[i]);
+                }
+                Root.FormCollection.ClipartsDlg.Initialize();
+            }
+            dlg.Dispose();
+        }
+
+        private void ClipBtn_Click(object sender, EventArgs e)
+        {
+            ImageLister dlg = new ImageLister(Root);
+            dlg.FromClpBtn.Visible = false;
+            dlg.LoadImageBtn.Visible = false;
+            dlg.DelBtn.Visible = false;
+            dlg.FillingCombo.Visible = false;
+            if(dlg.ShowDialog()==DialogResult.OK)
+            {
+                ((Button)sender).BackgroundImage = FormCollection.getImgFromDiskOrRes(dlg.ImageStamp);
+                if((string)(((Control)sender).Tag) == "1")
+                    Root.ImageStamp1 = dlg.ImageStamp;
+                else if ((string)(((Control)sender).Tag) == "2")
+                    Root.ImageStamp2 = dlg.ImageStamp;
+                else if ((string)(((Control)sender).Tag) == "3")
+                    Root.ImageStamp3 = dlg.ImageStamp;
+            }
+            dlg.Dispose();
+        }
+
+        private void cbLoadSaveEnabled_CheckedChanged(object sender, EventArgs e)
+        {
+            Root.LoadSaveEnabled = cbLoadSaveEnabled.Checked;
+        }
+
+        private void ToolbarOrientationBtn_Click(object sender, EventArgs e)
+        {
+            Root.ToolbarOrientation += 1;
+            if (Root.ToolbarOrientation > Orientation.max)
+                Root.ToolbarOrientation = Orientation.min;
+            ToolbarOrientationBtn.BackgroundImage = ToolBarOrientationIcons[Root.ToolbarOrientation];
+        }
+
+        private void FadingTimeEd_Validating(object sender, CancelEventArgs e)
+        {
+            float f = -1;
+            TextBox tb = (TextBox)sender;
+            if (float.TryParse(tb.Text, out f) && f > 0)
+            {
+                Root.TimeBeforeFading = f;
+                tb.BackColor = SystemColors.Window;
+                e.Cancel = false;
+                for (int i=0;i<Root.MaxPenCount;i++)
+                {
+                    if(Root.PenAttr[i].ExtendedProperties.Contains(Root.FADING_PEN))
+                        Root.PenAttr[i].ExtendedProperties.Add(Root.FADING_PEN, Root.TimeBeforeFading);
+                }
+            }
+            else
+            {
+                tb.BackColor = Color.Orange;
+                e.Cancel = true;
+            }
+        }
+
+        private void ZoomWidthEd_Validating(object sender, CancelEventArgs e)
+        {
+            if (Int32.TryParse(ZoomWidthEd.Text, out Root.ZoomWidth))
+                ZoomWidthEd.BackColor = SystemColors.Window;
+            else
+                ZoomWidthEd.BackColor = Color.Orange;
+        }
+
+        private void ZoomHeightEd_Validating(object sender, CancelEventArgs e)
+        {
+            if (Int32.TryParse(ZoomHeightEd.Text, out Root.ZoomHeight))
+                ZoomHeightEd.BackColor = SystemColors.Window;
+            else
+                ZoomHeightEd.BackColor = Color.Orange;
+        }
+
+        private void ZoomScaleEd_Validating(object sender, CancelEventArgs e)
+        {
+            if (float.TryParse(ZoomScaleEd.Text, out Root.ZoomScale))
+                ZoomScaleEd.BackColor = SystemColors.Window;
+            else
+                ZoomScaleEd.BackColor = Color.Orange;
+        }
+
+        private void ZoomContinousCb_CheckedChanged(object sender, EventArgs e)
+        {
+            Root.ZoomContinous = ZoomContinousCb.Checked;
+        }
+
+        private void ZoomEnabledCb_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Root.ZoomEnabled = ZoomEnabledCb.SelectedIndex;
+        }
+
+        private void hiGlobal_Enter(object sender, EventArgs e)
+        {
+            Root.UnsetHotkey();
+        }
+
+        private void hiGlobal_Leave(object sender, EventArgs e)
+        {
+            Root.SetHotkey();
+        }
+
+        private void FormOptions_Leave(object sender, EventArgs e)
+        {
         }
 
         private void cbAllowHotkeyInPointer_CheckedChanged(object sender, EventArgs e)
@@ -745,5 +1077,133 @@ namespace gInk
 				FormOptions_LocalReload();
 			}
 		}
-	}
+
+        private void InverseWheelCb_CheckedChanged(object sender, EventArgs e)
+        {
+            Root.InverseMousewheel = InverseWheelCb.Checked;
+            InverseWheelCb.Text = Root.InverseMousewheel ? Root.Local.OptionsInverseMouseWheelChecked : Root.Local.OptionsInverseMouseWheel;
+        }
+
+        private void SnapInPointerKeysChanged(object sender, EventArgs e)
+        {
+            if(SnapInPointerHoldCb.SelectedIndex>=0)
+                Root.SnapInPointerHoldKey = (SnapInPointerKeys)(SnapInPointerHoldCb.SelectedIndex);
+            if(SnapInPointerTwiceCb.SelectedIndex>=0)
+                Root.SnapInPointerPressTwiceKey = (SnapInPointerKeys)(SnapInPointerTwiceCb.SelectedIndex);
+        }
+
+        private void SubToolsBar_cb_CheckedChanged(object sender, EventArgs e)
+        {
+            Root.SubToolsEnabled = SubToolsBar_cb.Checked;
+        }
+
+        private void FormOptions_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            GC.Collect();
+        }
+
+        private void ActivateDbgWinBtn_Click(object sender, EventArgs e)
+        {
+            Program.ShowWindow(Program.GetConsoleWindow(), 1);
+            Console.WriteLine("Debug Window activated");
+        }
+
+        private void APIRestEd_Validating(object sender, CancelEventArgs e)
+        {
+            if (Root.APIRest.ChangeAddress(APIRestEd.Text))
+            {
+                e.Cancel = false;
+                APIRestEd.BackColor = Color.White;
+                Root.APIRestUrl = APIRestEd.Text;
+            }
+            else
+            {
+                e.Cancel = true;
+                APIRestEd.BackColor = Color.Orange;
+                Root.APIRest.ChangeAddress(Root.APIRestUrl);
+            }
+        }
+
+        private void APIRestEd_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if(e.KeyChar=='\r')
+            {
+                this.SelectNextControl(this.ActiveControl, true, true, true, true);
+                (sender as TextBox).Select();
+                e.Handled = true;
+            }
+        }
+
+        private void FitToCurveEd_CheckedChanged(object sender, EventArgs e)
+        {
+            Root.FitToCurve = FitToCurveEd.Checked;
+        }
+
+        private void CaptStrokesOnlyCb_CheckedChanged(object sender, EventArgs e)
+        {
+            Root.StrokesOnlySnapshot = CaptStrokesOnlyCb.Checked;
+        }
+
+        private void PensOnTwoLinesCb_CheckedChanged(object sender, EventArgs e)
+        {
+            Root.PensOnTwoLines = PensOnTwoLinesCb.Checked;
+        }
+
+        private void MeasureEnabledCb_CheckedChanged(object sender, EventArgs e)
+        {
+            Root.MeasureEnabled = MeasureEnabledCb.Checked;
+            MeasurementBox.Enabled = Root.MeasureEnabled;
+        }
+
+        private void Measure2ScaleEd_Validated(object sender, EventArgs e)
+        {
+            Root.Measure2Scale = Double.Parse(Measure2ScaleEd.Text);
+        }
+
+        private void Measure2DigEd_Validated(object sender, EventArgs e)
+        {
+            Root.Measure2Digits = int.Parse(Measure2DigEd.Text);
+        }
+
+        private void Measure2DigEd_Validating(object sender, CancelEventArgs e)
+        {
+            int tempi;
+            if ((int.TryParse(((TextBox)sender).Text.Replace(",", "."), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out tempi))&& tempi>=0 && tempi<=9)
+                ((TextBox)sender).BackColor = Color.White;
+            else
+            {
+                e.Cancel = true;
+                ((TextBox)sender).BackColor=Color.Orange;
+                ((TextBox)sender).Select();
+            }
+        }
+
+        private void Measure2UnitEd_TextChanged(object sender, EventArgs e)
+        {
+            Root.Measure2Unit = Measure2UnitEd.Text;
+        }
+
+        private void MeasureAngleCb_CheckedChanged(object sender, EventArgs e)
+        {
+            Root.MeasureAnglCounterClockwise = MeasureAngleCb.Checked;
+        }
+
+        private void ColorPickerEnaCb_CheckedChanged(object sender, EventArgs e)
+        {
+            Root.ColorPickerEnabled = ColorPickerEnaCb.Checked;
+        }
+
+        private void comboPensLineStyle_Changed(object sender,EventArgs e)
+        {
+            Panel p = (Panel)sender;
+            string s = Root.NextLineStyleString(Root.LineStyleToString(Root.PenAttr[(int)p.Tag].ExtendedProperties));
+            p.BackgroundImage = FormCollection.getImgFromDiskOrRes("DashStyle" + s);
+            DashStyle ds = Root.LineStyleFromString(s);
+            if (ds == DashStyle.Custom)
+                try { Root.PenAttr[(int)p.Tag].ExtendedProperties.Remove(Root.DASHED_LINE_GUID); }catch { }
+            else
+                Root.PenAttr[(int)p.Tag].ExtendedProperties.Add(Root.DASHED_LINE_GUID, ds);
+        }
+    }
 }
+ 

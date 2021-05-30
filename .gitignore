@@ -1,6 +1,7 @@
 build
 release
 bin/crash.txt
+ppink/ppink.exe
 
 *.pdb
 *.exp
@@ -11,4 +12,4 @@ bin/crash.txt
 *vshost.exe*
 .vs/
 media/
-
+src/obj/x64/

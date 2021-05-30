@@ -1,4 +1,57 @@
-p1.3 (In Progress)
+p1.6 (in progress)	
+=================
+
+---> RC1
+* new : add LineStyle (Stroke(taking into accountDash/Dot/Dash)
+* new : add measures indications upon move / erase buttons
+* new : add color picker (including transparency adjustment through mouse wheel)
+* new : add option to display pens on two lines
+* enh : prevent background moving in pan (still possible in move 1 stroke)
+* new : Add shortcuts to edit pens
+* new : Add option/capability to snapshot only strokes and ignore the background
+* new : Add Shortcut to increase/decrease pen width
+* new : option to disable smoothing (mainly for use with pen or touchscreen)
+* New : add REST interface to control ppInk from remote programs/tools(Streamdesk / Matric / Touchportal...)
+* New : add solution to exit a crash and add debug window to ease support
+* New : add option to display secondary toolbar (to access all fillings)
+* New : add fading shortcut and indication on keys
+* Upg : Escape exit inking independant of shortcut setup
+* Upg : Move to x64
+* Major Fix : memory leak
+* fix : multiple fixes, see commits history
+
+	p1.5 (RC2)
+=================
+---> RC2
+* new : Add multiple snapshots in pointer mode for advanced drawings with configurable keys (between alt/shift/control)
+* enh : add option to swap between wheel and shift+wheel (between width adjust and pen selection)
+* new : shift+mousewheel selects pen (configurable see above)
+* enh: Start Inking when selecting ppInk with Alt+Tab
+* enh : ctrl+enter validates and close text input
+* translated : arabic added (thanks to @eamayreh)
+* new : window mode (allow restricted area to interact and freeing mouse (wheel and clicks) elsewhere)
+* fix : multiple fixes, see commits history
+
+---> beta1
+* new icone but you can still deploy your own
+* new : add zoom capability : both dynamic magnifier and freezed to full screen.
+* new : fading color(stroke dissapear after some time)
+* new : toolbar orientation can be configured
+* new : add save/restore strokes 
+* new : implement keyboard shortcut for pen selection in rotation 
+* Enh: distinguish Tag and Text default Font
+* New : Add frame/background to Text & Numbering
+* New : add selection highlighting for edit/move/copy/erase
+* New : add direct access cliparts buttons
+* Upg : improve W7 compatibility
+
+p1.4 (alpha1)
+=================
+---> alpha1
+* New : clipart tool added
+* Fix : toolbar color adjustable with transparency
+
+p1.3 (alpha3)
 =================
 ---> alpha3
 * New : Buttons and background color customisable
