@@ -11,6 +11,5 @@ ppink/ppink.exe
 *.lnk
 *vshost.exe*
 .vs/
-
 media/
 src/obj/x64/
