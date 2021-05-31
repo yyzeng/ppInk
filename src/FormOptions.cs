@@ -293,6 +293,9 @@ namespace gInk
             hiToolClipArt1.Hotkey = Root.Hotkey_ClipArt1;
             hiToolClipArt2.Hotkey = Root.Hotkey_ClipArt2;
             hiToolClipArt3.Hotkey = Root.Hotkey_ClipArt3;
+            hiLoadStrokes.Hotkey = Root.Hotkey_LoadStrokes;
+            hiSaveStrokes.Hotkey = Root.Hotkey_SaveStrokes;
+
             hiZoom.Hotkey = Root.Hotkey_Zoom;
             hiPenWidthPlus.Hotkey = Root.Hotkey_PenWidthPlus;
             hiPenWidthMinus.Hotkey = Root.Hotkey_PenWidthMinus;
@@ -427,6 +430,8 @@ namespace gInk
             this.lbHkClipart2.Text = shortTxt(Root.Local.ButtonNameClipArt) + " 2";
             this.lbHkClipart3.Text = shortTxt(Root.Local.ButtonNameClipArt) + " 3";
             this.lbHkZoom.Text = shortTxt(Root.Local.ButtonNameZoom);
+            this.lbHkLoadStrokes.Text = shortTxt(Root.Local.LoadStroke);
+            this.lbHkSaveStrokes.Text = shortTxt(Root.Local.SaveStroke);
 
             this.lbHkLineStyle.Text = Root.Local.OptionsLineStyle;
             this.lbHkPenWidthPlus.Text = Root.Local.OptionsHotkeysPenWidthPlus;
@@ -672,15 +677,15 @@ namespace gInk
 			{
 				if (comboPensWidth[p].Text == Root.Local.OptionsPensThin)
 				{
-					comboPensWidth[p].Text = "30";
+					comboPensWidth[p].Text = Root.PenWidthThin.ToString();
 				}
 				else if (comboPensWidth[p].Text == Root.Local.OptionsPensNormal)
 				{
-					comboPensWidth[p].Text = "80";
+					comboPensWidth[p].Text = Root.PenWidthNormal.ToString();
 				}
 				else if (comboPensWidth[p].Text == Root.Local.OptionsPensThick)
 				{
-					comboPensWidth[p].Text = "500";
+					comboPensWidth[p].Text = Root.PenWidthThick.ToString();
 				}
 
 				if (comboPensAlpha[p].Text == Root.Local.OptionsPensPencil)

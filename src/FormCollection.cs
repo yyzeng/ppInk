@@ -1015,7 +1015,7 @@ namespace gInk
             setPenWidthBarPosition();
 
             pboxPenWidthIndicator.Top = 0;
-            pboxPenWidthIndicator.Left = (int)Math.Sqrt(Root.GlobalPenWidth * 30);
+            pboxPenWidthIndicator.Left = (int)Math.Sqrt(Root.GlobalPenWidth * 30.0F);
             gpPenWidth.Controls.Add(pboxPenWidthIndicator);
 
             tempArrowCursor = null;
@@ -2839,8 +2839,14 @@ namespace gInk
                 IC.DefaultDrawingAttributes = Root.PenAttr[pen].Clone();
                 if (pen == LastPenSelected)
                     IC.DefaultDrawingAttributes.Width = w;
-                else if (Root.PenWidthEnabled && !Root.WidthAtPenSel)
+                /*else if (Root.PenWidthEnabled && !Root.WidthAtPenSel)
                 {
+                    IC.DefaultDrawingAttributes.Width = Root.GlobalPenWidth;
+                }*/
+                else if (Root.PenWidthEnabled)
+                {
+                    if (Root.WidthAtPenSel)
+                        Root.GlobalPenWidth = Root.PenAttr[pen].Width;
                     IC.DefaultDrawingAttributes.Width = Root.GlobalPenWidth;
                 }
                 LastPenSelected = pen;
@@ -3242,6 +3248,9 @@ namespace gInk
         bool LastColorEditStatus = false;
         bool LastLineStyleStatus = false;
 
+        bool LastLoadStrokesStatus = false;
+        bool LastSaveStrokesStatus = false;
+
         DateTime LongHkPress;
 
         int SnappingPointerStep = 0;
@@ -3259,7 +3268,7 @@ namespace gInk
                 if (e.X < 10 || gpPenWidth.Width - e.X < 10)
                     return;
 
-                Root.GlobalPenWidth = e.X * e.X / 30;
+                Root.GlobalPenWidth = e.X * e.X / 30.0F;
                 pboxPenWidthIndicator.Left = e.X - pboxPenWidthIndicator.Width / 2;
                 IC.DefaultDrawingAttributes.Width = Root.GlobalPenWidth;
                 Root.UponButtonsUpdate |= 0x2;
@@ -3270,7 +3279,7 @@ namespace gInk
         {
             if (e.X >= 10 && gpPenWidth.Width - e.X >= 10)
             {
-                Root.GlobalPenWidth = e.X * e.X / 30;
+                Root.GlobalPenWidth = e.X * e.X / 30.0F;
                 pboxPenWidthIndicator.Left = e.X - pboxPenWidthIndicator.Width / 2;
                 IC.DefaultDrawingAttributes.Width = Root.GlobalPenWidth;
             }
@@ -3296,7 +3305,7 @@ namespace gInk
                 if (x < 10 || gpPenWidth.Width - x < 10)
                     return;
 
-                Root.GlobalPenWidth = x * x / 30;
+                Root.GlobalPenWidth = x * x / 30.0F;
                 pboxPenWidthIndicator.Left = x - pboxPenWidthIndicator.Width / 2;
                 IC.DefaultDrawingAttributes.Width = Root.GlobalPenWidth;
                 Root.UponButtonsUpdate |= 0x2;
@@ -4174,7 +4183,54 @@ namespace gInk
                 }
                 LastLineStyleStatus = pressed;
 
+                pressed = (GetKeyState(Root.Hotkey_LoadStrokes.Key) & 0x8000) == 0x8000;
+                if (pressed && !LastLoadStrokesStatus && Root.Hotkey_LoadStrokes.ModifierMatch(control, alt, shift, win))
+                {
+                    /*if (AltKeyPressed())
+                        MouseTimeDown = DateTime.FromBinary(0);
+                    else
+                        MouseTimeDown = DateTime.Now;*/
+                    LongHkPress = DateTime.Now.AddSeconds(Root.LongHKPressDelay);
+                }
+                if (LastLoadStrokesStatus && !pressed && DateTime.Now.CompareTo(LongHkPress) < 0)
+                {
+                    LongHkPress = DateTime.Now.AddYears(1);
+                    MouseTimeDown = DateTime.Now;
+                    Console.WriteLine("Load Shrt");
+                    btLoad_Click(btLoad, null);
+                }
+                if (LastLoadStrokesStatus && pressed && DateTime.Now.CompareTo(LongHkPress) > 0)
+                {
+                    LongHkPress = DateTime.Now.AddYears(1);
+                    MouseTimeDown = DateTime.FromBinary(0);
+                    btLoad_Click(btLoad, null);
+                }
+                LastLoadStrokesStatus = pressed;
 
+                pressed = (GetKeyState(Root.Hotkey_SaveStrokes.Key) & 0x8000) == 0x8000;
+                if (pressed && !LastSaveStrokesStatus && Root.Hotkey_SaveStrokes.ModifierMatch(control, alt, shift, win))
+                {
+                    /*if (AltKeyPressed())
+                        MouseTimeDown = DateTime.FromBinary(0);
+                    else
+                        MouseTimeDown = DateTime.Now;*/
+                    LongHkPress = DateTime.Now.AddSeconds(Root.LongHKPressDelay);
+                }
+                if (LastSaveStrokesStatus && !pressed && DateTime.Now.CompareTo(LongHkPress) < 0)
+                {
+                    LongHkPress = DateTime.Now.AddYears(1);
+                    MouseTimeDown = DateTime.Now;
+                    btSave_Click(btSave, null);
+                }
+                if (LastSaveStrokesStatus && pressed && DateTime.Now.CompareTo(LongHkPress) > 0)
+                {
+                    LongHkPress = DateTime.Now.AddYears(1);
+                    MouseTimeDown = DateTime.FromBinary(0);
+                    btSave_Click(btSave, null);
+                }
+                LastSaveStrokesStatus = pressed;
+
+                //Console.WriteLine("LongHkPress" + LongHkPress.ToBinary().ToString());
             }
 
             if (Root.Snapping < 0)

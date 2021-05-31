@@ -232,6 +232,10 @@ namespace gInk
         public Hotkey Hotkey_ColorEdit = new Hotkey();
         public Hotkey Hotkey_LineStyle = new Hotkey();
 
+        public Hotkey Hotkey_LoadStrokes = new Hotkey();
+        public Hotkey Hotkey_SaveStrokes = new Hotkey();
+
+
         public float LongHKPressDelay = 2.5F;
 
         public int ToolSelected = Tools.Hand;        // indicates which tool (Hand,Line,...) is currently selected
@@ -276,7 +280,13 @@ namespace gInk
 
 		public int CurrentPen = 1;  // defaut pen
 		public int LastPen = 1;
-		public int GlobalPenWidth = 80;
+		public float GlobalPenWidth = 80;
+
+        // those are constants initialised from ini files
+        public float PenWidthThin = 30;
+        public float PenWidthNormal = 80;
+        public float PenWidthThick = 500;
+
         public bool FitToCurve = true;
 		public bool gpPenWidthVisible = false;
 		public string SnapshotFileFullPath = ""; // used to record the last snapshot file name, to select it when the balloon is clicked
@@ -1064,6 +1074,12 @@ namespace gInk
                         case "HOTKEY_LINESTYLE":
                             Hotkey_LineStyle.Parse(sPara);
                             break;
+                        case "HOTKEY_LOADSTROKES":
+                            Hotkey_LoadStrokes.Parse(sPara);
+                            break;
+                        case "HOTKEY_SAVESTROKES":
+                            Hotkey_SaveStrokes.Parse(sPara);
+                            break;
 
                         case "PENS_ON_TWO_LINES":
                             if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
@@ -1470,8 +1486,22 @@ namespace gInk
                             else if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
                                 MeasureAnglCounterClockwise = false;
                             break;
-    }
-}
+
+                        // Those parameters are for init only : there is no write to file
+                        case "PENWIDTH_THIN_DEFAULT":
+                            if (float.TryParse(sPara, out tempf))
+                                PenWidthThin = tempf;
+                            break;
+                        case "PENWIDTH_NORMAL_DEFAULT":
+                            if (float.TryParse(sPara, out tempf))
+                                PenWidthNormal = tempf;
+                            break;
+                        case "PENWIDTH_THICK_DEFAULT":
+                            if (float.TryParse(sPara, out tempf))
+                                PenWidthThick = tempf;
+                            break;
+                    }
+                }
 			}
 			fini.Close();
 		}
@@ -1682,6 +1712,13 @@ namespace gInk
                         case "HOTKEY_LINESTYLE":
                             sPara = Hotkey_LineStyle.ToStringInvariant();
                             break;
+                        case "HOTKEY_LOADSTROKES":                            
+                            sPara = Hotkey_LoadStrokes.ToStringInvariant();
+                            break;
+                        case "HOTKEY_SAVESTROKES":
+                            sPara = Hotkey_SaveStrokes.ToStringInvariant();
+                            break;
+
 
 
                         case "PENS_ON_TWO_LINES":
