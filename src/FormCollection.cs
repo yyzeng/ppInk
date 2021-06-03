@@ -1311,6 +1311,11 @@ namespace gInk
                     Root.PickupTransparency = (byte)Math.Min(Math.Max(0, i), 255);
                     this.Cursor = CreateCursorFromBitmap(buildColorPicker(Root.PickupColor, Root.PickupTransparency));
                 }
+                else if (Root.ToolSelected == Tools.NumberTag)
+                {
+                    TagSize += (e.Delta > 0 ? 1 : -1);
+                    TagSize = Math.Min(Math.Max(4, TagSize), 255);                
+                }
                 else
                     PenWidth_Change(Root.PixelToHiMetric(e.Delta > 0 ? 5 : -5));
                 return;
