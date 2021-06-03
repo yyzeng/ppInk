@@ -155,6 +155,7 @@ namespace gInk
 				cbAllowHotkeyInPointer.Checked = true;
             cbLoadSaveEnabled.Checked = Root.LoadSaveEnabled;
             ColorPickerEnaCb.Checked = Root.ColorPickerEnabled;
+            SwapSnapsBehviorsCb.Checked = !Root.SwapSnapsBehaviors;
 
             AltTabActivateCb.Checked = Root.AltTabPointer;
 
@@ -370,6 +371,7 @@ namespace gInk
             this.SaveConfigBtn.Text = Root.Local.OptionsGeneralSaveConfigToFile;
             this.CaptStrokesOnlyCb.Text = Root.Local.OptionsCaptureStrokesOnly;
             this.ColorPickerEnaCb.Text = Root.Local.OptionsHotkeysColorPicker;
+            this.SwapSnapsBehviorsCb.Text = Root.Local.OptionsSwapSnapshotBehavior;
 
             MeasurementBox.Text = Root.Local.OptionMeasureGroup;
             Measuse1Lbl.Text = Root.Local.OptionMeasureLenLabel;
@@ -1208,6 +1210,11 @@ namespace gInk
                 try { Root.PenAttr[(int)p.Tag].ExtendedProperties.Remove(Root.DASHED_LINE_GUID); }catch { }
             else
                 Root.PenAttr[(int)p.Tag].ExtendedProperties.Add(Root.DASHED_LINE_GUID, ds);
+        }
+
+        private void SwapSnapBehaviorsCb_CheckedChanged(object sender, EventArgs e)
+        {
+            Root.SwapSnapsBehaviors = !SwapSnapsBehviorsCb.Checked;
         }
     }
 }

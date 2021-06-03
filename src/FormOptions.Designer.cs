@@ -29,40 +29,40 @@ namespace gInk
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            gInk.Hotkey hotkey1 = new gInk.Hotkey();
-            gInk.Hotkey hotkey2 = new gInk.Hotkey();
-            gInk.Hotkey hotkey3 = new gInk.Hotkey();
-            gInk.Hotkey hotkey4 = new gInk.Hotkey();
-            gInk.Hotkey hotkey5 = new gInk.Hotkey();
-            gInk.Hotkey hotkey6 = new gInk.Hotkey();
-            gInk.Hotkey hotkey7 = new gInk.Hotkey();
-            gInk.Hotkey hotkey8 = new gInk.Hotkey();
-            gInk.Hotkey hotkey9 = new gInk.Hotkey();
-            gInk.Hotkey hotkey10 = new gInk.Hotkey();
-            gInk.Hotkey hotkey11 = new gInk.Hotkey();
-            gInk.Hotkey hotkey12 = new gInk.Hotkey();
-            gInk.Hotkey hotkey13 = new gInk.Hotkey();
-            gInk.Hotkey hotkey14 = new gInk.Hotkey();
-            gInk.Hotkey hotkey15 = new gInk.Hotkey();
-            gInk.Hotkey hotkey16 = new gInk.Hotkey();
-            gInk.Hotkey hotkey17 = new gInk.Hotkey();
-            gInk.Hotkey hotkey18 = new gInk.Hotkey();
-            gInk.Hotkey hotkey19 = new gInk.Hotkey();
-            gInk.Hotkey hotkey20 = new gInk.Hotkey();
-            gInk.Hotkey hotkey21 = new gInk.Hotkey();
-            gInk.Hotkey hotkey22 = new gInk.Hotkey();
-            gInk.Hotkey hotkey23 = new gInk.Hotkey();
-            gInk.Hotkey hotkey24 = new gInk.Hotkey();
-            gInk.Hotkey hotkey25 = new gInk.Hotkey();
-            gInk.Hotkey hotkey26 = new gInk.Hotkey();
-            gInk.Hotkey hotkey27 = new gInk.Hotkey();
-            gInk.Hotkey hotkey28 = new gInk.Hotkey();
-            gInk.Hotkey hotkey29 = new gInk.Hotkey();
-            gInk.Hotkey hotkey30 = new gInk.Hotkey();
-            gInk.Hotkey hotkey31 = new gInk.Hotkey();
-            gInk.Hotkey hotkey32 = new gInk.Hotkey();
-            gInk.Hotkey hotkey33 = new gInk.Hotkey();
-            gInk.Hotkey hotkey34 = new gInk.Hotkey();
+            gInk.Hotkey hotkey35 = new gInk.Hotkey();
+            gInk.Hotkey hotkey36 = new gInk.Hotkey();
+            gInk.Hotkey hotkey37 = new gInk.Hotkey();
+            gInk.Hotkey hotkey38 = new gInk.Hotkey();
+            gInk.Hotkey hotkey39 = new gInk.Hotkey();
+            gInk.Hotkey hotkey40 = new gInk.Hotkey();
+            gInk.Hotkey hotkey41 = new gInk.Hotkey();
+            gInk.Hotkey hotkey42 = new gInk.Hotkey();
+            gInk.Hotkey hotkey43 = new gInk.Hotkey();
+            gInk.Hotkey hotkey44 = new gInk.Hotkey();
+            gInk.Hotkey hotkey45 = new gInk.Hotkey();
+            gInk.Hotkey hotkey46 = new gInk.Hotkey();
+            gInk.Hotkey hotkey47 = new gInk.Hotkey();
+            gInk.Hotkey hotkey48 = new gInk.Hotkey();
+            gInk.Hotkey hotkey49 = new gInk.Hotkey();
+            gInk.Hotkey hotkey50 = new gInk.Hotkey();
+            gInk.Hotkey hotkey51 = new gInk.Hotkey();
+            gInk.Hotkey hotkey52 = new gInk.Hotkey();
+            gInk.Hotkey hotkey53 = new gInk.Hotkey();
+            gInk.Hotkey hotkey54 = new gInk.Hotkey();
+            gInk.Hotkey hotkey55 = new gInk.Hotkey();
+            gInk.Hotkey hotkey56 = new gInk.Hotkey();
+            gInk.Hotkey hotkey57 = new gInk.Hotkey();
+            gInk.Hotkey hotkey58 = new gInk.Hotkey();
+            gInk.Hotkey hotkey59 = new gInk.Hotkey();
+            gInk.Hotkey hotkey60 = new gInk.Hotkey();
+            gInk.Hotkey hotkey61 = new gInk.Hotkey();
+            gInk.Hotkey hotkey62 = new gInk.Hotkey();
+            gInk.Hotkey hotkey63 = new gInk.Hotkey();
+            gInk.Hotkey hotkey64 = new gInk.Hotkey();
+            gInk.Hotkey hotkey65 = new gInk.Hotkey();
+            gInk.Hotkey hotkey66 = new gInk.Hotkey();
+            gInk.Hotkey hotkey67 = new gInk.Hotkey();
+            gInk.Hotkey hotkey68 = new gInk.Hotkey();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormOptions));
             this.lbPens4 = new System.Windows.Forms.Label();
             this.lbHkZoom = new System.Windows.Forms.Label();
@@ -256,6 +256,7 @@ namespace gInk
             this.lbcbPens = new System.Windows.Forms.Label();
             this.FadingTimeEd = new System.Windows.Forms.TextBox();
             this.WidthAtPenSelCb = new System.Windows.Forms.CheckBox();
+            this.SwapSnapsBehviorsCb = new System.Windows.Forms.CheckBox();
             this.tabPage3.SuspendLayout();
             this.SnapInPointerGrp.SuspendLayout();
             this.VideoTab.SuspendLayout();
@@ -473,7 +474,7 @@ namespace gInk
             // 
             this.hiSaveStrokes.BackColor = System.Drawing.Color.White;
             this.hiSaveStrokes.ExternalConflictFlag = false;
-            this.hiSaveStrokes.Hotkey = hotkey1;
+            this.hiSaveStrokes.Hotkey = hotkey35;
             this.hiSaveStrokes.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiSaveStrokes.Location = new System.Drawing.Point(601, 492);
             this.hiSaveStrokes.Name = "hiSaveStrokes";
@@ -496,7 +497,7 @@ namespace gInk
             // 
             this.hiLoadStrokes.BackColor = System.Drawing.Color.White;
             this.hiLoadStrokes.ExternalConflictFlag = false;
-            this.hiLoadStrokes.Hotkey = hotkey2;
+            this.hiLoadStrokes.Hotkey = hotkey36;
             this.hiLoadStrokes.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiLoadStrokes.Location = new System.Drawing.Point(601, 466);
             this.hiLoadStrokes.Name = "hiLoadStrokes";
@@ -519,7 +520,7 @@ namespace gInk
             // 
             this.hiLineStyle.BackColor = System.Drawing.Color.White;
             this.hiLineStyle.ExternalConflictFlag = false;
-            this.hiLineStyle.Hotkey = hotkey3;
+            this.hiLineStyle.Hotkey = hotkey37;
             this.hiLineStyle.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiLineStyle.Location = new System.Drawing.Point(111, 440);
             this.hiLineStyle.Name = "hiLineStyle";
@@ -542,7 +543,7 @@ namespace gInk
             // 
             this.hiColorEdit.BackColor = System.Drawing.Color.White;
             this.hiColorEdit.ExternalConflictFlag = false;
-            this.hiColorEdit.Hotkey = hotkey4;
+            this.hiColorEdit.Hotkey = hotkey38;
             this.hiColorEdit.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiColorEdit.Location = new System.Drawing.Point(111, 414);
             this.hiColorEdit.Name = "hiColorEdit";
@@ -565,7 +566,7 @@ namespace gInk
             // 
             this.hiColorPickup.BackColor = System.Drawing.Color.White;
             this.hiColorPickup.ExternalConflictFlag = false;
-            this.hiColorPickup.Hotkey = hotkey5;
+            this.hiColorPickup.Hotkey = hotkey39;
             this.hiColorPickup.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiColorPickup.Location = new System.Drawing.Point(340, 466);
             this.hiColorPickup.Name = "hiColorPickup";
@@ -588,7 +589,7 @@ namespace gInk
             // 
             this.hiPenWidthMinus.BackColor = System.Drawing.Color.White;
             this.hiPenWidthMinus.ExternalConflictFlag = false;
-            this.hiPenWidthMinus.Hotkey = hotkey6;
+            this.hiPenWidthMinus.Hotkey = hotkey40;
             this.hiPenWidthMinus.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiPenWidthMinus.Location = new System.Drawing.Point(110, 492);
             this.hiPenWidthMinus.Name = "hiPenWidthMinus";
@@ -611,7 +612,7 @@ namespace gInk
             // 
             this.hiPenWidthPlus.BackColor = System.Drawing.Color.White;
             this.hiPenWidthPlus.ExternalConflictFlag = false;
-            this.hiPenWidthPlus.Hotkey = hotkey7;
+            this.hiPenWidthPlus.Hotkey = hotkey41;
             this.hiPenWidthPlus.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiPenWidthPlus.Location = new System.Drawing.Point(110, 466);
             this.hiPenWidthPlus.Name = "hiPenWidthPlus";
@@ -634,7 +635,7 @@ namespace gInk
             // 
             this.hiFadingToggle.BackColor = System.Drawing.Color.White;
             this.hiFadingToggle.ExternalConflictFlag = false;
-            this.hiFadingToggle.Hotkey = hotkey8;
+            this.hiFadingToggle.Hotkey = hotkey42;
             this.hiFadingToggle.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiFadingToggle.Location = new System.Drawing.Point(340, 440);
             this.hiFadingToggle.Name = "hiFadingToggle";
@@ -863,7 +864,7 @@ namespace gInk
             // 
             this.hiZoom.BackColor = System.Drawing.Color.White;
             this.hiZoom.ExternalConflictFlag = false;
-            this.hiZoom.Hotkey = hotkey9;
+            this.hiZoom.Hotkey = hotkey43;
             this.hiZoom.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiZoom.Location = new System.Drawing.Point(340, 414);
             this.hiZoom.Name = "hiZoom";
@@ -877,7 +878,7 @@ namespace gInk
             // 
             this.hiToolClipArt3.BackColor = System.Drawing.Color.White;
             this.hiToolClipArt3.ExternalConflictFlag = false;
-            this.hiToolClipArt3.Hotkey = hotkey10;
+            this.hiToolClipArt3.Hotkey = hotkey44;
             this.hiToolClipArt3.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiToolClipArt3.Location = new System.Drawing.Point(601, 440);
             this.hiToolClipArt3.Name = "hiToolClipArt3";
@@ -891,7 +892,7 @@ namespace gInk
             // 
             this.hiToolClipArt2.BackColor = System.Drawing.Color.White;
             this.hiToolClipArt2.ExternalConflictFlag = false;
-            this.hiToolClipArt2.Hotkey = hotkey11;
+            this.hiToolClipArt2.Hotkey = hotkey45;
             this.hiToolClipArt2.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiToolClipArt2.Location = new System.Drawing.Point(601, 414);
             this.hiToolClipArt2.Name = "hiToolClipArt2";
@@ -905,7 +906,7 @@ namespace gInk
             // 
             this.hiToolClipArt1.BackColor = System.Drawing.Color.White;
             this.hiToolClipArt1.ExternalConflictFlag = false;
-            this.hiToolClipArt1.Hotkey = hotkey12;
+            this.hiToolClipArt1.Hotkey = hotkey46;
             this.hiToolClipArt1.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiToolClipArt1.Location = new System.Drawing.Point(601, 388);
             this.hiToolClipArt1.Name = "hiToolClipArt1";
@@ -919,7 +920,7 @@ namespace gInk
             // 
             this.hiToolClipArt.BackColor = System.Drawing.Color.White;
             this.hiToolClipArt.ExternalConflictFlag = false;
-            this.hiToolClipArt.Hotkey = hotkey13;
+            this.hiToolClipArt.Hotkey = hotkey47;
             this.hiToolClipArt.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiToolClipArt.Location = new System.Drawing.Point(601, 362);
             this.hiToolClipArt.Name = "hiToolClipArt";
@@ -933,7 +934,7 @@ namespace gInk
             // 
             this.hiClose.BackColor = System.Drawing.Color.White;
             this.hiClose.ExternalConflictFlag = false;
-            this.hiClose.Hotkey = hotkey14;
+            this.hiClose.Hotkey = hotkey48;
             this.hiClose.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiClose.Location = new System.Drawing.Point(340, 388);
             this.hiClose.Name = "hiClose";
@@ -947,7 +948,7 @@ namespace gInk
             // 
             this.hiDockUndock.BackColor = System.Drawing.Color.White;
             this.hiDockUndock.ExternalConflictFlag = false;
-            this.hiDockUndock.Hotkey = hotkey15;
+            this.hiDockUndock.Hotkey = hotkey49;
             this.hiDockUndock.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiDockUndock.Location = new System.Drawing.Point(340, 362);
             this.hiDockUndock.Name = "hiDockUndock";
@@ -961,7 +962,7 @@ namespace gInk
             // 
             this.hiVideo.BackColor = System.Drawing.Color.White;
             this.hiVideo.ExternalConflictFlag = false;
-            this.hiVideo.Hotkey = hotkey16;
+            this.hiVideo.Hotkey = hotkey50;
             this.hiVideo.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiVideo.Location = new System.Drawing.Point(340, 336);
             this.hiVideo.Name = "hiVideo";
@@ -975,7 +976,7 @@ namespace gInk
             // 
             this.hiToolMagnet.BackColor = System.Drawing.Color.White;
             this.hiToolMagnet.ExternalConflictFlag = false;
-            this.hiToolMagnet.Hotkey = hotkey17;
+            this.hiToolMagnet.Hotkey = hotkey51;
             this.hiToolMagnet.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiToolMagnet.Location = new System.Drawing.Point(601, 336);
             this.hiToolMagnet.Name = "hiToolMagnet";
@@ -989,7 +990,7 @@ namespace gInk
             // 
             this.hiToolEdit.BackColor = System.Drawing.Color.White;
             this.hiToolEdit.ExternalConflictFlag = false;
-            this.hiToolEdit.Hotkey = hotkey18;
+            this.hiToolEdit.Hotkey = hotkey52;
             this.hiToolEdit.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiToolEdit.Location = new System.Drawing.Point(601, 310);
             this.hiToolEdit.Name = "hiToolEdit";
@@ -1003,7 +1004,7 @@ namespace gInk
             // 
             this.HiToolText.BackColor = System.Drawing.Color.White;
             this.HiToolText.ExternalConflictFlag = false;
-            this.HiToolText.Hotkey = hotkey19;
+            this.HiToolText.Hotkey = hotkey53;
             this.HiToolText.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.HiToolText.Location = new System.Drawing.Point(601, 283);
             this.HiToolText.Name = "HiToolText";
@@ -1017,7 +1018,7 @@ namespace gInk
             // 
             this.hiToolNumb.BackColor = System.Drawing.Color.White;
             this.hiToolNumb.ExternalConflictFlag = false;
-            this.hiToolNumb.Hotkey = hotkey20;
+            this.hiToolNumb.Hotkey = hotkey54;
             this.hiToolNumb.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiToolNumb.Location = new System.Drawing.Point(601, 256);
             this.hiToolNumb.Name = "hiToolNumb";
@@ -1031,7 +1032,7 @@ namespace gInk
             // 
             this.hiToolArrow.BackColor = System.Drawing.Color.White;
             this.hiToolArrow.ExternalConflictFlag = false;
-            this.hiToolArrow.Hotkey = hotkey21;
+            this.hiToolArrow.Hotkey = hotkey55;
             this.hiToolArrow.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiToolArrow.Location = new System.Drawing.Point(601, 229);
             this.hiToolArrow.Name = "hiToolArrow";
@@ -1045,7 +1046,7 @@ namespace gInk
             // 
             this.hiToolOval.BackColor = System.Drawing.Color.White;
             this.hiToolOval.ExternalConflictFlag = false;
-            this.hiToolOval.Hotkey = hotkey22;
+            this.hiToolOval.Hotkey = hotkey56;
             this.hiToolOval.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiToolOval.Location = new System.Drawing.Point(601, 202);
             this.hiToolOval.Name = "hiToolOval";
@@ -1059,7 +1060,7 @@ namespace gInk
             // 
             this.hiToolRect.BackColor = System.Drawing.Color.White;
             this.hiToolRect.ExternalConflictFlag = false;
-            this.hiToolRect.Hotkey = hotkey23;
+            this.hiToolRect.Hotkey = hotkey57;
             this.hiToolRect.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiToolRect.Location = new System.Drawing.Point(601, 175);
             this.hiToolRect.Name = "hiToolRect";
@@ -1073,7 +1074,7 @@ namespace gInk
             // 
             this.hiToolLine.BackColor = System.Drawing.Color.White;
             this.hiToolLine.ExternalConflictFlag = false;
-            this.hiToolLine.Hotkey = hotkey24;
+            this.hiToolLine.Hotkey = hotkey58;
             this.hiToolLine.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiToolLine.Location = new System.Drawing.Point(601, 147);
             this.hiToolLine.Name = "hiToolLine";
@@ -1087,7 +1088,7 @@ namespace gInk
             // 
             this.hiToolHand.BackColor = System.Drawing.Color.White;
             this.hiToolHand.ExternalConflictFlag = false;
-            this.hiToolHand.Hotkey = hotkey25;
+            this.hiToolHand.Hotkey = hotkey59;
             this.hiToolHand.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiToolHand.Location = new System.Drawing.Point(601, 120);
             this.hiToolHand.Name = "hiToolHand";
@@ -1101,7 +1102,7 @@ namespace gInk
             // 
             this.hiInkVisible.BackColor = System.Drawing.Color.White;
             this.hiInkVisible.ExternalConflictFlag = false;
-            this.hiInkVisible.Hotkey = hotkey26;
+            this.hiInkVisible.Hotkey = hotkey60;
             this.hiInkVisible.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiInkVisible.Location = new System.Drawing.Point(340, 202);
             this.hiInkVisible.Name = "hiInkVisible";
@@ -1115,7 +1116,7 @@ namespace gInk
             // 
             this.hiSnapshot.BackColor = System.Drawing.Color.White;
             this.hiSnapshot.ExternalConflictFlag = false;
-            this.hiSnapshot.Hotkey = hotkey27;
+            this.hiSnapshot.Hotkey = hotkey61;
             this.hiSnapshot.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiSnapshot.Location = new System.Drawing.Point(340, 229);
             this.hiSnapshot.Name = "hiSnapshot";
@@ -1129,7 +1130,7 @@ namespace gInk
             // 
             this.hiClear.BackColor = System.Drawing.Color.White;
             this.hiClear.ExternalConflictFlag = false;
-            this.hiClear.Hotkey = hotkey28;
+            this.hiClear.Hotkey = hotkey62;
             this.hiClear.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiClear.Location = new System.Drawing.Point(340, 310);
             this.hiClear.Name = "hiClear";
@@ -1143,7 +1144,7 @@ namespace gInk
             // 
             this.hiPan.BackColor = System.Drawing.Color.White;
             this.hiPan.ExternalConflictFlag = false;
-            this.hiPan.Hotkey = hotkey29;
+            this.hiPan.Hotkey = hotkey63;
             this.hiPan.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiPan.Location = new System.Drawing.Point(340, 147);
             this.hiPan.Name = "hiPan";
@@ -1157,7 +1158,7 @@ namespace gInk
             // 
             this.hiPointer.BackColor = System.Drawing.Color.White;
             this.hiPointer.ExternalConflictFlag = false;
-            this.hiPointer.Hotkey = hotkey30;
+            this.hiPointer.Hotkey = hotkey64;
             this.hiPointer.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiPointer.Location = new System.Drawing.Point(340, 175);
             this.hiPointer.Name = "hiPointer";
@@ -1172,7 +1173,7 @@ namespace gInk
             // 
             this.hiRedo.BackColor = System.Drawing.Color.White;
             this.hiRedo.ExternalConflictFlag = false;
-            this.hiRedo.Hotkey = hotkey31;
+            this.hiRedo.Hotkey = hotkey65;
             this.hiRedo.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiRedo.Location = new System.Drawing.Point(340, 283);
             this.hiRedo.Name = "hiRedo";
@@ -1186,7 +1187,7 @@ namespace gInk
             // 
             this.hiUndo.BackColor = System.Drawing.Color.White;
             this.hiUndo.ExternalConflictFlag = false;
-            this.hiUndo.Hotkey = hotkey32;
+            this.hiUndo.Hotkey = hotkey66;
             this.hiUndo.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiUndo.Location = new System.Drawing.Point(340, 256);
             this.hiUndo.Name = "hiUndo";
@@ -1200,7 +1201,7 @@ namespace gInk
             // 
             this.hiEraser.BackColor = System.Drawing.Color.White;
             this.hiEraser.ExternalConflictFlag = false;
-            this.hiEraser.Hotkey = hotkey33;
+            this.hiEraser.Hotkey = hotkey67;
             this.hiEraser.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiEraser.Location = new System.Drawing.Point(340, 120);
             this.hiEraser.Name = "hiEraser";
@@ -1214,7 +1215,7 @@ namespace gInk
             // 
             this.hiGlobal.BackColor = System.Drawing.Color.White;
             this.hiGlobal.ExternalConflictFlag = false;
-            this.hiGlobal.Hotkey = hotkey34;
+            this.hiGlobal.Hotkey = hotkey68;
             this.hiGlobal.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.hiGlobal.Location = new System.Drawing.Point(19, 39);
             this.hiGlobal.Name = "hiGlobal";
@@ -1848,6 +1849,7 @@ namespace gInk
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.tabPage1.Controls.Add(this.SwapSnapsBehviorsCb);
             this.tabPage1.Controls.Add(this.ColorPickerEnaCb);
             this.tabPage1.Controls.Add(this.MeasureEnabledCb);
             this.tabPage1.Controls.Add(this.MeasurementBox);
@@ -1915,9 +1917,9 @@ namespace gInk
             this.ColorPickerEnaCb.Location = new System.Drawing.Point(298, 106);
             this.ColorPickerEnaCb.Margin = new System.Windows.Forms.Padding(2);
             this.ColorPickerEnaCb.Name = "ColorPickerEnaCb";
-            this.ColorPickerEnaCb.Size = new System.Drawing.Size(80, 17);
+            this.ColorPickerEnaCb.Size = new System.Drawing.Size(83, 17);
             this.ColorPickerEnaCb.TabIndex = 57;
-            this.ColorPickerEnaCb.Text = "checkBox1";
+            this.ColorPickerEnaCb.Text = "Color Picker";
             this.ColorPickerEnaCb.UseVisualStyleBackColor = true;
             this.ColorPickerEnaCb.CheckedChanged += new System.EventHandler(this.ColorPickerEnaCb_CheckedChanged);
             // 
@@ -2479,6 +2481,18 @@ namespace gInk
             this.WidthAtPenSelCb.UseVisualStyleBackColor = true;
             this.WidthAtPenSelCb.CheckedChanged += new System.EventHandler(this.WidthAtPenSelCb_CheckedChanged);
             // 
+            // SwapSnapsBehviorsCb
+            // 
+            this.SwapSnapsBehviorsCb.AutoSize = true;
+            this.SwapSnapsBehviorsCb.Location = new System.Drawing.Point(380, 99);
+            this.SwapSnapsBehviorsCb.Margin = new System.Windows.Forms.Padding(2);
+            this.SwapSnapsBehviorsCb.Name = "SwapSnapsBehviorsCb";
+            this.SwapSnapsBehviorsCb.Size = new System.Drawing.Size(114, 30);
+            this.SwapSnapsBehviorsCb.TabIndex = 58;
+            this.SwapSnapsBehviorsCb.Text = "Short= Snap && exit\r\nLong=Snap && cont\r\n";
+            this.SwapSnapsBehviorsCb.UseVisualStyleBackColor = true;
+            this.SwapSnapsBehviorsCb.CheckedChanged += new System.EventHandler(this.SwapSnapBehaviorsCb_CheckedChanged);
+            // 
             // FormOptions
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2712,5 +2726,6 @@ namespace gInk
         private HotkeyInputBox hiSaveStrokes;
         private System.Windows.Forms.Label lbHkLoadStrokes;
         private HotkeyInputBox hiLoadStrokes;
+        private System.Windows.Forms.CheckBox SwapSnapsBehviorsCb;
     }
 }

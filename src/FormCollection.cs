@@ -3136,6 +3136,37 @@ namespace gInk
             }
         }
 
+        public void StartSnapshot(bool Continue)
+        {
+            if (ZoomForm.Visible)
+                ZoomBtn_Click(btZoom, null);
+
+            if (Root.Snapping > 0)
+                return;
+            ActivateStrokesInput(false);
+            PolyLineLastX = Int32.MinValue; PolyLineLastY = Int32.MinValue; PolyLineInProgress = null;
+            /*try
+            {
+                this.Cursor = cursorsnap;
+            }
+            catch*/
+            {
+                this.Cursor = getCursFromDiskOrRes("cursorsnap", System.Windows.Forms.Cursors.Cross);
+            }
+
+            Root.gpPenWidthVisible = false;
+
+
+            SnapWithoutClosing = Continue;
+
+            Root.SnappingX = -1;
+            Root.SnappingY = -1;
+            Root.SnappingRect = new Rectangle(0, 0, 0, 0);
+            Root.Snapping = 1;
+            ButtonsEntering = -2;
+            Root.UnPointer();
+        }
+
         public void btSnap_Click(object sender, EventArgs e)
         {
             longClickTimer.Stop(); // for an unkown reason the mouse arrives later
@@ -3157,27 +3188,14 @@ namespace gInk
 
             if (Root.Snapping > 0)
                 return;
-            ActivateStrokesInput(false);
-            PolyLineLastX = Int32.MinValue; PolyLineLastY = Int32.MinValue; PolyLineInProgress = null;
-            /*try
-            {
-                this.Cursor = cursorsnap;
-            }
-            catch*/
-            {
-                this.Cursor = getCursFromDiskOrRes("cursorsnap", System.Windows.Forms.Cursors.Cross);
-            }
 
-            Root.gpPenWidthVisible = false;
-
-
-            if (sender != null && tsp.TotalSeconds > Root.LongClickTime)
+            if ((sender != null && tsp.TotalSeconds > Root.LongClickTime) ^ Root.SwapSnapsBehaviors)
             {
-                SnapWithoutClosing = true;
+                StartSnapshot(true);
             }
             else
             {
-                SnapWithoutClosing = false;
+                StartSnapshot(false);
             }
 
             Root.SnappingX = -1;

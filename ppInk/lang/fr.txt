@@ -44,7 +44,7 @@ ButtonActivateDebug ="Fenêtre Debug"
 
 SubToolsBarCbText = "Activation de la barre d'outils secondaire"
 OptionPensOnTwoLinesCb = "Stylos sur deux lignes"
-
+OptionsSwapSnapshotBehavior = "Court = Capture && sort\nLong= Capture && cont"
 StrokeFileExists = "{0} Existe\nVoulez-vous le remplacer?"
 FileCanNotWrite = "impossible d'écrire\n{0}"
 SnappingInPointerMessage = "Capture d'écran n°{0}"

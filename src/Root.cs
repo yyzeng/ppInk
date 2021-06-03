@@ -161,6 +161,7 @@ namespace gInk
         public bool AutoScroll;
         public bool WhiteTrayIcon;
         public string SnapshotBasePath;
+        public bool SwapSnapsBehaviors=false;
         public int CanvasCursor = 0;
         public bool AllowDraggingToolbar = true;
         public bool AllowHotkeyInPointerMode = true;
@@ -1486,7 +1487,12 @@ namespace gInk
                             else if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
                                 MeasureAnglCounterClockwise = false;
                             break;
-
+                        case "SWAP_SNAPSHOT_BEHAVIORS":
+                            if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
+                                SwapSnapsBehaviors = true;
+                            else if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
+                                SwapSnapsBehaviors = false;
+                            break;                            
                         // Those parameters are for init only : there is no write to file
                         case "PENWIDTH_THIN_DEFAULT":
                             if (float.TryParse(sPara, out tempf))
@@ -1986,6 +1992,9 @@ namespace gInk
                             break;
                         case "MEASURE_ANGLE_DIR":
                             sPara= MeasureAnglCounterClockwise?"True":"False";
+                            break;
+                        case "SWAP_SNAPSHOT_BEHAVIORS":
+                            sPara = SwapSnapsBehaviors?"True":"False";
                             break;
                     }
                 }

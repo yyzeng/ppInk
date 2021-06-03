@@ -724,16 +724,15 @@ namespace gInk
                             if (s == "out")//Exit Inking after
                             {
                                 Root.APIRestCloseOnSnap = true;
-                                Root.FormCollection.btSnap_Click(null, null);
+                                Root.FormCollection.StartSnapshot(false);
                             }
                             else if (s == "end")//dynamic Magnifier
                             {
-                                Root.FormCollection.btSnap_Click(null, null);
+                                Root.FormCollection.StartSnapshot(false);
                             }
                             else if (s == "cont")//continue after
                             {
-                                Root.FormCollection.MouseTimeDown = DateTime.FromBinary(0);
-                                Root.FormCollection.btSnap_Click(Root.FormCollection.btSnap, null);
+                                Root.FormCollection.StartSnapshot(true);
                             }
                             else
                                 resp.StatusCode = 400;

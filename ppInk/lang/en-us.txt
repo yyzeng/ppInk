@@ -44,6 +44,7 @@ ButtonActivateDebug ="Debug Window"
 
 SubToolsBarCbText = "Enable Secondary ToolBar"
 OptionPensOnTwoLinesCb = "Pens on two lines"
+OptionsSwapSnapshotBehavior = "Short = Snap && exit\nLong=Snap && cont"
 
 StrokeFileExists = "{0} Already Exists\nDo you want to override it?"
 FileCanNotWrite = "{0}\ncan not be written."

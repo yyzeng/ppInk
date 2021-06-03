@@ -52,6 +52,8 @@ namespace gInk
 
         public string SubToolsBarCbText = "Enable Secondary ToolBar";
         public string OptionPensOnTwoLinesCb = "Pens on two lines";
+        public string OptionsSwapSnapshotBehavior = "Short = Snap && exit\nLong=Snap && cont";
+
 
         public string StrokeFileExists = "{0} Already Exists\nDo you want to override it?";
         public string FileCanNotWrite = "{0}\ncan not be written.";
