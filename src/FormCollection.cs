@@ -3938,7 +3938,10 @@ namespace gInk
                     if (LastPenStatus[0] && !pressed)
                         LongHkPress = DateTime.Now.AddYears(1);
                     if (LastPenStatus[0] && pressed && DateTime.Now.CompareTo(LongHkPress) > 0)
+                    {
+                        LongHkPress = DateTime.Now.AddYears(1);
                         btColor_LongClick(btPen[Root.CurrentPen]);
+                    }
                     LastPenStatus[0] = pressed;
                 }
                 else
@@ -3956,7 +3959,10 @@ namespace gInk
                         if (LastPenStatus[p] && !pressed)
                             LongHkPress = DateTime.Now.AddYears(1);
                         if (LastPenStatus[p] && pressed && DateTime.Now.CompareTo(LongHkPress) > 0)
+                        {
+                            LongHkPress = DateTime.Now.AddYears(1);
                             btColor_LongClick(btPen[p]);
+                        }
                         LastPenStatus[p] = pressed;
                     }
                 }

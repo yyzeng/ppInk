@@ -26,6 +26,7 @@ namespace gInk
             if (i < 0) i = sin.Length;
             FadingCB.Text = sin.Substring(0, i);
             DashStyleGrp.Text = Root.Local.OptionsLineStyle;
+            CancelBtn.Select(); // in order to prevent input during hotkey hold down
         }
 
         public void setColor(int alpha,Color c)
