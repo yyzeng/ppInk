@@ -313,6 +313,8 @@
     <None Include="DashDotLSTag.png" />
     <None Include="DotLSTag.png" />
     <None Include="DashLSTag.png" />
+    <None Include="lasso_act.png" />
+    <None Include="lasso.png" />
     <Content Include="Magnetic.png" />
     <Content Include="Magnetic_act.png" />
     <None Include="pan1_act.png" />

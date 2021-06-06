@@ -31,6 +31,7 @@ namespace gInk
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormCollection));
             this.gpButtons = new System.Windows.Forms.Panel();
+            this.btLasso = new System.Windows.Forms.Button();
             this.btZoom = new System.Windows.Forms.Button();
             this.btSave = new System.Windows.Forms.Button();
             this.btLoad = new System.Windows.Forms.Button();
@@ -84,6 +85,7 @@ namespace gInk
             // gpButtons
             // 
             this.gpButtons.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.gpButtons.Controls.Add(this.btLasso);
             this.gpButtons.Controls.Add(this.btZoom);
             this.gpButtons.Controls.Add(this.btSave);
             this.gpButtons.Controls.Add(this.btLoad);
@@ -111,15 +113,36 @@ namespace gInk
             this.gpButtons.Controls.Add(this.btPointer);
             this.gpButtons.Controls.Add(this.btClear);
             this.gpButtons.Controls.Add(this.btUndo);
+            this.gpButtons.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.gpButtons.Location = new System.Drawing.Point(24, 48);
             this.gpButtons.Margin = new System.Windows.Forms.Padding(2);
-            this.gpButtons.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.gpButtons.Name = "gpButtons";
-            this.gpButtons.Size = new System.Drawing.Size(1343, 53);
+            this.gpButtons.Size = new System.Drawing.Size(1394, 53);
             this.gpButtons.TabIndex = 3;
             this.gpButtons.MouseDown += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseDown);
             this.gpButtons.MouseMove += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseMove);
             this.gpButtons.MouseUp += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseUp);
+            // 
+            // btLasso
+            // 
+            this.btLasso.BackColor = System.Drawing.Color.Transparent;
+            this.btLasso.BackgroundImage = global::gInk.Properties.Resources.lasso;
+            this.btLasso.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btLasso.FlatAppearance.BorderSize = 0;
+            this.btLasso.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.btLasso.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.btLasso.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btLasso.Location = new System.Drawing.Point(1196, 5);
+            this.btLasso.Margin = new System.Windows.Forms.Padding(2);
+            this.btLasso.Name = "btLasso";
+            this.btLasso.Size = new System.Drawing.Size(46, 46);
+            this.btLasso.TabIndex = 13;
+            this.toolTip.SetToolTip(this.btLasso, "Pan");
+            this.btLasso.UseVisualStyleBackColor = true;
+            this.btLasso.Click += new System.EventHandler(this.btLasso_Click);
+            this.btLasso.MouseDown += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseDown);
+            this.btLasso.MouseMove += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseMove);
+            this.btLasso.MouseUp += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseUp);
             // 
             // btZoom
             // 
@@ -289,7 +312,7 @@ namespace gInk
             this.btStop.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
             this.btStop.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btStop.ForeColor = System.Drawing.Color.Transparent;
-            this.btStop.Location = new System.Drawing.Point(1270, 4);
+            this.btStop.Location = new System.Drawing.Point(1346, 2);
             this.btStop.Margin = new System.Windows.Forms.Padding(2);
             this.btStop.Name = "btStop";
             this.btStop.Size = new System.Drawing.Size(46, 46);
@@ -331,7 +354,7 @@ namespace gInk
             this.btInkVisible.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
             this.btInkVisible.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
             this.btInkVisible.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btInkVisible.Location = new System.Drawing.Point(1220, 4);
+            this.btInkVisible.Location = new System.Drawing.Point(1296, 2);
             this.btInkVisible.Margin = new System.Windows.Forms.Padding(2);
             this.btInkVisible.Name = "btInkVisible";
             this.btInkVisible.Size = new System.Drawing.Size(46, 46);
@@ -352,7 +375,7 @@ namespace gInk
             this.btPan.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
             this.btPan.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
             this.btPan.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btPan.Location = new System.Drawing.Point(1170, 4);
+            this.btPan.Location = new System.Drawing.Point(1246, 2);
             this.btPan.Margin = new System.Windows.Forms.Padding(2);
             this.btPan.Name = "btPan";
             this.btPan.Size = new System.Drawing.Size(46, 46);
@@ -936,8 +959,8 @@ namespace gInk
             this.gpPenWidth.BackgroundImage = global::gInk.Properties.Resources.penwidthpanel;
             this.gpPenWidth.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.gpPenWidth.Controls.Add(this.pboxPenWidthIndicator);
-            this.gpPenWidth.Location = new System.Drawing.Point(116, 217);
             this.gpPenWidth.Cursor = System.Windows.Forms.Cursors.Arrow;
+            this.gpPenWidth.Location = new System.Drawing.Point(116, 217);
             this.gpPenWidth.Name = "gpPenWidth";
             this.gpPenWidth.Size = new System.Drawing.Size(200, 53);
             this.gpPenWidth.TabIndex = 4;
@@ -979,8 +1002,8 @@ namespace gInk
             this.gpSubTools.Controls.Add(this.Btn_SubTool3);
             this.gpSubTools.Controls.Add(this.Btn_SubTool2);
             this.gpSubTools.Controls.Add(this.Btn_SubTool1);
-            this.gpSubTools.Location = new System.Drawing.Point(676, 217);
             this.gpSubTools.Cursor = System.Windows.Forms.Cursors.Arrow;
+            this.gpSubTools.Location = new System.Drawing.Point(676, 217);
             this.gpSubTools.Name = "gpSubTools";
             this.gpSubTools.Size = new System.Drawing.Size(415, 53);
             this.gpSubTools.TabIndex = 5;
@@ -1016,7 +1039,7 @@ namespace gInk
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.WhiteSmoke;
-            this.ClientSize = new System.Drawing.Size(1368, 526);
+            this.ClientSize = new System.Drawing.Size(1429, 526);
             this.Controls.Add(this.gpSubTools);
             this.Controls.Add(this.gpPenWidth);
             this.Controls.Add(this.gpButtons);
@@ -1087,6 +1110,7 @@ namespace gInk
         public System.Windows.Forms.Panel gpSubTools;
         public System.Windows.Forms.Timer tiSlide;
         public System.Windows.Forms.Timer longClickTimer;
+        public System.Windows.Forms.Button btLasso;
     }
 }
 

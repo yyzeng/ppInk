@@ -352,7 +352,11 @@ namespace gInk
             {
                 foreach (Stroke st in Root.FormCollection.IC.Ink.Strokes)
                 {
-                    if ((Root.StrokeHovered != null)&&(st.Id == Root.StrokeHovered.Id))
+                    if (((Root.StrokeHovered != null) && (st.Id == Root.StrokeHovered.Id)) 
+                        || (Root.FormCollection.AppendToSelection && (Root.FormCollection.StrokesSelection.Contains(st)
+                                                                      || (Root.FormCollection.InprogressSelection != null && Root.FormCollection.InprogressSelection.Contains(st))))
+                        || (!Root.FormCollection.AppendToSelection && (Root.FormCollection.StrokesSelection.Contains(st)
+                                                                       && (Root.FormCollection.InprogressSelection != null && !Root.FormCollection.InprogressSelection.Contains(st)))))
                     {
                         Rectangle rect = st.GetBoundingBox();
                         Point pt = rect.Location;
@@ -854,7 +858,19 @@ namespace gInk
             if (!prepared)
             {
                 BitBlt(OutcanvusDc, 0, 0, this.Width, this.Height, canvusDc, 0, 0, 0x00CC0020);
-                if(Root.Snapping<=0)
+                if (Root.LassoMode && Root.FormCollection.IC.Ink.Strokes.Count>0 
+                    && Root.FormCollection.IC.Ink.Strokes[Root.FormCollection.IC.Ink.Strokes.Count - 1].ExtendedProperties.Contains(Root.ISLASSO_GUID))
+                {
+                    Stroke stroke = Root.FormCollection.IC.Ink.Strokes[Root.FormCollection.IC.Ink.Strokes.Count - 1];
+                    Point[] pts = stroke.GetPoints();
+                    Root.FormCollection.IC.Renderer.InkSpaceToPixel(gOutCanvus, ref pts);
+                    Pen p = new Pen(Root.FormCollection.AppendToSelection?Color.Red:Color.Violet, 2);  // stroke.DrawingAttributes.Color, Root.HiMetricToPixel(stroke.DrawingAttributes.Width));
+                    p.DashStyle = DashStyle.Dash;
+                    if (pts.Length >= 3) 
+                        gOutCanvus.DrawPolygon(p, pts);
+                    p.Dispose();
+                }
+                else if (Root.Snapping<=0)
                     DrawCustomOnGraphic(gOutCanvus, Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY);
             }
 
@@ -968,7 +984,8 @@ namespace gInk
                         //Root.FormCollection.IC.Renderer.Draw(gOutCanvus, stroke, Root.FormCollection.IC.DefaultDrawingAttributes);
                         DrawOneStroke(gOutCanvus, stroke, Root.FormCollection.IC.DefaultDrawingAttributes);
                     }
-                    UpdateFormDisplay(true, Root.ToolSelected == Tools.Hand && (!Root.FormCollection.ZoomCapturing));
+                    UpdateFormDisplay(true, (Root.ToolSelected == Tools.Hand) && (!Root.FormCollection.ZoomCapturing));
+                    
                 }
             }
 

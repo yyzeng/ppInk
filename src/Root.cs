@@ -106,6 +106,7 @@ namespace gInk
     {
         public Local Local = new Local();
         public const int MaxPenCount = 10;
+        public const int LassoPercent = 80;
 
         //public Guid TYPE_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 0, 0);
         public static Guid TEXT_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 0, 1);
@@ -122,6 +123,7 @@ namespace gInk
         public static Guid ISDELETION_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 1, 0);
         public static Guid ISSTROKE_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 1, 1);
         public static Guid ISTAG_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 1, 2);
+        public static Guid ISLASSO_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 1, 3);
         //not yet used : 
         //public Guid ISRECT_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 1, 2);
         //public Guid ISOVAL_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 1, 3);
@@ -256,6 +258,7 @@ namespace gInk
 		public bool MouseMovedUnderSnapshotDragging = false; // used to pause re-drawing when mouse is not moving during dragging to take a screenshot
         public int PenWidth_Delta = 5;
 
+        public bool LassoMode = false;
         public bool PanMode = false;
 		public bool InkVisible = true;
         public int MagneticRadius= MIN_MAGNETIC;        // Magnet Radius; <=0 means off;
