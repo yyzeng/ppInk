@@ -46,6 +46,7 @@ namespace gInk
         public string SaveStroke = "Save Strokes\n(long =opendialog ; short = {0})";
         public string LoadStroke = "Load Strokes\n(long =opendialog ; short = {0})";
         public string ButtonNameZoom = "Zoom";
+        public string ButtonNameLasso = "Lasso Selection(Left=Add;Right=Remove;Button=Reset Selection)";
 
         public string QuestionClipArtUpdate = "Cliparts seem to have been updated during edition.\nDo you want to update le default list?";
         public string ButtonActivateDebug = "Debug Window";

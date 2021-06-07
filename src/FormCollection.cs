@@ -1100,6 +1100,7 @@ namespace gInk
             this.toolTip.SetToolTip(this.btClip3, Root.Local.ButtonNameClipArt + "-3 (" + Root.Hotkey_ClipArt3.ToString() + ")");
             this.toolTip.SetToolTip(this.btSave, String.Format(Root.Local.SaveStroke, ""));
             this.toolTip.SetToolTip(this.btLoad, String.Format(Root.Local.LoadStroke, ""));
+            this.toolTip.SetToolTip(this.btLasso, Root.Local.ButtonNameLasso + " (" + Root.Hotkey_Lasso.ToString() + ")");
 
             if (Root.ToolbarOrientation <= Orientation.Horizontal)
             {
@@ -3432,6 +3433,7 @@ namespace gInk
         bool LastColorPickupStatus = false;
         bool LastColorEditStatus = false;
         bool LastLineStyleStatus = false;
+        bool LastLassoStatus = false;
 
         bool LastLoadStrokesStatus = false;
         bool LastSaveStrokesStatus = false;
@@ -4358,6 +4360,13 @@ namespace gInk
                         StartStopPickUpColor(0);
                 }
                 LastColorPickupStatus = pressed;
+
+                pressed = (GetKeyState(Root.Hotkey_Lasso.Key) & 0x8000) == 0x8000;
+                if (pressed && !LastLassoStatus && Root.Hotkey_Lasso.ModifierMatch(control, alt, shift, win))
+                {
+                    btLasso_Click(null, null);
+                }
+                LastLassoStatus = pressed;
 
                 pressed = (GetKeyState(Root.Hotkey_ColorEdit.Key) & 0x8000) == 0x8000;
                 if (pressed && !LastColorEditStatus && Root.Hotkey_ColorEdit.ModifierMatch(control, alt, shift, win))

@@ -38,6 +38,7 @@ ButtonNameVideo = "Video Record"
 SaveStroke = "Save Strokes\n(long =opendialog ; short = {0})"
 LoadStroke = "Load Strokes\n(long =opendialog ; short = {0})"
 ButtonNameZoom = "Zoom"
+ButtonNameLasso = "Lasso Selection(Left=Add;Right=Remove;Button=Reset Selection)"
 
 QuestionClipArtUpdate = "Cliparts seem to have been updated during edition.\nDo you want to update le default list?"
 ButtonActivateDebug ="Debug Window"

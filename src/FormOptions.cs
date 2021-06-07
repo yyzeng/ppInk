@@ -303,6 +303,7 @@ namespace gInk
             hiColorPickup.Hotkey = Root.Hotkey_ColorPickup;
             hiColorEdit.Hotkey = Root.Hotkey_ColorEdit;
             hiLineStyle.Hotkey = Root.Hotkey_LineStyle;
+            hiLasso.Hotkey = Root.Hotkey_Lasso;
 
             WsUrlTxt.Text = Root.ObsUrl;
             WsPwdTxt.Text = Root.ObsPwd;
@@ -441,6 +442,7 @@ namespace gInk
 
             this.lbHkColorPickup.Text = Root.Local.OptionsHotkeysColorPicker;
             this.lbHkColorEdit.Text = Root.Local.OptionsHotkeysColorEdit;
+            this.lbHkLasso.Text = shortTxt(Root.Local.ButtonNameLasso);
 
             this.lbGlobalHotkey.Text = Root.Local.OptionsHotkeysglobal;
             this.cbAllowHotkeyInPointer.Text = Root.Local.OptionsHotkeysEnableinpointer;

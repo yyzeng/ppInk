@@ -234,6 +234,7 @@ namespace gInk
         public Hotkey Hotkey_ColorPickup = new Hotkey();
         public Hotkey Hotkey_ColorEdit = new Hotkey();
         public Hotkey Hotkey_LineStyle = new Hotkey();
+        public Hotkey Hotkey_Lasso = new Hotkey();
 
         public Hotkey Hotkey_LoadStrokes = new Hotkey();
         public Hotkey Hotkey_SaveStrokes = new Hotkey();
@@ -1084,6 +1085,9 @@ namespace gInk
                         case "HOTKEY_SAVESTROKES":
                             Hotkey_SaveStrokes.Parse(sPara);
                             break;
+                        case "HOTKEY_LASSO":
+                            Hotkey_Lasso.Parse(sPara);
+                            break;
 
                         case "PENS_ON_TWO_LINES":
                             if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
@@ -1727,9 +1731,10 @@ namespace gInk
                         case "HOTKEY_SAVESTROKES":
                             sPara = Hotkey_SaveStrokes.ToStringInvariant();
                             break;
-
-
-
+                        case "HOTKEY_LASSO":
+                            sPara = Hotkey_Lasso.ToStringInvariant();
+                            break;
+                                                       
                         case "PENS_ON_TWO_LINES":
                             sPara = PensOnTwoLines? "True" : "False";
                             break;

@@ -38,6 +38,7 @@ ButtonNameVideo = "Enregistrement Video"
 SaveStroke = "Sauver Dessins\n(appui long = sélectionne fichier ; court = ouvre {0})"
 LoadStroke = "Charger Dessins\n(appui long = sélectionne fichier ; court = ouvre {0})"
 ButtonNameZoom = "Zoom"
+ButtonNameLasso = "Selection au lasso(Gauche=Ajoute;Droit=Ote;Bouton=Vide la sélection)"
 
 QuestionClipArtUpdate = "Les Cliparts semblent avoir été mis à jour durant l'édition.\nVoulez-vous mettre à jour la liste par défaut?"
 ButtonActivateDebug ="Fenêtre Debug"
