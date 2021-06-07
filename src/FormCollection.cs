@@ -2939,6 +2939,9 @@ namespace gInk
                 btPan.BackgroundImage = getImgFromDiskOrRes("pan", ImageExts);
                 Root.PanMode = false;
                 Root.LassoMode = true;
+                StrokesSelection.Clear();
+                InprogressSelection = null;
+                Root.UponAllDrawingUpdate = true;
                 ActivateStrokesInput(true);
                 try
                 {
