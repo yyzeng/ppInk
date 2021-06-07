@@ -443,11 +443,11 @@ namespace gInk
                             }
                             else if (Root.PointerMode)
                             {
-                                ret = string.Format("{{\"Tool\":{0},\"ToolInText\":\"{2}\", \"Filling\":{1}, \"FillingInText\":\"{3}\" }}", -1, -1, "Pointer", "-");
+                                ret = string.Format("{{\"Tool\":{0},\"ToolInText\":\"{2}\", \"Filling\":{1}, \"FillingInText\":\"{3}\" }}", -2, -1, "Pointer", "-");
                             }
                             else if (Root.PanMode)
                             {
-                                ret = string.Format("{{\"Tool\":{0},\"ToolInText\":\"{2}\", \"Filling\":{1}, \"FillingInText\":\"{3}\" }}", -1, -1, "Pan", "-");
+                                ret = string.Format("{{\"Tool\":{0},\"ToolInText\":\"{2}\", \"Filling\":{1}, \"FillingInText\":\"{3}\" }}", -3, -1, "Pan", "-");
                             }
                             else
                             {
