@@ -2281,7 +2281,7 @@ namespace gInk
                     catch { }
             }
 
-            if (Root.LassoMode && CurrentMouseButton != MouseButtons.None)
+            if (Root.LassoMode && CurrentMouseButton != MouseButtons.None && IC.Ink.Strokes.Count>0)
             {
                 AppendToSelection = ((int)CurrentMouseButton == 1) || (CurrentMouseButton == MouseButtons.Left);
                 Stroke st = IC.Ink.Strokes[IC.Ink.Strokes.Count - 1];
@@ -2302,14 +2302,22 @@ namespace gInk
                     if (NearestStroke(new Point(e.X, e.Y), true, out Root.StrokeHovered, out pos, false) > Root.PixelToHiMetric(Root.MinMagneticRadius()))
                     {
                         Root.StrokeHovered = null;
+                        SavHoveredForSelection = null;
                         MetricToolTip.Hide(this);
                         return;
                     }
-                    else
+                    else if(Root.StrokeHovered?.Id != SavHoveredForSelection?.Id) // I do not know why comparing Objects is not good
                     {
                         if (Root.MeasureEnabled)
                             MetricToolTip.Show(MeasureStroke(Root.StrokeHovered)
                                                +(Root.LassoMode?("\n"+ MeasureAllStrokes(StrokesSelection,InprogressSelection,Root.StrokeHovered)) :""), this, e.Location.X, e.Location.Y - 80);
+                        return;
+                    }
+                    else
+                    {
+                        //Console.WriteLine("{0} vs. {1}",Root.StrokeHovered?.Id,SavHoveredForSelection?.Id);
+                        Root.StrokeHovered = null;
+                        MetricToolTip.Hide(this);
                         return;
                     }
                 }
@@ -2453,7 +2461,7 @@ namespace gInk
             {
                 SaveUndoStrokes();
             }
-            else if (Root.LassoMode && (Root.CursorX0 == Int32.MinValue || (e.X==Root.CursorX0 &&e.Y==Root.CursorY0)))
+            else if (Root.LassoMode && (Root.CursorX0 == Int32.MinValue || (Math.Abs(e.X-Root.CursorX0)< Root.MinMagneticRadius() && Math.Abs(e.Y-Root.CursorY0)< Root.MinMagneticRadius())))
             {
                 try
                 {
@@ -2462,6 +2470,7 @@ namespace gInk
                     else
                         StrokesSelection.Add(SavHoveredForSelection);
                 } catch { }
+                Root.UponAllDrawingUpdate = true;
             }
 
             else
@@ -2546,19 +2555,26 @@ namespace gInk
         public string MeasureAllStrokes(Strokes sts1, Strokes sts2,Stroke Hovered)
         {
             double sum = 0;
-            int c = sts1.Count;
-            foreach(Stroke st in sts1)
-                sum += StrokeLength(st);
+            int c = 0;
+            foreach (Stroke st in sts1)
+                try
+                {
+                    sum += StrokeLength(st);
+                    c++;
+                } catch { }
             if(sts2 !=null)
             {
                 foreach (Stroke st in sts2)
-                    sum += StrokeLength(st);
-                c += sts2.Count;
+                    try
+                    {
+                        sum += StrokeLength(st);
+                        c++;
+                    } catch { }
             }
-            if(Hovered!=null && !sts1.Contains(Hovered) && (sts2==null || !sts2.Contains(Hovered)))
+            if (Hovered!=null && !sts1.Contains(Hovered) && (sts2==null || !sts2.Contains(Hovered)))
             {
                 sum += StrokeLength(Hovered);
-                c += 1;
+                c++;
             }
             return string.Format(MeasureNumberFormat, Root.Local.FormaTotalLength, Root.ConvertMeasureLength(sum), Root.Measure2Unit,c);
         }
@@ -4695,6 +4711,8 @@ namespace gInk
             }
 			//Root.ClearInk(false); <-- code exploded inhere removing clearcanvus
             Root.FormCollection.IC.Ink.DeleteStrokes();
+            InprogressSelection = null;
+            StrokesSelection.Clear();
             if (Root.BoardSelected == 1) // White
                 AddBackGround(255, 255, 255, 255);
             else if (Root.BoardSelected == 2) // Customed
