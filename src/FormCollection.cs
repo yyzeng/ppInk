@@ -2148,6 +2148,8 @@ namespace gInk
             }
         }
 
+        private Stroke SavHoveredForSelection;
+
         private void IC_MouseDown(object sender, CancelMouseEventArgs e)
         {
             Console.WriteLine("MouseDown");
@@ -2197,6 +2199,8 @@ namespace gInk
                 Root.CursorX = Root.CursorX0;
                 Root.CursorY = Root.CursorY0;
             }
+
+            SavHoveredForSelection = Root.LassoMode ? Root.StrokeHovered : null;
 
             if (((Root.ToolSelected == Tools.Move) || (Root.ToolSelected == Tools.Copy)))  // Move
             {
@@ -2289,10 +2293,11 @@ namespace gInk
                     }
                     catch { }
             }
-            
+
 
             if (e.Button == MouseButtons.None)
-                if (Root.EraserMode || Root.ToolSelected == Tools.Edit || Root.ToolSelected == Tools.Move || Root.ToolSelected == Tools.Copy)
+            {
+                if (Root.EraserMode || Root.ToolSelected == Tools.Edit || Root.ToolSelected == Tools.Move || Root.ToolSelected == Tools.Copy || Root.LassoMode)
                 {
                     if (NearestStroke(new Point(e.X, e.Y), true, out Root.StrokeHovered, out pos, false) > Root.PixelToHiMetric(Root.MinMagneticRadius()))
                     {
@@ -2302,8 +2307,9 @@ namespace gInk
                     }
                     else
                     {
-                        if(Root.MeasureEnabled)
-                            MetricToolTip.Show(MeasureStroke(Root.StrokeHovered), this, e.Location.X, e.Location.Y -50);
+                        if (Root.MeasureEnabled)
+                            MetricToolTip.Show(MeasureStroke(Root.StrokeHovered)
+                                               +(Root.LassoMode?("\n"+ MeasureAllStrokes(StrokesSelection,InprogressSelection,Root.StrokeHovered)) :""), this, e.Location.X, e.Location.Y - 80);
                         return;
                     }
                 }
@@ -2312,6 +2318,8 @@ namespace gInk
                     MetricToolTip.Hide(this);
                     return;
                 }
+            }
+
             MetricToolTip.Hide(this);
             //Console.WriteLine("Cursor {0},{1} - {2}", e.X, e.Y, e.Button);
             Root.CursorX = e.X;
@@ -2445,6 +2453,17 @@ namespace gInk
             {
                 SaveUndoStrokes();
             }
+            else if (Root.LassoMode && (Root.CursorX0 == Int32.MinValue || (e.X==Root.CursorX0 &&e.Y==Root.CursorY0)))
+            {
+                try
+                {
+                    if (StrokesSelection.Contains(SavHoveredForSelection))
+                        StrokesSelection.Remove(SavHoveredForSelection);
+                    else
+                        StrokesSelection.Add(SavHoveredForSelection);
+                } catch { }
+            }
+
             else
             {
                 Root.UponAllDrawingUpdate = true;
@@ -2483,12 +2502,11 @@ namespace gInk
             }
         }
 
-        NumberFormatInfo MeasureNumberFormat;
-        public string MeasureStroke(Stroke st)
+        private Double StrokeLength(Stroke st)
         {
             int j;
-            Point pt,pt1;
-            Double sum=0.0F;
+            Point pt, pt1;
+            Double sum = 0.0F;
             Double ang = Double.NaN;
             string str = "";
 
@@ -2500,7 +2518,19 @@ namespace gInk
                 sum += Math.Sqrt((1.0 * pt1.X - pt.X) * (pt1.X - pt.X) + (1.0 * pt1.Y - pt.Y) * (pt1.Y - pt.Y));
                 pt = pt1;
             }
-            str = string.Format(MeasureNumberFormat, Root.Local.FormatLength, Root.ConvertMeasureLength(sum),Root.Measure2Unit);
+            return sum;
+        }
+
+        NumberFormatInfo MeasureNumberFormat;
+        public string MeasureStroke(Stroke st)
+        {
+            int j;
+            Point pt,pt1;
+            Double ang = Double.NaN;
+            string str = "";
+
+            j = st.GetPoints().Length;
+            str = string.Format(MeasureNumberFormat, Root.Local.FormatLength, Root.ConvertMeasureLength(StrokeLength(st)),Root.Measure2Unit);
             if(j==3)
             {
                 pt = st.GetPoint(1);
@@ -2511,6 +2541,26 @@ namespace gInk
                 str += string.Format("\n"+ Root.Local.FormatAngle, (Root.MeasureAnglCounterClockwise?1:-1) * ang / Math.PI * 180);
             }
             return str;
+        }
+
+        public string MeasureAllStrokes(Strokes sts1, Strokes sts2,Stroke Hovered)
+        {
+            double sum = 0;
+            int c = sts1.Count;
+            foreach(Stroke st in sts1)
+                sum += StrokeLength(st);
+            if(sts2 !=null)
+            {
+                foreach (Stroke st in sts2)
+                    sum += StrokeLength(st);
+                c += sts2.Count;
+            }
+            if(Hovered!=null && !sts1.Contains(Hovered) && (sts2==null || !sts2.Contains(Hovered)))
+            {
+                sum += StrokeLength(Hovered);
+                c += 1;
+            }
+            return string.Format(MeasureNumberFormat, Root.Local.FormaTotalLength, Root.ConvertMeasureLength(sum), Root.Measure2Unit,c);
         }
 
         public void ActivateStrokesInput(bool active)

@@ -86,6 +86,7 @@ namespace gInk
         public string OptionMeasureAngle = "Angle CounterClockwise";
         public string FormatLength = "Length : {0:N1} {1}";
         public string FormatAngle = "Angle : {0:N0}°";
+        public string FormaTotalLength = "Total({2}) : {0:N1} {1}";
 
         public string ButtonOkText = "&OK";
         public string ButtonCancelText = "&Cancel";
