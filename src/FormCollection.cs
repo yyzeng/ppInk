@@ -5848,11 +5848,11 @@ namespace gInk
                         {
                             stk.DrawingAttributes.ExtendedProperties.Add(Root.DASHED_LINE_GUID, ds);
                         }
-                        else
-                            try { stk.DrawingAttributes.ExtendedProperties.Remove(Root.DASHED_LINE_GUID); } catch { }
+                        //else
+                        //    try { stk.DrawingAttributes.ExtendedProperties.Remove(Root.DASHED_LINE_GUID); } catch { }
                     }
-                    else
-                        try { stk.DrawingAttributes.ExtendedProperties.Remove(Root.DASHED_LINE_GUID); } catch { }
+                    //else
+                    //    try { stk.DrawingAttributes.ExtendedProperties.Remove(Root.DASHED_LINE_GUID); } catch { }
                     do
                     {
                         st = fileout.ReadLine();
@@ -5903,6 +5903,7 @@ namespace gInk
                     while (st!=null && st.StartsWith("#"));
                 }
             }
+            Root.UponAllDrawingUpdate = true;
         }
 
         public void btLoad_Click(object sender, EventArgs e)
