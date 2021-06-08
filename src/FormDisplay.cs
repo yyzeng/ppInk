@@ -356,7 +356,7 @@ namespace gInk
                         || (Root.FormCollection.AppendToSelection && (Root.FormCollection.StrokesSelection.Contains(st)
                                                                       || (Root.FormCollection.InprogressSelection != null && Root.FormCollection.InprogressSelection.Contains(st))))
                         || (!Root.FormCollection.AppendToSelection && (Root.FormCollection.StrokesSelection.Contains(st)
-                                                                       && (Root.FormCollection.InprogressSelection != null && !Root.FormCollection.InprogressSelection.Contains(st)))))
+                                                                       && (Root.FormCollection.InprogressSelection == null || !Root.FormCollection.InprogressSelection.Contains(st)))))
                     {
                         Rectangle rect = st.GetBoundingBox();
                         Point pt = rect.Location;
