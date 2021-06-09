@@ -2391,8 +2391,8 @@ namespace gInk
                         {
                             if (st.ExtendedProperties.Contains(Root.TEXT_GUID))
                             {
-                                st.ExtendedProperties.Add(Root.TEXTX_GUID, ((int)movedStroke.ExtendedProperties[Root.TEXTX_GUID].Data) + (currentxy.X - LasteXY.X));
-                                st.ExtendedProperties.Add(Root.TEXTY_GUID, ((int)movedStroke.ExtendedProperties[Root.TEXTY_GUID].Data) + (currentxy.Y - LasteXY.Y));
+                                st.ExtendedProperties.Add(Root.TEXTX_GUID, ((int)st.ExtendedProperties[Root.TEXTX_GUID].Data) + (currentxy.X - LasteXY.X));
+                                st.ExtendedProperties.Add(Root.TEXTY_GUID, ((int)st.ExtendedProperties[Root.TEXTY_GUID].Data) + (currentxy.Y - LasteXY.Y));
                             }
                             if (st.ExtendedProperties.Contains(Root.IMAGE_X_GUID))
                             {
