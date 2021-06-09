@@ -5966,6 +5966,7 @@ namespace gInk
                 LoadStrokes(Path.GetFullPath(Environment.ExpandEnvironmentVariables(Root.SnapshotBasePath + "AutoSave.strokes.txt")));
             else
                 LoadStrokes(SaveStrokeFile);
+            SaveUndoStrokes();
             Root.UponAllDrawingUpdate = true;
         }
 
