@@ -4173,8 +4173,8 @@ namespace gInk
 
                 if (Root.Hotkey_Pens[0].ConflictWith(Root.Hotkey_Pens[1]))
                 { // same hotkey for pen 0 and pen 1 : we have to rotate through pens
-                    pressed = (GetKeyState(Root.Hotkey_Pens[0].Key) & 0x8000) == 0x8000;
-                    if (pressed && !LastPenStatus[0] && Root.Hotkey_Pens[0].ModifierMatch(control, alt, shift, win))
+                    pressed = ((GetKeyState(Root.Hotkey_Pens[0].Key) & 0x8000) == 0x8000) && Root.Hotkey_Pens[0].ModifierMatch(control, alt, shift, win);
+                    if (pressed && !LastPenStatus[0])
                     {
                         int p = LastPenSelected + 1;
                         if (p >= Root.MaxPenCount)
@@ -4203,8 +4203,8 @@ namespace gInk
                 { // standard behavior
                     for (int p = 0; p < Root.MaxPenCount; p++)
                     {
-                        pressed = (GetKeyState(Root.Hotkey_Pens[p].Key) & 0x8000) == 0x8000;
-                        if (pressed && !LastPenStatus[p] && Root.Hotkey_Pens[p].ModifierMatch(control, alt, shift, win))
+                        pressed = ((GetKeyState(Root.Hotkey_Pens[p].Key) & 0x8000) == 0x8000) && Root.Hotkey_Pens[p].ModifierMatch(control, alt, shift, win);
+                        if (pressed && !LastPenStatus[p] )
                         {
                             //SelectPen(p);
                             MouseTimeDown = DateTime.Now;
@@ -4471,8 +4471,8 @@ namespace gInk
                 }
                 LastLineStyleStatus = pressed;
 
-                pressed = (GetKeyState(Root.Hotkey_LoadStrokes.Key) & 0x8000) == 0x8000;
-                if (pressed && !LastLoadStrokesStatus && Root.Hotkey_LoadStrokes.ModifierMatch(control, alt, shift, win))
+                pressed = ((GetKeyState(Root.Hotkey_LoadStrokes.Key) & 0x8000) == 0x8000)&& Root.Hotkey_LoadStrokes.ModifierMatch(control, alt, shift, win);
+                if (pressed && !LastLoadStrokesStatus)
                 {
                     /*if (AltKeyPressed())
                         MouseTimeDown = DateTime.FromBinary(0);
@@ -4483,8 +4483,8 @@ namespace gInk
                 if (LastLoadStrokesStatus && !pressed && DateTime.Now.CompareTo(LongHkPress) < 0)
                 {
                     LongHkPress = DateTime.Now.AddYears(1);
-                    MouseTimeDown = DateTime.Now;
-                    Console.WriteLine("Load Shrt");
+                    MouseTimeDown = DateTime.Now;                    
+                    LastSaveStrokesStatus = pressed; // btSave will be long... to prevent to restart process...
                     btLoad_Click(btLoad, null);
                 }
                 if (LastLoadStrokesStatus && pressed && DateTime.Now.CompareTo(LongHkPress) > 0)
@@ -4495,8 +4495,9 @@ namespace gInk
                 }
                 LastLoadStrokesStatus = pressed;
 
-                pressed = (GetKeyState(Root.Hotkey_SaveStrokes.Key) & 0x8000) == 0x8000;
-                if (pressed && !LastSaveStrokesStatus && Root.Hotkey_SaveStrokes.ModifierMatch(control, alt, shift, win))
+                pressed = ((GetKeyState(Root.Hotkey_SaveStrokes.Key) & 0x8000) == 0x8000) && Root.Hotkey_SaveStrokes.ModifierMatch(control, alt, shift, win);
+                //if (pressed && !LastSaveStrokesStatus && Root.Hotkey_SaveStrokes.ModifierMatch(control, alt, shift, win))
+                if (pressed && !LastSaveStrokesStatus)
                 {
                     /*if (AltKeyPressed())
                         MouseTimeDown = DateTime.FromBinary(0);
@@ -4508,6 +4509,7 @@ namespace gInk
                 {
                     LongHkPress = DateTime.Now.AddYears(1);
                     MouseTimeDown = DateTime.Now;
+                    LastSaveStrokesStatus = pressed; // btSave will be long... to prevent to restart process...
                     btSave_Click(btSave, null);
                 }
                 if (LastSaveStrokesStatus && pressed && DateTime.Now.CompareTo(LongHkPress) > 0)
