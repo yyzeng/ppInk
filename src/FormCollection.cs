@@ -830,6 +830,7 @@ namespace gInk
 
             if (Root.InkVisibleEnabled)
             {
+                btInkVisible.Visible = true;
                 btInkVisible.Height = dim1;
                 btInkVisible.Width = dim1;
                 image_visible_not = getImgFromDiskOrRes("visible_not", ImageExts);
@@ -843,6 +844,7 @@ namespace gInk
 
             if (Root.SnapEnabled)
             {
+                btSnap.Visible = true;
                 btSnap.Height = dim1;
                 btSnap.Width = dim1;
                 btSnap.BackgroundImage = getImgFromDiskOrRes("snap", ImageExts); ;
@@ -854,6 +856,7 @@ namespace gInk
 
             if (Root.UndoEnabled)
             {
+                btUndo.Visible = true;
                 btUndo.Height = dim1;
                 btUndo.Width = dim1;
                 btUndo.BackgroundImage = getImgFromDiskOrRes("undo", ImageExts);
@@ -865,6 +868,7 @@ namespace gInk
 
             if (Root.ClearEnabled)
             {
+                btClear.Visible = true;
                 btClear.Height = dim1;
                 btClear.Width = dim1;
                 btClear.BackgroundImage = getImgFromDiskOrRes("garbage", ImageExts);
