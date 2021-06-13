@@ -1956,13 +1956,13 @@ namespace gInk
                                 sPara = " ";
                             break;
                         case "IMAGESTAMP1":
-                            sPara = MakeRelativePath(Global.ProgramFolder, ImageStamp1);
+                            sPara = MakeRelativePath(Global.ProgramFolder, ImageStamp1).Replace('\\', '/');
                             break;
                         case "IMAGESTAMP2":
-                            sPara = MakeRelativePath(Global.ProgramFolder, ImageStamp2);
+                            sPara = MakeRelativePath(Global.ProgramFolder, ImageStamp2).Replace('\\', '/');
                             break;
                         case "IMAGESTAMP3":
-                            sPara = MakeRelativePath(Global.ProgramFolder, ImageStamp3);
+                            sPara = MakeRelativePath(Global.ProgramFolder, ImageStamp3).Replace('\\', '/');
                             break;
                         case "TOOLBAR_DIRECTION":
                             if (ToolbarOrientation == Orientation.toLeft)
