@@ -43,37 +43,40 @@
             this.FadingCB = new System.Windows.Forms.CheckBox();
             this.StyleStrokeRd = new System.Windows.Forms.RadioButton();
             this.DashStyleGrp = new System.Windows.Forms.GroupBox();
+            this.panel6 = new System.Windows.Forms.Panel();
+            this.panel5 = new System.Windows.Forms.Panel();
+            this.panel4 = new System.Windows.Forms.Panel();
+            this.panel3 = new System.Windows.Forms.Panel();
+            this.panel2 = new System.Windows.Forms.Panel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.StyleDashDotDotRd = new System.Windows.Forms.RadioButton();
             this.StyleDotRd = new System.Windows.Forms.RadioButton();
             this.StyleSolidRd = new System.Windows.Forms.RadioButton();
             this.StyleDashDotRd = new System.Windows.Forms.RadioButton();
             this.StyleDashRd = new System.Windows.Forms.RadioButton();
-            this.panel2 = new System.Windows.Forms.Panel();
-            this.panel3 = new System.Windows.Forms.Panel();
-            this.panel4 = new System.Windows.Forms.Panel();
-            this.panel5 = new System.Windows.Forms.Panel();
-            this.panel6 = new System.Windows.Forms.Panel();
+            this.SVSquare = new System.Windows.Forms.Panel();
+            this.CursorHSI = new System.Windows.Forms.PictureBox();
             this.previewPanel.SuspendLayout();
             this.gpPenWidth.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pboxPenWidthIndicator)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.DashStyleGrp.SuspendLayout();
+            this.SVSquare.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.CursorHSI)).BeginInit();
             this.SuspendLayout();
             // 
             // lightnessColorSlider
             // 
-            this.lightnessColorSlider.Location = new System.Drawing.Point(203, 12);
+            this.lightnessColorSlider.Location = new System.Drawing.Point(12, 191);
             this.lightnessColorSlider.Name = "lightnessColorSlider";
-            this.lightnessColorSlider.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.lightnessColorSlider.Size = new System.Drawing.Size(33, 182);
+            this.lightnessColorSlider.Size = new System.Drawing.Size(192, 28);
             this.lightnessColorSlider.TabIndex = 27;
             // 
             // screenColorPicker
             // 
             this.screenColorPicker.Color = System.Drawing.Color.Black;
             this.screenColorPicker.Cursor = System.Windows.Forms.Cursors.Default;
-            this.screenColorPicker.Location = new System.Drawing.Point(120, 291);
+            this.screenColorPicker.Location = new System.Drawing.Point(93, 303);
             this.screenColorPicker.Name = "screenColorPicker";
             this.screenColorPicker.Size = new System.Drawing.Size(84, 65);
             this.screenColorPicker.Zoom = 6;
@@ -89,17 +92,18 @@
             // colorEditor
             // 
             this.colorEditor.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.colorEditor.Location = new System.Drawing.Point(319, 12);
+            this.colorEditor.Location = new System.Drawing.Point(418, 12);
             this.colorEditor.Name = "colorEditor";
-            this.colorEditor.Size = new System.Drawing.Size(261, 236);
+            this.colorEditor.Size = new System.Drawing.Size(243, 236);
             this.colorEditor.TabIndex = 23;
+            this.colorEditor.ColorChanged += new System.EventHandler(this.colorEditor_ColorChanged);
             // 
             // colorGrid
             // 
             this.colorGrid.AutoAddColors = false;
             this.colorGrid.CellBorderStyle = Cyotek.Windows.Forms.ColorCellBorderStyle.None;
             this.colorGrid.EditMode = Cyotek.Windows.Forms.ColorEditingMode.Both;
-            this.colorGrid.Location = new System.Drawing.Point(12, 201);
+            this.colorGrid.Location = new System.Drawing.Point(12, 225);
             this.colorGrid.Name = "colorGrid";
             this.colorGrid.Padding = new System.Windows.Forms.Padding(0);
             this.colorGrid.Palette = Cyotek.Windows.Forms.ColorPalette.Paint;
@@ -113,7 +117,7 @@
             // 
             this.previewPanel.BackgroundImage = global::gInk.Properties.Resources.cellbackground;
             this.previewPanel.Controls.Add(this.gpPenWidth);
-            this.previewPanel.Location = new System.Drawing.Point(319, 291);
+            this.previewPanel.Location = new System.Drawing.Point(395, 291);
             this.previewPanel.Name = "previewPanel";
             this.previewPanel.Size = new System.Drawing.Size(160, 53);
             this.previewPanel.TabIndex = 26;
@@ -149,7 +153,7 @@
             // CancelBtn
             // 
             this.CancelBtn.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.CancelBtn.Location = new System.Drawing.Point(502, 370);
+            this.CancelBtn.Location = new System.Drawing.Point(578, 370);
             this.CancelBtn.Name = "CancelBtn";
             this.CancelBtn.Size = new System.Drawing.Size(75, 23);
             this.CancelBtn.TabIndex = 28;
@@ -159,7 +163,7 @@
             // OkBtn
             // 
             this.OkBtn.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.OkBtn.Location = new System.Drawing.Point(382, 370);
+            this.OkBtn.Location = new System.Drawing.Point(458, 370);
             this.OkBtn.Name = "OkBtn";
             this.OkBtn.Size = new System.Drawing.Size(75, 24);
             this.OkBtn.TabIndex = 29;
@@ -178,7 +182,7 @@
             // pictureBox1
             // 
             this.pictureBox1.Image = global::gInk.Properties.Resources.eyedropper;
-            this.pictureBox1.Location = new System.Drawing.Point(73, 291);
+            this.pictureBox1.Location = new System.Drawing.Point(46, 303);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(41, 35);
             this.pictureBox1.TabIndex = 31;
@@ -187,7 +191,7 @@
             // FadingCB
             // 
             this.FadingCB.AutoSize = true;
-            this.FadingCB.Location = new System.Drawing.Point(319, 254);
+            this.FadingCB.Location = new System.Drawing.Point(458, 254);
             this.FadingCB.Name = "FadingCB";
             this.FadingCB.Size = new System.Drawing.Size(58, 17);
             this.FadingCB.TabIndex = 32;
@@ -218,11 +222,56 @@
             this.DashStyleGrp.Controls.Add(this.StyleDashDotRd);
             this.DashStyleGrp.Controls.Add(this.StyleDashRd);
             this.DashStyleGrp.Controls.Add(this.StyleStrokeRd);
-            this.DashStyleGrp.Location = new System.Drawing.Point(485, 254);
+            this.DashStyleGrp.Location = new System.Drawing.Point(561, 254);
             this.DashStyleGrp.Name = "DashStyleGrp";
             this.DashStyleGrp.Size = new System.Drawing.Size(100, 100);
             this.DashStyleGrp.TabIndex = 34;
             this.DashStyleGrp.TabStop = false;
+            // 
+            // panel6
+            // 
+            this.panel6.BackgroundImage = global::gInk.Properties.Resources.DashStyleDashDotDot;
+            this.panel6.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.panel6.Location = new System.Drawing.Point(67, 77);
+            this.panel6.Name = "panel6";
+            this.panel6.Size = new System.Drawing.Size(25, 12);
+            this.panel6.TabIndex = 37;
+            // 
+            // panel5
+            // 
+            this.panel5.BackgroundImage = global::gInk.Properties.Resources.DashStyleDashDot;
+            this.panel5.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.panel5.Location = new System.Drawing.Point(22, 77);
+            this.panel5.Name = "panel5";
+            this.panel5.Size = new System.Drawing.Size(25, 12);
+            this.panel5.TabIndex = 37;
+            // 
+            // panel4
+            // 
+            this.panel4.BackgroundImage = global::gInk.Properties.Resources.DashStyleDot;
+            this.panel4.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.panel4.Location = new System.Drawing.Point(67, 49);
+            this.panel4.Name = "panel4";
+            this.panel4.Size = new System.Drawing.Size(25, 12);
+            this.panel4.TabIndex = 37;
+            // 
+            // panel3
+            // 
+            this.panel3.BackgroundImage = global::gInk.Properties.Resources.DashStyleDash;
+            this.panel3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.panel3.Location = new System.Drawing.Point(22, 49);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(25, 12);
+            this.panel3.TabIndex = 39;
+            // 
+            // panel2
+            // 
+            this.panel2.BackgroundImage = global::gInk.Properties.Resources.DashStyleSolid;
+            this.panel2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.panel2.Location = new System.Drawing.Point(67, 20);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(25, 12);
+            this.panel2.TabIndex = 36;
             // 
             // panel1
             // 
@@ -283,50 +332,28 @@
             this.StyleDashRd.TabStop = true;
             this.StyleDashRd.UseVisualStyleBackColor = true;
             // 
-            // panel2
+            // SVSquare
             // 
-            this.panel2.BackgroundImage = global::gInk.Properties.Resources.DashStyleSolid;
-            this.panel2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.panel2.Location = new System.Drawing.Point(67, 20);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(25, 12);
-            this.panel2.TabIndex = 36;
+            this.SVSquare.Controls.Add(this.CursorHSI);
+            this.SVSquare.Location = new System.Drawing.Point(210, 34);
+            this.SVSquare.Name = "SVSquare";
+            this.SVSquare.Size = new System.Drawing.Size(200, 200);
+            this.SVSquare.TabIndex = 35;
+            this.SVSquare.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SVSquare_MouseMove);
+            this.SVSquare.MouseMove += new System.Windows.Forms.MouseEventHandler(this.SVSquare_MouseMove);
             // 
-            // panel3
+            // CursorHSI
             // 
-            this.panel3.BackgroundImage = global::gInk.Properties.Resources.DashStyleDash;
-            this.panel3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.panel3.Location = new System.Drawing.Point(22, 49);
-            this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(25, 12);
-            this.panel3.TabIndex = 39;
-            // 
-            // panel4
-            // 
-            this.panel4.BackgroundImage = global::gInk.Properties.Resources.DashStyleDot;
-            this.panel4.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.panel4.Location = new System.Drawing.Point(67, 49);
-            this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(25, 12);
-            this.panel4.TabIndex = 37;
-            // 
-            // panel5
-            // 
-            this.panel5.BackgroundImage = global::gInk.Properties.Resources.DashStyleDashDot;
-            this.panel5.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.panel5.Location = new System.Drawing.Point(22, 77);
-            this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(25, 12);
-            this.panel5.TabIndex = 37;
-            // 
-            // panel6
-            // 
-            this.panel6.BackgroundImage = global::gInk.Properties.Resources.DashStyleDashDotDot;
-            this.panel6.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.panel6.Location = new System.Drawing.Point(67, 77);
-            this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(25, 12);
-            this.panel6.TabIndex = 37;
+            this.CursorHSI.BackColor = System.Drawing.Color.Transparent;
+            this.CursorHSI.BackgroundImage = global::gInk.Properties.Resources.cursorHSI;
+            this.CursorHSI.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.CursorHSI.Location = new System.Drawing.Point(87, 105);
+            this.CursorHSI.Name = "CursorHSI";
+            this.CursorHSI.Size = new System.Drawing.Size(9, 9);
+            this.CursorHSI.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.CursorHSI.TabIndex = 0;
+            this.CursorHSI.TabStop = false;
+            this.CursorHSI.MouseMove += new System.Windows.Forms.MouseEventHandler(this.CursorHSI_MouseMove);
             // 
             // PenModifyDlg
             // 
@@ -334,7 +361,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.CancelBtn;
-            this.ClientSize = new System.Drawing.Size(595, 402);
+            this.ClientSize = new System.Drawing.Size(673, 402);
+            this.Controls.Add(this.SVSquare);
             this.Controls.Add(this.DashStyleGrp);
             this.Controls.Add(this.FadingCB);
             this.Controls.Add(this.pictureBox1);
@@ -356,6 +384,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.DashStyleGrp.ResumeLayout(false);
             this.DashStyleGrp.PerformLayout();
+            this.SVSquare.ResumeLayout(false);
+            this.SVSquare.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.CursorHSI)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -389,5 +420,7 @@
         private System.Windows.Forms.Panel panel4;
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Panel SVSquare;
+        private System.Windows.Forms.PictureBox CursorHSI;
     }
 }
