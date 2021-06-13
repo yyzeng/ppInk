@@ -1520,15 +1520,22 @@ namespace gInk
             return st1;
         }
 
+        public double ArrowVarLen()
+        {
+            return Root.ArrowLen * Math.Max(.5, Math.Pow(IC.DefaultDrawingAttributes.Width / Root.PenWidthNormal,.7));
+        }
+
         private Stroke AddArrowStroke(int CursorX0, int CursorY0, int CursorX, int CursorY)
         // arrow at starting point
         {
             Point[] pts = new Point[5];
             double theta = Math.Atan2(CursorY - CursorY0, CursorX - CursorX0);
 
-            pts[0] = new Point((int)(CursorX0 + Math.Cos(theta + Root.ArrowAngle) * Root.ArrowLen), (int)(CursorY0 + Math.Sin(theta + Root.ArrowAngle) * Root.ArrowLen));
+            double l = ArrowVarLen();
+
+            pts[0] = new Point((int)(CursorX0 + Math.Cos(theta + Root.ArrowAngle) * l), (int)(CursorY0 + Math.Sin(theta + Root.ArrowAngle) * l));
             pts[1] = new Point(CursorX0, CursorY0);
-            pts[2] = new Point((int)(CursorX0 + Math.Cos(theta - Root.ArrowAngle) * Root.ArrowLen), (int)(CursorY0 + Math.Sin(theta - Root.ArrowAngle) * Root.ArrowLen));
+            pts[2] = new Point((int)(CursorX0 + Math.Cos(theta - Root.ArrowAngle) * l), (int)(CursorY0 + Math.Sin(theta - Root.ArrowAngle) * l));
             pts[3] = new Point(CursorX0, CursorY0);
             pts[4] = new Point(CursorX, CursorY);
 
@@ -2538,9 +2545,7 @@ namespace gInk
         {
             int j;
             Point pt, pt1;
-            Double sum = 0.0F;
-            Double ang = Double.NaN;
-            string str = "";
+            Double sum = 0.0F;            
 
             pt = st.GetPoint(0);
             j = st.GetPoints().Length;
