@@ -173,7 +173,7 @@ namespace gInk
         public string CloseOnSnap = "blankonly";
         public bool AlwaysHideToolbar = false;
         public float ToolbarHeight = 0.06f;
-        public bool AltAsOneCommand = true;
+        public int AltAsOneCommand = 2;
 
         public int CursorX, CursorY;
         public int CursorX0 = int.MinValue, CursorY0 = int.MinValue;
@@ -975,10 +975,12 @@ namespace gInk
                             ChangeLanguage(sPara);
                             break;
                         case "ALT_AS_TEMPORARY_COMMAND":
-                            if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
-                                AltAsOneCommand = true;
+                            if (sPara.ToUpper() == "TRUE" || sPara.ToUpper() == "ON")
+                                AltAsOneCommand = 2;
+                            if (int.TryParse(sPara,out tempi))
+                                AltAsOneCommand = tempi;
                             else
-                                AltAsOneCommand = false;
+                                AltAsOneCommand = 0;
                             break;
                         case "HOTKEY_GLOBAL":
                             Hotkey_Global.Parse(sPara);
@@ -1618,8 +1620,10 @@ namespace gInk
 					switch (sName)
 					{
                         case "ALT_AS_TEMPORARY_COMMAND":
-                            if (AltAsOneCommand)
+                            if (AltAsOneCommand == 2)
                                 sPara = "True";
+                            else if (AltAsOneCommand == 1)
+                                sPara = "1";
                             else
                                 sPara = "False";
                             break;

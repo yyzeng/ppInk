@@ -2726,7 +2726,7 @@ namespace gInk
             btClip3.FlatAppearance.BorderSize = btClipSel == btClip3.Tag ? 3 : 0;
             btClipSel = null;
 
-            if (AltKeyPressed())
+            if (AltKeyPressed() && Root.AltAsOneCommand>=1)
             {
                 //if (SavedTool <= Tools.Invalid || tool != Root.ToolSelected )
                 if (SavedTool <= Tools.Invalid)
@@ -2963,7 +2963,7 @@ namespace gInk
                                                 //Console.WriteLine(t.ToString());
             if (pen == -4)
             {
-                if (AltKeyPressed() && SavedPen < 0)
+                if (AltKeyPressed() && Root.AltAsOneCommand>=1 && SavedPen < 0 )
                 {
                     SavedPen = LastPenSelected;
                 }
@@ -3005,7 +3005,7 @@ namespace gInk
             }
             else if (pen == -3)
             {
-                if (AltKeyPressed() && SavedPen < 0)
+                if (AltKeyPressed() && Root.AltAsOneCommand>=1 && SavedPen < 0)
                 {
                     SavedPen = LastPenSelected;
                 }
@@ -3031,7 +3031,7 @@ namespace gInk
             }
             else if (pen == -2)
             {
-                if (AltKeyPressed() && SavedPen < 0)
+                if (AltKeyPressed() && Root.AltAsOneCommand>=1 && SavedPen < 0)
                 {
                     SavedPen = LastPenSelected;
                 }
@@ -3050,7 +3050,7 @@ namespace gInk
             }
             else if (pen == -1)
             {
-                if (AltKeyPressed() && SavedPen < 0)
+                if (AltKeyPressed() && Root.AltAsOneCommand>=1 && SavedPen < 0)
                 {
                     SavedPen = LastPenSelected;
                 }
@@ -3096,7 +3096,7 @@ namespace gInk
             {
                 // clearing selection or not depends on tools :  if pen is selected, action will be defined in SelectTool
                 btPan.BackgroundImage = getImgFromDiskOrRes("pan", ImageExts);
-                if (AltKeyPressed() && pen != LastPenSelected && SavedPen < 0)
+                if (AltKeyPressed() && Root.AltAsOneCommand>=1 && pen != LastPenSelected && SavedPen < 0)
                 {
                     SavedPen = LastPenSelected;
                 }
@@ -4119,7 +4119,7 @@ namespace gInk
             }
             //Console.WriteLine("process Keys");
             //if (!AltKeyPressed() && !Root.PointerMode)//&& (SavedPen>=0 || SavedTool>=0))
-            if (!AltKeyPressed())
+            if (!AltKeyPressed() && Root.AltAsOneCommand>=1)
             {
                 if (SavedPen >= 0)
                 {
@@ -4176,7 +4176,7 @@ namespace gInk
             {
                 bool control = ((short)(GetKeyState(VK_LCONTROL) | GetKeyState(VK_RCONTROL)) & 0x8000) == 0x8000;
                 //bool alt = (((short)(GetKeyState(VK_LMENU) | GetKeyState(VK_RMENU)) & 0x8000) == 0x8000);
-                int alt = Root.AltAsOneCommand ? -1 : (AltKeyPressed() ? 1 : 0);
+                int alt = Root.AltAsOneCommand==2 ? -1 : (AltKeyPressed() ? 1 : 0);
                 bool shift = ((short)(GetKeyState(VK_LSHIFT) | GetKeyState(VK_RSHIFT)) & 0x8000) == 0x8000;
                 bool win = ((short)(GetKeyState(VK_LWIN) | GetKeyState(VK_RWIN)) & 0x8000) == 0x8000;
 
@@ -5343,7 +5343,7 @@ namespace gInk
                 i = Tools.ClipArt;
             }
             int f = -1;
-            if (!AltKeyPressed() & (Root.PointerMode || Root.EraserEnabled || Root.PanMode || Root.LassoMode) & SavedTool != -1) 
+            if (!AltKeyPressed() && Root.AltAsOneCommand>=1 & (Root.PointerMode || Root.EraserEnabled || Root.PanMode || Root.LassoMode) & SavedTool != -1) 
             {
                 SavedPen = -1;
                 SavedTool = -1;
