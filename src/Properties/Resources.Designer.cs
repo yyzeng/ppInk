@@ -111,6 +111,16 @@ namespace gInk.Properties {
         }
         
         /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap cursorHSI {
+            get {
+                object obj = ResourceManager.GetObject("cursorHSI", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Icon semblable à (Icône).
         /// </summary>
         public static System.Drawing.Icon cursorsnap {
@@ -387,6 +397,26 @@ namespace gInk.Properties {
             get {
                 object obj = ResourceManager.GetObject("icon_white", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap lasso {
+            get {
+                object obj = ResourceManager.GetObject("lasso", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap lasso_act {
+            get {
+                object obj = ResourceManager.GetObject("lasso_act", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         

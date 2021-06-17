@@ -251,19 +251,25 @@ namespace gInk
 
 			for (int p = 0; p < Root.MaxPenCount; p++)
 			{
-				int top = p * (hiPan.Top - hiEraser.Top) + hiEraser.Top;
-				lbHotkeyPens[p].Left = 20;
+				//int top = p * (hiEraser.Top - hiLasso.Top) + hiLasso.Top;
+				lbHotkeyPens[p].Left = lbHkColorEdit.Left;
 				lbHotkeyPens[p].Width = 80;
-				lbHotkeyPens[p].Top = top;
+				lbHotkeyPens[p].Top = p * (lbHkEraser.Top - lbHkLasso.Top) + lbHkLasso.Top;
 
 				hiPens[p].Hotkey = Root.Hotkey_Pens[p];
-				hiPens[p].Left = 100;
-				hiPens[p].Width = 120;
-				hiPens[p].Top = top;
+				hiPens[p].Left = hiColorEdit.Left;
+				hiPens[p].Width = hiColorEdit.Width;
+				hiPens[p].Top = p * (hiEraser.Top - hiLasso.Top) + hiLasso.Top;
 			}
 
-            AltAsOneCommandCb.Checked = Root.AltAsOneCommand;
-
+            //AltAsOneCommandCb.Checked = Root.AltAsOneCommand;
+            if (Root.AltAsOneCommand == 2)
+                AltAsOneCommandCb.CheckState = CheckState.Checked;
+            else if (Root.AltAsOneCommand == 1)
+                AltAsOneCommandCb.CheckState = CheckState.Indeterminate;
+            else
+                AltAsOneCommandCb.CheckState = CheckState.Unchecked;
+                       
             SnapInPointerHoldCb.SelectedIndex = (int)(Root.SnapInPointerHoldKey);
             SnapInPointerTwiceCb.SelectedIndex = (int)(Root.SnapInPointerPressTwiceKey);
 
@@ -303,6 +309,7 @@ namespace gInk
             hiColorPickup.Hotkey = Root.Hotkey_ColorPickup;
             hiColorEdit.Hotkey = Root.Hotkey_ColorEdit;
             hiLineStyle.Hotkey = Root.Hotkey_LineStyle;
+            hiLasso.Hotkey = Root.Hotkey_Lasso;
 
             WsUrlTxt.Text = Root.ObsUrl;
             WsPwdTxt.Text = Root.ObsPwd;
@@ -441,6 +448,7 @@ namespace gInk
 
             this.lbHkColorPickup.Text = Root.Local.OptionsHotkeysColorPicker;
             this.lbHkColorEdit.Text = Root.Local.OptionsHotkeysColorEdit;
+            this.lbHkLasso.Text = shortTxt(Root.Local.ButtonNameLasso);
 
             this.lbGlobalHotkey.Text = Root.Local.OptionsHotkeysglobal;
             this.cbAllowHotkeyInPointer.Text = Root.Local.OptionsHotkeysEnableinpointer;
@@ -813,11 +821,6 @@ namespace gInk
         private void DefArrStartCb_CheckedChanged(object sender, EventArgs e)
         {
             Root.DefaultArrow_start = DefArrStartCb.Checked;
-        }
-
-        private void AltAsOneCommandCb_CheckedChanged(object sender, EventArgs e)
-        {
-            Root.AltAsOneCommand = AltAsOneCommandCb.Checked;
         }
 
         private void OpenIntoSnapCb_CheckedChanged(object sender, EventArgs e)
@@ -1215,6 +1218,36 @@ namespace gInk
         private void SwapSnapBehaviorsCb_CheckedChanged(object sender, EventArgs e)
         {
             Root.SwapSnapsBehaviors = !SwapSnapsBehviorsCb.Checked;
+        }
+
+        private void AltAsOneCommandCb_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+                AltAsOneCommandCb.CheckState = CheckState.Indeterminate;
+            //else
+            //    AltAsOneCommandCb.Checked = !AltAsOneCommandCb.Checked;
+        }
+
+        private void AltAsOneCommandCb_CheckStateChanged(object sender, EventArgs e)
+        {
+           switch(AltAsOneCommandCb.CheckState)
+           {
+                case CheckState.Checked:
+                    Root.AltAsOneCommand = 2;
+                    break;
+                case CheckState.Indeterminate:
+                    Root.AltAsOneCommand = 1;
+                    break;
+                case CheckState.Unchecked:
+                    Root.AltAsOneCommand = 0;
+                    break;
+           }
+        }
+
+        private void AltAsOneCommandCb_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+                AltAsOneCommandCb.CheckState = CheckState.Indeterminate;
         }
     }
 }

@@ -46,6 +46,7 @@ namespace gInk
         public string SaveStroke = "Save Strokes\n(long =opendialog ; short = {0})";
         public string LoadStroke = "Load Strokes\n(long =opendialog ; short = {0})";
         public string ButtonNameZoom = "Zoom";
+        public string ButtonNameLasso = "Lasso Selection(Left=Add;Right=Remove;Button=Reset Selection)";
 
         public string QuestionClipArtUpdate = "Cliparts seem to have been updated during edition.\nDo you want to update le default list?";
         public string ButtonActivateDebug = "Debug Window";
@@ -85,6 +86,7 @@ namespace gInk
         public string OptionMeasureAngle = "Angle CounterClockwise";
         public string FormatLength = "Length : {0:N1} {1}";
         public string FormatAngle = "Angle : {0:N0}°";
+        public string FormaTotalLength = "Total({2}) : {0:N1} {1}";
 
         public string ButtonOkText = "&OK";
         public string ButtonCancelText = "&Cancel";

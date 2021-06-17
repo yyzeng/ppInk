@@ -106,6 +106,7 @@ namespace gInk
     {
         public Local Local = new Local();
         public const int MaxPenCount = 10;
+        public const int LassoPercent = 80;
 
         //public Guid TYPE_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 0, 0);
         public static Guid TEXT_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 0, 1);
@@ -122,6 +123,7 @@ namespace gInk
         public static Guid ISDELETION_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 1, 0);
         public static Guid ISSTROKE_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 1, 1);
         public static Guid ISTAG_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 1, 2);
+        public static Guid ISLASSO_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 1, 3);
         //not yet used : 
         //public Guid ISRECT_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 1, 2);
         //public Guid ISOVAL_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 1, 3);
@@ -171,7 +173,7 @@ namespace gInk
         public string CloseOnSnap = "blankonly";
         public bool AlwaysHideToolbar = false;
         public float ToolbarHeight = 0.06f;
-        public bool AltAsOneCommand = true;
+        public int AltAsOneCommand = 2;
 
         public int CursorX, CursorY;
         public int CursorX0 = int.MinValue, CursorY0 = int.MinValue;
@@ -232,6 +234,7 @@ namespace gInk
         public Hotkey Hotkey_ColorPickup = new Hotkey();
         public Hotkey Hotkey_ColorEdit = new Hotkey();
         public Hotkey Hotkey_LineStyle = new Hotkey();
+        public Hotkey Hotkey_Lasso = new Hotkey();
 
         public Hotkey Hotkey_LoadStrokes = new Hotkey();
         public Hotkey Hotkey_SaveStrokes = new Hotkey();
@@ -256,6 +259,7 @@ namespace gInk
 		public bool MouseMovedUnderSnapshotDragging = false; // used to pause re-drawing when mouse is not moving during dragging to take a screenshot
         public int PenWidth_Delta = 5;
 
+        public bool LassoMode = false;
         public bool PanMode = false;
 		public bool InkVisible = true;
         public int MagneticRadius= MIN_MAGNETIC;        // Magnet Radius; <=0 means off;
@@ -971,10 +975,12 @@ namespace gInk
                             ChangeLanguage(sPara);
                             break;
                         case "ALT_AS_TEMPORARY_COMMAND":
-                            if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
-                                AltAsOneCommand = true;
+                            if (sPara.ToUpper() == "TRUE" || sPara.ToUpper() == "ON")
+                                AltAsOneCommand = 2;
+                            if (int.TryParse(sPara,out tempi))
+                                AltAsOneCommand = tempi;
                             else
-                                AltAsOneCommand = false;
+                                AltAsOneCommand = 0;
                             break;
                         case "HOTKEY_GLOBAL":
                             Hotkey_Global.Parse(sPara);
@@ -1080,6 +1086,9 @@ namespace gInk
                             break;
                         case "HOTKEY_SAVESTROKES":
                             Hotkey_SaveStrokes.Parse(sPara);
+                            break;
+                        case "HOTKEY_LASSO":
+                            Hotkey_Lasso.Parse(sPara);
                             break;
 
                         case "PENS_ON_TWO_LINES":
@@ -1611,8 +1620,10 @@ namespace gInk
 					switch (sName)
 					{
                         case "ALT_AS_TEMPORARY_COMMAND":
-                            if (AltAsOneCommand)
+                            if (AltAsOneCommand == 2)
                                 sPara = "True";
+                            else if (AltAsOneCommand == 1)
+                                sPara = "1";
                             else
                                 sPara = "False";
                             break;
@@ -1724,9 +1735,10 @@ namespace gInk
                         case "HOTKEY_SAVESTROKES":
                             sPara = Hotkey_SaveStrokes.ToStringInvariant();
                             break;
-
-
-
+                        case "HOTKEY_LASSO":
+                            sPara = Hotkey_Lasso.ToStringInvariant();
+                            break;
+                                                       
                         case "PENS_ON_TWO_LINES":
                             sPara = PensOnTwoLines? "True" : "False";
                             break;
@@ -1944,13 +1956,13 @@ namespace gInk
                                 sPara = " ";
                             break;
                         case "IMAGESTAMP1":
-                            sPara = MakeRelativePath(Global.ProgramFolder, ImageStamp1);
+                            sPara = MakeRelativePath(Global.ProgramFolder, ImageStamp1).Replace('\\', '/');
                             break;
                         case "IMAGESTAMP2":
-                            sPara = MakeRelativePath(Global.ProgramFolder, ImageStamp2);
+                            sPara = MakeRelativePath(Global.ProgramFolder, ImageStamp2).Replace('\\', '/');
                             break;
                         case "IMAGESTAMP3":
-                            sPara = MakeRelativePath(Global.ProgramFolder, ImageStamp3);
+                            sPara = MakeRelativePath(Global.ProgramFolder, ImageStamp3).Replace('\\', '/');
                             break;
                         case "TOOLBAR_DIRECTION":
                             if (ToolbarOrientation == Orientation.toLeft)

@@ -81,6 +81,7 @@ namespace gInk
         //public Bitmap[] image_pen_act;
         public Bitmap image_eraser_act, image_eraser;
         public Bitmap image_visible_not, image_visible;
+        public Bitmap image_lasso_act, image_lasso;
         public System.Windows.Forms.Cursor cursorred, cursorsnap, cursorerase;
         public System.Windows.Forms.Cursor cursortip;
         public System.Windows.Forms.Cursor tempArrowCursor = null;
@@ -137,6 +138,9 @@ namespace gInk
         public Button[] Btn_SubTools;
 
         public ToolTip MetricToolTip = new ToolTip();
+
+        public Strokes StrokesSelection,InprogressSelection;
+        public bool AppendToSelection;
 
         // http://www.csharp411.com/hide-form-from-alttab/
         protected override CreateParams CreateParams
@@ -418,6 +422,8 @@ namespace gInk
             IC.MouseWheel += IC_MouseWheel;
             IC.Stroke += IC_Stroke;
 
+            StrokesSelection =  IC.Ink.CreateStrokes();
+
             foreach (Control ct in gpButtons.Controls)
             {
                 if (ct.GetType() == typeof(Button))
@@ -445,7 +451,9 @@ namespace gInk
 
             Root.Snapping = 0;
             Root.ColorPickerMode = false;
+            StrokesSelection.Clear();
             FadingList.Clear();
+
             if (Root.WindowRect.Width <= 0 || Root.WindowRect.Height <= 0)
             {
                 this.Left = SystemInformation.VirtualScreen.Left;
@@ -530,7 +538,7 @@ namespace gInk
             if (Root.ToolbarOrientation <= Orientation.Horizontal)
             {
                 gpButtons.Height = dim;
-                gpButtons.Width = (int)((dim1 * .5 + dim3) + (penSec + (Root.ToolsEnabled ? (6 * dim4s + dim4s) : 0) + (Root.EraserEnabled ? dim4 : 0) + (Root.PanEnabled ? dim4 : 0) + (Root.PointerEnabled ? dim4 : 0)
+                gpButtons.Width = (int)((dim1 * .5 + dim3) + (penSec + (Root.ToolsEnabled ? (6 * dim4s + dim4s) : 0) + (Root.EraserEnabled ? dim4 : 0) + (Root.PanEnabled ? dim4s : 0) + (Root.PointerEnabled ? dim4 : 0)
                                                                      + (Root.PenWidthEnabled ? dim4 : 0) + (Root.InkVisibleEnabled ? dim4 : 0) + (Root.SnapEnabled ? dim4 : 0)
                                                                      + (Root.UndoEnabled ? dim4 : 0) + (Root.ClearEnabled ? dim4 : 0) + (Root.LoadSaveEnabled ? dim4s : 0)
                                                                      + ((Root.VideoRecordMode != VideoRecordMode.NoVideo) ? dim4 : 0)
@@ -539,7 +547,7 @@ namespace gInk
             else //Vertical
             {
                 gpButtons.Width = dim;
-                gpButtons.Height = (int)((dim1 * .5 + dim3) + (penSec + (Root.ToolsEnabled ? (6 * dim4s + dim4s) : 0) + (Root.EraserEnabled ? dim4 : 0) + (Root.PanEnabled ? dim4 : 0) + (Root.PointerEnabled ? dim4 : 0)
+                gpButtons.Height = (int)((dim1 * .5 + dim3) + (penSec + (Root.ToolsEnabled ? (6 * dim4s + dim4s) : 0) + (Root.EraserEnabled ? dim4 : 0) + (Root.PanEnabled ? dim4s : 0) + (Root.PointerEnabled ? dim4 : 0)
                                                                       + (Root.PenWidthEnabled ? dim4 : 0) + (Root.InkVisibleEnabled ? dim4 : 0) + (Root.SnapEnabled ? dim4 : 0)
                                                                       + (Root.UndoEnabled ? dim4 : 0) + (Root.ClearEnabled ? dim4 : 0) + (Root.LoadSaveEnabled ? dim4s : 0)
                                                                       + ((Root.VideoRecordMode != VideoRecordMode.NoVideo) ? dim4 : 0)
@@ -750,15 +758,26 @@ namespace gInk
 
             if (Root.PanEnabled)
             {
-                btPan.Height = dim1;
-                btPan.Width = dim1;
+                btLasso.Height = dim1s;
+                btLasso.Width = dim1s;
+                btLasso.Visible = true;
+                image_lasso_act = getImgFromDiskOrRes("lasso_act", ImageExts);
+                image_lasso = getImgFromDiskOrRes("lasso", ImageExts);
+                btLasso.BackgroundImage = image_lasso;
+                SetButtonPosition(prev, btLasso, dim3);
+                prev = btLasso;
+
+                btPan.Height = dim1s;
+                btPan.Width = dim1s;
                 btPan.Visible = true;
                 btPan.BackgroundImage = getImgFromDiskOrRes("pan", ImageExts);
-                SetButtonPosition(prev, btPan, dim3);
-                prev = btPan;
+                SetSmallButtonNext(prev, btPan, dim2s);
             }
             else
+            {
+                btLasso.Visible = false;
                 btPan.Visible = false;
+            }
 
             if (Root.ToolsEnabled)
             {
@@ -811,6 +830,7 @@ namespace gInk
 
             if (Root.InkVisibleEnabled)
             {
+                btInkVisible.Visible = true;
                 btInkVisible.Height = dim1;
                 btInkVisible.Width = dim1;
                 image_visible_not = getImgFromDiskOrRes("visible_not", ImageExts);
@@ -824,6 +844,7 @@ namespace gInk
 
             if (Root.SnapEnabled)
             {
+                btSnap.Visible = true;
                 btSnap.Height = dim1;
                 btSnap.Width = dim1;
                 btSnap.BackgroundImage = getImgFromDiskOrRes("snap", ImageExts); ;
@@ -835,6 +856,7 @@ namespace gInk
 
             if (Root.UndoEnabled)
             {
+                btUndo.Visible = true;
                 btUndo.Height = dim1;
                 btUndo.Width = dim1;
                 btUndo.BackgroundImage = getImgFromDiskOrRes("undo", ImageExts);
@@ -846,6 +868,7 @@ namespace gInk
 
             if (Root.ClearEnabled)
             {
+                btClear.Visible = true;
                 btClear.Height = dim1;
                 btClear.Width = dim1;
                 btClear.BackgroundImage = getImgFromDiskOrRes("garbage", ImageExts);
@@ -1081,6 +1104,7 @@ namespace gInk
             this.toolTip.SetToolTip(this.btClip3, Root.Local.ButtonNameClipArt + "-3 (" + Root.Hotkey_ClipArt3.ToString() + ")");
             this.toolTip.SetToolTip(this.btSave, String.Format(Root.Local.SaveStroke, ""));
             this.toolTip.SetToolTip(this.btLoad, String.Format(Root.Local.LoadStroke, ""));
+            this.toolTip.SetToolTip(this.btLasso, Root.Local.ButtonNameLasso + " (" + Root.Hotkey_Lasso.ToString() + ")");
 
             if (Root.ToolbarOrientation <= Orientation.Horizontal)
             {
@@ -1496,15 +1520,22 @@ namespace gInk
             return st1;
         }
 
+        public double ArrowVarLen()
+        {
+            return Root.ArrowLen * Math.Max(.5, Math.Pow(IC.DefaultDrawingAttributes.Width / Root.PenWidthNormal,.7));
+        }
+
         private Stroke AddArrowStroke(int CursorX0, int CursorY0, int CursorX, int CursorY)
         // arrow at starting point
         {
             Point[] pts = new Point[5];
             double theta = Math.Atan2(CursorY - CursorY0, CursorX - CursorX0);
 
-            pts[0] = new Point((int)(CursorX0 + Math.Cos(theta + Root.ArrowAngle) * Root.ArrowLen), (int)(CursorY0 + Math.Sin(theta + Root.ArrowAngle) * Root.ArrowLen));
+            double l = ArrowVarLen();
+
+            pts[0] = new Point((int)(CursorX0 + Math.Cos(theta + Root.ArrowAngle) * l), (int)(CursorY0 + Math.Sin(theta + Root.ArrowAngle) * l));
             pts[1] = new Point(CursorX0, CursorY0);
-            pts[2] = new Point((int)(CursorX0 + Math.Cos(theta - Root.ArrowAngle) * Root.ArrowLen), (int)(CursorY0 + Math.Sin(theta - Root.ArrowAngle) * Root.ArrowLen));
+            pts[2] = new Point((int)(CursorX0 + Math.Cos(theta - Root.ArrowAngle) * l), (int)(CursorY0 + Math.Sin(theta - Root.ArrowAngle) * l));
             pts[3] = new Point(CursorX0, CursorY0);
             pts[4] = new Point(CursorX, CursorY);
 
@@ -1784,7 +1815,7 @@ namespace gInk
         {
             Rectangle r = e.Stroke.GetBoundingBox(BoundingBoxMode.PointsOnly);
             bool HitTouch = Math.Max(r.Width, r.Height) < 2 * e.Stroke.DrawingAttributes.Width;    // To take into account PenWidth extension done by GetBoundingBox
-            Console.WriteLine(string.Format("IC_Stroke X0={0} X0=X{1} / Type{2} / Hit{3}", Root.CursorX0, (Root.CursorX0== Root.CursorX)&&(Root.CursorY0 == Root.CursorY), e.Cursor.Tablet.DeviceKind.ToString(),HitTouch));
+            //Console.WriteLine(string.Format("IC_Stroke X0={0} X0=X{1} / Type{2} / Hit{3}", Root.CursorX0, (Root.CursorX0== Root.CursorX)&&(Root.CursorY0 == Root.CursorY), e.Cursor.Tablet.DeviceKind.ToString(),HitTouch));
             movedStroke = null; // reset the moving object
             Root.FingerInAction = false;        // this is done a little before MouseUp ; but it looks like the one from MouseUp is not always done...
             try { if (e.Stroke.ExtendedProperties.Contains(Root.ISSTROKE_GUID)) e.Stroke.ExtendedProperties.Remove(Root.ISSTROKE_GUID); } catch { } // the ISSTROKE set for drawin
@@ -1862,6 +1893,15 @@ namespace gInk
                     p = Root.FormDisplay.PointToClient(p);
                     Root.CursorX = p.X;
                     Root.CursorY = p.Y;
+                }
+                if(Root.LassoMode)
+                {
+                    Point[] pts = e.Stroke.GetPoints();
+                    if (pts.Length >= 3)
+                    {
+                        InprogressSelection = IC.Ink.HitTest(e.Stroke.GetPoints(), Root.LassoPercent, out _);
+                        InprogressSelection.Remove(e.Stroke);
+                    }
                 }
                 IC.Ink.DeleteStroke(e.Stroke); // the stroke that was just inserted has to be replaced.
 
@@ -1992,7 +2032,8 @@ namespace gInk
                     }
                 }
             }
-            SaveUndoStrokes();
+            if(!Root.LassoMode && !Root.FormCollection.ZoomCapturing)
+                SaveUndoStrokes();
             Root.UponAllDrawingUpdate = true;
             /*Root.FormDisplay.ClearCanvus();
             Root.FormDisplay.DrawStrokes();
@@ -2000,7 +2041,7 @@ namespace gInk
             Root.FormDisplay.UpdateFormDisplay(true);*/
 
             // reset the CursorX0/Y0 : this seems to introduce a wrong interim drawing
-            CurrentMouseButton = MouseButtons.None;
+            //CurrentMouseButton = MouseButtons.None;
             Root.CursorX0 = Int32.MinValue;
             Root.CursorY0 = Int32.MinValue;
             Console.WriteLine("------------------ "+(dbgcpt++).ToString());
@@ -2075,7 +2116,15 @@ namespace gInk
             else if (Root.ToolSelected == Tools.Hand)
                 e.Stroke.ExtendedProperties.Add(Root.ISSTROKE_GUID, true); // we set the ISTROKE_GUID in order to draw the inprogress as a line
             else
-                e.Stroke.ExtendedProperties.Add(Root.ISHIDDEN_GUID, true); // we set the ISTROKE_GUID in order to draw the inprogress as a line
+                e.Stroke.ExtendedProperties.Add(Root.ISHIDDEN_GUID, true); // Others should be hidden.
+
+            if (Root.LassoMode)
+            {
+                e.Stroke.ExtendedProperties.Add(Root.ISLASSO_GUID, true);
+                //ModifyStrokesSelection(AppendToSelection, ref InprogressSelection, StrokesSelection);
+                //Console.WriteLine("StrokesSel " + StrokesSelection.Count.ToString());
+            }
+
 
             if (!Root.InkVisible && Root.Snapping <= 0)
             {
@@ -2119,6 +2168,8 @@ namespace gInk
             }
         }
 
+        private Stroke SavHoveredForSelection;
+
         private void IC_MouseDown(object sender, CancelMouseEventArgs e)
         {
             Console.WriteLine("MouseDown");
@@ -2133,8 +2184,14 @@ namespace gInk
                 Root.gpPenWidthVisible = false;
                 Root.UponSubPanelUpdate = true;
             }
+            if (Root.LassoMode)     // in MouseDown to get it also on short press;
+            {
+                ModifyStrokesSelection(AppendToSelection, ref InprogressSelection, StrokesSelection);
+                //Console.WriteLine("StrokesSel " + StrokesSelection.Count.ToString());
+            }
 
             Root.FingerInAction = true;
+
             if (Root.Snapping == 1)
             {
                 Root.SnappingX = e.X;
@@ -2168,10 +2225,46 @@ namespace gInk
                 Root.CursorY = Root.CursorY0;
             }
 
-            if ((Root.ToolSelected == Tools.Move) || (Root.ToolSelected == Tools.Copy)) // Move
+            SavHoveredForSelection = Root.LassoMode ? Root.StrokeHovered : null;
+
+            if (((Root.ToolSelected == Tools.Move) || (Root.ToolSelected == Tools.Copy)))  // Move
             {
                 float pos;
-                if (NearestStroke(new Point(Root.CursorX, Root.CursorY), true, out movedStroke, out pos, false, true) > Root.PixelToHiMetric(Root.MinMagneticRadius()))
+                if (StrokesSelection.Count > 0)
+                {
+                    movedStroke = null;
+                    //Console.WriteLine("## " + StrokesSelection.Count.ToString() + " / " + IC.Ink.Strokes.Count.ToString());
+                    if (Root.ToolSelected == Tools.Copy)
+                    {
+                        foreach(Stroke s in StrokesSelection) // to ensure no deleted strokes
+                            try
+                            {
+                                float f = s.DrawingAttributes.Width;
+                            }
+                            catch
+                            {
+                                StrokesSelection.Remove(s);
+                            }
+                        Stroke[] lst = new Stroke[StrokesSelection.Count];
+                        for (int i = 0; i < StrokesSelection.Count; i++)
+                        {
+                            lst[i] = Root.FormCollection.IC.Ink.CreateStroke(StrokesSelection[i].GetPoints());
+                            lst[i].DrawingAttributes = StrokesSelection[i].DrawingAttributes.Clone();
+                            foreach (ExtendedProperty prop in StrokesSelection[i].ExtendedProperties)
+                            {
+                                lst[i].ExtendedProperties.Add(prop.Id, prop.Data);
+                            }
+                            Root.FormCollection.IC.Ink.Strokes.Add(lst[i]);
+                        }
+                        StrokesSelection.Clear();
+                        for (int i = 0; i < lst.Length; i++)
+                        {
+                            StrokesSelection.Add(lst[i]);
+                        }
+                    }
+                    //Console.WriteLine("$$ " + StrokesSelection.Count.ToString() + " / " + IC.Ink.Strokes.Count.ToString());
+                }
+                else if (NearestStroke(new Point(Root.CursorX, Root.CursorY), true, out movedStroke, out pos, false, true) > Root.PixelToHiMetric(Root.MinMagneticRadius())) //not hovering a stroke
                     movedStroke = null;
                 else if (Root.ToolSelected == Tools.Copy)
                 {
@@ -2204,7 +2297,7 @@ namespace gInk
                         Root.PickupColor = bmp.GetPixel(0, 0);
                         try
                         {
-                            if (this.Cursor?.Tag != null && (int)IC.Cursor?.Tag == 2)
+                            if (this.Cursor?.Tag != null && (int)this.Cursor?.Tag == 2)
                                 this.Cursor?.Dispose();
                         }
                         catch { }
@@ -2213,19 +2306,43 @@ namespace gInk
                     catch { }
             }
 
+            if (Root.LassoMode && e.Button != MouseButtons.None && IC.Ink.Strokes.Count>0)
+            {
+                AppendToSelection = ((int)e.Button == 1) || (e.Button == MouseButtons.Left);
+                Stroke st = IC.Ink.Strokes[IC.Ink.Strokes.Count - 1];
+                if (st.ExtendedProperties.Contains(Root.ISLASSO_GUID))
+                    try
+                    {
+                        //Point[] pts;
+                        //InprogressSelection = IC.Ink.HitTest(st.GetPoints(), Root.LassoPercent, out pts);
+                    }
+                    catch { }
+            }
+
+
             if (e.Button == MouseButtons.None)
-                if (Root.EraserMode || Root.ToolSelected == Tools.Edit || Root.ToolSelected == Tools.Move || Root.ToolSelected == Tools.Copy)
+            {
+                if (Root.EraserMode || Root.ToolSelected == Tools.Edit || Root.ToolSelected == Tools.Move || Root.ToolSelected == Tools.Copy || Root.LassoMode)
                 {
                     if (NearestStroke(new Point(e.X, e.Y), true, out Root.StrokeHovered, out pos, false) > Root.PixelToHiMetric(Root.MinMagneticRadius()))
                     {
                         Root.StrokeHovered = null;
+                        SavHoveredForSelection = null;
                         MetricToolTip.Hide(this);
+                        return;
+                    }
+                    else if(Root.StrokeHovered?.Id != SavHoveredForSelection?.Id) // I do not know why comparing Objects is not good
+                    {
+                        if (Root.MeasureEnabled)
+                            MetricToolTip.Show(MeasureStroke(Root.StrokeHovered)
+                                               +(Root.LassoMode?("\n"+ MeasureAllStrokes(StrokesSelection,InprogressSelection,Root.StrokeHovered)) :""), this, e.Location.X, e.Location.Y - 80);
                         return;
                     }
                     else
                     {
-                        if(Root.MeasureEnabled)
-                            MetricToolTip.Show(MeasureStroke(Root.StrokeHovered), this, e.Location.X, e.Location.Y -50);
+                        //Console.WriteLine("{0} vs. {1}",Root.StrokeHovered?.Id,SavHoveredForSelection?.Id);
+                        Root.StrokeHovered = null;
+                        MetricToolTip.Hide(this);
                         return;
                     }
                 }
@@ -2234,6 +2351,8 @@ namespace gInk
                     MetricToolTip.Hide(this);
                     return;
                 }
+            }
+
             MetricToolTip.Hide(this);
             //Console.WriteLine("Cursor {0},{1} - {2}", e.X, e.Y, e.Button);
             Root.CursorX = e.X;
@@ -2274,7 +2393,32 @@ namespace gInk
             }
             else if ((Root.ToolSelected == Tools.Move) || (Root.ToolSelected == Tools.Copy))
             {
-                if (movedStroke != null)
+                if (StrokesSelection.Count > 0)
+                {
+                    try
+                    {
+                        StrokesSelection.Move(currentxy.X - LasteXY.X, currentxy.Y - LasteXY.Y);
+                        foreach (Stroke st in StrokesSelection)
+                        {
+                            if (st.ExtendedProperties.Contains(Root.TEXT_GUID))
+                            {
+                                st.ExtendedProperties.Add(Root.TEXTX_GUID, ((int)st.ExtendedProperties[Root.TEXTX_GUID].Data) + (currentxy.X - LasteXY.X));
+                                st.ExtendedProperties.Add(Root.TEXTY_GUID, ((int)st.ExtendedProperties[Root.TEXTY_GUID].Data) + (currentxy.Y - LasteXY.Y));
+                            }
+                            if (st.ExtendedProperties.Contains(Root.IMAGE_X_GUID))
+                            {
+                                Point pt = new Point(st.GetPoint(0).X, st.GetPoint(0).Y);
+                                IC.Renderer.InkSpaceToPixel(Root.FormDisplay.gOneStrokeCanvus, ref pt);
+                                st.ExtendedProperties.Add(Root.IMAGE_X_GUID, pt.X);
+                                st.ExtendedProperties.Add(Root.IMAGE_Y_GUID, pt.Y);
+                            }
+                        }
+                    } catch { }
+                    Root.FormDisplay.ClearCanvus();
+                    Root.FormDisplay.DrawStrokes();
+                    Root.FormDisplay.UpdateFormDisplay(true);
+                }
+                else if (movedStroke != null)
                 {
                     //TODO: ajouter aimantation
                     /*Console.WriteLine(Root.CursorX0.ToString() + " ~ " + Root.CursorY0.ToString());
@@ -2336,12 +2480,28 @@ namespace gInk
                 Root.SnappingRect = new Rectangle(left + this.Left, top + this.Top, width, height);
                 Root.UponTakingSnap = true;
                 ExitSnapping();
-                CurrentMouseButton = MouseButtons.None;
+                //CurrentMouseButton = MouseButtons.None;
             }
             else if (Root.PanMode)
             {
                 SaveUndoStrokes();
             }
+            else if (Root.LassoMode && (SavHoveredForSelection !=null) && (Root.CursorX0 == Int32.MinValue || (Math.Abs(e.X-Root.CursorX0)< Root.MinMagneticRadius() && Math.Abs(e.Y-Root.CursorY0)< Root.MinMagneticRadius())))
+            {
+                try
+                {
+                    if (((int)CurrentMouseButton == 1) || (CurrentMouseButton == MouseButtons.Left))
+                    {
+                        StrokesSelection.Add(SavHoveredForSelection);
+                    }
+                    else
+                    {
+                        StrokesSelection.Remove(SavHoveredForSelection);
+                    }
+                } catch { }
+                Root.UponAllDrawingUpdate = true;
+            }
+
             else
             {
                 Root.UponAllDrawingUpdate = true;
@@ -2349,6 +2509,7 @@ namespace gInk
             // due to asynchronism, IC_MouseUp Could occur before IC_Stroke and then prevent the special strokes to be created
             //Root.CursorX0 = int.MinValue;
             //Root.CursorY0 = int.MinValue;
+            CurrentMouseButton = MouseButtons.None;
         }
 
         private void IC_CursorInRange(object sender, InkCollectorCursorInRangeEventArgs e)
@@ -2380,14 +2541,11 @@ namespace gInk
             }
         }
 
-        NumberFormatInfo MeasureNumberFormat;
-        public string MeasureStroke(Stroke st)
+        private Double StrokeLength(Stroke st)
         {
             int j;
-            Point pt,pt1;
-            Double sum=0.0F;
-            Double ang = Double.NaN;
-            string str = "";
+            Point pt, pt1;
+            Double sum = 0.0F;            
 
             pt = st.GetPoint(0);
             j = st.GetPoints().Length;
@@ -2397,7 +2555,19 @@ namespace gInk
                 sum += Math.Sqrt((1.0 * pt1.X - pt.X) * (pt1.X - pt.X) + (1.0 * pt1.Y - pt.Y) * (pt1.Y - pt.Y));
                 pt = pt1;
             }
-            str = string.Format(MeasureNumberFormat, Root.Local.FormatLength, Root.ConvertMeasureLength(sum),Root.Measure2Unit);
+            return sum;
+        }
+
+        NumberFormatInfo MeasureNumberFormat;
+        public string MeasureStroke(Stroke st)
+        {
+            int j;
+            Point pt,pt1;
+            Double ang = Double.NaN;
+            string str = "";
+
+            j = st.GetPoints().Length;
+            str = string.Format(MeasureNumberFormat, Root.Local.FormatLength, Root.ConvertMeasureLength(StrokeLength(st)),Root.Measure2Unit);
             if(j==3)
             {
                 pt = st.GetPoint(1);
@@ -2408,6 +2578,36 @@ namespace gInk
                 str += string.Format("\n"+ Root.Local.FormatAngle, (Root.MeasureAnglCounterClockwise?1:-1) * ang / Math.PI * 180);
             }
             return str;
+        }
+
+        public string MeasureAllStrokes(Strokes sts1, Strokes sts2,Stroke Hovered)
+        {
+            double sum = 0;
+            int c = 0;
+            foreach (Stroke st in sts1)
+                try
+                {
+                    if(!st.Deleted)
+                    {
+                        sum += StrokeLength(st);
+                        c++;
+                    }
+                } catch { }
+            if(sts2 !=null)
+            {
+                foreach (Stroke st in sts2)
+                    try
+                    {
+                        sum += StrokeLength(st);
+                        c++;
+                    } catch { }
+            }
+            if (Hovered!=null && !sts1.Contains(Hovered) && (sts2==null || !sts2.Contains(Hovered)))
+            {
+                sum += StrokeLength(Hovered);
+                c++;
+            }
+            return string.Format(MeasureNumberFormat, Root.Local.FormaTotalLength, Root.ConvertMeasureLength(sum), Root.Measure2Unit,c);
         }
 
         public void ActivateStrokesInput(bool active)
@@ -2526,7 +2726,7 @@ namespace gInk
             btClip3.FlatAppearance.BorderSize = btClipSel == btClip3.Tag ? 3 : 0;
             btClipSel = null;
 
-            if (AltKeyPressed())
+            if (AltKeyPressed() && Root.AltAsOneCommand>=1)
             {
                 //if (SavedTool <= Tools.Invalid || tool != Root.ToolSelected )
                 if (SavedTool <= Tools.Invalid)
@@ -2546,6 +2746,13 @@ namespace gInk
                 Root.FilledSelected = Filling.Empty;
             Root.UponButtonsUpdate |= 0x2;
             EnterEraserMode(false);
+
+            if(tool != Tools.Move && tool != Tools.Copy && tool != Tools.Invalid)  // for  all std tools we clear selection
+            {
+                InprogressSelection = null;
+                StrokesSelection.Clear();
+                Root.UponAllDrawingUpdate = true;
+            }
 
             if (tool == Tools.Invalid)
             {
@@ -2714,6 +2921,7 @@ namespace gInk
             else if (tool == Tools.Move)
             {
                 //SelectPen(LastPenSelected);
+                ModifyStrokesSelection(AppendToSelection, ref InprogressSelection, StrokesSelection);
                 btPan.BackgroundImage = getImgFromDiskOrRes("pan1_act", ImageExts);
                 try
                 {
@@ -2727,6 +2935,7 @@ namespace gInk
             else if (tool == Tools.Copy)
             {
                 //SelectPen(LastPenSelected);
+                ModifyStrokesSelection(AppendToSelection, ref InprogressSelection, StrokesSelection);
                 btPan.BackgroundImage = getImgFromDiskOrRes("pan_copy", ImageExts);
                 try
                 {
@@ -2741,19 +2950,62 @@ namespace gInk
         }
 
         public void SelectPen(int pen)
-        // -3 = pan, -2 = pointer, -1 = erasor, >=0 = pens
+        // -4 = Lasso, -3 = pan, -2 = pointer, -1 = erasor, >=0 = pens
         {
-                bool bb = Root.ColorPickerMode;
+            bool bb = Root.ColorPickerMode;
 
             btEraser.BackgroundImage = image_eraser;
             btPointer.BackgroundImage = image_pointer;
+            btLasso.BackgroundImage = image_lasso;
             btPan.BackgroundImage.Dispose();    // will be set after
-            //Console.WriteLine("SelectPen : " + pen.ToString());
-            //System.Diagnostics.StackTrace t = new System.Diagnostics.StackTrace();
-            //Console.WriteLine(t.ToString());
-            if (pen == -3)
+                                                //Console.WriteLine("SelectPen : " + pen.ToString());
+                                                //System.Diagnostics.StackTrace t = new System.Diagnostics.StackTrace();
+                                                //Console.WriteLine(t.ToString());
+            if (pen == -4)
             {
-                if (AltKeyPressed() && SavedPen < 0)
+                if (AltKeyPressed() && Root.AltAsOneCommand>=1 && SavedPen < 0 )
+                {
+                    SavedPen = LastPenSelected;
+                }
+                SelectTool(-1, 0);       // Alt will be processed inhere
+
+                for (int b = 0; b < Root.MaxPenCount; b++)
+                {
+                    try
+                    {
+                        btPen[b].BackgroundImage.Dispose();
+                    }
+                    catch { }
+                    //btPen[b].Image = image_pen[b];
+                    btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, false,
+                                                            Root.PenAttr[b].ExtendedProperties.Contains(Root.FADING_PEN), Root.LineStyleToString(Root.PenAttr[b].ExtendedProperties));// image_pen[b];
+                }
+                btLasso.BackgroundImage = image_lasso_act;
+                EnterEraserMode(false);
+                Root.UnPointer();
+                btPan.BackgroundImage = getImgFromDiskOrRes("pan", ImageExts);
+                Root.PanMode = false;
+                Root.LassoMode = true;
+                StrokesSelection.Clear();
+                InprogressSelection = null;
+                Root.UponAllDrawingUpdate = true;
+                ActivateStrokesInput(true);
+                try
+                {
+                    if (IC.Cursor?.Tag != null && (int)IC.Cursor?.Tag == 2)
+                       IC.Cursor?.Dispose();
+                    IC.Cursor = cursorred;
+                }
+                catch
+                {
+                    IC.Cursor = getCursFromDiskOrRes("cursorarrow", System.Windows.Forms.Cursors.NoMove2D);
+                }
+
+                IC.Cursor = cursorred;
+            }
+            else if (pen == -3)
+            {
+                if (AltKeyPressed() && Root.AltAsOneCommand>=1 && SavedPen < 0)
                 {
                     SavedPen = LastPenSelected;
                 }
@@ -2773,11 +3025,13 @@ namespace gInk
                 EnterEraserMode(false);
                 Root.UnPointer();
                 Root.PanMode = true;
+                ModifyStrokesSelection(AppendToSelection, ref InprogressSelection, StrokesSelection); // not used inhere but just because button is in the part of the subtools
+                Root.LassoMode = false;
                 ActivateStrokesInput(false);
             }
             else if (pen == -2)
             {
-                if (AltKeyPressed() && SavedPen < 0)
+                if (AltKeyPressed() && Root.AltAsOneCommand>=1 && SavedPen < 0)
                 {
                     SavedPen = LastPenSelected;
                 }
@@ -2791,10 +3045,12 @@ namespace gInk
                 EnterEraserMode(false);
                 Root.Pointer();
                 Root.PanMode = false;
+                // no change in selections : this will be reset ater returning from pointer mod
+                Root.LassoMode = false;
             }
             else if (pen == -1)
             {
-                if (AltKeyPressed() && SavedPen < 0)
+                if (AltKeyPressed() && Root.AltAsOneCommand>=1 && SavedPen < 0)
                 {
                     SavedPen = LastPenSelected;
                 }
@@ -2812,6 +3068,12 @@ namespace gInk
                 EnterEraserMode(true);
                 Root.UnPointer();
                 Root.PanMode = false;
+                ModifyStrokesSelection(AppendToSelection, ref InprogressSelection, StrokesSelection);
+                IC.Ink.Strokes.Remove(StrokesSelection);
+                IC.Ink.DeleteStrokes(StrokesSelection);
+                StrokesSelection.Clear();
+                Root.LassoMode = false;
+                Root.UponAllDrawingUpdate = true;
                 // !!!!!!!!!!!!!!! random exception
                 for (int i = 0; i < 10; i++)
                 {
@@ -2832,9 +3094,9 @@ namespace gInk
             }
             else if (pen >= 0)
             {
-                
+                // clearing selection or not depends on tools :  if pen is selected, action will be defined in SelectTool
                 btPan.BackgroundImage = getImgFromDiskOrRes("pan", ImageExts);
-                if (AltKeyPressed() && pen != LastPenSelected && SavedPen < 0)
+                if (AltKeyPressed() && Root.AltAsOneCommand>=1 && pen != LastPenSelected && SavedPen < 0)
                 {
                     SavedPen = LastPenSelected;
                 }
@@ -2864,6 +3126,7 @@ namespace gInk
                 //btPen[pen].Image = image_pen_act[pen];
                 EnterEraserMode(false);
                 Root.UnPointer();
+                Root.LassoMode = false;
                 Root.PanMode = false;
                 try
                 {
@@ -3270,6 +3533,7 @@ namespace gInk
         bool LastColorPickupStatus = false;
         bool LastColorEditStatus = false;
         bool LastLineStyleStatus = false;
+        bool LastLassoStatus = false;
 
         bool LastLoadStrokesStatus = false;
         bool LastSaveStrokesStatus = false;
@@ -3855,7 +4119,7 @@ namespace gInk
             }
             //Console.WriteLine("process Keys");
             //if (!AltKeyPressed() && !Root.PointerMode)//&& (SavedPen>=0 || SavedTool>=0))
-            if (!AltKeyPressed())
+            if (!AltKeyPressed() && Root.AltAsOneCommand>=1)
             {
                 if (SavedPen >= 0)
                 {
@@ -3912,14 +4176,14 @@ namespace gInk
             {
                 bool control = ((short)(GetKeyState(VK_LCONTROL) | GetKeyState(VK_RCONTROL)) & 0x8000) == 0x8000;
                 //bool alt = (((short)(GetKeyState(VK_LMENU) | GetKeyState(VK_RMENU)) & 0x8000) == 0x8000);
-                int alt = Root.AltAsOneCommand ? -1 : (AltKeyPressed() ? 1 : 0);
+                int alt = Root.AltAsOneCommand==2 ? -1 : (AltKeyPressed() ? 1 : 0);
                 bool shift = ((short)(GetKeyState(VK_LSHIFT) | GetKeyState(VK_RSHIFT)) & 0x8000) == 0x8000;
                 bool win = ((short)(GetKeyState(VK_LWIN) | GetKeyState(VK_RWIN)) & 0x8000) == 0x8000;
 
                 if (Root.Hotkey_Pens[0].ConflictWith(Root.Hotkey_Pens[1]))
                 { // same hotkey for pen 0 and pen 1 : we have to rotate through pens
-                    pressed = (GetKeyState(Root.Hotkey_Pens[0].Key) & 0x8000) == 0x8000;
-                    if (pressed && !LastPenStatus[0] && Root.Hotkey_Pens[0].ModifierMatch(control, alt, shift, win))
+                    pressed = ((GetKeyState(Root.Hotkey_Pens[0].Key) & 0x8000) == 0x8000) && Root.Hotkey_Pens[0].ModifierMatch(control, alt, shift, win);
+                    if (pressed && !LastPenStatus[0])
                     {
                         int p = LastPenSelected + 1;
                         if (p >= Root.MaxPenCount)
@@ -3948,8 +4212,8 @@ namespace gInk
                 { // standard behavior
                     for (int p = 0; p < Root.MaxPenCount; p++)
                     {
-                        pressed = (GetKeyState(Root.Hotkey_Pens[p].Key) & 0x8000) == 0x8000;
-                        if (pressed && !LastPenStatus[p] && Root.Hotkey_Pens[p].ModifierMatch(control, alt, shift, win))
+                        pressed = ((GetKeyState(Root.Hotkey_Pens[p].Key) & 0x8000) == 0x8000) && Root.Hotkey_Pens[p].ModifierMatch(control, alt, shift, win);
+                        if (pressed && !LastPenStatus[p] )
                         {
                             //SelectPen(p);
                             MouseTimeDown = DateTime.Now;
@@ -3991,10 +4255,7 @@ namespace gInk
                 pressed = (GetKeyState(Root.Hotkey_Undo.Key) & 0x8000) == 0x8000;
                 if (pressed && !LastUndoStatus && Root.Hotkey_Undo.ModifierMatch(control, alt, shift, win))
                 {
-                    if (!Root.InkVisible)
-                        Root.SetInkVisible(true);
-
-                    Root.UndoInk();
+                    btUndo_Click(null, null);  // prefered in order to process also undo selection
                 }
                 LastUndoStatus = pressed;
 
@@ -4197,6 +4458,13 @@ namespace gInk
                 }
                 LastColorPickupStatus = pressed;
 
+                pressed = (GetKeyState(Root.Hotkey_Lasso.Key) & 0x8000) == 0x8000;
+                if (pressed && !LastLassoStatus && Root.Hotkey_Lasso.ModifierMatch(control, alt, shift, win))
+                {
+                    btLasso_Click(null, null);
+                }
+                LastLassoStatus = pressed;
+
                 pressed = (GetKeyState(Root.Hotkey_ColorEdit.Key) & 0x8000) == 0x8000;
                 if (pressed && !LastColorEditStatus && Root.Hotkey_ColorEdit.ModifierMatch(control, alt, shift, win))
                 {
@@ -4212,8 +4480,8 @@ namespace gInk
                 }
                 LastLineStyleStatus = pressed;
 
-                pressed = (GetKeyState(Root.Hotkey_LoadStrokes.Key) & 0x8000) == 0x8000;
-                if (pressed && !LastLoadStrokesStatus && Root.Hotkey_LoadStrokes.ModifierMatch(control, alt, shift, win))
+                pressed = ((GetKeyState(Root.Hotkey_LoadStrokes.Key) & 0x8000) == 0x8000)&& Root.Hotkey_LoadStrokes.ModifierMatch(control, alt, shift, win);
+                if (pressed && !LastLoadStrokesStatus)
                 {
                     /*if (AltKeyPressed())
                         MouseTimeDown = DateTime.FromBinary(0);
@@ -4224,8 +4492,8 @@ namespace gInk
                 if (LastLoadStrokesStatus && !pressed && DateTime.Now.CompareTo(LongHkPress) < 0)
                 {
                     LongHkPress = DateTime.Now.AddYears(1);
-                    MouseTimeDown = DateTime.Now;
-                    Console.WriteLine("Load Shrt");
+                    MouseTimeDown = DateTime.Now;                    
+                    LastSaveStrokesStatus = pressed; // btSave will be long... to prevent to restart process...
                     btLoad_Click(btLoad, null);
                 }
                 if (LastLoadStrokesStatus && pressed && DateTime.Now.CompareTo(LongHkPress) > 0)
@@ -4236,8 +4504,9 @@ namespace gInk
                 }
                 LastLoadStrokesStatus = pressed;
 
-                pressed = (GetKeyState(Root.Hotkey_SaveStrokes.Key) & 0x8000) == 0x8000;
-                if (pressed && !LastSaveStrokesStatus && Root.Hotkey_SaveStrokes.ModifierMatch(control, alt, shift, win))
+                pressed = ((GetKeyState(Root.Hotkey_SaveStrokes.Key) & 0x8000) == 0x8000) && Root.Hotkey_SaveStrokes.ModifierMatch(control, alt, shift, win);
+                //if (pressed && !LastSaveStrokesStatus && Root.Hotkey_SaveStrokes.ModifierMatch(control, alt, shift, win))
+                if (pressed && !LastSaveStrokesStatus)
                 {
                     /*if (AltKeyPressed())
                         MouseTimeDown = DateTime.FromBinary(0);
@@ -4249,6 +4518,7 @@ namespace gInk
                 {
                     LongHkPress = DateTime.Now.AddYears(1);
                     MouseTimeDown = DateTime.Now;
+                    LastSaveStrokesStatus = pressed; // btSave will be long... to prevent to restart process...
                     btSave_Click(btSave, null);
                 }
                 if (LastSaveStrokesStatus && pressed && DateTime.Now.CompareTo(LongHkPress) > 0)
@@ -4471,6 +4741,8 @@ namespace gInk
             }
 			//Root.ClearInk(false); <-- code exploded inhere removing clearcanvus
             Root.FormCollection.IC.Ink.DeleteStrokes();
+            InprogressSelection = null;
+            StrokesSelection.Clear();
             if (Root.BoardSelected == 1) // White
                 AddBackGround(255, 255, 255, 255);
             else if (Root.BoardSelected == 2) // Customed
@@ -4498,7 +4770,13 @@ namespace gInk
 			if (!Root.InkVisible)
 				Root.SetInkVisible(true);
 
-			Root.UndoInk();
+            if (Root.LassoMode)
+            {
+                InprogressSelection = null;
+                Root.UponAllDrawingUpdate = true;
+            }
+            else
+			    Root.UndoInk();
 		}
 
         public void SelectNextLineStyle(object sender)
@@ -5065,7 +5343,7 @@ namespace gInk
                 i = Tools.ClipArt;
             }
             int f = -1;
-            if(!AltKeyPressed() & (Root.PointerMode || Root.EraserEnabled||Root.PanMode) & SavedTool!=-1)
+            if (!AltKeyPressed() && Root.AltAsOneCommand>=1 & (Root.PointerMode || Root.EraserEnabled || Root.PanMode || Root.LassoMode) & SavedTool != -1) 
             {
                 SavedPen = -1;
                 SavedTool = -1;
@@ -5600,11 +5878,11 @@ namespace gInk
                         {
                             stk.DrawingAttributes.ExtendedProperties.Add(Root.DASHED_LINE_GUID, ds);
                         }
-                        else
-                            try { stk.DrawingAttributes.ExtendedProperties.Remove(Root.DASHED_LINE_GUID); } catch { }
+                        //else
+                        //    try { stk.DrawingAttributes.ExtendedProperties.Remove(Root.DASHED_LINE_GUID); } catch { }
                     }
-                    else
-                        try { stk.DrawingAttributes.ExtendedProperties.Remove(Root.DASHED_LINE_GUID); } catch { }
+                    //else
+                    //    try { stk.DrawingAttributes.ExtendedProperties.Remove(Root.DASHED_LINE_GUID); } catch { }
                     do
                     {
                         st = fileout.ReadLine();
@@ -5655,6 +5933,7 @@ namespace gInk
                     while (st!=null && st.StartsWith("#"));
                 }
             }
+            Root.UponAllDrawingUpdate = true;
         }
 
         public void btLoad_Click(object sender, EventArgs e)
@@ -5696,7 +5975,27 @@ namespace gInk
                 LoadStrokes(Path.GetFullPath(Environment.ExpandEnvironmentVariables(Root.SnapshotBasePath + "AutoSave.strokes.txt")));
             else
                 LoadStrokes(SaveStrokeFile);
+            SaveUndoStrokes();
             Root.UponAllDrawingUpdate = true;
+        }
+
+        private void btLasso_Click(object sender, EventArgs e)
+        {
+            longClickTimer.Stop(); // for an unkown reason the mouse arrives later
+            if (sender is ContextMenu)
+            {
+                sender = (sender as ContextMenu).SourceControl;
+                MouseTimeDown = DateTime.FromBinary(0);
+            }
+            if (ToolbarMoved)
+            {
+                ToolbarMoved = false;
+                return;
+            }
+            StrokesSelection.Clear();
+            SelectPen(-4);
+
+            return;
         }
 
         public void btSave_Click(object sender, EventArgs e)
@@ -5754,7 +6053,36 @@ namespace gInk
             };
         }
 
+        private Strokes IsInside(Stroke lasso, float percent = 0)
+        {
+            try
+            {
+                Point[] pts;
+                Strokes sts = IC.Ink.HitTest(lasso.GetPoints(), percent, out pts);
+                return sts;
+            }
+            catch
+            {
+                return null;
+            }
+        }
 
+        public void ModifyStrokesSelection(bool AppendToSelection, ref Strokes InprogressSelection, Strokes StrokesSelection)
+        {
+            if (InprogressSelection == null) return;
+            foreach(Stroke st in InprogressSelection)
+            {
+                if(AppendToSelection)
+                    StrokesSelection.Add(st);
+                else
+                    try
+                    {
+                        StrokesSelection.Remove(st);
+                    }
+                    catch { }
+            }
+            InprogressSelection = null;
+        }
 
 
         [DllImport("user32.dll")]

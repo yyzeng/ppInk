@@ -13,6 +13,7 @@ namespace gInk
     public partial class PenModifyDlg : Form
     {
         Root Root;
+        Bitmap HSBitmap = null;
 
         public PenModifyDlg(Root root)
         {
@@ -26,6 +27,9 @@ namespace gInk
             if (i < 0) i = sin.Length;
             FadingCB.Text = sin.Substring(0, i);
             DashStyleGrp.Text = Root.Local.OptionsLineStyle;
+            HSBitmap = new Bitmap(SVSquare.Width, SVSquare.Height);
+            SVSquare.BackgroundImage = HSBitmap;
+            DoubleBuffered = true;
             CancelBtn.Select(); // in order to prevent input during hotkey hold down
         }
 
@@ -181,6 +185,43 @@ namespace gInk
         private void colorEditorManager_ColorChanged(object sender, EventArgs e)
         {
            gpPenWidth.BackColor = colorEditorManager.Color;
+        }
+
+        float HueMemo=1000;
+        private void colorEditor_ColorChanged(object sender, EventArgs e)
+        {
+            CursorHSI.Left = (int)(colorEditor.Color.GetSaturation() * SVSquare.Width+.5)-4;
+            CursorHSI.Top = (int)((1-colorEditor.Color.GetBrightness()) * SVSquare.Height+.5)-4;
+            float Hue = colorEditor.Color.GetHue();
+            if (Math.Abs(Hue-HueMemo)>=1)
+            {
+                HueMemo = Hue;
+                Cyotek.Windows.Forms.HslColor HSL= Color.Black;
+                HSL.H = Hue;
+                for (int x = 0; x < SVSquare.Width; x++)
+                {
+                    HSL.S = (float)x / SVSquare.Width;
+                    for (int y = 0; y < SVSquare.Height; y++)
+                    {
+                        HSL.L = 1-(float)y / SVSquare.Height;
+                        HSBitmap.SetPixel(x, y, HSL.ToRgbColor());
+                    }
+                }
+                SVSquare.Invalidate();
+            }
+        }
+
+        private void SVSquare_MouseMove(object sender, MouseEventArgs e)
+        {
+            if(e.Button !=MouseButtons.None)
+            {
+                colorEditor.Color = HSBitmap.GetPixel(Math.Min(Math.Max(0,e.X),SVSquare.Width-1), Math.Min(Math.Max(0, e.Y), SVSquare.Height-1));
+            }
+        }
+
+        private void CursorHSI_MouseMove(object sender, MouseEventArgs e)
+        {
+            SVSquare_MouseMove(sender, new MouseEventArgs(e.Button, e.Clicks, e.X + CursorHSI.Left, e.Y + CursorHSI.Top, e.Delta));
         }
 
     }

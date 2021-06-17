@@ -72,16 +72,16 @@ namespace gInk
 				BackColor = Color.White;
 		}
 
-
-		protected override void OnKeyDown(KeyEventArgs e)
-		{
-			e.SuppressKeyPress = true;
+        protected override void OnPreviewKeyDown(PreviewKeyDownEventArgs e)
+        {
+            e.IsInputKey = true;
+            base.OnPreviewKeyDown(e);
 
 			Keys modifierKeys = e.Modifiers;
 			Keys pressedKey = e.KeyData ^ modifierKeys;
 
             //bool deleting = pressedKey == Keys.Escape || pressedKey == Keys.Delete || pressedKey == Keys.Back;
-            bool deleting = pressedKey == Keys.Delete || pressedKey == Keys.Back;
+            bool deleting = ((modifierKeys & Keys.Control) > 0) && ((modifierKeys & Keys.Shift) > 0) && (pressedKey == Keys.Delete || pressedKey == Keys.Back);
             if (deleting)
 			{
 				Text = LocalSt.KeyNames[0];
