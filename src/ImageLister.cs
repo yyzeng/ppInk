@@ -124,7 +124,7 @@ namespace gInk
                 img.MakeTransparent(img.GetPixel(0, 0));
                 Console.WriteLine("transp " + img.PixelFormat.ToString());
             }
-            string st = "ClipBoard"+ImageListViewer.Items.Count.ToString();
+            string st = "ClipBoard" + ((int)((DateTime.Now - DateTime.Today).TotalSeconds * 100)).ToString(); // ImageListViewer.Items.Count.ToString();
             ImageListViewer.Items.Add(new ListViewItem("Clipboard",st));
             ImageListViewer.LargeImageList.Images.Add(st,img);
             int j = ImageListViewer.LargeImageList.Images.IndexOfKey(st);
@@ -179,6 +179,7 @@ namespace gInk
             try
             {
                 int i = ImageListViewer.SelectedIndices[0];
+                // should not remove from originals to keep display in existing image Originals.Remove(ImageListViewer.Items[i].ImageKey);
                 ImageListViewer.Items.RemoveAt(i);
             }
             catch
