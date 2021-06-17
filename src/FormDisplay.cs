@@ -207,7 +207,8 @@ namespace gInk
         {
             DrawButtons(gCanvus, redrawbuttons, exiting);
         }
-            public void DrawButtons(Graphics g, bool redrawbuttons=true, bool exiting = false)
+
+        public void DrawButtons(Graphics g, bool redrawbuttons=true, bool exiting = false)
 		{
 			if (Root.AlwaysHideToolbar)
 				return;
@@ -408,14 +409,28 @@ namespace gInk
                     {
                         //Image img = Root.FormCollection.ClipartsDlg.Images.Images[(int)(st.ExtendedProperties[Root.IMAGE_GUID].Data)];
                         Image img;
-                        try
+                        if(!Root.FingerInAction && st.ExtendedProperties.Contains(Root.ANIMATIONFRAMEIMG_GUID))
                         {
-                            img = Root.FormCollection.ClipartsDlg.Originals[(string)(st.ExtendedProperties[Root.IMAGE_GUID].Data)];
+                            try
+                            {
+                                AnimationStructure ani = (AnimationStructure)(Root.FormCollection.Animations[(int)(st.ExtendedProperties[Root.ANIMATIONFRAMEIMG_GUID].Data)]);
+                                img = ani.Image.Frames[ani.Idx].GetImage();
+                            }
+                            catch
+                            {
+                                img = gInk.Properties.Resources.unknown;
+                            }
+
                         }
-                        catch
-                        {
-                            img = gInk.Properties.Resources.unknown;
-                        }
+                        else
+                            try
+                            {
+                                img = Root.FormCollection.ClipartsDlg.Originals[(string)(st.ExtendedProperties[Root.IMAGE_GUID].Data)];
+                            }
+                            catch
+                            {
+                                img = gInk.Properties.Resources.unknown;
+                            }
                         /*Rectangle r = st.GetBoundingBox();
                         Point p1 = new Point(r.Location.X, r.Location.Y);
                         Point p2 = new Point(r.Location.X+r.Size.Width, r.Location.Y+r.Size.Height);
@@ -906,11 +921,24 @@ namespace gInk
 			}
 			*/
 
+            DateTime dt = DateTime.Now;
+            foreach (int k in Root.FormCollection.Animations.Keys)
+            {
+                AnimationStructure ani = Root.FormCollection.Animations[k];
+                if (dt>=ani.T0)
+                {                    
+                    ani.Idx = (ani.Idx + 1) % ani.Image.AcTlChunk.NumFrames;
+                    ani.T0 = ani.T0.AddSeconds((1.0 * ani.Image.Frames[ani.Idx].FcTlChunk.DelayNum) / ani.Image.Frames[ani.Idx].FcTlChunk.DelayDen);
+                    Root.UponAllDrawingUpdate = true;                    
+                }
+            }
+
 			if (Root.UponAllDrawingUpdate)
 			{
                 ClearCanvus();
 				DrawStrokes();
-				DrawButtons(true);
+                DrawButtons(Root.UponButtonsUpdate > 0);
+                Root.UponButtonsUpdate = 0;
 				if (Root.Snapping > 0)
 					DrawSnapping(Root.SnappingRect);
 				UpdateFormDisplay(true);

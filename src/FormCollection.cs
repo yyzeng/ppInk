@@ -17,6 +17,7 @@ using System.Reflection;
 using System.Drawing.Imaging;
 using System.Globalization;
 using System.Drawing.Drawing2D;
+using gInk.Apng;
 
 namespace gInk
 {
@@ -48,6 +49,9 @@ namespace gInk
             [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
             private static extern IntPtr LoadCursorFromFile(string path);
         }
+
+        public Dictionary<int, AnimationStructure> Animations = new Dictionary<int, AnimationStructure>();
+        public int AniPoolIdx;
 
         // Button/Tooblar
         const double NormSizePercent = 0.85;
@@ -453,6 +457,9 @@ namespace gInk
             Root.ColorPickerMode = false;
             StrokesSelection.Clear();
             FadingList.Clear();
+
+            Animations.Clear();
+            AniPoolIdx = 0;
 
             if (Root.WindowRect.Width <= 0 || Root.WindowRect.Height <= 0)
             {
@@ -1477,6 +1484,17 @@ namespace gInk
             st.ExtendedProperties.Add(Root.IMAGE_H_GUID, CursorY - CursorY0);
             if (st.ExtendedProperties.Contains(Root.FADING_PEN))
                 FadingList.Add(st);
+            ApngImage img = new ApngImage(fn);
+            if(!img.IsSimplePng)
+            {
+                AnimationStructure ani=new AnimationStructure();
+                ani.Image = img;
+                ani.Idx = 0;
+                ani.T0 = DateTime.Now.AddSeconds(.1 + (1.0*img.Frames[ani.Idx].FcTlChunk.DelayNum) / img.Frames[ani.Idx].FcTlChunk.DelayDen);
+                Animations.Add(AniPoolIdx, ani);
+                st.ExtendedProperties.Add(Root.ANIMATIONFRAMEIMG_GUID, AniPoolIdx);
+                AniPoolIdx++;
+            }
             return st;
         }
 
@@ -2163,6 +2181,12 @@ namespace gInk
                 Stroke minStroke;
                 if (NearestStroke(new Point(Root.CursorX, Root.CursorY), true, out minStroke, out pos, false, false) < Root.PixelToHiMetric(Root.MinMagneticRadius()))
                 {
+                    try
+                    {
+                        if (minStroke.ExtendedProperties.Contains(Root.ANIMATIONFRAMEIMG_GUID))
+                            Animations.Remove((int)minStroke.ExtendedProperties[Root.ANIMATIONFRAMEIMG_GUID].Data);                        
+                    }
+                    catch { };
                     IC.Ink.DeleteStroke(minStroke);
                 }
             }
@@ -2400,6 +2424,8 @@ namespace gInk
                         StrokesSelection.Move(currentxy.X - LasteXY.X, currentxy.Y - LasteXY.Y);
                         foreach (Stroke st in StrokesSelection)
                         {
+                            if (st.Deleted)
+                                continue;
                             if (st.ExtendedProperties.Contains(Root.TEXT_GUID))
                             {
                                 st.ExtendedProperties.Add(Root.TEXTX_GUID, ((int)st.ExtendedProperties[Root.TEXTX_GUID].Data) + (currentxy.X - LasteXY.X));
@@ -2946,6 +2972,7 @@ namespace gInk
                     IC.Cursor = getCursFromDiskOrRes("cursorarrow", System.Windows.Forms.Cursors.NoMove2D);
                 }
             }
+            Root.UponButtonsUpdate |= 0x2;
             Root.ToolSelected = tool;
         }
 
@@ -3069,6 +3096,15 @@ namespace gInk
                 Root.UnPointer();
                 Root.PanMode = false;
                 ModifyStrokesSelection(AppendToSelection, ref InprogressSelection, StrokesSelection);
+                foreach(Stroke st in StrokesSelection)
+                {
+                    try
+                    {
+                        if (st.ExtendedProperties.Contains(Root.ANIMATIONFRAMEIMG_GUID))
+                            Animations.Remove((int)st.ExtendedProperties[Root.ANIMATIONFRAMEIMG_GUID].Data);
+                    }
+                    catch { };
+                }
                 IC.Ink.Strokes.Remove(StrokesSelection);
                 IC.Ink.DeleteStrokes(StrokesSelection);
                 StrokesSelection.Clear();
@@ -3795,7 +3831,9 @@ namespace gInk
                 foreach (Stroke st in FadingList)
                 {
                     //Stroke st = IC.Ink.Strokes[i];
-                    if (st.ExtendedProperties.Contains(Root.FADING_PEN))
+                    if (st.Deleted)
+                        FadingList.Remove(st);
+                    else if (st.ExtendedProperties.Contains(Root.FADING_PEN))
                     {
                         Int64 j = (Int64)(st.ExtendedProperties[Root.FADING_PEN].Data);
                         if (DateTime.Now.Ticks > j)
@@ -3943,8 +3981,7 @@ namespace gInk
                     VisibleToolbar.Height = gpButtonsHeight - Math.Abs(gpButtons.Top - gpButtonsTop);// Math.Max(gpButtonsHeight - Math.Abs(gpButtons.Top - gpButtonsTop), btDock.Height);
 
                 Root.UponAllDrawingUpdate = true;
-                Root.UponButtonsUpdate |= 0x1;
-                Root.UponButtonsUpdate |= 0x4;
+                Root.UponButtonsUpdate |= 0x5;
             }
             else if (ButtonsEntering == -9) // and Left=X&&Top==Y
             {
@@ -4608,6 +4645,7 @@ namespace gInk
                         gpButtons.Left = newleft;
                         gpButtons.Top = newtop;
                         Root.UponAllDrawingUpdate = true;
+                        Root.UponButtonsUpdate |= 0x5;
                         ToolbarMoved = true;
                         Root.gpButtonsLeft = gpButtonsLeft;
                         Root.gpButtonsTop = gpButtonsTop;
@@ -5463,6 +5501,7 @@ namespace gInk
             if (Root.CanvasCursor == 1)
                 SetPenTipCursor();
             btZoom.BackgroundImage = getImgFromDiskOrRes("Zoom");
+            Root.UponButtonsUpdate |= 0x2;
         }
 
         public void StartZoomCapt()
@@ -5572,6 +5611,7 @@ namespace gInk
             }
             gpSubTools.Visible = Root.SubToolsEnabled;
             Root.UponAllDrawingUpdate = true;
+            Root.UponButtonsUpdate |= 0x7;
             Task.Run(() => { for (int i = 1; i <= 10; i++)
                              {
                                 ColorMatrix cm = new ColorMatrix();
@@ -5618,8 +5658,8 @@ namespace gInk
             {
                 gpSubTools.Visible = false;
             }
+            //Root.UponAllDrawingUpdate = true;
             Root.UponButtonsUpdate |= 0x2;
-            Root.UponAllDrawingUpdate = true;
         }
 
         private void gpSubTools_MouseDown(object sender, MouseEventArgs e)
@@ -5652,6 +5692,7 @@ namespace gInk
                         gpSubTools.Left = newleft;
                         gpSubTools.Top = newtop;
                         Root.UponAllDrawingUpdate = true;
+                        Root.UponButtonsUpdate |= 0x5;
                     }
                 }
             }
@@ -5666,6 +5707,7 @@ namespace gInk
         {
             gpSubTools.Visible = false;
             Root.UponAllDrawingUpdate = true;
+            Root.UponButtonsUpdate |= 0x5;
         }
 
         private void BtnPin_Click(object sender, EventArgs e)
