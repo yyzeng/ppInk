@@ -228,7 +228,7 @@ namespace gInk
 			if (left + width > gpbl + fullwidth)
 				drawwidth = gpbl + fullwidth - left;
 
-            if (redrawbuttons)
+            if (redrawbuttons && Root.FormCollection.gpButtons.Width>0 && Root.FormCollection.gpButtons.Height>0)
                 Root.FormCollection.gpButtons.DrawToBitmap(gpButtonsImage, new Rectangle(0, 0, Root.FormCollection.gpButtonsWidth, Root.FormCollection.gpButtonsHeight));
 
             if (exiting)

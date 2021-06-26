@@ -446,6 +446,9 @@ namespace gInk
             Initialize();
         }
 
+        private string MemoHintClose;
+        private string MemoHintDock;
+
         public void Initialize()
         {
             Console.WriteLine("A=" + (DateTime.Now.Ticks / 1e7).ToString());
@@ -1084,7 +1087,8 @@ namespace gInk
             LastTickTime = DateTime.Parse("1987-01-01");
             tiSlide.Enabled = true;
 
-            this.toolTip.SetToolTip(this.btDock, Root.Local.ButtonNameDock + " (" + Root.Hotkey_DockUndock.ToString() + ")");
+            MemoHintDock = Root.Local.ButtonNameDock + " (" + Root.Hotkey_DockUndock.ToString() + ")";
+            this.toolTip.SetToolTip(this.btDock, MemoHintDock);
             this.toolTip.SetToolTip(this.btPenWidth, Root.Local.ButtonNamePenwidth);
             this.toolTip.SetToolTip(this.btEraser, Root.Local.ButtonNameErasor + " (" + Root.Hotkey_Eraser.ToString() + ")");
             this.toolTip.SetToolTip(this.btPan, Root.Local.ButtonNamePan + " (" + Root.Hotkey_Pan.ToString() + ")");
@@ -1094,7 +1098,8 @@ namespace gInk
             this.toolTip.SetToolTip(this.btUndo, Root.Local.ButtonNameUndo + " (" + Root.Hotkey_Undo.ToString() + ")");
             this.toolTip.SetToolTip(this.btClear, Root.Local.ButtonNameClear + " (" + Root.Hotkey_Clear.ToString() + ")");
             this.toolTip.SetToolTip(this.btVideo, Root.Local.ButtonNameVideo + " (" + Root.Hotkey_Video.ToString() + ")");
-            this.toolTip.SetToolTip(this.btStop, Root.Local.ButtonNameExit + " (" + Root.Hotkey_Close.ToString() + "/Alt+F4)");
+            MemoHintClose = Root.Local.ButtonNameExit + " (" + Root.Hotkey_Close.ToString() + "/Alt+F4)";
+            this.toolTip.SetToolTip(this.btStop, MemoHintClose);
             this.toolTip.SetToolTip(this.btHand, Root.Local.ButtonNameHand + " (" + Root.Hotkey_Hand.ToString() + ")");
             this.toolTip.SetToolTip(this.btLine, Root.Local.ButtonNameLine + " (" + Root.Hotkey_Line.ToString() + ")");
             this.toolTip.SetToolTip(this.btRect, Root.Local.ButtonNameRect + " (" + Root.Hotkey_Rect.ToString() + ")");
@@ -3904,6 +3909,12 @@ namespace gInk
                     case Orientation.toRight:
                         AimedPos.X = gpButtonsLeft;
                         AimedSize.Width = gpButtonsWidth - d;
+                        if (toolTip.GetToolTip(btStop) != MemoHintDock)
+                        {
+                            btStop.Click -= btStop_Click;
+                            btStop.Click += btDock_Click;
+                            toolTip.SetToolTip(btStop, MemoHintDock);
+                        }
                         break;
                     case Orientation.toUp:
                         AimedPos.Y = gpButtonsTop + d;
@@ -3912,6 +3923,12 @@ namespace gInk
                     case Orientation.toDown:
                         AimedPos.Y = gpButtonsTop;
                         AimedSize.Height = gpButtonsHeight - d;
+                        if (toolTip.GetToolTip(btStop) != MemoHintDock)
+                        {
+                            btStop.Click -= btStop_Click;
+                            btStop.Click += btDock_Click;
+                            toolTip.SetToolTip(btStop, MemoHintDock);
+                        }
                         break;
                 }
             }
@@ -3931,6 +3948,12 @@ namespace gInk
                     case Orientation.toRight:
                         AimedPos.X = gpButtonsLeft;
                         AimedSize.Width = Root.Docked ? btDock.Width : gpButtonsWidth;
+                        if(toolTip.GetToolTip(btStop)!=MemoHintClose)
+                        {
+                            btStop.Click -= btDock_Click;
+                            btStop.Click += btStop_Click;
+                            toolTip.SetToolTip(btStop, MemoHintClose);
+                        }
                         break;
                     case Orientation.toUp:
                         AimedPos.Y = gpButtonsTop + d;
@@ -3939,6 +3962,12 @@ namespace gInk
                     case Orientation.toDown:
                         AimedPos.Y = gpButtonsTop;
                         AimedSize.Height = Root.Docked ? btDock.Height : gpButtonsHeight;
+                        if (toolTip.GetToolTip(btStop) != MemoHintClose)
+                        {
+                            btStop.Click -= btDock_Click;
+                            btStop.Click += btStop_Click;
+                            toolTip.SetToolTip(btStop, MemoHintClose);
+                        }
                         break;
                 }
             }
@@ -3966,19 +3995,31 @@ namespace gInk
                 //d = (int)(gpButtons.Width * .9 + AimedSize.Width * .1)
                 if (Root.ToolbarOrientation == Orientation.toRight)
                     if (Math.Abs(VisibleToolbar.Width - AimedSize.Width) < 5)
+                    {
                         VisibleToolbar.Width = AimedSize.Width;
+                        gpButtons.Width = AimedSize.Width;
+                    }
                     else
                         VisibleToolbar.Width = (int)(VisibleToolbar.Width * .5 + AimedSize.Width * .5);
                 else
+                {
                     VisibleToolbar.Width = gpButtonsWidth - Math.Abs(gpButtons.Left - gpButtonsLeft);// Math.Max(gpButtonsWidth - Math.Abs(gpButtons.Left - gpButtonsLeft), btDock.Width);
+                    gpButtons.Width = VisibleToolbar.Width;
+                }
 
                 if (Root.ToolbarOrientation == Orientation.toDown)
                     if (Math.Abs(VisibleToolbar.Height - AimedSize.Height) < 5)
+                    {
                         VisibleToolbar.Height = AimedSize.Height;
+                        gpButtons.Height = AimedSize.Height;
+                    }
                     else
                         VisibleToolbar.Height = (int)(VisibleToolbar.Height * .5 + AimedSize.Height * .5);
                 else
+                {
                     VisibleToolbar.Height = gpButtonsHeight - Math.Abs(gpButtons.Top - gpButtonsTop);// Math.Max(gpButtonsHeight - Math.Abs(gpButtons.Top - gpButtonsTop), btDock.Height);
+                    gpButtons.Height = VisibleToolbar.Height;
+                }
 
                 Root.UponAllDrawingUpdate = true;
                 Root.UponButtonsUpdate |= 0x5;
