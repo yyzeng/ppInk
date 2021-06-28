@@ -1353,7 +1353,7 @@ namespace gInk
                     TagSize = Math.Min(Math.Max(4, TagSize), 255);                
                 }
                 else
-                    PenWidth_Change(Root.PixelToHiMetric(e.Delta > 0 ? 5 : -5));
+                    PenWidth_Change(e.Delta > 0 ? Root.PenWidth_Delta : -Root.PenWidth_Delta);
                 return;
             }
         }
