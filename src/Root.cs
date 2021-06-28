@@ -988,7 +988,7 @@ namespace gInk
                         case "ALT_AS_TEMPORARY_COMMAND":
                             if (sPara.ToUpper() == "TRUE" || sPara.ToUpper() == "ON")
                                 AltAsOneCommand = 2;
-                            if (int.TryParse(sPara,out tempi))
+                            else if (int.TryParse(sPara,out tempi))
                                 AltAsOneCommand = tempi;
                             else
                                 AltAsOneCommand = 0;
