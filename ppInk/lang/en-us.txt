@@ -149,7 +149,7 @@ OptionsHotKeySnapInPointerLbl = "press and hold....                .... and pres
 OptionsHotKeySnapInPointerKeys = "None\nShift\nCtrl\nAlt"
 OptionsHotKeyAltAsOneCommand = "Process Alt as Temporary Command (Alt will be ignored in hotkeys)"
 OptionsHotkeysglobal = "Global hotkey (starts drawing, and starts/stops mouse pointer mode)"
-OptionsHotkeysEnableinpointer = "Enable all following hotkeys in mouse pointer mode (may cause a mess)"
+OptionsHotkeysEnableinpointer = "Enable all following hotkeys in mouse pointer mode (may cause a mess)                                  use ctrl+shift+del or ctrl+shift+backspace to delete hotkeys"
 
 OptionsHotkeysPenWidthPlus = "Pen Width (+)"
 OptionsHotkeysPenWidthMinus = "Pen Width (-)"

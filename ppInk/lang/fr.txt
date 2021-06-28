@@ -146,7 +146,7 @@ OptionsHotKeySnapInPointerLbl = "maintenir...                       ... et appuy
 OptionsHotKeySnapInPointerKeys = "(Aucun)\nMaj\nControl\nAlt"
 OptionsHotKeyAltAsOneCommand = "Alt utilisé comme commande temporaire (Alt sera ignoré dans les raccourcis)"
 OptionsHotkeysglobal = "Raccourci général (débuter un dessin, basculer entre le mode curseur de souris et le dessin)"
-OptionsHotkeysEnableinpointer = "Activer tous les raccourcis en mode curseur de souris (peut poser problème)"
+OptionsHotkeysEnableinpointer = "Activer tous les raccourcis en mode curseur de souris (peut poser problème)                 utiliser ctrl+shift+del or ctrl+shift+RetArr pour supprimer un raccourci"
 
 OptionsHotkeysPenWidthPlus = "Largeur Stylo +"
 OptionsHotkeysPenWidthMinus = "Largeur Stylo -"
