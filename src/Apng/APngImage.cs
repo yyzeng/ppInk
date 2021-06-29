@@ -5,6 +5,8 @@ using System.IO;
 using gInk.Extensions;
 using System.Threading.Tasks;
 using gInk.Apng.Chunks;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 /// <summary>
 ///     freely copied from  https://github.com/ImoutoChan/ApngWpfPlayer/tree/master/ImoutoRebirth.Navigator.ApngWpfPlayer/ApngEngine
@@ -23,7 +25,55 @@ namespace gInk.Apng
 
         private ApngImage(byte[] fileBytes)
         {
-            var ms = new MemoryStream(fileBytes);
+            // first we try to identify the type of stream            
+            MemoryStream ms = new MemoryStream(fileBytes);
+            Image img = Image.FromStream(ms);
+
+            ms.Seek(0, SeekOrigin.Begin);
+
+            // if GIF (animated or not )
+            if (ImageFormat.Gif.Equals(img.RawFormat))
+            {
+                try
+                {
+                    NumFrames = img.GetFrameCount(FrameDimension.Time);
+                    IsSimplePng = false;
+                    DefaultImage._image = new Bitmap(img);
+                    for (int i=0;i< NumFrames; i++)
+                    {
+                        Frame f = new Frame();
+                        byte[] times = img.GetPropertyItem(0x5100).Value;
+                        int dur = BitConverter.ToInt32(times, 4 * i);
+                        img.SelectActiveFrame(FrameDimension.Time, i);
+                        f._image = new Bitmap(img);
+                        f._delay = dur/100.0;
+                        _frames.Add(f);
+                    }
+                }
+                catch
+                {
+                    IsSimplePng = true;
+                    DefaultImage._image = img;
+                    DefaultImage._delay = 0;
+                    NumFrames = 0;
+                    _frames.Insert(0, DefaultImage);
+                }
+                img.Dispose();
+                return;
+            }
+
+            // if JPEG,... it is a static image
+            if (!ImageFormat.Png.Equals(img.RawFormat))
+            {
+                IsSimplePng = true;
+                DefaultImage._image = img;
+                DefaultImage._delay = 0;
+                NumFrames = 0;
+                _frames.Insert(0, DefaultImage);
+                return;
+            }
+
+            // Finally process APNG files
 
             // check file signature.
             if (!Helper.IsBytesEqual(ms.ReadBytes(Frame.Signature.Length), Frame.Signature))
@@ -34,117 +84,159 @@ namespace gInk.Apng
             if (IhdrChunk.ChunkType != "IHDR")
                 throw new Exception("IHDR chunk must located before any other chunks.");
 
+            Bitmap canvas = new Bitmap(IhdrChunk.Width, IhdrChunk.Height, PixelFormat.Format32bppArgb);
+            Graphics graphics = Graphics.FromImage(canvas);
+
             // Now let's loop in chunks
-            Chunk chunk;
-            Frame frame = null;
-            var otherChunks = new List<OtherChunk>();
-            var isIdatAlreadyParsed = false;
-            do
+            try
             {
-                if (ms.Position == ms.Length)
-                    throw new Exception("IEND chunk expected.");
-
-                chunk = new Chunk(ms);
-
-                switch (chunk.ChunkType)
+                Chunk chunk;
+                Frame frame = null;
+                var otherChunks = new List<OtherChunk>();
+                var isIdatAlreadyParsed = false;
+                do
                 {
-                    case "IHDR":
-                        throw new Exception("Only single IHDR is allowed.");
+                    if (ms.Position == ms.Length)
+                        throw new Exception("IEND chunk expected.");
+
+                    chunk = new Chunk(ms);
+
+                    switch (chunk.ChunkType)
+                    {
+                        case "IHDR":
+                            throw new Exception("Only single IHDR is allowed.");
                         // break;
 
-                    case "acTL":
-                        if (IsSimplePng)
-                            throw new Exception("acTL chunk must located before any IDAT and fdAT");
+                        // case "bKGD": is not processed
 
-                        AcTlChunk = new AcTlChunk(chunk);
-                        break;
+                        case "acTL":
+                            if (IsSimplePng)
+                                throw new Exception("acTL chunk must located before any IDAT and fdAT");
 
-                    case "IDAT":
-                        // To be an ApngImage, acTL must located before any IDAT and fdAT.
-                        if (AcTlChunk == null)
-                            IsSimplePng = true;
+                            AcTlChunk = new AcTlChunk(chunk);
+                            break;
 
-                        // Only default image has IDAT.
-                        DefaultImage.IhdrChunk = IhdrChunk;
-                        DefaultImage.AddIdatChunk(new IdatChunk(chunk));
-                        isIdatAlreadyParsed = true;
-                        break;
+                        case "IDAT":
+                            // To be an ApngImage, acTL must located before any IDAT and fdAT.
+                            if (AcTlChunk == null)
+                                IsSimplePng = true;
 
-                    case "fcTL":
-                        // Simple PNG should ignore this.
-                        if (IsSimplePng)
-                            continue;
+                            // Only default image has IDAT.
+                            DefaultImage.IhdrChunk = IhdrChunk;
+                            DefaultImage.AddIdatChunk(new IdatChunk(chunk));
+                            isIdatAlreadyParsed = true;
 
-                        if (frame != null && frame.IdatChunks.Count == 0)
-                            throw new Exception("One frame must have only one fcTL chunk.");
+                            if (DefaultImage.FcTlChunk != null)
+                            {
+                                _frames.Insert(0, DefaultImage);
+                                DefaultImageIsAnimated = true;
+                                //graphics.DrawImage(Image.FromStream(DefaultImage.GetStream()), DefaultImage.FcTlChunk.XOffset, DefaultImage.FcTlChunk.YOffset);
+                                //DefaultImage._image = (Bitmap)(canvas.Clone());
+                            }
+                            break;
 
-                        // IDAT already parsed means this fcTL is used by FRAME IMAGE.
-                        if (isIdatAlreadyParsed)
-                        {
-                            // register current frame object and build a new frame object
-                            // for next use
+                        case "fcTL":
+                            // Simple PNG should ignore this.
+                            if (IsSimplePng)
+                                continue;
+
+                            if (frame != null && frame.IdatChunks.Count == 0)
+                                throw new Exception("One frame must have only one fcTL chunk.");
+
+                            // IDAT already parsed means this fcTL is used by FRAME IMAGE.
+                            if (isIdatAlreadyParsed)
+                            {
+                                // register current frame object and build a new frame object
+                                // for next use
+                                if (frame != null)
+                                    _frames.Add(frame);
+                                frame = new Frame
+                                {
+                                    IhdrChunk = IhdrChunk,
+                                    FcTlChunk = new FcTlChunk(chunk)
+                                };
+                            }
+                            // Otherwise this fcTL is used by the DEFAULT IMAGE.
+                            else
+                            {
+                                DefaultImage.FcTlChunk = new FcTlChunk(chunk);
+                            }
+                            break;
+                        case "fdAT":
+                            // Simple PNG should ignore this.
+                            if (IsSimplePng)
+                                continue;
+
+                            // fdAT is only used by frame image.
+                            if (frame == null || frame.FcTlChunk == null)
+                                throw new Exception("fcTL chunk expected.");
+
+                            frame.AddIdatChunk(new FdAtChunk(chunk).ToIdatChunk());
+                            //graphics.DrawImage(Image.FromStream(frame.GetStream()), DefaultImage.FcTlChunk.XOffset, DefaultImage.FcTlChunk.YOffset);
+                            //DefaultImage._image = (Bitmap)(canvas.Clone());
+                            break;
+
+                        case "IEND":
+                            // register last frame object
                             if (frame != null)
                                 _frames.Add(frame);
-                            frame = new Frame
+
+                            if (DefaultImage.IdatChunks.Count != 0)
+                                DefaultImage.IendChunk = new IendChunk(chunk);
+                            foreach (var f in _frames)
                             {
-                                IhdrChunk = IhdrChunk,
-                                FcTlChunk = new FcTlChunk(chunk)
-                            };
-                        }
-                        // Otherwise this fcTL is used by the DEFAULT IMAGE.
-                        else
-                        {
-                            DefaultImage.FcTlChunk = new FcTlChunk(chunk);
-                        }
-                        break;
-                    case "fdAT":
-                        // Simple PNG should ignore this.
-                        if (IsSimplePng)
-                            continue;
+                                f.IendChunk = new IendChunk(chunk);
+                            }
+                            break;
 
-                        // fdAT is only used by frame image.
-                        if (frame == null || frame.FcTlChunk == null)
-                            throw new Exception("fcTL chunk expected.");
+                        default:
+                            otherChunks.Add(new OtherChunk(chunk));
+                            break;
+                    }
+                } while (chunk.ChunkType != "IEND");
 
-                        frame.AddIdatChunk(new FdAtChunk(chunk).ToIdatChunk());
-                        break;
 
-                    case "IEND":
-                        // register last frame object
-                        if (frame != null)
-                            _frames.Add(frame);
+                // Now we should apply every chunk in otherChunks to every frame.
+                //_frames.ForEach(f => otherChunks.ForEach(f.AddOtherChunk));
 
-                        if (DefaultImage.IdatChunks.Count != 0)
-                            DefaultImage.IendChunk = new IendChunk(chunk);
-                        foreach (var f in _frames)
-                        {
-                            f.IendChunk = new IendChunk(chunk);
-                        }
-                        break;
+                NumFrames = _frames.Count;
+                for (int j = 0; j < NumFrames; j++)
+                {
+                    otherChunks.ForEach(_frames[j].AddOtherChunk);
 
-                    default:
-                        otherChunks.Add(new OtherChunk(chunk));
-                        break;
+                    if (_frames[j].FcTlChunk.BlendOp == BlendOps.ApngBlendOpSource)
+                        graphics.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
+                    else
+                        graphics.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
+
+                    graphics.DrawImage(Image.FromStream(_frames[j].GetStream()), _frames[j].FcTlChunk.XOffset, _frames[j].FcTlChunk.YOffset);
+                    _frames[j]._image = (Bitmap)(canvas.Clone());
+                    if (_frames[j].FcTlChunk.DisposeOp == DisposeOps.ApngDisposeOpBackground)
+                        graphics.Clear(Color.Transparent);
+                    else if (_frames[j].FcTlChunk.DisposeOp == DisposeOps.ApngDisposeOpPrevious && j > 0)
+                    {
+                        graphics.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
+                        graphics.DrawImage(_frames[j - 1]._image, Point.Empty);
+                    }
                 }
-            } while (chunk.ChunkType != "IEND");
 
-            // We have one more thing to do:
-            // If the default image if part of the animation,
-            // we should insert it into frames list.
-            if (DefaultImage.FcTlChunk != null)
-            {
-                _frames.Insert(0, DefaultImage);
-                DefaultImageIsAnimated = true;
             }
-
-            // Now we should apply every chunk in otherChunks to every frame.
-            _frames.ForEach(f => otherChunks.ForEach(f.AddOtherChunk));
+            finally
+            {
+                canvas?.Dispose();
+                graphics?.Dispose();
+            }
         }
 
         /// <summary>
         ///     Indicate whether the file is a simple PNG.
         /// </summary>
         public bool IsSimplePng { get; private set; }
+
+        public bool IsAnimated()
+        {
+            return !IsSimplePng;
+        } 
 
         /// <summary>
         ///     Indicate whether the default image is part of the animation
@@ -173,6 +265,11 @@ namespace gInk.Apng
         ///     Gets the acTL Chunk
         /// </summary>
         public AcTlChunk AcTlChunk { get; private set; }
+
+        /// <summary>
+        ///     Gets Number of Frames in an efficient way;
+        /// </summary>
+        public int NumFrames{ get; private set; }
     }
 
 }

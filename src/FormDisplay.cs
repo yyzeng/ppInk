@@ -926,9 +926,13 @@ namespace gInk
             {
                 AnimationStructure ani = Root.FormCollection.Animations[k];
                 if (dt>=ani.T0)
-                {                    
-                    ani.Idx = (ani.Idx + 1) % ani.Image.AcTlChunk.NumFrames;
-                    ani.T0 = ani.T0.AddSeconds((1.0 * ani.Image.Frames[ani.Idx].FcTlChunk.DelayNum) / ani.Image.Frames[ani.Idx].FcTlChunk.DelayDen);
+                {
+                    do
+                    { 
+                        ani.Idx = (ani.Idx + 1) % (ani.Image.NumFrames);
+                        ani.T0 = ani.T0.AddSeconds(ani.Image.Frames[ani.Idx].GetDelay());
+                    }
+                    while (dt > ani.T0);
                     Root.UponAllDrawingUpdate = true;                    
                 }
             }

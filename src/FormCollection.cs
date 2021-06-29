@@ -1490,12 +1490,12 @@ namespace gInk
             if (st.ExtendedProperties.Contains(Root.FADING_PEN))
                 FadingList.Add(st);
             ApngImage img = new ApngImage(fn);
-            if(!img.IsSimplePng)
+            if(img.IsAnimated())
             {
                 AnimationStructure ani=new AnimationStructure();
                 ani.Image = img;
-                ani.Idx = 0;
-                ani.T0 = DateTime.Now.AddSeconds(.1 + (1.0*img.Frames[ani.Idx].FcTlChunk.DelayNum) / img.Frames[ani.Idx].FcTlChunk.DelayDen);
+                ani.Idx = 0;               
+                ani.T0 = DateTime.Now.AddSeconds(.1 + img.Frames[ani.Idx].GetDelay());
                 Animations.Add(AniPoolIdx, ani);
                 st.ExtendedProperties.Add(Root.ANIMATIONFRAMEIMG_GUID, AniPoolIdx);
                 AniPoolIdx++;

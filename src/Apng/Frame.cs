@@ -99,7 +99,9 @@ namespace gInk.Apng
 
         }
 
-        private Image _image;
+        public Image _image;
+        
+        public double _delay=-1;
 
         public Image GetImage()
         {
@@ -109,5 +111,15 @@ namespace gInk.Apng
             }
             return _image;
         }
+
+        public double GetDelay()
+        {
+            if(_delay<0)
+            {
+                _delay = (1.0 * FcTlChunk.DelayNum) / (FcTlChunk.DelayDen==0? 100:FcTlChunk.DelayDen);
+            }
+            return _delay;
+        }
+
     }
 }
