@@ -1489,13 +1489,13 @@ namespace gInk
             st.ExtendedProperties.Add(Root.IMAGE_H_GUID, CursorY - CursorY0);
             if (st.ExtendedProperties.Contains(Root.FADING_PEN))
                 FadingList.Add(st);
-            ApngImage img = new ApngImage(fn);
-            if(img.IsAnimated())
+
+            if (ClipartsDlg.Animations.ContainsKey(fn))
             {
                 AnimationStructure ani=new AnimationStructure();
-                ani.Image = img;
+                ani.Image = ClipartsDlg.Animations[fn];
                 ani.Idx = 0;               
-                ani.T0 = DateTime.Now.AddSeconds(.1 + img.Frames[ani.Idx].GetDelay());
+                ani.T0 = DateTime.Now.AddSeconds(.1 + ani.Image.Frames[ani.Idx].GetDelay());
                 Animations.Add(AniPoolIdx, ani);
                 st.ExtendedProperties.Add(Root.ANIMATIONFRAMEIMG_GUID, AniPoolIdx);
                 AniPoolIdx++;
@@ -6000,6 +6000,17 @@ namespace gInk
                         {
                                 try{ ClipartsDlg.LoadImage(st2); } catch { }
                         }
+                        if (guid==Root.ANIMATIONFRAMEIMG_GUID)
+                        {
+                            AnimationStructure ani = new AnimationStructure();
+                            ani.Image = ClipartsDlg.Animations[(string)(stk.ExtendedProperties[Root.IMAGE_GUID].Data)];
+                            ani.Idx = 0;
+                            ani.T0 = DateTime.Now.AddSeconds(.1 + ani.Image.Frames[ani.Idx].GetDelay());
+                            Animations.Add(AniPoolIdx, ani);
+                            stk.ExtendedProperties.Add(Root.ANIMATIONFRAMEIMG_GUID, AniPoolIdx);
+                            AniPoolIdx++;
+                        }
+
                         stk.ExtendedProperties.Add(guid, obj);
                         do
                         {

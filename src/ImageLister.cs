@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using gInk.Apng;
 
 namespace gInk
 {
@@ -22,6 +23,7 @@ namespace gInk
         public int ImgSizeX = -1;
         public int ImgSizeY = -1;
         public Dictionary<string,Image> Originals = new Dictionary<string, Image>();
+        public Dictionary<string, ApngImage> Animations = new Dictionary<string, ApngImage>();
 
         public ImageLister(Root rt)
         {
@@ -164,13 +166,18 @@ namespace gInk
             if (!Originals.ContainsKey(fn))
             {
                 ImageListViewer.Items.Add(new ListViewItem(fn1, fn));
-                Image img = Image.FromFile(fn);
-                ImageListViewer.LargeImageList.Images.Add(fn, img);
+                //Image img = Image.FromFile(fn);
+                ApngImage img = new ApngImage(fn);
+                ImageListViewer.LargeImageList.Images.Add(fn, img.DefaultImage.GetImage());
                 int j = ImageListViewer.LargeImageList.Images.IndexOfKey(fn);
-                Originals.Add(fn, (Image)(img.Clone()));
-                ImgSizes[j].X = img.Width;
-                ImgSizes[j].Y = img.Height;
-            }       
+                Originals.Add(fn, (Image)(img.DefaultImage.GetImage().Clone()));
+                ImgSizes[j].X = img.DefaultImage.GetImage().Width;
+                ImgSizes[j].Y = img.DefaultImage.GetImage().Height;
+                if(img.IsAnimated())
+                {
+                    Animations.Add(fn, img);
+                }
+            }
             return fn1;
         }
 
