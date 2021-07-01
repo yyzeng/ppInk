@@ -38,6 +38,7 @@
             this.DelBtn = new System.Windows.Forms.Button();
             this.FillingCombo = new System.Windows.Forms.ComboBox();
             this.AutoCloseCb = new System.Windows.Forms.CheckBox();
+            this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.SuspendLayout();
             // 
             // ImageListViewer
@@ -143,6 +144,10 @@
             this.AutoCloseCb.UseVisualStyleBackColor = true;
             this.AutoCloseCb.Visible = false;
             // 
+            // openFileDialog
+            // 
+            this.openFileDialog.FileName = "openFileDialog1";
+            // 
             // ImageLister
             // 
             this.AcceptButton = this.InsertBtn;
@@ -181,5 +186,6 @@
         public System.Windows.Forms.Button DelBtn;
         public System.Windows.Forms.ComboBox FillingCombo;
         public System.Windows.Forms.CheckBox AutoCloseCb;
+        private System.Windows.Forms.OpenFileDialog openFileDialog;
     }
 }
