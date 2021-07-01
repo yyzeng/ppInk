@@ -413,7 +413,12 @@ namespace gInk
                         {
                             try
                             {
-                                AnimationStructure ani = (AnimationStructure)(Root.FormCollection.Animations[(int)(st.ExtendedProperties[Root.ANIMATIONFRAMEIMG_GUID].Data)]);
+                                AnimationStructure ani = Root.FormCollection.Animations[(int)(st.ExtendedProperties[Root.ANIMATIONFRAMEIMG_GUID].Data)];
+                                if (ani.DeleteRequested)
+                                {
+                                    Root.FormCollection.IC.Ink.DeleteStroke(st);
+                                    continue;
+                                }
                                 img = ani.Image.Frames[ani.Idx].GetImage();
                             }
                             catch
@@ -928,12 +933,25 @@ namespace gInk
                 if (dt>=ani.T0)
                 {
                     do
-                    { 
-                        ani.Idx = (ani.Idx + 1) % (ani.Image.NumFrames);
-                        ani.T0 = ani.T0.AddSeconds(ani.Image.Frames[ani.Idx].GetDelay());
+                    {
+                        ani.Idx++;
+                        if (ani.Idx >= ani.Image.NumFrames-1)
+                        {
+                            ani.Idx = 0;//= (ani.Idx + 1) % (ani.Image.NumFrames);
+                            ani.Loop--;
+                        }
+                        else
+                            ani.T0 = ani.T0.AddSeconds(ani.Image.Frames[ani.Idx].GetDelay());
                     }
                     while (dt > ani.T0);
                     Root.UponAllDrawingUpdate = true;                    
+                }
+                if(ani.Loop<=0 || dt > ani.TEnd)
+                {
+                    ani.T0 = DateTime.MaxValue;
+                    ani.TEnd = DateTime.MaxValue;
+                    if (ani.DeleteAtDend)
+                        ani.DeleteRequested = true;
                 }
             }
 

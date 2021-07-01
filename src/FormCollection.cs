@@ -18,6 +18,7 @@ using System.Drawing.Imaging;
 using System.Globalization;
 using System.Drawing.Drawing2D;
 using gInk.Apng;
+using System.Text.RegularExpressions;
 
 namespace gInk
 {
@@ -1492,15 +1493,42 @@ namespace gInk
 
             if (ClipartsDlg.Animations.ContainsKey(fn))
             {
-                AnimationStructure ani=new AnimationStructure();
-                ani.Image = ClipartsDlg.Animations[fn];
-                ani.Idx = 0;               
-                ani.T0 = DateTime.Now.AddSeconds(.1 + ani.Image.Frames[ani.Idx].GetDelay());
+                AnimationStructure ani = buildAni(fn);
                 Animations.Add(AniPoolIdx, ani);
                 st.ExtendedProperties.Add(Root.ANIMATIONFRAMEIMG_GUID, AniPoolIdx);
                 AniPoolIdx++;
             }
             return st;
+        }
+
+        private AnimationStructure buildAni(string fn)
+        {
+            AnimationStructure ani = new AnimationStructure();
+            if (!ClipartsDlg.Animations.ContainsKey(fn))
+                ClipartsDlg.LoadImage(fn);
+            ani.Image = ClipartsDlg.Animations[fn];
+            ani.Idx = 0;
+            ani.DeleteRequested = false;
+            ani.Loop = int.MaxValue;
+            ani.TEnd = DateTime.MaxValue;
+            Double d;
+            string s = Regex.Match(Path.GetFileNameWithoutExtension(fn), "\\[(.*)\\]$").Groups[1].Value;
+            bool l = false;
+            if (s.EndsWith("X", StringComparison.InvariantCultureIgnoreCase))
+            {
+                s = s.Remove(s.Length - 1);
+                l = true;
+            }
+            if (Double.TryParse(s, out d))
+            {
+                ani.DeleteAtDend = d < 0;
+                if (l)
+                    ani.Loop = (int)Math.Abs(d);
+                else
+                    ani.TEnd = DateTime.Now.AddSeconds(.1 + Math.Abs(d));
+            }
+            ani.T0 = DateTime.Now.AddSeconds(.1 + ani.Image.Frames[ani.Idx].GetDelay());
+            return ani;
         }
 
         private Stroke AddLineStroke(int CursorX0, int CursorY0, int CursorX, int CursorY)
@@ -2247,7 +2275,7 @@ namespace gInk
                 Root.CursorX0 = e.X;
                 Root.CursorY0 = e.Y;
             }
-            MagneticEffect(Root.CursorX0 - 1, Root.CursorY0, ref Root.CursorX0, ref Root.CursorY0, Root.MagneticRadius > 0); // analysis of magnetic will be done within the module
+            MagneticEffect(Root.CursorX0 - 1, Root.CursorY0, ref Root.CursorX0, ref Root.CursorY0, Root.MagneticRadius > 0); // analysis of magnetic will be done within the function
             if (Root.InkVisible)
             {
                 Root.CursorX = Root.CursorX0;
@@ -6002,10 +6030,7 @@ namespace gInk
                         }
                         if (guid==Root.ANIMATIONFRAMEIMG_GUID)
                         {
-                            AnimationStructure ani = new AnimationStructure();
-                            ani.Image = ClipartsDlg.Animations[(string)(stk.ExtendedProperties[Root.IMAGE_GUID].Data)];
-                            ani.Idx = 0;
-                            ani.T0 = DateTime.Now.AddSeconds(.1 + ani.Image.Frames[ani.Idx].GetDelay());
+                            AnimationStructure ani = buildAni((string)(stk.ExtendedProperties[Root.IMAGE_GUID].Data));
                             Animations.Add(AniPoolIdx, ani);
                             stk.ExtendedProperties.Add(Root.ANIMATIONFRAMEIMG_GUID, AniPoolIdx);
                             AniPoolIdx++;

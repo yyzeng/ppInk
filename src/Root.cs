@@ -71,6 +71,10 @@ namespace gInk
         public ApngImage Image;
         public long Idx;
         public DateTime T0;
+        public bool DeleteAtDend;
+        public bool DeleteRequested;
+        public DateTime TEnd;
+        public int Loop;
     }
 
 
