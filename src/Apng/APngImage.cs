@@ -27,7 +27,7 @@ namespace gInk.Apng
         {
             // first we try to identify the type of stream            
             MemoryStream ms = new MemoryStream(fileBytes);
-            Image img = Image.FromStream(ms);
+            Bitmap img = new Bitmap(ms);
 
             ms.Seek(0, SeekOrigin.Begin);
 
@@ -45,8 +45,8 @@ namespace gInk.Apng
                         byte[] times = img.GetPropertyItem(0x5100).Value;
                         int dur = BitConverter.ToInt32(times, 4 * i);
                         img.SelectActiveFrame(FrameDimension.Time, i);
-                        f._image = new Bitmap(img);
-                        f._delay = dur/100.0;
+                        f._image = img.Clone(new Rectangle(Point.Empty,img.Size),PixelFormat.Format32bppArgb);
+                        f._delay = dur / 100.0;
                         _frames.Add(f);
                     }
                 }
