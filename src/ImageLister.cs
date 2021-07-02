@@ -50,21 +50,14 @@ namespace gInk
             ImageListViewer.Items.Clear();
             ImageListViewer.LargeImageList.Images.Clear();
             Originals.Clear();
+            Animations.Clear();
             for (int i = 0; i < Root.StampFileNames.Count; i++)
             {
                 try
                 {
-                    ImageListViewer.Items.Add(new ListViewItem(Path.GetFileNameWithoutExtension(Root.StampFileNames[i]), Root.StampFileNames[i]));
-                    Image img = Image.FromFile(Root.StampFileNames[i]);
-                    img.Tag = img.Width * 10000 + img.Height;
-                    ImageListViewer.LargeImageList.Images.Add(Root.StampFileNames[i], img);
-                    int j = ImageListViewer.LargeImageList.Images.IndexOfKey(Root.StampFileNames[i]);
-                    Originals.Add(Root.StampFileNames[i], (Image)(img.Clone()));
-                    //ImgSize[ImageListViewer.LargeImageList.Images.IndexOfKey(Root.StampFileNames[i])] = new Point(img.Width,img.Height);
-                    ImgSizes[j].X = img.Width;
-                    ImgSizes[j].Y = img.Height;
+                    LoadImage(Root.StampFileNames[i]);
                 }
-                catch
+                catch (Exception ex)
                 {
                     MessageBox.Show("Error Loading ClipArt image:\n" + Root.StampFileNames[i], "ppInk", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
@@ -168,11 +161,13 @@ namespace gInk
                 ImageListViewer.Items.Add(new ListViewItem(fn1, fn));
                 //Image img = Image.FromFile(fn);
                 ApngImage img = new ApngImage(fn);
-                ImageListViewer.LargeImageList.Images.Add(fn, img.DefaultImage.GetImage());
+                img.DefaultImage._image.Tag = img.DefaultImage._image.Width * 10000 + img.DefaultImage._image.Height;
+                ImageListViewer.LargeImageList.Images.Add(fn, (Image)(img.DefaultImage.GetImage().Clone()));
+                
                 int j = ImageListViewer.LargeImageList.Images.IndexOfKey(fn);
-                Originals.Add(fn, (Image)(img.DefaultImage.GetImage().Clone()));
-                ImgSizes[j].X = img.DefaultImage.GetImage().Width;
-                ImgSizes[j].Y = img.DefaultImage.GetImage().Height;
+                Originals.Add(fn, (Image)(img.DefaultImage.GetImage().Clone()));                
+                ImgSizes[j].X = Originals[fn].Width;
+                ImgSizes[j].Y = Originals[fn].Height;
                 if(img.IsAnimated())
                 {
                     Animations.Add(fn, img);

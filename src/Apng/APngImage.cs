@@ -195,6 +195,7 @@ namespace gInk.Apng
                     }
                 } while (chunk.ChunkType != "IEND");
 
+                DefaultImage.GetImage(); // to force Default._image generation
 
                 // Now we should apply every chunk in otherChunks to every frame.
                 //_frames.ForEach(f => otherChunks.ForEach(f.AddOtherChunk));
