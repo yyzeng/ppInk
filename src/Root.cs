@@ -120,6 +120,7 @@ namespace gInk
     {
         public Local Local = new Local();
         public const int MaxPenCount = 10;
+        public const int SavedPenDA = MaxPenCount;
         public const int LassoPercent = 80;
 
         //public Guid TYPE_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 0, 0);
@@ -174,7 +175,7 @@ namespace gInk
         public bool LoadSaveEnabled = true;
         public bool PanEnabled = true;
         public bool InkVisibleEnabled = true;
-        public DrawingAttributes[] PenAttr = new DrawingAttributes[MaxPenCount];
+        public DrawingAttributes[] PenAttr = new DrawingAttributes[MaxPenCount+1]; //+1 for SavedPenDA
         public bool AutoScroll;
         public bool WhiteTrayIcon;
         public string SnapshotBasePath;
@@ -843,7 +844,10 @@ namespace gInk
 			PenAttr[9].Color = Color.FromArgb(145, 70, 160);
 			PenAttr[9].Width = 500;
 			PenAttr[9].Transparency = 175;
-		}
+
+            PenAttr[SavedPenDA] = null;
+
+        }
 
 		public void SetDefaultConfig()
 		{
