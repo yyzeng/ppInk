@@ -89,6 +89,12 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Apng\APngImage.cs" />
+    <Compile Include="Apng\Chunks\Chunk.cs" />
+    <Compile Include="Apng\Chunks\CodedChunks.cs" />
+    <Compile Include="Apng\StreamExtensions.cs" />
+    <Compile Include="Apng\Helper.cs" />
+    <Compile Include="Apng\Frame.cs" />
     <Compile Include="BuildTimestamp.cs" />
     <Compile Include="CallForm.cs">
       <SubType>Form</SubType>

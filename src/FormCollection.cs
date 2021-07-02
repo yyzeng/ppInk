@@ -17,6 +17,8 @@ using System.Reflection;
 using System.Drawing.Imaging;
 using System.Globalization;
 using System.Drawing.Drawing2D;
+using gInk.Apng;
+using System.Text.RegularExpressions;
 
 namespace gInk
 {
@@ -48,6 +50,9 @@ namespace gInk
             [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
             private static extern IntPtr LoadCursorFromFile(string path);
         }
+
+        public Dictionary<int, AnimationStructure> Animations = new Dictionary<int, AnimationStructure>();
+        public int AniPoolIdx;
 
         // Button/Tooblar
         const double NormSizePercent = 0.85;
@@ -442,6 +447,9 @@ namespace gInk
             Initialize();
         }
 
+        private string MemoHintClose;
+        private string MemoHintDock;
+
         public void Initialize()
         {
             Console.WriteLine("A=" + (DateTime.Now.Ticks / 1e7).ToString());
@@ -453,6 +461,9 @@ namespace gInk
             Root.ColorPickerMode = false;
             StrokesSelection.Clear();
             FadingList.Clear();
+
+            Animations.Clear();
+            AniPoolIdx = 0;
 
             if (Root.WindowRect.Width <= 0 || Root.WindowRect.Height <= 0)
             {
@@ -1077,7 +1088,8 @@ namespace gInk
             LastTickTime = DateTime.Parse("1987-01-01");
             tiSlide.Enabled = true;
 
-            this.toolTip.SetToolTip(this.btDock, Root.Local.ButtonNameDock + " (" + Root.Hotkey_DockUndock.ToString() + ")");
+            MemoHintDock = Root.Local.ButtonNameDock + " (" + Root.Hotkey_DockUndock.ToString() + ")";
+            this.toolTip.SetToolTip(this.btDock, MemoHintDock);
             this.toolTip.SetToolTip(this.btPenWidth, Root.Local.ButtonNamePenwidth);
             this.toolTip.SetToolTip(this.btEraser, Root.Local.ButtonNameErasor + " (" + Root.Hotkey_Eraser.ToString() + ")");
             this.toolTip.SetToolTip(this.btPan, Root.Local.ButtonNamePan + " (" + Root.Hotkey_Pan.ToString() + ")");
@@ -1087,7 +1099,8 @@ namespace gInk
             this.toolTip.SetToolTip(this.btUndo, Root.Local.ButtonNameUndo + " (" + Root.Hotkey_Undo.ToString() + ")");
             this.toolTip.SetToolTip(this.btClear, Root.Local.ButtonNameClear + " (" + Root.Hotkey_Clear.ToString() + ")");
             this.toolTip.SetToolTip(this.btVideo, Root.Local.ButtonNameVideo + " (" + Root.Hotkey_Video.ToString() + ")");
-            this.toolTip.SetToolTip(this.btStop, Root.Local.ButtonNameExit + " (" + Root.Hotkey_Close.ToString() + "/Alt+F4)");
+            MemoHintClose = Root.Local.ButtonNameExit + " (" + Root.Hotkey_Close.ToString() + "/Alt+F4)";
+            this.toolTip.SetToolTip(this.btStop, MemoHintClose);
             this.toolTip.SetToolTip(this.btHand, Root.Local.ButtonNameHand + " (" + Root.Hotkey_Hand.ToString() + ")");
             this.toolTip.SetToolTip(this.btLine, Root.Local.ButtonNameLine + " (" + Root.Hotkey_Line.ToString() + ")");
             this.toolTip.SetToolTip(this.btRect, Root.Local.ButtonNameRect + " (" + Root.Hotkey_Rect.ToString() + ")");
@@ -1341,7 +1354,7 @@ namespace gInk
                     TagSize = Math.Min(Math.Max(4, TagSize), 255);                
                 }
                 else
-                    PenWidth_Change(Root.PixelToHiMetric(e.Delta > 0 ? 5 : -5));
+                    PenWidth_Change(e.Delta > 0 ? Root.PenWidth_Delta : -Root.PenWidth_Delta);
                 return;
             }
         }
@@ -1477,7 +1490,45 @@ namespace gInk
             st.ExtendedProperties.Add(Root.IMAGE_H_GUID, CursorY - CursorY0);
             if (st.ExtendedProperties.Contains(Root.FADING_PEN))
                 FadingList.Add(st);
+
+            if (ClipartsDlg.Animations.ContainsKey(fn))
+            {
+                AnimationStructure ani = buildAni(fn);
+                Animations.Add(AniPoolIdx, ani);
+                st.ExtendedProperties.Add(Root.ANIMATIONFRAMEIMG_GUID, AniPoolIdx);
+                AniPoolIdx++;
+            }
             return st;
+        }
+
+        private AnimationStructure buildAni(string fn)
+        {
+            AnimationStructure ani = new AnimationStructure();
+            if (!ClipartsDlg.Animations.ContainsKey(fn))
+                ClipartsDlg.LoadImage(fn);
+            ani.Image = ClipartsDlg.Animations[fn];
+            ani.Idx = 0;
+            ani.DeleteRequested = false;
+            ani.Loop = int.MaxValue;
+            ani.TEnd = DateTime.MaxValue;
+            Double d;
+            string s = Regex.Match(Path.GetFileNameWithoutExtension(fn), "\\[(.*)\\]$").Groups[1].Value;
+            bool l = false;
+            if (s.EndsWith("X", StringComparison.InvariantCultureIgnoreCase))
+            {
+                s = s.Remove(s.Length - 1);
+                l = true;
+            }
+            if (Double.TryParse(s, out d))
+            {
+                ani.DeleteAtDend = d < 0;
+                if (l)
+                    ani.Loop = (int)Math.Abs(d);
+                else
+                    ani.TEnd = DateTime.Now.AddSeconds(.1 + Math.Abs(d));
+            }
+            ani.T0 = DateTime.Now.AddSeconds(.1 + ani.Image.Frames[ani.Idx].GetDelay());
+            return ani;
         }
 
         private Stroke AddLineStroke(int CursorX0, int CursorY0, int CursorX, int CursorY)
@@ -2163,6 +2214,12 @@ namespace gInk
                 Stroke minStroke;
                 if (NearestStroke(new Point(Root.CursorX, Root.CursorY), true, out minStroke, out pos, false, false) < Root.PixelToHiMetric(Root.MinMagneticRadius()))
                 {
+                    try
+                    {
+                        if (minStroke.ExtendedProperties.Contains(Root.ANIMATIONFRAMEIMG_GUID))
+                            Animations.Remove((int)minStroke.ExtendedProperties[Root.ANIMATIONFRAMEIMG_GUID].Data);                        
+                    }
+                    catch { };
                     IC.Ink.DeleteStroke(minStroke);
                 }
             }
@@ -2218,7 +2275,7 @@ namespace gInk
                 Root.CursorX0 = e.X;
                 Root.CursorY0 = e.Y;
             }
-            MagneticEffect(Root.CursorX0 - 1, Root.CursorY0, ref Root.CursorX0, ref Root.CursorY0, Root.MagneticRadius > 0); // analysis of magnetic will be done within the module
+            MagneticEffect(Root.CursorX0 - 1, Root.CursorY0, ref Root.CursorX0, ref Root.CursorY0, Root.MagneticRadius > 0); // analysis of magnetic will be done within the function
             if (Root.InkVisible)
             {
                 Root.CursorX = Root.CursorX0;
@@ -2400,6 +2457,8 @@ namespace gInk
                         StrokesSelection.Move(currentxy.X - LasteXY.X, currentxy.Y - LasteXY.Y);
                         foreach (Stroke st in StrokesSelection)
                         {
+                            if (st.Deleted)
+                                continue;
                             if (st.ExtendedProperties.Contains(Root.TEXT_GUID))
                             {
                                 st.ExtendedProperties.Add(Root.TEXTX_GUID, ((int)st.ExtendedProperties[Root.TEXTX_GUID].Data) + (currentxy.X - LasteXY.X));
@@ -2946,6 +3005,7 @@ namespace gInk
                     IC.Cursor = getCursFromDiskOrRes("cursorarrow", System.Windows.Forms.Cursors.NoMove2D);
                 }
             }
+            Root.UponButtonsUpdate |= 0x2;
             Root.ToolSelected = tool;
         }
 
@@ -3069,6 +3129,15 @@ namespace gInk
                 Root.UnPointer();
                 Root.PanMode = false;
                 ModifyStrokesSelection(AppendToSelection, ref InprogressSelection, StrokesSelection);
+                foreach(Stroke st in StrokesSelection)
+                {
+                    try
+                    {
+                        if (st.ExtendedProperties.Contains(Root.ANIMATIONFRAMEIMG_GUID))
+                            Animations.Remove((int)st.ExtendedProperties[Root.ANIMATIONFRAMEIMG_GUID].Data);
+                    }
+                    catch { };
+                }
                 IC.Ink.Strokes.Remove(StrokesSelection);
                 IC.Ink.DeleteStrokes(StrokesSelection);
                 StrokesSelection.Clear();
@@ -3795,7 +3864,9 @@ namespace gInk
                 foreach (Stroke st in FadingList)
                 {
                     //Stroke st = IC.Ink.Strokes[i];
-                    if (st.ExtendedProperties.Contains(Root.FADING_PEN))
+                    if (st.Deleted)
+                        FadingList.Remove(st);
+                    else if (st.ExtendedProperties.Contains(Root.FADING_PEN))
                     {
                         Int64 j = (Int64)(st.ExtendedProperties[Root.FADING_PEN].Data);
                         if (DateTime.Now.Ticks > j)
@@ -3866,6 +3937,12 @@ namespace gInk
                     case Orientation.toRight:
                         AimedPos.X = gpButtonsLeft;
                         AimedSize.Width = gpButtonsWidth - d;
+                        if (toolTip.GetToolTip(btStop) != MemoHintDock)
+                        {
+                            btStop.Click -= btStop_Click;
+                            btStop.Click += btDock_Click;
+                            toolTip.SetToolTip(btStop, MemoHintDock);
+                        }
                         break;
                     case Orientation.toUp:
                         AimedPos.Y = gpButtonsTop + d;
@@ -3874,6 +3951,12 @@ namespace gInk
                     case Orientation.toDown:
                         AimedPos.Y = gpButtonsTop;
                         AimedSize.Height = gpButtonsHeight - d;
+                        if (toolTip.GetToolTip(btStop) != MemoHintDock)
+                        {
+                            btStop.Click -= btStop_Click;
+                            btStop.Click += btDock_Click;
+                            toolTip.SetToolTip(btStop, MemoHintDock);
+                        }
                         break;
                 }
             }
@@ -3893,6 +3976,12 @@ namespace gInk
                     case Orientation.toRight:
                         AimedPos.X = gpButtonsLeft;
                         AimedSize.Width = Root.Docked ? btDock.Width : gpButtonsWidth;
+                        if(toolTip.GetToolTip(btStop)!=MemoHintClose)
+                        {
+                            btStop.Click -= btDock_Click;
+                            btStop.Click += btStop_Click;
+                            toolTip.SetToolTip(btStop, MemoHintClose);
+                        }
                         break;
                     case Orientation.toUp:
                         AimedPos.Y = gpButtonsTop + d;
@@ -3901,6 +3990,12 @@ namespace gInk
                     case Orientation.toDown:
                         AimedPos.Y = gpButtonsTop;
                         AimedSize.Height = Root.Docked ? btDock.Height : gpButtonsHeight;
+                        if (toolTip.GetToolTip(btStop) != MemoHintClose)
+                        {
+                            btStop.Click -= btDock_Click;
+                            btStop.Click += btStop_Click;
+                            toolTip.SetToolTip(btStop, MemoHintClose);
+                        }
                         break;
                 }
             }
@@ -3928,23 +4023,34 @@ namespace gInk
                 //d = (int)(gpButtons.Width * .9 + AimedSize.Width * .1)
                 if (Root.ToolbarOrientation == Orientation.toRight)
                     if (Math.Abs(VisibleToolbar.Width - AimedSize.Width) < 5)
+                    {
                         VisibleToolbar.Width = AimedSize.Width;
+                        gpButtons.Width = AimedSize.Width;
+                    }
                     else
                         VisibleToolbar.Width = (int)(VisibleToolbar.Width * .5 + AimedSize.Width * .5);
                 else
+                {
                     VisibleToolbar.Width = gpButtonsWidth - Math.Abs(gpButtons.Left - gpButtonsLeft);// Math.Max(gpButtonsWidth - Math.Abs(gpButtons.Left - gpButtonsLeft), btDock.Width);
+                    gpButtons.Width = VisibleToolbar.Width;
+                }
 
                 if (Root.ToolbarOrientation == Orientation.toDown)
                     if (Math.Abs(VisibleToolbar.Height - AimedSize.Height) < 5)
+                    {
                         VisibleToolbar.Height = AimedSize.Height;
+                        gpButtons.Height = AimedSize.Height;
+                    }
                     else
                         VisibleToolbar.Height = (int)(VisibleToolbar.Height * .5 + AimedSize.Height * .5);
                 else
+                {
                     VisibleToolbar.Height = gpButtonsHeight - Math.Abs(gpButtons.Top - gpButtonsTop);// Math.Max(gpButtonsHeight - Math.Abs(gpButtons.Top - gpButtonsTop), btDock.Height);
+                    gpButtons.Height = VisibleToolbar.Height;
+                }
 
                 Root.UponAllDrawingUpdate = true;
-                Root.UponButtonsUpdate |= 0x1;
-                Root.UponButtonsUpdate |= 0x4;
+                Root.UponButtonsUpdate |= 0x5;
             }
             else if (ButtonsEntering == -9) // and Left=X&&Top==Y
             {
@@ -4608,6 +4714,7 @@ namespace gInk
                         gpButtons.Left = newleft;
                         gpButtons.Top = newtop;
                         Root.UponAllDrawingUpdate = true;
+                        Root.UponButtonsUpdate |= 0x5;
                         ToolbarMoved = true;
                         Root.gpButtonsLeft = gpButtonsLeft;
                         Root.gpButtonsTop = gpButtonsTop;
@@ -5463,6 +5570,7 @@ namespace gInk
             if (Root.CanvasCursor == 1)
                 SetPenTipCursor();
             btZoom.BackgroundImage = getImgFromDiskOrRes("Zoom");
+            Root.UponButtonsUpdate |= 0x2;
         }
 
         public void StartZoomCapt()
@@ -5572,6 +5680,7 @@ namespace gInk
             }
             gpSubTools.Visible = Root.SubToolsEnabled;
             Root.UponAllDrawingUpdate = true;
+            Root.UponButtonsUpdate |= 0x7;
             Task.Run(() => { for (int i = 1; i <= 10; i++)
                              {
                                 ColorMatrix cm = new ColorMatrix();
@@ -5618,8 +5727,8 @@ namespace gInk
             {
                 gpSubTools.Visible = false;
             }
+            //Root.UponAllDrawingUpdate = true;
             Root.UponButtonsUpdate |= 0x2;
-            Root.UponAllDrawingUpdate = true;
         }
 
         private void gpSubTools_MouseDown(object sender, MouseEventArgs e)
@@ -5652,6 +5761,7 @@ namespace gInk
                         gpSubTools.Left = newleft;
                         gpSubTools.Top = newtop;
                         Root.UponAllDrawingUpdate = true;
+                        Root.UponButtonsUpdate |= 0x5;
                     }
                 }
             }
@@ -5666,6 +5776,7 @@ namespace gInk
         {
             gpSubTools.Visible = false;
             Root.UponAllDrawingUpdate = true;
+            Root.UponButtonsUpdate |= 0x5;
         }
 
         private void BtnPin_Click(object sender, EventArgs e)
@@ -5917,6 +6028,14 @@ namespace gInk
                         {
                                 try{ ClipartsDlg.LoadImage(st2); } catch { }
                         }
+                        if (guid==Root.ANIMATIONFRAMEIMG_GUID)
+                        {
+                            AnimationStructure ani = buildAni((string)(stk.ExtendedProperties[Root.IMAGE_GUID].Data));
+                            Animations.Add(AniPoolIdx, ani);
+                            stk.ExtendedProperties.Add(Root.ANIMATIONFRAMEIMG_GUID, AniPoolIdx);
+                            AniPoolIdx++;
+                        }
+
                         stk.ExtendedProperties.Add(guid, obj);
                         do
                         {

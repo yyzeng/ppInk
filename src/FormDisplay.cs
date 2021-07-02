@@ -207,7 +207,8 @@ namespace gInk
         {
             DrawButtons(gCanvus, redrawbuttons, exiting);
         }
-            public void DrawButtons(Graphics g, bool redrawbuttons=true, bool exiting = false)
+
+        public void DrawButtons(Graphics g, bool redrawbuttons=true, bool exiting = false)
 		{
 			if (Root.AlwaysHideToolbar)
 				return;
@@ -227,7 +228,7 @@ namespace gInk
 			if (left + width > gpbl + fullwidth)
 				drawwidth = gpbl + fullwidth - left;
 
-            if (redrawbuttons)
+            if (redrawbuttons && Root.FormCollection.gpButtons.Width>0 && Root.FormCollection.gpButtons.Height>0)
                 Root.FormCollection.gpButtons.DrawToBitmap(gpButtonsImage, new Rectangle(0, 0, Root.FormCollection.gpButtonsWidth, Root.FormCollection.gpButtonsHeight));
 
             if (exiting)
@@ -408,14 +409,33 @@ namespace gInk
                     {
                         //Image img = Root.FormCollection.ClipartsDlg.Images.Images[(int)(st.ExtendedProperties[Root.IMAGE_GUID].Data)];
                         Image img;
-                        try
+                        if(!Root.FingerInAction && st.ExtendedProperties.Contains(Root.ANIMATIONFRAMEIMG_GUID))
                         {
-                            img = Root.FormCollection.ClipartsDlg.Originals[(string)(st.ExtendedProperties[Root.IMAGE_GUID].Data)];
+                            try
+                            {
+                                AnimationStructure ani = Root.FormCollection.Animations[(int)(st.ExtendedProperties[Root.ANIMATIONFRAMEIMG_GUID].Data)];
+                                if (ani.DeleteRequested)
+                                {
+                                    Root.FormCollection.IC.Ink.DeleteStroke(st);
+                                    continue;
+                                }
+                                img = ani.Image.Frames[ani.Idx].GetImage();
+                            }
+                            catch
+                            {
+                                img = gInk.Properties.Resources.unknown;
+                            }
+
                         }
-                        catch
-                        {
-                            img = gInk.Properties.Resources.unknown;
-                        }
+                        else
+                            try
+                            {
+                                img = Root.FormCollection.ClipartsDlg.Originals[(string)(st.ExtendedProperties[Root.IMAGE_GUID].Data)];
+                            }
+                            catch
+                            {
+                                img = gInk.Properties.Resources.unknown;
+                            }
                         /*Rectangle r = st.GetBoundingBox();
                         Point p1 = new Point(r.Location.X, r.Location.Y);
                         Point p2 = new Point(r.Location.X+r.Size.Width, r.Location.Y+r.Size.Height);
@@ -906,11 +926,41 @@ namespace gInk
 			}
 			*/
 
+            DateTime dt = DateTime.Now;
+            foreach (int k in Root.FormCollection.Animations.Keys)
+            {
+                AnimationStructure ani = Root.FormCollection.Animations[k];
+                if (dt>=ani.T0)
+                {
+                    do
+                    {
+                        ani.Idx++;
+                        if (ani.Idx >= ani.Image.NumFrames-1)
+                        {
+                            ani.Idx = 0;//= (ani.Idx + 1) % (ani.Image.NumFrames);
+                            ani.Loop--;
+                        }
+                        else
+                            ani.T0 = ani.T0.AddSeconds(ani.Image.Frames[ani.Idx].GetDelay());
+                    }
+                    while (dt > ani.T0);
+                    Root.UponAllDrawingUpdate = true;                    
+                }
+                if(ani.Loop<=0 || dt > ani.TEnd)
+                {
+                    ani.T0 = DateTime.MaxValue;
+                    ani.TEnd = DateTime.MaxValue;
+                    if (ani.DeleteAtDend)
+                        ani.DeleteRequested = true;
+                }
+            }
+
 			if (Root.UponAllDrawingUpdate)
 			{
                 ClearCanvus();
 				DrawStrokes();
-				DrawButtons(true);
+                DrawButtons(Root.UponButtonsUpdate > 0);
+                Root.UponButtonsUpdate = 0;
 				if (Root.Snapping > 0)
 					DrawSnapping(Root.SnappingRect);
 				UpdateFormDisplay(true);

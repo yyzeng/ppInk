@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Net.WebSockets;
 using System.Collections.Specialized;
 using System.Drawing.Drawing2D;
+using gInk.Apng;
 
 namespace gInk
 {
@@ -64,6 +65,19 @@ namespace gInk
     public enum VideoRecInProgress { Stopped=0, Starting=1, Recording=2, Stopping = 3, Pausing=4, Paused=5, Resuming=6, Streaming = 7 };
 
     public enum SnapInPointerKeys { None=0, Shift=1, Control=2, Alt=3 };
+
+    public class AnimationStructure
+    {
+        public ApngImage Image;
+        public long Idx;
+        public DateTime T0;
+        public bool DeleteAtDend;
+        public bool DeleteRequested;
+        public DateTime TEnd;
+        public int Loop;
+    }
+
+
 
     public class TestMessageFilter : IMessageFilter
 	{
@@ -138,6 +152,7 @@ namespace gInk
         public static Guid IMAGE_H_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 8);
         public static Guid ISHIDDEN_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 10);
         public static Guid ISBACKGROUND_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 11);
+        public static Guid ANIMATIONFRAMEIMG_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 12);
 
         public static Guid FADING_PEN = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 3, 1);
         public static Guid DASHED_LINE_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 3, 2);        // will contain DashStyle style
@@ -977,7 +992,7 @@ namespace gInk
                         case "ALT_AS_TEMPORARY_COMMAND":
                             if (sPara.ToUpper() == "TRUE" || sPara.ToUpper() == "ON")
                                 AltAsOneCommand = 2;
-                            if (int.TryParse(sPara,out tempi))
+                            else if (int.TryParse(sPara,out tempi))
                                 AltAsOneCommand = tempi;
                             else
                                 AltAsOneCommand = 0;
