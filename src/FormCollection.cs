@@ -1524,7 +1524,7 @@ namespace gInk
             {
                 ani.DeleteAtDend = d < 0;
                 if (l)
-                    ani.Loop = (int)Math.Abs(d);
+                    ani.Loop = (int)Math.Abs(d*ani.Image.NumFrames);
                 else
                     ani.TEnd = DateTime.Now.AddSeconds(.1 + Math.Abs(d));
             }

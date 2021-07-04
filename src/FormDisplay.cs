@@ -935,10 +935,10 @@ namespace gInk
                     do
                     {
                         ani.Idx++;
+                        ani.Loop--;
                         if (ani.Idx >= ani.Image.NumFrames-1)
                         {
                             ani.Idx = 0;//= (ani.Idx + 1) % (ani.Image.NumFrames);
-                            ani.Loop--;
                         }
                         else
                             ani.T0 = ani.T0.AddSeconds(ani.Image.Frames[ani.Idx].GetDelay());
