@@ -459,6 +459,7 @@ namespace gInk
 
             Root.Snapping = 0;
             Root.ColorPickerMode = false;
+            Root.PenAttr[Root.SavedPenDA] = null;
             StrokesSelection.Clear();
             FadingList.Clear();
 
@@ -1523,7 +1524,7 @@ namespace gInk
             {
                 ani.DeleteAtDend = d < 0;
                 if (l)
-                    ani.Loop = (int)Math.Abs(d);
+                    ani.Loop = (int)Math.Abs(d*ani.Image.NumFrames);
                 else
                     ani.TEnd = DateTime.Now.AddSeconds(.1 + Math.Abs(d));
             }
@@ -3165,9 +3166,14 @@ namespace gInk
             {
                 // clearing selection or not depends on tools :  if pen is selected, action will be defined in SelectTool
                 btPan.BackgroundImage = getImgFromDiskOrRes("pan", ImageExts);
-                if (AltKeyPressed() && Root.AltAsOneCommand>=1 && pen != LastPenSelected && SavedPen < 0)
+                if (AltKeyPressed() && Root.AltAsOneCommand>=1 && pen != LastPenSelected)
                 {
-                    SavedPen = LastPenSelected;
+                    if(Root.PenAttr[Root.SavedPenDA]!=null)
+                        Root.PenAttr[LastPenSelected] = Root.PenAttr[Root.SavedPenDA];
+                    Root.PenAttr[Root.SavedPenDA] = null;
+                    Root.UponButtonsUpdate |= 0x2;
+                    if (SavedPen < 0)
+                        SavedPen = LastPenSelected;
                 }
                 if (this.Cursor != System.Windows.Forms.Cursors.Arrow)
                     this.Cursor = System.Windows.Forms.Cursors.Arrow;
@@ -3394,6 +3400,8 @@ namespace gInk
                 Active = 0;     // we force to get it off
             if(Active==1)
             {
+                if (AltKeyPressed() && Root.PenAttr[Root.SavedPenDA] == null)
+                    Root.PenAttr[Root.SavedPenDA] = Root.PenAttr[Root.CurrentPen].Clone();
                 ActivateStrokesInput(false);
                 Root.ColorPickerMode = true;
                 Root.PickupTransparency = Root.PenAttr[Root.CurrentPen].Transparency;
@@ -4227,11 +4235,21 @@ namespace gInk
             //if (!AltKeyPressed() && !Root.PointerMode)//&& (SavedPen>=0 || SavedTool>=0))
             if (!AltKeyPressed() && Root.AltAsOneCommand>=1)
             {
+                if(Root.PenAttr[Root.SavedPenDA]!=null)
+                {
+                    Root.PenAttr[Root.CurrentPen] = Root.PenAttr[Root.SavedPenDA];
+                    Root.PenAttr[Root.SavedPenDA] = null;
+                    btPen[Root.CurrentPen].BackgroundImage = buildPenIcon(Root.PenAttr[Root.CurrentPen].Color, Root.PenAttr[Root.CurrentPen].Transparency, true, Root.PenAttr[Root.CurrentPen].ExtendedProperties.Contains(Root.FADING_PEN));
+                    SelectPen(Root.CurrentPen);
+                    Root.UponButtonsUpdate |= 0x2;
+                }
+
                 if (SavedPen >= 0)
                 {
                     SelectPen(SavedPen);
                     SavedPen = -1;
                 }
+
                 if (SavedTool >= 0)
                 {
                     SelectTool(SavedTool, SavedFilled);
@@ -4806,6 +4824,9 @@ namespace gInk
         {
             if (pen < 0)
                 return;
+            if (AltKeyPressed() && Root.PenAttr[Root.SavedPenDA] == null)
+                Root.PenAttr[Root.SavedPenDA] = Root.PenAttr[pen].Clone();
+
             if (Root.PenAttr[pen].ExtendedProperties.Contains(Root.FADING_PEN))
             {
                 try { Root.PenAttr[pen].ExtendedProperties.Remove(Root.FADING_PEN); } catch { };
@@ -4887,11 +4908,13 @@ namespace gInk
 		}
 
         public void SelectNextLineStyle(object sender)
-        {   //!!!!!!!!!!!!!!!!!!!!!!
+        {   
             for (int b = 0; b < Root.MaxPenCount; b++)
                 if ((Button)sender == btPen[b])
                 {
                     // inspired from FormOptions / comboPensLineStyle_Changed
+                    if (AltKeyPressed() && Root.PenAttr[Root.SavedPenDA] == null)
+                        Root.PenAttr[Root.SavedPenDA] = Root.PenAttr[b].Clone();
                     string s = Root.NextLineStyleString(Root.LineStyleToString(Root.PenAttr[b].ExtendedProperties));
                     DashStyle ds = Root.LineStyleFromString(s);
                     if (ds == DashStyle.Custom)
