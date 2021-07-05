@@ -4855,6 +4855,8 @@ namespace gInk
 				return;
 			}
 
+            StopAllZooms();
+
             TimeSpan tsp = DateTime.Now - MouseTimeDown;
             PolyLineLastX = Int32.MinValue; PolyLineLastY = Int32.MinValue; PolyLineInProgress = null;
             if (sender != null && tsp.TotalSeconds > Root.LongClickTime)
