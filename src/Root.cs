@@ -431,6 +431,15 @@ namespace gInk
                 TagSize = TextSize;
             }
             
+			//FormCollection = null;
+			//FormDisplay = null;
+            FormCollection = new FormCollection(this);
+            FormButtonHitter = new FormButtonHitter(this);
+            FormDisplay = new FormDisplay(this);  // FormDisplay is created at the end to ensure other objects are created.
+            UndoStrokes = new Ink[8];
+
+            APIRest = new APIRest(this);
+
             Size size = SystemInformation.SmallIconSize;
 			trayIcon = new NotifyIcon();
 			trayIcon.Text = "ppInk";
@@ -445,16 +454,6 @@ namespace gInk
 
 			TestMessageFilter mf = new TestMessageFilter(this);
 			Application.AddMessageFilter(mf);
-
-			//FormCollection = null;
-			//FormDisplay = null;
-            FormCollection = new FormCollection(this);
-            FormButtonHitter = new FormButtonHitter(this);
-            FormDisplay = new FormDisplay(this);  // FormDisplay is created at the end to ensure other objects are created.
-            UndoStrokes = new Ink[8];
-
-            APIRest = new APIRest(this);
-
         }
 
         public void callshortcut()
@@ -462,7 +461,7 @@ namespace gInk
             TagNumbering = 1; //reset tag counter 
             if ((FormCollection == null || !FormCollection.Visible) && (FormDisplay == null || !FormDisplay.Visible))
             {
-                if (FormOpacity > 0) callForm.Hide();
+                if (FormOpacity > 0) callForm?.Hide();
                 //if (FormOpacity > 0) callForm.Close();
                 StartInk();
                 if (OpenIntoSnapMode)
@@ -1136,8 +1135,8 @@ namespace gInk
                                 globalRoot.HideInAltTab = false;
                             break;
                         case "SNAPSHOT_PATH":
-                            SnapshotBasePath = sPara;
-                            if (!SnapshotBasePath.EndsWith("/") && !SnapshotBasePath.EndsWith("\\"))
+                            SnapshotBasePath = sPara.Replace('\\','/');
+                            if (!SnapshotBasePath.EndsWith("/"))
                                 SnapshotBasePath += "/";
                             break;
                         case "OPEN_INTO_SNAP":
