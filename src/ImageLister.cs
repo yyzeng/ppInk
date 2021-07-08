@@ -156,22 +156,28 @@ namespace gInk
         public string LoadImage(string fn)
         {
             string fn1 = Path.GetFileNameWithoutExtension(fn);
-            if (!Originals.ContainsKey(fn))
+            // fn2 is required as Windows file system is case insensitive and some names are typed manually in config.ini file
+            string fn2 = fn.Replace('\\','/').ToLower();
+            bool fnd = false;
+            foreach(ListViewItem it in ImageListViewer.Items)
             {
-                ImageListViewer.Items.Add(new ListViewItem(fn1, fn));
-                //Image img = Image.FromFile(fn);
+                fnd = it.ImageKey.Equals(fn2);
+                if (fnd) break;
+            }
+            if (!fnd)//ImageListViewer.Items.ContainsKey(fn2))
+            {
+                ImageListViewer.Items.Add(new ListViewItem(fn1, fn2));
                 ApngImage img = new ApngImage(fn);
                 img.DefaultImage._image.Tag = img.DefaultImage._image.Width * 10000 + img.DefaultImage._image.Height;
-                ImageListViewer.LargeImageList.Images.Add(fn, (Image)(img.DefaultImage.GetImage().Clone()));
-                
-                int j = ImageListViewer.LargeImageList.Images.IndexOfKey(fn);
-                Originals.Add(fn, (Image)(img.DefaultImage.GetImage().Clone()));                
-                ImgSizes[j].X = Originals[fn].Width;
-                ImgSizes[j].Y = Originals[fn].Height;
-                if(img.IsAnimated())
-                {
-                    Animations.Add(fn, img);
-                }
+                if(!ImageListViewer.LargeImageList.Images.ContainsKey(fn2))
+                    ImageListViewer.LargeImageList.Images.Add(fn2, (Image)(img.DefaultImage.GetImage().Clone()));
+                if (!Originals.ContainsKey(fn2))
+                    Originals.Add(fn2, (Image)(img.DefaultImage.GetImage().Clone()));
+                int j = ImageListViewer.LargeImageList.Images.IndexOfKey(fn2);
+                ImgSizes[j].X = Originals[fn2].Width;
+                ImgSizes[j].Y = Originals[fn2].Height;
+                if (img.IsAnimated() && !Animations.ContainsKey(fn2))
+                    Animations.Add(fn2, img);
             }
             return fn1;
         }
