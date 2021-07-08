@@ -409,7 +409,7 @@ namespace gInk
                     {
                         //Image img = Root.FormCollection.ClipartsDlg.Images.Images[(int)(st.ExtendedProperties[Root.IMAGE_GUID].Data)];
                         Image img;
-                        if(!Root.FingerInAction && st.ExtendedProperties.Contains(Root.ANIMATIONFRAMEIMG_GUID))
+                        if(st.ExtendedProperties.Contains(Root.ANIMATIONFRAMEIMG_GUID))
                         {
                             try
                             {
@@ -436,16 +436,6 @@ namespace gInk
                             {
                                 img = gInk.Properties.Resources.unknown;
                             }
-                        /*Rectangle r = st.GetBoundingBox();
-                        Point p1 = new Point(r.Location.X, r.Location.Y);
-                        Point p2 = new Point(r.Location.X+r.Size.Width, r.Location.Y+r.Size.Height);
-                        Root.FormCollection.IC.Renderer.InkSpaceToPixel(gOneStrokeCanvus, ref p1);
-                        Root.FormCollection.IC.Renderer.InkSpaceToPixel(gOneStrokeCanvus, ref p2);
-                        int X = p1.X; //(int)(st.ExtendedProperties[Root.IMAGE_X_GUID].Data);
-                        int Y = p1.Y; //(int)(st.ExtendedProperties[Root.IMAGE_Y_GUID].Data);
-                        int W = p2.X - p1.X;// (int)(st.ExtendedProperties[Root.IMAGE_W_GUID].Data);
-                        int H = p2.Y - p1.Y;//(int)(st.ExtendedProperties[Root.IMAGE_H_GUID].Data);
-                        */
                         // I came back to this solution of using IMAGE_?_GUID in order to have a more accurate position and therefore prevent blurry image
                         int X = (int)(st.ExtendedProperties[Root.IMAGE_X_GUID].Data);
                         int Y = (int)(st.ExtendedProperties[Root.IMAGE_Y_GUID].Data);
@@ -525,24 +515,33 @@ namespace gInk
                     {
                         //Image img = Root.FormCollection.ClipartsDlg.Images.Images[(int)(st.ExtendedProperties[Root.IMAGE_GUID].Data)];
                         Image img;
-                        try
+                        if (st.ExtendedProperties.Contains(Root.ANIMATIONFRAMEIMG_GUID))
                         {
-                            img = Root.FormCollection.ClipartsDlg.Originals[(string)(st.ExtendedProperties[Root.IMAGE_GUID].Data)];
+                            try
+                            {
+                                AnimationStructure ani = Root.FormCollection.Animations[(int)(st.ExtendedProperties[Root.ANIMATIONFRAMEIMG_GUID].Data)];
+                                if (ani.DeleteRequested)
+                                {
+                                    Root.FormCollection.IC.Ink.DeleteStroke(st);
+                                    continue;
+                                }
+                                img = ani.Image.Frames[ani.Idx].GetImage();
+                            }
+                            catch
+                            {
+                                img = gInk.Properties.Resources.unknown;
+                            }
+
                         }
-                        catch
-                        {
-                            img = gInk.Properties.Resources.unknown;
-                        }
-                        /*Rectangle r = st.GetBoundingBox();
-                        Point p1 = new Point(r.Location.X, r.Location.Y);
-                        Point p2 = new Point(r.Location.X+r.Size.Width, r.Location.Y+r.Size.Height);
-                        Root.FormCollection.IC.Renderer.InkSpaceToPixel(gOneStrokeCanvus, ref p1);
-                        Root.FormCollection.IC.Renderer.InkSpaceToPixel(gOneStrokeCanvus, ref p2);
-                        int X = p1.X; //(int)(st.ExtendedProperties[Root.IMAGE_X_GUID].Data);
-                        int Y = p1.Y; //(int)(st.ExtendedProperties[Root.IMAGE_Y_GUID].Data);
-                        int W = p2.X - p1.X;// (int)(st.ExtendedProperties[Root.IMAGE_W_GUID].Data);
-                        int H = p2.Y - p1.Y;//(int)(st.ExtendedProperties[Root.IMAGE_H_GUID].Data);
-                        */
+                        else
+                            try
+                            {
+                                img = Root.FormCollection.ClipartsDlg.Originals[(string)(st.ExtendedProperties[Root.IMAGE_GUID].Data)];
+                            }
+                            catch
+                            {
+                                img = gInk.Properties.Resources.unknown;
+                            }
                         // I came back to this solution of using IMAGE_?_GUID in order to have a more accurate position and therefore prevent blurry image
                         int X = (int)(st.ExtendedProperties[Root.IMAGE_X_GUID].Data);
                         int Y = (int)(st.ExtendedProperties[Root.IMAGE_Y_GUID].Data);
@@ -927,35 +926,37 @@ namespace gInk
 			*/
 
             DateTime dt = DateTime.Now;
-            foreach (int k in Root.FormCollection.Animations.Keys)
-            {
-                AnimationStructure ani = Root.FormCollection.Animations[k];
-                if (dt>=ani.T0)
+            if(!Root.FingerInAction)
+                foreach (int k in Root.FormCollection.Animations.Keys)
                 {
-                    do
+                    AnimationStructure ani = Root.FormCollection.Animations[k];
+                    if (dt >= ani.T0)
                     {
-                        ani.Idx++;
-                        ani.Loop--;
-                        if (ani.Idx >= ani.Image.NumFrames-1)
+                        do
                         {
-                            ani.Idx = 0;//= (ani.Idx + 1) % (ani.Image.NumFrames);
+                            ani.Idx++;
+                            ani.Loop--;
+                            if (ani.Idx >= ani.Image.NumFrames)
+                            {
+                                ani.Idx = 0;//= (ani.Idx + 1) % (ani.Image.NumFrames);
+                            }
+                            else
+                                ani.T0 = ani.T0.AddSeconds(ani.Image.Frames[ani.Idx].GetDelay());
                         }
-                        else
-                            ani.T0 = ani.T0.AddSeconds(ani.Image.Frames[ani.Idx].GetDelay());
+                        while (dt > ani.T0);
+                        Root.UponAllDrawingUpdate = true;
                     }
-                    while (dt > ani.T0);
-                    Root.UponAllDrawingUpdate = true;                    
+                    if (ani.Loop <= 0 || dt > ani.TEnd)
+                    {
+                        ani.T0 = DateTime.MaxValue;
+                        ani.TEnd = DateTime.MaxValue;
+                        ani.Loop = int.MaxValue;
+                        if (ani.DeleteAtDend)
+                            ani.DeleteRequested = true;
+                    }
                 }
-                if(ani.Loop<=0 || dt > ani.TEnd)
-                {
-                    ani.T0 = DateTime.MaxValue;
-                    ani.TEnd = DateTime.MaxValue;
-                    if (ani.DeleteAtDend)
-                        ani.DeleteRequested = true;
-                }
-            }
 
-			if (Root.UponAllDrawingUpdate)
+            if (Root.UponAllDrawingUpdate)
 			{
                 ClearCanvus();
 				DrawStrokes();

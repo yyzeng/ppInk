@@ -1520,11 +1520,11 @@ namespace gInk
                 s = s.Remove(s.Length - 1);
                 l = true;
             }
-            if (Double.TryParse(s, out d))
+            if (Double.TryParse(s, NumberStyles.AllowLeadingSign|NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out d))
             {
                 ani.DeleteAtDend = d < 0;
                 if (l)
-                    ani.Loop = (int)Math.Abs(d*ani.Image.NumFrames);
+                    ani.Loop = (int)Math.Abs(d*ani.Image.NumFrames-1);
                 else
                     ani.TEnd = DateTime.Now.AddSeconds(.1 + Math.Abs(d));
             }
