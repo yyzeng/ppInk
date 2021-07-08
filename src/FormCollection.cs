@@ -1675,6 +1675,7 @@ namespace gInk
             DialogResult ret = inp.ShowDialog();  // cancellation process is within the cancel button
             TextEdited = true;
             AllowInteractions(false);
+            SetPenTipCursor();
             //ToUnThrough();
 
             return ret;
@@ -1913,8 +1914,8 @@ namespace gInk
                         st = AddImageStroke(scr.Bounds.Left, scr.Bounds.Top, scr.Bounds.Right, scr.Bounds.Bottom, "_ZoomClip", Filling.NoFrame);
                     }
                     try { st.ExtendedProperties.Remove(Root.FADING_PEN); } catch { };  // if the pen was fading we need to remove that 
-                    if (Root.CanvasCursor == 1)
-                        SetPenTipCursor();
+                    //if (Root.CanvasCursor == 1)
+                    SetPenTipCursor();
                 }
 
                 return;
@@ -2411,7 +2412,7 @@ namespace gInk
                 }
             }
 
-            MetricToolTip.Hide(this);
+            //MetricToolTip.Hide(this);
             //Console.WriteLine("Cursor {0},{1} - {2}", e.X, e.Y, e.Button);
             Root.CursorX = e.X;
             Root.CursorY = e.Y;
@@ -3227,7 +3228,7 @@ namespace gInk
                         IC.Cursor = getCursFromDiskOrRes("cursorarrow", System.Windows.Forms.Cursors.NoMove2D);
                     }
                 }
-                else if (Root.CanvasCursor == 1)
+                else //if (Root.CanvasCursor == 1)
                     SetPenTipCursor();
 
             }
@@ -3425,9 +3426,9 @@ namespace gInk
             if (Active == 0)
             {
                 ActivateStrokesInput(true);
-                if (Root.CanvasCursor == 1)
-                    SetPenTipCursor();
-                else
+                //if (Root.CanvasCursor == 1)
+                SetPenTipCursor();
+                /*else
                     try
                     {
                         IC.Cursor = cursorred;
@@ -3435,8 +3436,8 @@ namespace gInk
                     catch
                     {
                         IC.Cursor = getCursFromDiskOrRes("cursorarrow", System.Windows.Forms.Cursors.NoMove2D);
-                    }
-                System.Windows.Forms.Cursor.Position = new Point(System.Windows.Forms.Cursor.Position.X, System.Windows.Forms.Cursor.Position.Y); // force cursor refresh
+                    }*/
+                //System.Windows.Forms.Cursor.Position = new Point(System.Windows.Forms.Cursor.Position.X, System.Windows.Forms.Cursor.Position.Y); // force cursor refresh
                 btPenWidth.BackgroundImage = getImgFromDiskOrRes("penwidth");
                 Root.UponButtonsUpdate |= 0x2;
                 Root.ColorPickerMode = false;
@@ -3648,8 +3649,8 @@ namespace gInk
                 IC.DefaultDrawingAttributes.Width = Root.GlobalPenWidth;
             }
 
-            if (Root.CanvasCursor == 1)
-                SetPenTipCursor();
+            //if (Root.CanvasCursor == 1)
+            SetPenTipCursor();
 
             Root.gpPenWidthVisible = false;
             Root.UponSubPanelUpdate = true;
@@ -3678,8 +3679,8 @@ namespace gInk
 
         private void pboxPenWidthIndicator_MouseUp(object sender, MouseEventArgs e)
         {
-            if (Root.CanvasCursor == 1)
-                SetPenTipCursor();
+            //if (Root.CanvasCursor == 1)
+            SetPenTipCursor();
 
             Root.gpPenWidthVisible = false;
             Root.UponSubPanelUpdate = true;
@@ -3693,6 +3694,20 @@ namespace gInk
             DrawingAttributes dda = IC.DefaultDrawingAttributes;
             Brush cbrush;
             Point widt;
+            if (Root.CanvasCursor == 0)
+            {
+
+                try
+                {
+                    IC.Cursor = cursorred;
+                }
+                catch
+                {
+                    IC.Cursor = getCursFromDiskOrRes("cursorarrow", System.Windows.Forms.Cursors.NoMove2D);
+                }
+                System.Windows.Forms.Cursor.Position = new Point(System.Windows.Forms.Cursor.Position.X, System.Windows.Forms.Cursor.Position.Y);
+                return;
+            }
             if (!Root.EraserMode)
             {
                 cbrush = new SolidBrush(IC.DefaultDrawingAttributes.Color);
@@ -4669,8 +4684,8 @@ namespace gInk
             if (Root.GlobalPenWidth < 1)
                 Root.GlobalPenWidth = 1;
             IC.DefaultDrawingAttributes.Width = Root.GlobalPenWidth;
-            if (Root.CanvasCursor == 1)
-                SetPenTipCursor();
+            //if (Root.CanvasCursor == 1)
+            SetPenTipCursor();
             return;
         }
 
@@ -5592,8 +5607,8 @@ namespace gInk
             }
             ZoomCapturing = false;
             ZoomCaptured = false;
-            if (Root.CanvasCursor == 1)
-                SetPenTipCursor();
+            //if (Root.CanvasCursor == 1)
+            SetPenTipCursor();
             btZoom.BackgroundImage = getImgFromDiskOrRes("Zoom");
             Root.UponButtonsUpdate |= 0x2;
         }
@@ -5615,8 +5630,8 @@ namespace gInk
 
         public void ActivateZoomDyn()
         {
-            if (Root.CanvasCursor == 1)
-                SetPenTipCursor();
+            //if (Root.CanvasCursor == 1)
+            SetPenTipCursor();
             ZoomForm.Width = (int)(Root.ZoomWidth * Root.ZoomScale);
             ZoomForm.Height = (int)(Root.ZoomHeight * Root.ZoomScale);
             ZoomForm.Show();
