@@ -1681,7 +1681,7 @@ namespace gInk
             return ret;
         }
 
-        private float NearestStroke(Point pt, bool ptInPixel, out Stroke minStroke, out float pos, bool Search4Text = true, bool butLast = false)
+        private float NearestStroke(Point pt, bool ptInPixel, out Stroke minStroke, out float pos, bool Search4Text = true, bool butLast = false,bool Magnet=true)
         {
             if (ptInPixel)
                 IC.Renderer.PixelToInkSpace(Root.FormDisplay.gOneStrokeCanvus, ref pt);
@@ -1701,6 +1701,10 @@ namespace gInk
                 Stroke st = IC.Ink.Strokes[i];
                 if (st.ExtendedProperties.Contains(Root.ISDELETION_GUID))
                     continue;
+                //Rectangle r = st.GetBoundingBox();
+                //float mag = Root.PixelToHiMetric(Root.MinMagneticRadius());
+                //if (Magnet && (pt.X < (r.Left - mag) || pt.X > (r.Left + mag) || pt.Y < (r.Top - mag) || pt.Y > (r.Bottom + mag)))
+                //    continue;
                 pos1 = st.NearestPoint(pt, out dst1);
                 if ((dst1 < dst) && (!Search4Text || (st.ExtendedProperties.Contains(Root.TEXT_GUID))))
                 {
@@ -1952,9 +1956,10 @@ namespace gInk
                     Point[] pts = e.Stroke.GetPoints();
                     if (pts.Length >= 3)
                     {
-                        InprogressSelection = IC.Ink.HitTest(e.Stroke.GetPoints(), Root.LassoPercent, out _);
+                        InprogressSelection = IC.Ink.HitTest(pts, Root.LassoPercent, out _);
                         InprogressSelection.Remove(e.Stroke);
                     }
+                    Console.WriteLine("Lasso capt " + InprogressSelection?.Count.ToString()??"0");
                 }
                 IC.Ink.DeleteStroke(e.Stroke); // the stroke that was just inserted has to be replaced.
 
@@ -1980,7 +1985,7 @@ namespace gInk
                     int w = Root.ImageStamp.X;
                     int h = Root.ImageStamp.Y;
                     //#if ((Root.CursorX0 == Int32.MinValue) || ((Root.CursorX0 == Root.CursorX) && (Root.CursorY0 == Root.CursorY)))
-                    if (HitTouch || ((Root.CursorX0 == Root.CursorX) && (Root.CursorY0 == Root.CursorY)))
+                    if (HitTouch || ((Root.CursorX0 == Root.CursorX) && (Root.CursorY0 == Root.CursorY)) || ((Root.CursorX0 == Int32.MinValue )))
                     {
                         Root.CursorX0 = Root.CursorX;
                         Root.CursorY0 = Root.CursorY;
@@ -2156,7 +2161,7 @@ namespace gInk
 
         private void IC_CursorDown(object sender, InkCollectorCursorDownEventArgs e)
         {
-            Console.WriteLine("CursorDown :"+e.Cursor.Tablet.DeviceKind.ToString());
+            Console.WriteLine("CursorDown :" + e.Cursor.Tablet.DeviceKind.ToString());
             if (ZoomCapturing)
             {
                 Screen scr = Screen.FromPoint(MousePosition);
@@ -2178,37 +2183,39 @@ namespace gInk
                 //Console.WriteLine("StrokesSel " + StrokesSelection.Count.ToString());
             }
 
-
             if (!Root.InkVisible && Root.Snapping <= 0)
             {
                 Root.SetInkVisible(true);
             }
 
-            Root.FormDisplay.ClearCanvus(Root.FormDisplay.gOneStrokeCanvus);
-            Root.FormDisplay.DrawStrokes(Root.FormDisplay.gOneStrokeCanvus);
-            Root.FormDisplay.DrawButtons(Root.FormDisplay.gOneStrokeCanvus, false);
-            Point p;
-            try
+            //Root.FormDisplay.ClearCanvus(Root.FormDisplay.gOneStrokeCanvus);
+            //Root.FormDisplay.DrawStrokes(Root.FormDisplay.gOneStrokeCanvus);
+            //Root.FormDisplay.DrawButtons(Root.FormDisplay.gOneStrokeCanvus, false);
+            if (Root.ToolSelected != Tools.Hand)
             {
-                if (e.Stroke.BezierPoints.Length > 0)
+                Point p;
+                try
                 {
-                    p = e.Stroke.BezierPoints[0];
-                    IC.Renderer.InkSpaceToPixel(Root.FormDisplay.gOneStrokeCanvus, ref p);
+                    if (e.Stroke.BezierPoints.Length > 0)
+                    {
+                        p = e.Stroke.BezierPoints[0];
+                        IC.Renderer.InkSpaceToPixel(Root.FormDisplay.gOneStrokeCanvus, ref p);
+                    }
+                    else
+                    {
+                        //throw new System.ApplicationException("Empty Stroke");
+                        p = System.Windows.Forms.Cursor.Position;
+                        p = Root.FormDisplay.PointToClient(p);
+                    }
                 }
-                else
+                catch
                 {
-                    //throw new System.ApplicationException("Empty Stroke");
                     p = System.Windows.Forms.Cursor.Position;
                     p = Root.FormDisplay.PointToClient(p);
                 }
+                Root.CursorX = p.X;
+                Root.CursorY = p.Y;
             }
-            catch
-            {
-                p = System.Windows.Forms.Cursor.Position;
-                p = Root.FormDisplay.PointToClient(p);
-            }
-            Root.CursorX = p.X;
-            Root.CursorY = p.Y;
             if (Root.EraserMode) // we are deleting the nearest object for clicking...
             {
                 e.Stroke.ExtendedProperties.Add(Root.ISDELETION_GUID, true);
@@ -2277,14 +2284,18 @@ namespace gInk
                 Root.CursorX0 = e.X;
                 Root.CursorY0 = e.Y;
             }
-            MagneticEffect(Root.CursorX0 - 1, Root.CursorY0, ref Root.CursorX0, ref Root.CursorY0, Root.MagneticRadius > 0); // analysis of magnetic will be done within the function
+            if(Root.ToolSelected != Tools.Hand && !Root.LassoMode)
+                MagneticEffect(Root.CursorX0 - 1, Root.CursorY0, ref Root.CursorX0, ref Root.CursorY0, Root.MagneticRadius > 0); // analysis of magnetic will be done within the function
             if (Root.InkVisible)
             {
                 Root.CursorX = Root.CursorX0;
                 Root.CursorY = Root.CursorY0;
             }
 
-            SavHoveredForSelection = Root.LassoMode ? Root.StrokeHovered : null;
+            if (Root.LassoMode && IC.Ink.Strokes.Count > 0)
+                AppendToSelection = ((int)e.Button == 1) || (e.Button == MouseButtons.Left);
+
+                SavHoveredForSelection = Root.LassoMode ? Root.StrokeHovered : null;
 
             if (((Root.ToolSelected == Tools.Move) || (Root.ToolSelected == Tools.Copy)))  // Move
             {
@@ -2337,6 +2348,8 @@ namespace gInk
                     Root.FormCollection.IC.Ink.Strokes.Add(movedStroke);
                 }
             }
+            if (!(Root.EraserMode || Root.ToolSelected == Tools.Edit || Root.ToolSelected == Tools.Move || Root.ToolSelected == Tools.Copy || Root.LassoMode))
+                MetricToolTip.Hide(this);
         }
 
 
@@ -2344,7 +2357,6 @@ namespace gInk
         private void IC_MouseMove(object sender, CancelMouseEventArgs e)
         {
             float pos;
-            Root.StrokeHovered = null;
             //Console.WriteLine("MouseMove");
             if(Root.ColorPickerMode)
             {
@@ -2365,7 +2377,7 @@ namespace gInk
                     catch { }
             }
 
-            if (Root.LassoMode && e.Button != MouseButtons.None && IC.Ink.Strokes.Count>0)
+            /*if (Root.LassoMode && e.Button != MouseButtons.None && IC.Ink.Strokes.Count>0)
             {
                 AppendToSelection = ((int)e.Button == 1) || (e.Button == MouseButtons.Left);
                 Stroke st = IC.Ink.Strokes[IC.Ink.Strokes.Count - 1];
@@ -2376,9 +2388,10 @@ namespace gInk
                         //InprogressSelection = IC.Ink.HitTest(st.GetPoints(), Root.LassoPercent, out pts);
                     }
                     catch { }
-            }
+            }*/
 
 
+            Root.StrokeHovered = null;
             if (e.Button == MouseButtons.None)
             {
                 if (Root.EraserMode || Root.ToolSelected == Tools.Edit || Root.ToolSelected == Tools.Move || Root.ToolSelected == Tools.Copy || Root.LassoMode)
@@ -2426,12 +2439,13 @@ namespace gInk
             else if (Root.ToolSelected != Tools.Hand)
                 MagneticEffect(Root.CursorX0, Root.CursorY0, ref Root.CursorX, ref Root.CursorY, Root.ToolSelected > Tools.Hand && Root.MagneticRadius > 0);
 
-            if (LasteXY.X == 0 && LasteXY.Y == 0)
+            /*if (LasteXY.X == 0 && LasteXY.Y == 0)
             {
                 LasteXY.X = e.X;
                 LasteXY.Y = e.Y;
                 IC.Renderer.PixelToInkSpace(Root.FormDisplay.gOneStrokeCanvus, ref LasteXY);
-            }
+            }*/
+
             Point currentxy = new Point(e.X, e.Y);
             IC.Renderer.PixelToInkSpace(Root.FormDisplay.gOneStrokeCanvus, ref currentxy);
 
