@@ -674,7 +674,7 @@ namespace gInk
 				tbSnapPath.Text = folderBrowserDialog1.SelectedPath.Replace('\\','/');
                 if (!tbSnapPath.Text.EndsWith("/"))
                     tbSnapPath.Text += '/';
-                Root.SnapshotBasePath = folderBrowserDialog1.SelectedPath;
+                Root.SnapshotBasePath = tbSnapPath.Text;
 			}
 		}
 
