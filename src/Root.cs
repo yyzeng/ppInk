@@ -1430,6 +1430,7 @@ namespace gInk
                                 sPara="";
                             else if (!Path.IsPathRooted(sPara))
                                     sPara = Global.ProgramFolder + sPara;
+                            sPara=sPara.Replace('\\', '/').ToLower();
                             if (!StampFileNames.Contains(sPara))        // to ensure the files are within the stamfiles;
                                 StampFileNames.Insert(StampFileNames.Count, sPara);
                             ImageStamp1 = sPara;
@@ -1439,6 +1440,7 @@ namespace gInk
                                 sPara = "";
                             else if (!Path.IsPathRooted(sPara))
                                 sPara = Global.ProgramFolder + sPara;
+                            sPara = sPara.Replace('\\', '/').ToLower();
                             if (!StampFileNames.Contains(sPara))
                                 StampFileNames.Insert(StampFileNames.Count, sPara);
                             ImageStamp2 = sPara;
@@ -1448,6 +1450,7 @@ namespace gInk
                                 sPara = "";
                             else if (!Path.IsPathRooted(sPara))
                                 sPara = Global.ProgramFolder + sPara;
+                            sPara = sPara.Replace('\\', '/').ToLower();
                             if (!StampFileNames.Contains(sPara))
                                 StampFileNames.Insert(StampFileNames.Count, sPara);
                             ImageStamp3 = sPara;
