@@ -664,9 +664,10 @@ namespace gInk
 			if (x == 0 && y == 0)
 				return;
 
-			//FormCollection.IC.Ink.Strokes.Move(x, y);
+            //FormCollection.IC.Ink.Strokes.Move(x, y);
             // for texts
-            foreach(Stroke st in FormCollection.IC.Ink.Strokes)
+            Point pt = new Point();
+            foreach (Stroke st in FormCollection.IC.Ink.Strokes)
             {
                 if (st.ExtendedProperties.Contains(ISBACKGROUND_GUID))
                     continue;
@@ -676,8 +677,16 @@ namespace gInk
                     st.ExtendedProperties.Add(TEXTX_GUID, (int)(st.ExtendedProperties[TEXTX_GUID].Data) + x);
                     st.ExtendedProperties.Add(TEXTY_GUID, (int)(st.ExtendedProperties[TEXTY_GUID].Data) + y);
                 }
+                if (st.ExtendedProperties.Contains(IMAGE_GUID))
+                {
+                    pt.X = (int)(st.ExtendedProperties[IMAGE_X_GUID].Data) + x;
+                    pt.Y = (int)(st.ExtendedProperties[IMAGE_Y_GUID].Data) + y;
+                    FormCollection.IC.Renderer.InkSpaceToPixel(FormDisplay.gOneStrokeCanvus, ref pt);
+                    st.ExtendedProperties.Add(IMAGE_X_GUID, pt.X);
+                    st.ExtendedProperties.Add(IMAGE_Y_GUID, pt.Y);
+                }
             }
-			FormDisplay.ClearCanvus();
+            FormDisplay.ClearCanvus();
 			FormDisplay.DrawStrokes();
 			FormDisplay.DrawButtons(true);
 			FormDisplay.UpdateFormDisplay(true);
