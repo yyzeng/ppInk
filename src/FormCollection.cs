@@ -2164,15 +2164,12 @@ namespace gInk
         }
         Stroke movedStroke = null;
 
-        float ZoomScreenRatio;
 
         private void IC_CursorDown(object sender, InkCollectorCursorDownEventArgs e)
         {
             Console.WriteLine("CursorDown :" + e.Cursor.Tablet.DeviceKind.ToString());
             if (ZoomCapturing)
             {
-                Screen scr = Screen.FromPoint(MousePosition);
-                ZoomScreenRatio = (float)(scr.Bounds.Width) / scr.Bounds.Height;
                 e.Stroke.ExtendedProperties.Add(Root.ISHIDDEN_GUID, true); // we set the ISTROKE_GUID in order to draw the inprogress as a line
                 e.Stroke.DrawingAttributes.Color = Color.Purple;
                 e.Stroke.DrawingAttributes.Transparency = 0;
@@ -2243,10 +2240,14 @@ namespace gInk
 
         private Stroke SavHoveredForSelection;
 
+        float ZoomScreenRatio;
+
         private void IC_MouseDown(object sender, CancelMouseEventArgs e)
         {
             Console.WriteLine("MouseDown");
             CurrentMouseButton = e.Button;
+            Screen scr = Screen.FromPoint(e.Location);
+            ZoomScreenRatio = (float)(scr.Bounds.Width) / scr.Bounds.Height;
             if (gpSubTools.Visible && (int)(Btn_SubToolPin.Tag) != 1)
             {
                 gpSubTools.Visible = false;
@@ -2832,7 +2833,7 @@ namespace gInk
             Root.UponButtonsUpdate |= 0x2;
             EnterEraserMode(false);
 
-            if(tool != Tools.Move && tool != Tools.Copy && tool != Tools.Invalid)  // for  all std tools we clear selection
+            if(tool != Tools.Move && tool != Tools.Copy && tool != Tools.Edit && tool != Tools.Invalid)  // for  all std tools we clear selection
             {
                 InprogressSelection = null;
                 StrokesSelection.Clear();
@@ -2976,6 +2977,27 @@ namespace gInk
                 catch
                 {
                     IC.Cursor = getCursFromDiskOrRes("cursorarrow", System.Windows.Forms.Cursors.NoMove2D);
+                }
+                ModifyStrokesSelection(true, ref InprogressSelection, StrokesSelection);
+                if(StrokesSelection?.Count>0)
+                {
+                    DrawingAttributes da;
+                    try
+                    {
+                        da = StrokesSelection[0].DrawingAttributes.Clone();
+                    }
+                    catch
+                    {
+                        da = IC.DefaultDrawingAttributes.Clone();
+                    }
+                    AllowInteractions(true);
+                    if (PenModifyDlg.ModifyPen(ref da))
+                    {
+                        foreach (Stroke stk in StrokesSelection)
+                            stk.DrawingAttributes = da.Clone();
+                    }
+                    AllowInteractions(false);
+                    Root.UponAllDrawingUpdate = true;
                 }
             }
             else if ((tool == Tools.txtLeftAligned) || (tool == Tools.txtRightAligned))
@@ -4274,7 +4296,7 @@ namespace gInk
             //if (!AltKeyPressed() && !Root.PointerMode)//&& (SavedPen>=0 || SavedTool>=0))
             if (!AltKeyPressed() && Root.AltAsOneCommand>=1)
             {
-                if(Root.PenAttr[Root.SavedPenDA]!=null)
+                if(Root.PenAttr[Root.SavedPenDA]!=null && Root.CurrentPen>=0)
                 {
                     Root.PenAttr[Root.CurrentPen] = Root.PenAttr[Root.SavedPenDA];
                     Root.PenAttr[Root.SavedPenDA] = null;
