@@ -2581,9 +2581,12 @@ namespace gInk
             {
                 Root.UponAllDrawingUpdate = true;
             }
-            // due to asynchronism, IC_MouseUp Could occur before IC_Stroke and then prevent the special strokes to be created
-            //Root.CursorX0 = int.MinValue;
-            //Root.CursorY0 = int.MinValue;
+            // due to asynchronism, IC_MouseUp Could occur before IC_Stroke and then prevent the special strokes to be created but to be kept for pan,....
+            if(Root.PanMode)
+            {
+                Root.CursorX0 = int.MinValue;
+                Root.CursorY0 = int.MinValue;
+            }
             CurrentMouseButton = MouseButtons.None;
         }
 
