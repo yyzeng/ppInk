@@ -663,9 +663,11 @@ namespace gInk
 		{
 			if (x == 0 && y == 0)
 				return;
-
+            
             //FormCollection.IC.Ink.Strokes.Move(x, y);
             // for texts
+            Point pt1 = new Point(x,y);
+            FormCollection.IC.Renderer.InkSpaceToPixel(FormDisplay.gOneStrokeCanvus, ref pt1);
             Point pt = new Point();
             foreach (Stroke st in FormCollection.IC.Ink.Strokes)
             {
@@ -679,9 +681,8 @@ namespace gInk
                 }
                 if (st.ExtendedProperties.Contains(IMAGE_GUID))
                 {
-                    pt.X = (int)(st.ExtendedProperties[IMAGE_X_GUID].Data) + x;
-                    pt.Y = (int)(st.ExtendedProperties[IMAGE_Y_GUID].Data) + y;
-                    FormCollection.IC.Renderer.InkSpaceToPixel(FormDisplay.gOneStrokeCanvus, ref pt);
+                    pt.X = (int)(st.ExtendedProperties[IMAGE_X_GUID].Data) + pt1.X;
+                    pt.Y = (int)(st.ExtendedProperties[IMAGE_Y_GUID].Data) + pt1.Y;
                     st.ExtendedProperties.Add(IMAGE_X_GUID, pt.X);
                     st.ExtendedProperties.Add(IMAGE_Y_GUID, pt.Y);
                 }
@@ -772,9 +773,11 @@ namespace gInk
 			FormCollection.ToThrough();
 			FormButtonHitter.Show();
             FormButtonHitter.timer1_Tick(null,null); // Force Size recomputation for alt+tab processing
+            if (ColorPickerMode)
+                FormCollection.StartStopPickUpColor(0);
         }
 
-		public void UnPointer()
+        public void UnPointer()
 		{
 			if (PointerMode == false)
 				return;
@@ -784,10 +787,10 @@ namespace gInk
 			FormButtonHitter.Hide();
 			FormCollection.ToUnThrough();
             FormCollection.ToTopMost();
+            AppGetFocus();
 			FormCollection.Activate();
-			PointerMode = false;
-            if (ColorPickerMode)
-                FormCollection.StartStopPickUpColor(0);
+            FormCollection.Select();                       
+            PointerMode = false;
 		}
 
 		public void SelectPen(int pen)
@@ -1430,7 +1433,8 @@ namespace gInk
                                     st2 = Global.ProgramFolder + st1;
                                 else
                                     st2 = st1;
-                                if (!StampFileNames.Contains(st2))
+                                //if (!StampFileNames.Contains(st2))
+                                if (!ContainsInsensitive(StampFileNames,st2))
                                     StampFileNames.Insert(StampFileNames.Count,st2);
                             }
                             break;
@@ -1440,7 +1444,8 @@ namespace gInk
                             else if (!Path.IsPathRooted(sPara))
                                     sPara = Global.ProgramFolder + sPara;
                             sPara=sPara.Replace('\\', '/').ToLower();
-                            if (!StampFileNames.Contains(sPara))        // to ensure the files are within the stamfiles;
+                            //if (!StampFileNames.Contains(sPara,))        // to ensure the files are within the stamfiles;
+                            if (!ContainsInsensitive(StampFileNames, sPara)) 
                                 StampFileNames.Insert(StampFileNames.Count, sPara);
                             ImageStamp1 = sPara;
                             break;
@@ -1450,7 +1455,7 @@ namespace gInk
                             else if (!Path.IsPathRooted(sPara))
                                 sPara = Global.ProgramFolder + sPara;
                             sPara = sPara.Replace('\\', '/').ToLower();
-                            if (!StampFileNames.Contains(sPara))
+                            if (!ContainsInsensitive(StampFileNames, sPara)) 
                                 StampFileNames.Insert(StampFileNames.Count, sPara);
                             ImageStamp2 = sPara;
                             break;
@@ -1460,7 +1465,7 @@ namespace gInk
                             else if (!Path.IsPathRooted(sPara))
                                 sPara = Global.ProgramFolder + sPara;
                             sPara = sPara.Replace('\\', '/').ToLower();
-                            if (!StampFileNames.Contains(sPara))
+                            if (!ContainsInsensitive(StampFileNames, sPara)) 
                                 StampFileNames.Insert(StampFileNames.Count, sPara);
                             ImageStamp3 = sPara;
                             break;
@@ -2221,6 +2226,14 @@ namespace gInk
         public void AppGetFocus()
         {
             SetForegroundWindow(Process.GetCurrentProcess().MainWindowHandle);
+        }
+
+        public bool ContainsInsensitive(StringCollection Arr, string key)
+        {
+            foreach (string s in Arr)
+                if (s.Equals(key, StringComparison.InvariantCultureIgnoreCase))
+                    return true;
+            return false;
         }
 
         [DllImport("user32.dll")]
