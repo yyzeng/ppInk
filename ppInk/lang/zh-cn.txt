@@ -38,12 +38,14 @@ ButtonNameVideo = "视频录制"
 SaveStroke = "保存墨迹\n(长按选择路径 ; 短按保存至上次选择{0})"
 LoadStroke = "导入墨迹\n(长按选择路径 ; 短按启用上次选择{0})"
 ButtonNameZoom = "缩放"
+ButtonNameLasso = "套索选择(左=新增;右=移除;按钮=重置选择)"
 
 QuestionClipArtUpdate = "贴画似乎已在编辑过程中更新。\n是否更新默认列表？"
 ButtonActivateDebug ="调试窗口"
 
 SubToolsBarCbText = "启用辅助工具栏"
 OptionPensOnTwoLinesCb = "笔启用双栏模式"
+OptionsSwapSnapshotBehavior = "短按 = 截屏并退出 \n长按 = 截屏后继续"
 
 StrokeFileExists = "{0} 已存在\n是否替换它?"
 FileCanNotWrite = "{0}\n无法写入."
