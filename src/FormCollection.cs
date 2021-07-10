@@ -1675,8 +1675,15 @@ namespace gInk
             DialogResult ret = inp.ShowDialog();  // cancellation process is within the cancel button
             TextEdited = true;
             AllowInteractions(false);
-            SetPenTipCursor();
-            //ToUnThrough();
+            try
+            {
+                IC.Cursor = cursorred;
+            }
+            catch
+            {
+                IC.Cursor = getCursFromDiskOrRes("cursorarrow", System.Windows.Forms.Cursors.NoMove2D);
+            }
+            System.Windows.Forms.Cursor.Position = new Point(System.Windows.Forms.Cursor.Position.X, System.Windows.Forms.Cursor.Position.Y);
 
             return ret;
         }
@@ -4702,7 +4709,8 @@ namespace gInk
                 Root.GlobalPenWidth = 1;
             IC.DefaultDrawingAttributes.Width = Root.GlobalPenWidth;
             //if (Root.CanvasCursor == 1)
-            SetPenTipCursor();
+            if(Root.ToolSelected != Tools.Edit && Root.ToolSelected != Tools.txtLeftAligned && Root.ToolSelected != Tools.txtRightAligned && Root.ToolSelected != Tools.NumberTag && Root.ToolSelected != Tools.Invalid)
+                SetPenTipCursor();
             return;
         }
 
