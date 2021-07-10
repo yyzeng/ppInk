@@ -127,7 +127,7 @@ OptionsGeneralDefaultArrHdBtn = "Default Arrow Head At Start"
 OptionsGeneralMagnetLbl = "Magnetic radius(%Scr) (<=0 = disabled)"
 OptionsGeneralSaveConfigToFile = "Save to Files"
 OptionsCaptureStrokesOnly = "Snapshot Strokes only"
-OptionsGeneralNotePenwidth = "\n\n\nNotes: Parameter changes are taken into account at next toolbar reopening, but are note saved to files.\n     you DO need to save with next button to make them permanent."
+OptionsGeneralNotePenwidth = "\n\n\nNotes: Parameter changes are taken into account at next toolbar reopening, but are not saved to files.\n     you DO need to save with next button to make them permanent."
 
 OptionsPensShow = "Show"
 OptionsPensColor = "Color"
