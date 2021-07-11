@@ -106,7 +106,7 @@ The magnet activates some magnetic effect :
 -   Find a point on the drawing next to the cursor. For rectangles, magnetic
     effect is available to vertices, and also to the middle of sides.(also activated pressing Ctrl)
 -   The 8 points of the bounding rectangle of a text.(also activated pressing Ctrl)
--   On the line from the origin. The lines are horizontal,vertical and every 15°.(also activated pressing Shift)
+-   On the line from the origin. The lines are horizontal,vertical and every 15Â°.(also activated pressing Shift)
 The Magnetic distance can be adjusted in the options.
 If only Ctrl or Shift is depressed, the global magnetic effect is switched off to only take into account the magnetic of the pressed key.
 Hotkeys are availables for all tools,pens (configurable throught right click on icon next to clock)
@@ -157,7 +157,7 @@ advice : the created rectangle can be deleted using the erasor next to the borde
 *Pens specials*
 
 through the options or long click on a pen button, or using the edit pen hotkey you can edit advance pen:
-![](penDialog.gif)
+![](penDialog.png)
 
  
 - Fading : the stroke drawn will disappear after the defined time(adjustable in options dialogbox/pen tab)
