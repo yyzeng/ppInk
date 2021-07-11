@@ -2,7 +2,7 @@
 
 ppInk is an on-screen annotation software under Windows, forked from gInk.
 
-![](screenshot1.png)
+![](Animation.gif)
 
 ppInk introduces many new features compared to gInk, greatly inspired by another
 screen annotation software Epic Pen, but even more easy to use. ppInk / gInk are
@@ -57,6 +57,17 @@ selected my multiple click on those or some through long click (**or right click
 -   Edit:
     Short click : modify text/number tool (text and font) *or* the color/pen width of a stroke
     Long click : edit default font (for the time of the session)
+    if some strokes are selected before short click, the pen/color dialog will open to modify all selected strokes at once.
+
+-   Lasso:
+    Allow selection of multiple stroke either with the lasso, or clicking on strokes (surrounded). left click for lasso/selection will add to selection, and right click will substract (for touchscreen, remember that longclick is engaging rightclick).\
+    Each time you click on lasso tool or use shortcut the selection is reset.
+    Once you have just added a stroke with the lasso, you can use undo to cancel this selection modification
+    In lasso mode, the global length is reported in a tooltip.
+    After lasso selection, you can:
+    * engage Erase to delete selection
+    * engage move/copy to move/copy selection
+    * engage edit to modify color/line style/width of the selected strokes
 
 -   Pointer Mode (arrow cursor):
     Short click : engage Pointer Mode
@@ -76,10 +87,18 @@ selected my multiple click on those or some through long click (**or right click
     
     3 preset cliparts are also available: they can be configured in the option dialogbox, or for the time of the session through a right or long
     click on the selected button.
-
+    
+    **Animated Cliparts are now supported**: APNG and animaged-GIF are supported. By default animations are supported forever. you can specify duration or loops using square brackets: negative means the object will be destroyed at the end. x after the number means, the number indicated information in loop percent. eg:
+       ppInkClipart.png -> animated for ever
+       ppInkClipart[5.2].png -> animated for 5.2 sec and then animation stops
+       ppInkClipart[-3.1].png -> animated for 3.1 sec and then disappear
+       ppInkClipart[3.5x].png -> animated for 3 cycles and a half and then animation stops
+       ppInkClipart[-2x].png -> animated for 2 cycles and then disappear
+    
 -   Snapshot:
     Short click : Take a snapshot and exit after
     Long click : Take a snapshot and return to inking mode (keeping data); use alt+Hokey to do that with keyboard 
+    note that an option is available to invert behaviors between Long and short click
 
 *Magnetic*
 
@@ -116,6 +135,7 @@ Load button : a long click(or first short click) is a sort of "load as" : it ope
 When this option is activated (yes by default), when Alt is pressed and hold, the tool/pen/mode is temporary selected, left when alt is released
 eg : with Hand drawing selected, press Alt and keep it  down. Press and release R : rectangle is active, as long as Alt is depressed, and Hand will be reengaged when Alt is released
 This can be reset any combinaisons of Pens and Tools : eg : press Alt, you can engage Filled Blue rectangle, depressing R twice, and 3 (in any order), and return to previous tools/color releasing Alt
+Alt also works with dash line selection or fading shortcut.
 This can be also used with Erasor
 when pressing down Alt, the cursor is also temporary change to the big arrow to ease finding it on screen.
 
@@ -137,7 +157,8 @@ advice : the created rectangle can be deleted using the erasor next to the borde
 *Pens specials*
 
 through the options or long click on a pen button, or using the edit pen hotkey you can edit advance pen:
-![image](https://user-images.githubusercontent.com/4083478/120101876-a4b40780-c148-11eb-8133-8bfd4ee42c6e.png)
+![](penDialog.gif)
+
  
 - Fading : the stroke drawn will disappear after the defined time(adjustable in options dialogbox/pen tab)
 - Line Style (Stroke/Solid/Dash/Dot/DashDot/DashDotDot) : This will apply the define line style on all type of drawings. Stroke keeps the original drawing which uses the pen pressure to adjust the width. Solid,Dash,... ignore pen pressure. 
@@ -157,7 +178,7 @@ You can configure you own cursor file, saving it as cursor.ico in your exe folde
 
 *mouse wheel:*
 
-Mouse wheel allows you to modify the pen width. this can be easily observed with the tipped cursor. in this configuration, finding the mouse may be difficult to find in this configuration : you can then depress the alt key to get the arrow(or customized) cursor
+Mouse wheel allows you mainly to modify the pen width. this can be easily observed with the tipped cursor. in this configuration, finding the mouse may be difficult to find in this configuration : you can then depress the alt key to get the arrow(or customized) cursor. When Number tool is selected, instead of change pen with, it changes the number size.
 shift+mouse wheel allows to select pen
 note1 : mouse wheel / shift+ mouse wheel can now be swapped (shift+mouse wheel to access pen width) : available in options / pen tab
 note2 : as said above, two hotkeys are available to control width through the keyboard. 
@@ -276,7 +297,7 @@ Click the exit button or press ESC to exit drawing.
 
 -   Snapshot support.
 
--   Hotkey support.
+-   Hotkey support. (includes hotkeys with Del, BackSpace; in options **use ctrl+shift+del or ctrl+shift+backspace to delete the current hotkey**)
 
 -   Magnetic effect when drawing shapes
 
@@ -322,6 +343,7 @@ Weizhi Nai \@ 2019
 ppInk
 https://github.com/pubpub-zz/ppInk
 Pubpub-ZZ \@ 2020
+
 
 
 
