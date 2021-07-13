@@ -4661,7 +4661,8 @@ namespace gInk
                 pressed = (GetKeyState(Root.Hotkey_LineStyle.Key) & 0x8000) == 0x8000;
                 if (pressed && !LastLineStyleStatus && Root.Hotkey_LineStyle.ModifierMatch(control, alt, shift, win))
                 {
-                    SelectNextLineStyle(btPen[Root.CurrentPen]);
+                    if (Root.CurrentPen >= 0)
+                        SelectNextLineStyle(btPen[Root.CurrentPen]);
                 }
                 LastLineStyleStatus = pressed;
 
