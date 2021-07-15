@@ -338,11 +338,11 @@ NEW :  arabic available
 gInk  
 https://github.com/geovens/gInk  
 https://github.com/geovens/gInk  
-Weizhi Nai \@ 2019
+&copy; Weizhi Nai &copy; 2019
 
 ppInk
 https://github.com/pubpub-zz/ppInk
-Pubpub-ZZ \@ 2020
+&copy; Pubpub-ZZ 2020-2021
 
 
 
