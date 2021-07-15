@@ -3867,6 +3867,12 @@ namespace gInk
         {
             Initializing = false;
             Tick++;
+
+            if (!Root.FormDisplay.Visible)
+                return;
+
+            //if (Tick % 50 == 0) Console.WriteLine("AW."+Tick.ToString()+"="+ GetCaptionOfActiveWindow());
+
             if (ZoomForm.Visible && (Root.ZoomContinous || MousePosition.X != ZoomX || MousePosition.Y != ZoomY))
             {
                 ZoomX = MousePosition.X;
@@ -6292,6 +6298,42 @@ namespace gInk
         }
 
 
+        private string GetMainModuleFileName(Process process, int buffer = 1024)
+        {
+            try
+            {
+                var fileNameBuilder = new StringBuilder(buffer);
+                uint bufferLength = (uint)fileNameBuilder.Capacity + 1;
+                return QueryFullProcessImageName(process.Handle, 0, fileNameBuilder, ref bufferLength) ?
+                    fileNameBuilder.ToString() :
+                    null;
+
+            }
+            catch
+            {
+                return "?????";
+            }
+        }
+
+
+        public string GetCaptionOfActiveWindow()
+        {
+            var strTitle = string.Empty;
+            var handle = GetForegroundWindow();
+            // Obtain the length of the text   
+            var intLength = GetWindowTextLength(handle) + 1;
+            var stringBuilder = new StringBuilder(intLength);
+            if (GetWindowText(handle, stringBuilder, intLength) > 0)
+            {
+                strTitle = stringBuilder.ToString();
+            }
+            uint pid;
+            GetWindowThreadProcessId(handle , out pid);
+            Process p = Process.GetProcessById((int)pid);
+            return GetMainModuleFileName(p)+" / "+strTitle;
+        }
+
+
         [DllImport("user32.dll")]
 		static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
 		[DllImport("user32.dll", SetLastError = true)]
@@ -6319,5 +6361,17 @@ namespace gInk
         static extern bool GetKeyboardState(byte[] lpKeyState);
         [DllImport("user32.dll")]
         public static extern short GetAsyncKeyState(int vKey);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        static extern IntPtr GetForegroundWindow();
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int count);
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        static extern int GetWindowTextLength(IntPtr hWnd);
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetWindowThreadProcessId(IntPtr hWnd, out uint ProcessId);
+        [DllImport("Kernel32.dll")]
+        private static extern bool QueryFullProcessImageName([In] IntPtr hProcess, [In] uint dwFlags, [Out] StringBuilder lpExeName, [In, Out] ref uint lpdwSize);
+
     }
 }
