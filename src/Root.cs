@@ -100,7 +100,7 @@ namespace gInk
                 if (activePointer)           // StartInkingMsg is received twice, therefore we have to froce pointerMode at that time...
                 {
                     Root.FormCollection.btPointer_Click(null,null);
-                    if (Root.AltTabPointer && !Root.PointerMode && !Root.FormCollection.Initializing) // to unfold the bar if AltTabPointer option has been set
+                    if (Root.AltTabPointer && !Root.PointerMode && !Root.IsDockedBeforePen && !Root.FormCollection.Initializing) // to unfold the bar if AltTabPointer option has been set
                     {
                         Root.UnDock();
                     }
@@ -263,7 +263,10 @@ namespace gInk
         public bool EraserMode = false;
 		public bool Docked = false;
 		public bool PointerMode = false;
-		public bool FingerInAction = false;  // true when mouse down, either drawing or snapping or whatever
+        public bool IsDockedBeforePen = false;
+        public DateTime PointerChangeDate = DateTime.MinValue;
+
+        public bool FingerInAction = false;  // true when mouse down, either drawing or snapping or whatever
 		public int Snapping = 0;  // <=0: not snapping, 1: waiting finger, 2:dragging
 		public int SnappingX = -1, SnappingY = -1;
 		public Rectangle SnappingRect;
@@ -768,7 +771,11 @@ namespace gInk
 				return;
             if (ColorPickerMode)
                 FormCollection.StartStopPickUpColor(0);
+
+            PointerChangeDate = DateTime.Now.AddMilliseconds(100);
             PointerMode = true;
+            IsDockedBeforePen = Docked;
+
             FormDisplay.DrawBorder(false);
 			FormCollection.ToThrough();
 			FormButtonHitter.Show();
@@ -783,6 +790,10 @@ namespace gInk
 				return;
             if (FormCollection == null)
                 return;
+
+            PointerChangeDate = DateTime.Now.AddMilliseconds(100);
+            PointerMode = false;
+
             FormCollection.AddPointerSnaps();
 			FormButtonHitter.Hide();
 			FormCollection.ToUnThrough();
@@ -790,7 +801,6 @@ namespace gInk
             AppGetFocus();
 			FormCollection.Activate();
             FormCollection.Select();                       
-            PointerMode = false;
 		}
 
 		public void SelectPen(int pen)

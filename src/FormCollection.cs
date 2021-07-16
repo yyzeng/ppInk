@@ -1236,12 +1236,11 @@ namespace gInk
                 Initializing = false;
                 return;
             }
-            if (ButtonsEntering != 0)
+            if (ButtonsEntering != 0 || DateTime.Now <= Root.PointerChangeDate) 
             {
-                //Console.WriteLine("Entering");
                 return;
             }
-            //Console.WriteLine("activating " + (Root.PointerMode ? "pointer" : "not") + (Root.FormButtonHitter.Visible ? "visible" : "not")+ Root.FormButtonHitter.Width.ToString());
+
             if (Root.FormButtonHitter.Visible && (Math.Min(Root.FormButtonHitter.Width, Root.FormButtonHitter.Height) <= Math.Min(Root.FormCollection.btDock.Width, Root.FormCollection.btDock.Height) * 1.5))
             {
                 //Console.WriteLine("process ");
@@ -1268,10 +1267,13 @@ namespace gInk
                     Root.FormDisplay.DrawBorder(Root.FormDisplay.HasFocus());
                     Root.FormDisplay.UpdateFormDisplay(true);
                 }
-                // else exception will be raised somewhere else if a problem is met
-                if (!Root.AltTabPointer)
+                if (Root.FormDisplay == null || !Root.FormDisplay.Visible)
                     return;
-                if (msg.WParam == IntPtr.Zero)
+
+                if (!Root.AltTabPointer || DateTime.Now < Root.PointerChangeDate)
+                    return;
+
+                if (msg.WParam == IntPtr.Zero)      // WParam = 0 => losing Focus ; WParam = 1 => Getting Focus
                 {
                     //Console.WriteLine("desactivating " + Root.PointerMode.ToString());
                     if (!Root.PointerMode)
@@ -1282,12 +1284,13 @@ namespace gInk
 
                         SelectPen(-2);
                         Root.Dock();
-                        return;
                     }
+                    return;
                 }
                 else
                 {
-                    AltTabActivate();
+                    if (Root.PointerMode)
+                        AltTabActivate();
                     return;
                 }
             }
