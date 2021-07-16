@@ -251,7 +251,8 @@ namespace gInk
         public Hotkey Hotkey_ColorEdit = new Hotkey();
         public Hotkey Hotkey_LineStyle = new Hotkey();
         public Hotkey Hotkey_Lasso = new Hotkey();
-
+        public UInt32 LineStyleRotateEnabled= 0xFF;  // field of bits
+        
         public Hotkey Hotkey_LoadStrokes = new Hotkey();
         public Hotkey Hotkey_SaveStrokes = new Hotkey();
 
@@ -1131,6 +1132,17 @@ namespace gInk
                             Hotkey_Lasso.Parse(sPara);
                             break;
 
+                        case "LINESTYLEROTATE":
+                            try
+                            {
+                                LineStyleRotateEnabled = Convert.ToUInt32(Convert.ToInt32(sPara, 2));
+                            }
+                            catch
+                            {
+                                LineStyleRotateEnabled = 0xFF;
+                            }
+                            break;
+
                         case "PENS_ON_TWO_LINES":
                             if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
                                 PensOnTwoLines = true;
@@ -1783,7 +1795,16 @@ namespace gInk
                         case "HOTKEY_LASSO":
                             sPara = Hotkey_Lasso.ToStringInvariant();
                             break;
-                                                       
+
+                        case "LINESTYLEROTATE":
+                            string s = "";
+                            for (int i = 0; i < 8; i++)
+                            {
+                                s = (((LineStyleRotateEnabled & (1 << i)) != 0) ? "1" : "0") + s;
+                            }
+                            sPara =s;
+                            break;
+
                         case "PENS_ON_TWO_LINES":
                             sPara = PensOnTwoLines? "True" : "False";
                             break;
@@ -2212,22 +2233,39 @@ namespace gInk
             throw (new Exception("Unknown LineStyle String :" + s));
         }
 
-        public string NextLineStyleString(string s)
+        public string NextLineStyleString(string s,bool CustomList=false)
         {
+            UInt32 u = CustomList ? LineStyleRotateEnabled : 0xFF;
+            if (u == 0)
+                u = 0xFF;
+            String st;
+
             switch (s.ToUpper())
             {
                 case "STROKE":
-                    return "Solid";
+                    st = "Solid";
+                    return ((u & 0x2) != 0) ? st : NextLineStyleString(st, CustomList);
+                    //break;
                 case "SOLID":
-                    return "Dash";
+                    st = "Dash";
+                    return ((u & 0x4) != 0) ? st : NextLineStyleString(st, CustomList);
+                    //break;
                 case "DASH":
-                    return "Dot";
+                    st = "Dot";
+                    return ((u & 0x8) != 0) ? st : NextLineStyleString(st, CustomList);
+                    //break;
                 case "DOT":
-                    return "DashDot";
+                    st = "DashDot";
+                    return ((u & 0x10) != 0) ? st : NextLineStyleString(st, CustomList);
+                    //break;
                 case "DASHDOT":
-                    return "DashDotDot";
+                    st = "DashDotDot";
+                    return ((u & 0x20) != 0) ? st : NextLineStyleString(st, CustomList);
+                    //break;
                 case "DASHDOTDOT":
-                    return "Stroke";
+                    st = "Stroke";
+                    return ((u & 0x1) != 0) ? st : NextLineStyleString(st, CustomList);
+                    //break;
             }
             return "Stroke"; //default : original stroke
         }

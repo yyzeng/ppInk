@@ -4989,7 +4989,7 @@ namespace gInk
                     // inspired from FormOptions / comboPensLineStyle_Changed
                     if (AltKeyPressed() && Root.PenAttr[Root.SavedPenDA] == null)
                         Root.PenAttr[Root.SavedPenDA] = Root.PenAttr[b].Clone();
-                    string s = Root.NextLineStyleString(Root.LineStyleToString(Root.PenAttr[b].ExtendedProperties));
+                    string s = Root.NextLineStyleString(Root.LineStyleToString(Root.PenAttr[b].ExtendedProperties),true);
                     DashStyle ds = Root.LineStyleFromString(s);
                     if (ds == DashStyle.Custom)
                         try { Root.PenAttr[b].ExtendedProperties.Remove(Root.DASHED_LINE_GUID); } catch { }

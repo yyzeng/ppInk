@@ -311,6 +311,13 @@ namespace gInk
             hiLineStyle.Hotkey = Root.Hotkey_LineStyle;
             hiLasso.Hotkey = Root.Hotkey_Lasso;
 
+            CbHKRot_Stroke.Checked = (Root.LineStyleRotateEnabled & (int)(CbHKRot_Stroke.Tag)) != 0;
+            CbHKRot_Solid.Checked = (Root.LineStyleRotateEnabled & (int)(CbHKRot_Solid.Tag)) != 0;
+            CbHKRot_Dash.Checked = (Root.LineStyleRotateEnabled & (int)(CbHKRot_Dash.Tag)) != 0;
+            CbHKRot_Dot.Checked = (Root.LineStyleRotateEnabled & (int)(CbHKRot_Dot.Tag)) != 0;
+            CbHKRot_DashDot.Checked = (Root.LineStyleRotateEnabled & (int)(CbHKRot_DashDot.Tag)) != 0;
+            CbHKRot_DashDotDot.Checked = (Root.LineStyleRotateEnabled & (int)(CbHKRot_DashDotDot.Tag)) != 0;
+
             WsUrlTxt.Text = Root.ObsUrl;
             WsPwdTxt.Text = Root.ObsPwd;
             FfmpegCmdTxt.Text = Root.FFMpegCmd;
@@ -1253,6 +1260,19 @@ namespace gInk
         {
             if (e.Button == MouseButtons.Right)
                 AltAsOneCommandCb.CheckState = CheckState.Indeterminate;
+        }
+
+        private void CbHKRot_CheckedChanged(object sender, EventArgs e)
+        {
+            CheckBox cb = (CheckBox)sender;
+            if (cb.Checked)
+            {
+                Root.LineStyleRotateEnabled |= Convert.ToUInt32((int)(cb.Tag));                
+            }
+            else
+            {
+                Root.LineStyleRotateEnabled &= 0xFF ^ Convert.ToUInt32((int)(cb.Tag));
+            }
         }
     }
 }

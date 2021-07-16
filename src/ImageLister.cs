@@ -57,7 +57,7 @@ namespace gInk
                 {
                     LoadImage(Root.StampFileNames[i]);
                 }
-                catch (Exception ex)
+                catch //(Exception ex)
                 {
                     MessageBox.Show("Error Loading ClipArt image:\n" + Root.StampFileNames[i], "ppInk", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
