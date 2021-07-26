@@ -38,12 +38,14 @@ ButtonNameVideo = "Rekam video"
 SaveStroke = "Simpan Stroke\n(panjang =opendialog ; pendek = {0})"
 LoadStroke = "Muat Stroke\n(panjang =opendialog ; pendek = {0})"
 ButtonNameZoom = "Perbesar"
+ButtonNameLasso = "Seleksi Lasso(Kiri=Tambah;Kanan=Hapus;Tombol=Setel Ulang Pilihan)"
 
 QuestionClipArtUpdate = "Cliparts tampaknya telah diperbaharui.\nApakah ingin anda perbaharui?"
 ButtonActivateDebug ="Jendela Debug"
 
 SubToolsBarCbText = "Aktifkan ToolBar Kedua"
 OptionPensOnTwoLinesCb = "Pena dengan dua garis"
+OptionsSwapSnapshotBehavior = "Pendek = Snap && keluar\nPanjang = Snap && Lanjut"
 
 StrokeFileExists = "{0} Sudah ada\nApakah ingin ditimpa?"
 FileCanNotWrite = "{0}\ntidak dapat ditulis."
