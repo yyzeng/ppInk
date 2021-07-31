@@ -3628,9 +3628,11 @@ namespace gInk
             else
             {
                 SelectPen(LastPenSelected);
+                if (SavedTool == Tools.Invalid)
+                    SavedTool = Tools.Hand;
                 SelectTool(SavedTool, SavedFilled);
-                SavedTool = -1;
-                SavedFilled = -1;
+                SavedTool = Tools.Invalid;
+                SavedFilled = Filling.NoFrame;
             }
         }
 
