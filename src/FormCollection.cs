@@ -2122,22 +2122,30 @@ namespace gInk
                     int w = Root.ImageStamp.X;
                     int h = Root.ImageStamp.Y;
                     //#if ((Root.CursorX0 == Int32.MinValue) || ((Root.CursorX0 == Root.CursorX) && (Root.CursorY0 == Root.CursorY)))
-                    if (HitTouch || ((Root.CursorX0 == Root.CursorX) && (Root.CursorY0 == Root.CursorY)) || ((Root.CursorX0 == Int32.MinValue )))
+                    if (HitTouch || ((Root.CursorX0 == Root.CursorX) && (Root.CursorY0 == Root.CursorY)) || ((Root.CursorX0 == Int32.MinValue)))
                     {
-                        Root.CursorX0 = Root.CursorX;
-                        Root.CursorY0 = Root.CursorY;
+                        Root.CursorX0 = Root.CursorX - ((CurrentMouseButton == MouseButtons.Right) || ((int)CurrentMouseButton == 2) ? (w / 2) : 0);
+                        Root.CursorY0 = Root.CursorY - ((CurrentMouseButton == MouseButtons.Right) || ((int)CurrentMouseButton == 2) ? (h / 2) : 0);
                         Root.CursorX = Root.CursorX0 + w;
                         Root.CursorY = Root.CursorY0 + h;
                     }
-                    else if (Math.Abs((double)(Root.CursorX - Root.CursorX0) / (Root.CursorY - Root.CursorY0)) < Root.StampScaleRatio)
+                    else
                     {
-                        //Console.WriteLine("ratio 2 = " + ((double)(Root.CursorX - Root.CursorX0) / (Root.CursorY - Root.CursorY0)).ToString());
-                        Root.CursorX = (int)(Root.CursorX0 + (double)(Root.CursorY - Root.CursorY0) / h * w);
-                    }
+                        if (Math.Abs((double)(Root.CursorX - Root.CursorX0) / (Root.CursorY - Root.CursorY0)) < Root.StampScaleRatio)
+                        {
+                            //Console.WriteLine("ratio 2 = " + ((double)(Root.CursorX - Root.CursorX0) / (Root.CursorY - Root.CursorY0)).ToString());
+                            Root.CursorX = (int)(Root.CursorX0 + (double)(Root.CursorY - Root.CursorY0) / h * w);
+                        }
                     else if (Math.Abs((double)(Root.CursorY - Root.CursorY0) / (Root.CursorX - Root.CursorX0)) < Root.StampScaleRatio)
                     {
-                        //Console.WriteLine("ratio 1 = " + ((double)(Root.CursorY - Root.CursorY0) / (Root.CursorX - Root.CursorX0)).ToString());
-                        Root.CursorY = (int)(Root.CursorY0 + (double)(Root.CursorX - Root.CursorX0) / w * h);
+                            //Console.WriteLine("ratio 1 = " + ((double)(Root.CursorY - Root.CursorY0) / (Root.CursorX - Root.CursorX0)).ToString());
+                            Root.CursorY = (int)(Root.CursorY0 + (double)(Root.CursorX - Root.CursorX0) / w * h);
+                        }
+                        if ((CurrentMouseButton == MouseButtons.Right) || ((int)CurrentMouseButton == 2))
+                        {
+                            Root.CursorX0 -= (Root.CursorX - Root.CursorX0) / 2;
+                            Root.CursorY0 -= (Root.CursorY - Root.CursorY0) / 2;
+                        }
                     }
                     AddImageStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY, Root.ImageStamp.ImageStamp);
                 }
