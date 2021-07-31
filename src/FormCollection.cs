@@ -4089,6 +4089,38 @@ namespace gInk
 
             //if (Tick % 50 == 0) Console.WriteLine("AW."+Tick.ToString()+"="+ GetCaptionOfActiveWindow());
 
+            if (IsMovingToolbar == 2)
+            {
+                if(MouseButtons.Equals(MouseButtons.None))
+                {
+                    IsMovingToolbar = 0;
+                    return;
+                }
+                if (MousePosition.X != HitMovingToolbareXY.X || MousePosition.Y != HitMovingToolbareXY.Y)
+                {
+                    int newleft = gpButtons.Left + MousePosition.X - HitMovingToolbareXY.X;
+                    int newtop = gpButtons.Top + MousePosition.Y - HitMovingToolbareXY.Y;
+
+                    if (IsInsideVisibleScreen(newleft, newtop) && IsInsideVisibleScreen(newleft + gpButtons.Width, newtop) &&
+                        IsInsideVisibleScreen(newleft, newtop + gpButtons.Height) && IsInsideVisibleScreen(newleft + gpButtons.Width, newtop + gpButtons.Height))
+                    {
+                        gpButtonsLeft = gpButtonsLeft + newleft - gpButtons.Left;
+                        gpButtonsTop = gpButtonsTop + newtop - gpButtons.Top;
+                        gpButtons.Left = newleft;
+                        gpButtons.Top = newtop;
+                        Root.UponAllDrawingUpdate = true;
+                        Root.UponButtonsUpdate |= 0x5;
+                        ToolbarMoved = true;
+                        Root.gpButtonsLeft = gpButtonsLeft;
+                        Root.gpButtonsTop = gpButtonsTop;
+                    }
+                    HitMovingToolbareXY.X = MousePosition.X;
+                    HitMovingToolbareXY.Y = MousePosition.Y;
+                    return;
+                }
+            }
+
+
             if (ZoomForm.Visible && (Root.ZoomContinous || MousePosition.X != ZoomX || MousePosition.Y != ZoomY))
             {
                 ZoomX = MousePosition.X;
@@ -4999,41 +5031,17 @@ namespace gInk
 
 			ToolbarMoved = false;
 			IsMovingToolbar = 1;
-			HitMovingToolbareXY.X = e.X;
-			HitMovingToolbareXY.Y = e.Y;
+			HitMovingToolbareXY.X = MousePosition.X;
+			HitMovingToolbareXY.Y = MousePosition.Y;
 		}
 
 		private void gpButtons_MouseMove(object sender, MouseEventArgs e)
-		{
+		{            
 			if (IsMovingToolbar == 1)
 			{
-				if (Math.Abs(e.X - HitMovingToolbareXY.X) > 20 || Math.Abs(e.Y - HitMovingToolbareXY.Y) > 20)
+				if (Math.Abs(MousePosition.X - HitMovingToolbareXY.X) > 20 || Math.Abs(MousePosition.Y - HitMovingToolbareXY.Y) > 20)
 					IsMovingToolbar = 2;
 			}
-			if (IsMovingToolbar == 2)
-            {
-                if (e.X != HitMovingToolbareXY.X || e.Y != HitMovingToolbareXY.Y)
-                {
-                    int newleft = gpButtons.Left + e.X - HitMovingToolbareXY.X;
-                    int newtop = gpButtons.Top + e.Y - HitMovingToolbareXY.Y;
-
-                    if( IsInsideVisibleScreen(newleft, newtop) && IsInsideVisibleScreen(newleft + gpButtonsWidth, newtop) && 
-                        IsInsideVisibleScreen(newleft, newtop + gpButtonsHeight) && IsInsideVisibleScreen(newleft + gpButtonsWidth, newtop + gpButtonsHeight) )
-					{
-                        HitMovingToolbareXY.X = e.X - newleft + gpButtons.Left;
-                        HitMovingToolbareXY.Y = e.Y - newtop + gpButtons.Top;
-                        gpButtonsLeft = gpButtonsLeft + newleft - gpButtons.Left;
-                        gpButtonsTop = gpButtonsTop + newtop - gpButtons.Top;
-                        gpButtons.Left = newleft;
-                        gpButtons.Top = newtop;
-                        Root.UponAllDrawingUpdate = true;
-                        Root.UponButtonsUpdate |= 0x5;
-                        ToolbarMoved = true;
-                        Root.gpButtonsLeft = gpButtonsLeft;
-                        Root.gpButtonsTop = gpButtonsTop;
-                    }
-				}
-            }
 		}
 
 		private void gpButtons_MouseUp(object sender, MouseEventArgs e)
