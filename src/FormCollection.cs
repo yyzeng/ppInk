@@ -2465,7 +2465,13 @@ namespace gInk
                         Stroke[] lst = new Stroke[StrokesSelection.Count];
                         for (int i = 0; i < StrokesSelection.Count; i++)
                         {
-                            lst[i] = Root.FormCollection.IC.Ink.CreateStroke(StrokesSelection[i].GetPoints());
+                            //lst[i] = Root.FormCollection.IC.Ink.CreateStroke(StrokesSelection[i].GetPoints());
+                            TabletPropertyDescriptionCollection properties = new TabletPropertyDescriptionCollection();
+                            foreach (Guid property in StrokesSelection[i].PacketDescription)
+                                properties.Add(new TabletPropertyDescription(property, StrokesSelection[i].GetPacketDescriptionPropertyMetrics(property)));
+                            lst[i] = Root.FormCollection.IC.Ink.CreateStroke(StrokesSelection[i].GetPacketData(), properties);
+                            //lst[i] = Root.FormCollection.IC.Ink.CreateStroke(StrokesSelection[i].GetPoints());
+
                             lst[i].DrawingAttributes = StrokesSelection[i].DrawingAttributes.Clone();
                             foreach (ExtendedProperty prop in StrokesSelection[i].ExtendedProperties)
                             {
@@ -2486,7 +2492,11 @@ namespace gInk
                 else if (Root.ToolSelected == Tools.Copy)
                 {
                     Stroke copied = movedStroke;
-                    movedStroke = Root.FormCollection.IC.Ink.CreateStroke(copied.GetPoints());
+                    //movedStroke = Root.FormCollection.IC.Ink.CreateStroke(copied.GetPoints());
+                    TabletPropertyDescriptionCollection properties = new TabletPropertyDescriptionCollection();
+                    foreach (Guid property in copied.PacketDescription)
+                        properties.Add(new TabletPropertyDescription(property, copied.GetPacketDescriptionPropertyMetrics(property)));
+                    movedStroke = Root.FormCollection.IC.Ink.CreateStroke(copied.GetPacketData(),properties);
                     movedStroke.DrawingAttributes = copied.DrawingAttributes.Clone();
                     foreach (ExtendedProperty prop in copied.ExtendedProperties)
                     {
