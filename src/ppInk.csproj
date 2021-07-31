@@ -348,6 +348,7 @@
     <None Include="rotate_act.png" />
     <None Include="scale_act.png" />
     <Compile Include="ToDoList.cs" />
+    <None Include="scale.png" />
     <Content Include="tool_edit.png" />
     <Content Include="tool_edit_act.png" />
     <Content Include="tool_enAr.png" />

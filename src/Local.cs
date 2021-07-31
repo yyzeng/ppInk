@@ -190,6 +190,7 @@ namespace gInk
 		public string NotificationSnapshot = "Snapshot saved. Click here to browse snapshots.";
 
         public string PanSubToolsHints = "Move one stroke\nPan all strokes\nCopy one stroke";
+        public string ScaleSubToolsHints = "Resize one stroke/group\nRotate one stroke/group";
         public string HandSubToolsHints = "Handfree drawing\nColor filled drawing\nWhite filled drawing\nBlack filled drawing";
         public string LineSubToolsHints = "Segment\nPolyLine\nColored Polygon\nWhite Polygon\nBlack Polygon";
         public string RectSubToolsHints = "Rectangle\nColor filled Rectangle\nWhite filled Rectangle\nBlack filled Rectangle";

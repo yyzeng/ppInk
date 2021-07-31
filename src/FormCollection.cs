@@ -550,7 +550,7 @@ namespace gInk
             if (Root.ToolbarOrientation <= Orientation.Horizontal)
             {
                 gpButtons.Height = dim;
-                gpButtons.Width = (int)((dim1 * .5 + dim3) + (penSec + (Root.ToolsEnabled ? (6 * dim4s + dim4s) : 0) + (Root.EraserEnabled ? dim4 : 0) + (Root.PanEnabled ? dim4s : 0) + (Root.PointerEnabled ? dim4 : 0)
+                gpButtons.Width = (int)((dim1 * .5 + dim3) + (penSec + (Root.ToolsEnabled ? (6 * dim4s + dim4s) : 0) + (Root.EraserEnabled ? dim4 : 0) + (Root.PanEnabled ? 2*dim4s : 0) + (Root.PointerEnabled ? dim4 : 0)
                                                                      + (Root.PenWidthEnabled ? dim4 : 0) + (Root.InkVisibleEnabled ? dim4 : 0) + (Root.SnapEnabled ? dim4 : 0)
                                                                      + (Root.UndoEnabled ? dim4 : 0) + (Root.ClearEnabled ? dim4 : 0) + (Root.LoadSaveEnabled ? dim4s : 0)
                                                                      + ((Root.VideoRecordMode != VideoRecordMode.NoVideo) ? dim4 : 0)
@@ -559,7 +559,7 @@ namespace gInk
             else //Vertical
             {
                 gpButtons.Width = dim;
-                gpButtons.Height = (int)((dim1 * .5 + dim3) + (penSec + (Root.ToolsEnabled ? (6 * dim4s + dim4s) : 0) + (Root.EraserEnabled ? dim4 : 0) + (Root.PanEnabled ? dim4s : 0) + (Root.PointerEnabled ? dim4 : 0)
+                gpButtons.Height = (int)((dim1 * .5 + dim3) + (penSec + (Root.ToolsEnabled ? (6 * dim4s + dim4s) : 0) + (Root.EraserEnabled ? dim4 : 0) + (Root.PanEnabled ? 2*dim4s : 0) + (Root.PointerEnabled ? dim4 : 0)
                                                                       + (Root.PenWidthEnabled ? dim4 : 0) + (Root.InkVisibleEnabled ? dim4 : 0) + (Root.SnapEnabled ? dim4 : 0)
                                                                       + (Root.UndoEnabled ? dim4 : 0) + (Root.ClearEnabled ? dim4 : 0) + (Root.LoadSaveEnabled ? dim4s : 0)
                                                                       + ((Root.VideoRecordMode != VideoRecordMode.NoVideo) ? dim4 : 0)
@@ -676,10 +676,6 @@ namespace gInk
                 btText.Width = dim1s;
                 btText.Visible = true;
                 SetButtonPosition(btArrow, btText, dim3);
-                btEdit.Height = dim1s;
-                btEdit.Width = dim1s;
-                btEdit.Visible = true;
-                SetSmallButtonNext(btText, btEdit, dim2s);
 
                 btClipArt.Height = dim1s;
                 btClipArt.Width = dim1s;
@@ -747,7 +743,7 @@ namespace gInk
                 btArrow.Visible = false;
                 btNumb.Visible = false;
                 btText.Visible = false;
-                btEdit.Visible = false;
+
                 btClipArt.Visible = false;
                 btClip1.Visible = false;
                 btClip2.Visible = false;
@@ -784,36 +780,26 @@ namespace gInk
                 btPan.Visible = true;
                 btPan.BackgroundImage = getImgFromDiskOrRes("pan", ImageExts);
                 SetSmallButtonNext(prev, btPan, dim2s);
+
+                btEdit.Height = dim1s;
+                btEdit.Width = dim1s;
+                btEdit.Visible = true;
+                SetButtonPosition(prev, btEdit, dim3);
+                prev = btEdit;
+
+                btScaleRot.Height = dim1s;
+                btScaleRot.Width = dim1s;
+                btScaleRot.Visible = true;
+                btScaleRot.BackgroundImage = getImgFromDiskOrRes("scale", ImageExts);
+                SetSmallButtonNext(prev, btScaleRot, dim2s);
             }
             else
             {
                 btLasso.Visible = false;
                 btPan.Visible = false;
+                btEdit.Visible = false;
+                btScaleRot.Visible = false;
             }
-
-            if (Root.ToolsEnabled)
-            {
-                btMagn.Height = dim1s;
-                btMagn.Width = dim1s;
-                btMagn.Visible = true;
-                this.btMagn.BackgroundImage = getImgFromDiskOrRes((Root.MagneticRadius > 0) ? "Magnetic_act" : "Magnetic", ImageExts);
-                SetButtonPosition(prev, btMagn, dim3);
-                prev = btMagn;
-            }
-            else
-                btMagn.Visible = false;
-
-            if (Root.ZoomEnabled > 0)
-            {
-                btZoom.Height = dim1s;
-                btZoom.Width = dim1s;
-                btZoom.Visible = true;
-                btZoom.BackgroundImage = getImgFromDiskOrRes("Zoom", ImageExts);
-                SetSmallButtonNext(btMagn, btZoom, dim2s);
-                btZoom.Visible = true;
-            }
-            else
-                btZoom.Visible = false;
 
             if (Root.PointerEnabled)
             {
@@ -827,6 +813,28 @@ namespace gInk
             }
             else
                 btPointer.Visible = false;
+
+            if (Root.ZoomEnabled > 0)
+            {
+                btMagn.Height = dim1s;
+                btMagn.Width = dim1s;
+                btMagn.Visible = true;
+                this.btMagn.BackgroundImage = getImgFromDiskOrRes((Root.MagneticRadius > 0) ? "Magnetic_act" : "Magnetic", ImageExts);
+                SetButtonPosition(prev, btMagn, dim3);
+                prev = btMagn;
+
+                btZoom.Height = dim1s;
+                btZoom.Width = dim1s;
+                btZoom.Visible = true;
+                btZoom.BackgroundImage = getImgFromDiskOrRes("Zoom", ImageExts);
+                SetSmallButtonNext(btMagn, btZoom, dim2s);
+                btZoom.Visible = true;
+            }
+            else
+            {
+                btMagn.Visible = false;
+                btZoom.Visible = false;
+            }
 
             if (Root.PenWidthEnabled)
             {
@@ -2989,6 +2997,7 @@ namespace gInk
             btText.BackgroundImage = getImgFromDiskOrRes("tool_txtL", ImageExts);
             btEdit.BackgroundImage = getImgFromDiskOrRes("tool_edit", ImageExts);
             btClipArt.BackgroundImage = getImgFromDiskOrRes("tool_clipart", ImageExts);
+            btScaleRot.BackgroundImage = getImgFromDiskOrRes("scale", ImageExts);
 
             btClip1.FlatAppearance.BorderSize = btClipSel == btClip1.Tag ? 3 : 0;
             btClip2.FlatAppearance.BorderSize = btClipSel == btClip2.Tag ? 3 : 0;
@@ -3242,7 +3251,7 @@ namespace gInk
                 TransformYc = int.MinValue;
 
                 ModifyStrokesSelection(AppendToSelection, ref InprogressSelection, StrokesSelection);
-                btPan.BackgroundImage = getImgFromDiskOrRes("scale_act", ImageExts);
+                btScaleRot.BackgroundImage = getImgFromDiskOrRes("scale_act", ImageExts);
                 try
                 {
                     IC.Cursor = cursortarget;
@@ -3258,7 +3267,7 @@ namespace gInk
                 TransformYc = int.MinValue;
 
                 ModifyStrokesSelection(AppendToSelection, ref InprogressSelection, StrokesSelection);
-                btPan.BackgroundImage = getImgFromDiskOrRes("rotate_act", ImageExts);
+                btScaleRot.BackgroundImage = getImgFromDiskOrRes("rotate_act", ImageExts);
                 try
                 {
                     IC.Cursor = cursortarget;
@@ -3777,6 +3786,11 @@ namespace gInk
         public void btSnap_Click(object sender, EventArgs e)
         {
             longClickTimer.Stop(); // for an unkown reason the mouse arrives later
+
+            StrokesSelection.Clear();
+            Root.StrokeHovered = null;
+            Root.UponAllDrawingUpdate = true;
+
             if (sender is ContextMenu)
             {
                 sender = (sender as ContextMenu).SourceControl;
@@ -4728,9 +4742,9 @@ namespace gInk
                 if (pressed && !LastScaleRotStatus && Root.Hotkey_ScaleRotate.ModifierMatch(control, alt, shift, win))
                 {
                     if(Root.ToolSelected != Tools.Scale)
-                        btPan_Click(2, null);
+                        btScaleRot_Click(0, null);
                     else
-                        btPan_Click(3, null);
+                        btScaleRot_Click(1, null);
                 }
                 LastScaleRotStatus = pressed;
 
@@ -5810,8 +5824,6 @@ namespace gInk
             CustomizeAndOpenSubTools(-1, "PanSubTools",new string[] { "pan1_act" , "pan_copy","pan_act"  } , Root.Local.PanSubToolsHints,
                                      new Func<int, bool>[] { i => { SelectPen(LastPenSelected); SelectTool(Tools.Move); return true; },
                                                              i => { SelectPen(LastPenSelected); SelectTool(Tools.Copy); return true; },
-                                                             i => { SelectPen(LastPenSelected); SelectTool(Tools.Scale); return true; },
-                                                             i => { SelectPen(LastPenSelected); SelectTool(Tools.Rotate); return true; },
                                                              i => { SelectPen(-3); return true; } });
 			if (ToolbarMoved)
 			{
@@ -5830,20 +5842,37 @@ namespace gInk
             {
                 changeActiveTool(2, true, Root.SubToolsEnabled ? 1 : -1);
             }
+            else
+            {
+                changeActiveTool(0, true, Root.SubToolsEnabled ? 1 : -1);
+            }
+        }
+
+        private void btScaleRot_Click(object sender, EventArgs e)
+        {
+            CustomizeAndOpenSubTools(-1, "PanSubTools", new string[] { "scale_act", "rotate_act" }, Root.Local.PanSubToolsHints,
+                                     new Func<int, bool>[] { i => { SelectPen(LastPenSelected); SelectTool(Tools.Scale); return true; },
+                                                             i => { SelectPen(LastPenSelected); SelectTool(Tools.Rotate); return true; }});
+            if (ToolbarMoved)
+            {
+                ToolbarMoved = false;
+                return;
+            }
+            if (sender is int)
+            {
+                changeActiveTool((int)sender, true, Root.SubToolsEnabled ? 1 : -1);
+            }
             else if (Root.ToolSelected == Tools.Scale)
             {
-                changeActiveTool(3, true, Root.SubToolsEnabled ? 1 : -1);
-            }
-            else if (Root.ToolSelected == Tools.Rotate)
-            {
-                changeActiveTool(4, true, Root.SubToolsEnabled ? 1 : -1);
+                changeActiveTool(1, true, Root.SubToolsEnabled ? 1 : -1);
             }
             else
             {
                 changeActiveTool(0, true, Root.SubToolsEnabled ? 1 : -1);
             }
-            ;
+
         }
+
 
         private void btMagn_Click(object sender, EventArgs e)
         {

@@ -169,7 +169,8 @@ LblFfmpegNote= "Note :substitution in command line\n            $xx$ $yy$       
 
 NotificationSnapshot = "Snapshot saved. Click here to browse snapshots."
 
-PanSubToolsHints = "Move one stroke\nCopy one stroke\nMove all strokes"
+PanSubToolsHints = "Move one stroke/group\nCopy one stroke/group\nMove all strokes"
+ScaleSubToolsHints = "Resize one stroke/group\nRotate one stroke/group"
 HandSubToolsHints = "Handfree drawing\nColor filled drawing\nWhite filled drawing\nBlack filled drawing"
 LineSubToolsHints = "Segment\nPolyline\nColored Polygon\nWhite Polygon\nBlack Polygon"
 RectSubToolsHints = "Rectangle\nColored Rectangle\nWhite Rectangle\nBlack Rectangle"

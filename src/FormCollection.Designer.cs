@@ -31,6 +31,7 @@ namespace gInk
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormCollection));
             this.gpButtons = new System.Windows.Forms.Panel();
+            this.btScaleRot = new System.Windows.Forms.Button();
             this.btLasso = new System.Windows.Forms.Button();
             this.btZoom = new System.Windows.Forms.Button();
             this.btSave = new System.Windows.Forms.Button();
@@ -85,6 +86,7 @@ namespace gInk
             // gpButtons
             // 
             this.gpButtons.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.gpButtons.Controls.Add(this.btScaleRot);
             this.gpButtons.Controls.Add(this.btLasso);
             this.gpButtons.Controls.Add(this.btZoom);
             this.gpButtons.Controls.Add(this.btSave);
@@ -117,11 +119,29 @@ namespace gInk
             this.gpButtons.Location = new System.Drawing.Point(24, 48);
             this.gpButtons.Margin = new System.Windows.Forms.Padding(2);
             this.gpButtons.Name = "gpButtons";
-            this.gpButtons.Size = new System.Drawing.Size(1394, 53);
+            this.gpButtons.Size = new System.Drawing.Size(1466, 53);
             this.gpButtons.TabIndex = 3;
             this.gpButtons.MouseDown += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseDown);
             this.gpButtons.MouseMove += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseMove);
             this.gpButtons.MouseUp += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseUp);
+            // 
+            // btScaleRot
+            // 
+            this.btScaleRot.BackColor = System.Drawing.Color.Transparent;
+            this.btScaleRot.BackgroundImage = global::gInk.Properties.Resources.scale;
+            this.btScaleRot.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btScaleRot.FlatAppearance.BorderSize = 0;
+            this.btScaleRot.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.btScaleRot.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.btScaleRot.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btScaleRot.Location = new System.Drawing.Point(1387, 4);
+            this.btScaleRot.Margin = new System.Windows.Forms.Padding(2);
+            this.btScaleRot.Name = "btScaleRot";
+            this.btScaleRot.Size = new System.Drawing.Size(46, 46);
+            this.btScaleRot.TabIndex = 14;
+            this.toolTip.SetToolTip(this.btScaleRot, "ScaleRot");
+            this.btScaleRot.UseVisualStyleBackColor = true;
+            this.btScaleRot.Click += new System.EventHandler(this.btScaleRot_Click);
             // 
             // btLasso
             // 
@@ -1039,7 +1059,7 @@ namespace gInk
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.WhiteSmoke;
-            this.ClientSize = new System.Drawing.Size(1429, 526);
+            this.ClientSize = new System.Drawing.Size(1501, 526);
             this.Controls.Add(this.gpSubTools);
             this.Controls.Add(this.gpPenWidth);
             this.Controls.Add(this.gpButtons);
@@ -1111,6 +1131,7 @@ namespace gInk
         public System.Windows.Forms.Timer tiSlide;
         public System.Windows.Forms.Timer longClickTimer;
         public System.Windows.Forms.Button btLasso;
+        public System.Windows.Forms.Button btScaleRot;
     }
 }
 

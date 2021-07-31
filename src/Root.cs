@@ -30,8 +30,9 @@ namespace gInk
         public const int Edit = 7; public const int txtLeftAligned = 8; public const int txtRightAligned = 9;
         public const int Move = 10; public const int Copy = 11; public const int Scale = 12; public const int Rotate = 13;
         public const int Poly = 21; public const int ClipArt = 22;
-        public static readonly int[] All = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 21, 22 };
-        public static readonly string[] Names = { "Hand", "Line", "Rect", "Oval", "StartArrow", "EndArrow", "Numbering", "Edit", "Text Left Aligned", "Text Right Aligned", "Move", "Copy", "PolyLine", "ClipArt" };
+        public static readonly int[] All = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 21, 22 };
+        public static readonly string[] Names = { "Hand", "Line", "Rect", "Oval", "StartArrow", "EndArrow", "Numbering", "Edit", "Text Left Aligned", "Text Right Aligned",
+                                                  "Move", "Copy", "Resize", "Rotate", "PolyLine", "ClipArt" };
     }
     public class Filling {
         public const int NoFrame = -1;      // for Stamps
