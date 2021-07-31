@@ -262,6 +262,7 @@ namespace gInk
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.VideoTabCtrl = new System.Windows.Forms.TabControl();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.Click4StrokeCb = new System.Windows.Forms.CheckBox();
             this.lbLineStyle = new System.Windows.Forms.Label();
             this.FitToCurveEd = new System.Windows.Forms.CheckBox();
             this.lbPens1 = new System.Windows.Forms.Label();
@@ -2546,6 +2547,7 @@ namespace gInk
             // tabPage2
             // 
             this.tabPage2.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.tabPage2.Controls.Add(this.Click4StrokeCb);
             this.tabPage2.Controls.Add(this.lbLineStyle);
             this.tabPage2.Controls.Add(this.FitToCurveEd);
             this.tabPage2.Controls.Add(this.InverseWheelCb);
@@ -2572,6 +2574,17 @@ namespace gInk
             this.tabPage2.Size = new System.Drawing.Size(767, 566);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Pens";
+            // 
+            // Click4StrokeCb
+            // 
+            this.Click4StrokeCb.AutoSize = true;
+            this.Click4StrokeCb.Location = new System.Drawing.Point(392, 434);
+            this.Click4StrokeCb.Name = "Click4StrokeCb";
+            this.Click4StrokeCb.Size = new System.Drawing.Size(208, 17);
+            this.Click4StrokeCb.TabIndex = 20;
+            this.Click4StrokeCb.Text = "Pen multiple click to change Line Style";
+            this.Click4StrokeCb.UseVisualStyleBackColor = true;
+            this.Click4StrokeCb.CheckedChanged += new System.EventHandler(this.Click4StrokeCb_CheckedChanged);
             // 
             // lbLineStyle
             // 
@@ -2926,5 +2939,6 @@ namespace gInk
         private System.Windows.Forms.CheckBox CbHKRot_DashDot;
         private System.Windows.Forms.CheckBox CbHKRot_Dash;
         private System.Windows.Forms.CheckBox CbHKRot_Stroke;
+        private System.Windows.Forms.CheckBox Click4StrokeCb;
     }
 }

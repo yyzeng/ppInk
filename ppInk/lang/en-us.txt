@@ -144,6 +144,7 @@ OptionsPensWidthAtSelection = "Apply Width on Pen Selection\n(even with width se
 OptionsInverseMouseWheel = "Inverse MouseWheel control\nWheel = Pen Width\nShift+Wheel = Pen Selection"
 OptionsInverseMouseWheelChecked = "Inverse MouseWheel control\nWheel = Pen Selection\nShift+Wheel = Pen Width"
 OptionsFitToCurve = "Smooth Curves"
+OptionsClick4Stroke = "Click on Pen Buttons to change Line Style"
 
 OptionsHotKeySnapInPointerGrp = "Snapshot in Pointer Mode"
 OptionsHotKeySnapInPointerLbl = "press and hold....                .... and press twice\n\n\nBoth None = Disabled"

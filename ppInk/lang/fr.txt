@@ -141,6 +141,7 @@ OptionsPensWidthAtSelection = "Modifie La largeur à la sélection\n(Même avec 
 OptionsInverseMouseWheel = "Inverse les actions de la molette\nMolette seule = Largeur du stylo\nShift+Molette = Selection du stylo"
 OptionsInverseMouseWheelChecked = "Inverse les actions de la molette\nMolette seule = Selection du stylo\nShift+Molette = Largeur du stylo"
 OptionsFitToCurve = "Lissage des courbes"
+OptionsClick4Stroke = "Clic sur les boutons des stylos pour changer de style de ligne"
 
 OptionsHotKeySnapInPointerGrp = "Capture d'écran en mode Pointeur"
 OptionsHotKeySnapInPointerLbl = "maintenir...                       ... et appuyer 2 fois sur\n\n\nAucun pour les deux = Désactivé"

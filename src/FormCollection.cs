@@ -5260,6 +5260,8 @@ namespace gInk
             for (int b = 0; b < Root.MaxPenCount; b++)
                 if ((Button)sender == btPen[b])
                 {
+                    if (Root.ButtonClick_For_LineStyle && b == Root.CurrentPen)
+                        SelectNextLineStyle(btPen[b]);
                     SelectPen(b);
                     if (Root.ToolSelected == Tools.Invalid || Root.ToolSelected == Tools.Move || Root.ToolSelected == Tools.Copy || Root.ToolSelected == Tools.Scale || Root.ToolSelected == Tools.Rotate
                         || (Root.ToolSelected == Tools.Edit || Root.PanMode  || Root.EraserMode )) // if move

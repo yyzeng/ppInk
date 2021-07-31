@@ -150,6 +150,7 @@ namespace gInk
         public string OptionsInverseMouseWheel = "Inverse MouseWheel control\nWheel = Pen Width\nShift+Wheel = Pen Selection";
         public string OptionsInverseMouseWheelChecked = "Inverse MouseWheel control\nWheel = Pen Selection\nShift+Wheel = Pen Width";
         public string OptionsFitToCurve = "Smooth Curves";
+        public string OptionsClick4Stroke = "Click on Pen Buttons to change Line Style";
 
         public string OptionsPensThin = "Thin";
 		public string OptionsPensNormal = "Normal";

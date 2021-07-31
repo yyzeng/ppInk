@@ -259,8 +259,9 @@ namespace gInk
         public Hotkey Hotkey_LoadStrokes = new Hotkey();
         public Hotkey Hotkey_SaveStrokes = new Hotkey();
 
-
         public float LongHKPressDelay = 2.5F;
+
+        public bool ButtonClick_For_LineStyle = false;
 
         public int ToolSelected = Tools.Hand;        // indicates which tool (Hand,Line,...) is currently selected
         public int FilledSelected = 0;      // indicates which filling (None, Selected color, ...) is currently select
@@ -1138,6 +1139,13 @@ namespace gInk
                             Hotkey_Lasso.Parse(sPara);
                             break;
 
+                        case "BUTTONCLICK_FOR_LINESTYLE":
+                            if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
+                                ButtonClick_For_LineStyle = true;
+                            else
+                                ButtonClick_For_LineStyle = false;
+                            break;
+
                         case "LINESTYLEROTATE":
                             try
                             {
@@ -1803,6 +1811,10 @@ namespace gInk
                             break;
                         case "HOTKEY_LASSO":
                             sPara = Hotkey_Lasso.ToStringInvariant();
+                            break;
+
+                        case "BUTTONCLICK_FOR_LINESTYLE":
+                            sPara = ButtonClick_For_LineStyle?"True":"False";
                             break;
 
                         case "LINESTYLEROTATE":

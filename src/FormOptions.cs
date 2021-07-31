@@ -246,6 +246,7 @@ namespace gInk
             FadingTimeEd.Text = Root.TimeBeforeFading.ToString();
             InverseWheelCb.Checked = Root.InverseMousewheel;
             FitToCurveEd.Checked = Root.FitToCurve;
+            Click4StrokeCb.Checked = Root.ButtonClick_For_LineStyle;
 
             //cbAllowHotkeyInPointer.Top = (int)(this.Height * 0.18);
 
@@ -511,6 +512,7 @@ namespace gInk
             InverseWheelCb.Text = Root.InverseMousewheel ? Root.Local.OptionsInverseMouseWheelChecked : Root.Local.OptionsInverseMouseWheel;
             FitToCurveEd.Text = Root.Local.OptionsFitToCurve;
             lbLineStyle.Text = Root.Local.OptionsLineStyle;
+            Click4StrokeCb.Text = Root.Local.OptionsClick4Stroke;
 
             comboLanguage.Items.Clear();
 			List<string> langs = Root.Local.GetLanguagenames();
@@ -1273,6 +1275,11 @@ namespace gInk
             {
                 Root.LineStyleRotateEnabled &= 0xFF ^ Convert.ToUInt32((int)(cb.Tag));
             }
+        }
+
+        private void Click4StrokeCb_CheckedChanged(object sender, EventArgs e)
+        {
+            Root.ButtonClick_For_LineStyle = Click4StrokeCb.Checked;
         }
     }
 }
