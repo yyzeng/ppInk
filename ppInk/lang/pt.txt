@@ -38,12 +38,14 @@ ButtonNameVideo = "Gravação de vídeo"
 SaveStroke = "Salvar traços\n(longo = abrir janela dialogo; curto = {0})"
 LoadStroke = "Carregar traços\n(longo = abrir janela dialogo; curto = {0})"
 ButtonNameZoom = "Zoom"
+ButtonNameLasso = "Seleção de Laço(Esq.=Adicionar;Direito=Remover;Botão=Reset selecção)"
 
 QuestionClipArtUpdate = "O Cliparts parece ter sido atualizado durante a edição.\nDeseja atualizar a lista padrão"
 ButtonActivateDebug ="Janela depuração"
 
 SubToolsBarCbText = "Habilitar Barra de Ferramentas Secundária"
 OptionPensOnTwoLinesCb = "Canetas nas duas linhas"
+OptionsSwapSnapshotBehavior = "Curto = Capturar & sair\nLongo = Capturar & continuar"
 
 StrokeFileExists = "{0} Já existe \ Deseja substituí-lo?"
 FileCanNotWrite = "{0}\nnão pode ser escrito."
@@ -61,6 +63,7 @@ FormatLength = "Comprimento : {0:N1} {1}"
 FormatAngle = "Ângulo : {0:N1}°"
 OptionsHotkeysColorPicker = "Seletor de Cores"
 OptionsHotkeysColorEdit = "Editar cor/caneta"
+OptionsLineStyle = "Estilo Linha"
 
 OptionsGeneralAPIRest = "REST url servidor"
 
