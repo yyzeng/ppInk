@@ -322,6 +322,7 @@
     <None Include="lasso_act.png" />
     <None Include="lasso.png" />
     <None Include="cursorHSI.png" />
+    <None Include="cursortarget.ico" />
     <Content Include="Magnetic.png" />
     <Content Include="Magnetic_act.png" />
     <None Include="pan1_act.png" />
@@ -344,6 +345,8 @@
     <None Include="picker.png" />
     <None Include="SolidLSTag.png" />
     <None Include="StrokeLSTag.png" />
+    <None Include="rotate_act.png" />
+    <None Include="scale_act.png" />
     <Content Include="tool_edit.png" />
     <Content Include="tool_edit_act.png" />
     <Content Include="tool_enAr.png" />

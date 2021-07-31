@@ -437,11 +437,19 @@ namespace gInk
                                 img = gInk.Properties.Resources.unknown;
                             }
                         // I came back to this solution of using IMAGE_?_GUID in order to have a more accurate position and therefore prevent blurry image
-                        int X = (int)(st.ExtendedProperties[Root.IMAGE_X_GUID].Data);
-                        int Y = (int)(st.ExtendedProperties[Root.IMAGE_Y_GUID].Data);
-                        int W = (int)(st.ExtendedProperties[Root.IMAGE_W_GUID].Data);
-                        int H = (int)(st.ExtendedProperties[Root.IMAGE_H_GUID].Data);
+                        int X = (int)(double)(st.ExtendedProperties[Root.IMAGE_X_GUID].Data);
+                        int Y = (int)(double)(st.ExtendedProperties[Root.IMAGE_Y_GUID].Data);
+                        int W = (int)(double)(st.ExtendedProperties[Root.IMAGE_W_GUID].Data);
+                        int H = (int)(double)(st.ExtendedProperties[Root.IMAGE_H_GUID].Data);
+                        if (st.ExtendedProperties.Contains(Root.ROTATION_GUID))
+                        {
+                            Double Rotation = (double)st.ExtendedProperties[Root.ROTATION_GUID].Data;
+                            g.TranslateTransform(X, Y);
+                            g.RotateTransform((float)Rotation);
+                            g.TranslateTransform(-X, -Y);
+                        }
                         g.DrawImage(img, new Rectangle(X, Y, W, H));
+                        g.ResetTransform();
                     }
                     /*else */
                     if (st.ExtendedProperties.Contains(Root.ISSTROKE_GUID))
@@ -449,17 +457,25 @@ namespace gInk
 
                     if (st.ExtendedProperties.Contains(Root.TEXT_GUID))
                     {
-                        Point pt = new Point((int)(st.ExtendedProperties[Root.TEXTX_GUID].Data), (int)(st.ExtendedProperties[Root.TEXTY_GUID].Data));
+                        Point pt = new Point((int)(double)st.ExtendedProperties[Root.TEXTX_GUID].Data, (int)(double)st.ExtendedProperties[Root.TEXTY_GUID].Data);
                         Root.FormCollection.IC.Renderer.InkSpaceToPixel(gOneStrokeCanvus, ref pt);
                         System.Drawing.StringFormat stf = new System.Drawing.StringFormat(System.Drawing.StringFormatFlags.NoClip);
                         stf.Alignment = (System.Drawing.StringAlignment)(st.ExtendedProperties[Root.TEXTHALIGN_GUID].Data);
                         stf.LineAlignment = (System.Drawing.StringAlignment)(st.ExtendedProperties[Root.TEXTVALIGN_GUID].Data);
                         g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
+                        if (st.ExtendedProperties.Contains(Root.ROTATION_GUID))
+                        {
+                            Double Rotation = (double)st.ExtendedProperties[Root.ROTATION_GUID].Data;
+                            int W = 0, H = 0;
+                            g.TranslateTransform(pt.X + W / 2, pt.Y + H / 2);
+                            g.RotateTransform((float)Rotation);
+                            g.TranslateTransform(-pt.X - W / 2, -pt.Y - H / 2);
+                        }
                         g.DrawString((string)(st.ExtendedProperties[Root.TEXT_GUID].Data),
-                                     new Font((string)st.ExtendedProperties[Root.TEXTFONT_GUID].Data, (float)st.ExtendedProperties[Root.TEXTFONTSIZE_GUID].Data,
+                                     new Font((string)st.ExtendedProperties[Root.TEXTFONT_GUID].Data, (float)(double)st.ExtendedProperties[Root.TEXTFONTSIZE_GUID].Data,
                                         (System.Drawing.FontStyle)(int)st.ExtendedProperties[Root.TEXTFONTSTYLE_GUID].Data),
                                      new SolidBrush(Color.FromArgb(255 - st.DrawingAttributes.Transparency, st.DrawingAttributes.Color)), pt.X, pt.Y, stf);
-
+                        g.ResetTransform();
                     }
                 }
             }
@@ -543,11 +559,19 @@ namespace gInk
                                 img = gInk.Properties.Resources.unknown;
                             }
                         // I came back to this solution of using IMAGE_?_GUID in order to have a more accurate position and therefore prevent blurry image
-                        int X = (int)(st.ExtendedProperties[Root.IMAGE_X_GUID].Data);
-                        int Y = (int)(st.ExtendedProperties[Root.IMAGE_Y_GUID].Data);
-                        int W = (int)(st.ExtendedProperties[Root.IMAGE_W_GUID].Data);
-                        int H = (int)(st.ExtendedProperties[Root.IMAGE_H_GUID].Data);
+                        int X = (int)(double)(st.ExtendedProperties[Root.IMAGE_X_GUID].Data);
+                        int Y = (int)(double)(st.ExtendedProperties[Root.IMAGE_Y_GUID].Data);
+                        int W = (int)(double)(st.ExtendedProperties[Root.IMAGE_W_GUID].Data);
+                        int H = (int)(double)(st.ExtendedProperties[Root.IMAGE_H_GUID].Data);
+                        if (st.ExtendedProperties.Contains(Root.ROTATION_GUID))
+                        {
+                            Double Rotation = (double)st.ExtendedProperties[Root.ROTATION_GUID].Data;
+                            g.TranslateTransform(X, Y);
+                            g.RotateTransform((float)Rotation);
+                            g.TranslateTransform(-X, -Y);
+                        }
                         g.DrawImage(img, new Rectangle(X, Y, W, H));
+                        g.ResetTransform();
                     }
                     /*else */
                     if (st.ExtendedProperties.Contains(Root.ISSTROKE_GUID))
@@ -556,17 +580,25 @@ namespace gInk
 
                     if (st.ExtendedProperties.Contains(Root.TEXT_GUID))
                     {
-                        Point pt = new Point((int)(st.ExtendedProperties[Root.TEXTX_GUID].Data), (int)(st.ExtendedProperties[Root.TEXTY_GUID].Data));
+                        Point pt = new Point((int)(double)st.ExtendedProperties[Root.TEXTX_GUID].Data, (int)(double)st.ExtendedProperties[Root.TEXTY_GUID].Data);
                         Root.FormCollection.IC.Renderer.InkSpaceToPixel(gOneStrokeCanvus, ref pt);
                         System.Drawing.StringFormat stf = new System.Drawing.StringFormat(System.Drawing.StringFormatFlags.NoClip);
                         stf.Alignment = (System.Drawing.StringAlignment)(st.ExtendedProperties[Root.TEXTHALIGN_GUID].Data);
                         stf.LineAlignment = (System.Drawing.StringAlignment)(st.ExtendedProperties[Root.TEXTVALIGN_GUID].Data);
                         g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
+                        if (st.ExtendedProperties.Contains(Root.ROTATION_GUID))
+                        {
+                            Double Rotation = (double)st.ExtendedProperties[Root.ROTATION_GUID].Data;
+                            int W = 0, H = 0;
+                            g.TranslateTransform(pt.X + W / 2, pt.Y + H / 2);
+                            g.RotateTransform((float)Rotation);
+                            g.TranslateTransform(-pt.X - W / 2, -pt.Y - H / 2);
+                        }
                         g.DrawString((string)(st.ExtendedProperties[Root.TEXT_GUID].Data),
-                                     new Font((string)st.ExtendedProperties[Root.TEXTFONT_GUID].Data, (float)st.ExtendedProperties[Root.TEXTFONTSIZE_GUID].Data,
+                                     new Font((string)st.ExtendedProperties[Root.TEXTFONT_GUID].Data, (float)(double)st.ExtendedProperties[Root.TEXTFONTSIZE_GUID].Data,
                                         (System.Drawing.FontStyle)(int)st.ExtendedProperties[Root.TEXTFONTSTYLE_GUID].Data),
                                      new SolidBrush(Color.FromArgb(255 - st.DrawingAttributes.Transparency, st.DrawingAttributes.Color)), pt.X, pt.Y, stf);
-
+                        g.ResetTransform();
                     }
                 }
             }

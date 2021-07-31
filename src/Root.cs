@@ -28,7 +28,8 @@ namespace gInk
         public const int Hand = 0; public const int Line = 1; public const int Rect = 2; public const int Oval = 3;
         public const int StartArrow = 4; public const int EndArrow = 5; public const int NumberTag = 6;
         public const int Edit = 7; public const int txtLeftAligned = 8; public const int txtRightAligned = 9;
-        public const int Move = 10; public const int Copy = 11; public const int Poly = 21; public const int ClipArt = 22;
+        public const int Move = 10; public const int Copy = 11; public const int Scale = 12; public const int Rotate = 13;
+        public const int Poly = 21; public const int ClipArt = 22;
         public static readonly int[] All = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 21, 22 };
         public static readonly string[] Names = { "Hand", "Line", "Rect", "Oval", "StartArrow", "EndArrow", "Numbering", "Edit", "Text Left Aligned", "Text Right Aligned", "Move", "Copy", "PolyLine", "ClipArt" };
     }
@@ -157,6 +158,7 @@ namespace gInk
 
         public static Guid FADING_PEN = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 3, 1);
         public static Guid DASHED_LINE_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 3, 2);        // will contain DashStyle style
+        public static Guid ROTATION_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 3, 3);           // applies to both Text and Images
 
         public static int MIN_MAGNETIC = 25;
         // options
@@ -241,6 +243,7 @@ namespace gInk
         public Hotkey Hotkey_Text = new Hotkey();
         public Hotkey Hotkey_Edit = new Hotkey();
         public Hotkey Hotkey_Move = new Hotkey();
+        public Hotkey Hotkey_ScaleRotate = new Hotkey();
         public Hotkey Hotkey_Magnet = new Hotkey();
         public Hotkey Hotkey_ClipArt = new Hotkey();
         public Hotkey Hotkey_ClipArt1 = new Hotkey();
@@ -680,15 +683,15 @@ namespace gInk
                 st.Move(x, y);
                 if (st.ExtendedProperties.Contains(TEXTX_GUID))
                 {
-                    st.ExtendedProperties.Add(TEXTX_GUID, (int)(st.ExtendedProperties[TEXTX_GUID].Data) + x);
-                    st.ExtendedProperties.Add(TEXTY_GUID, (int)(st.ExtendedProperties[TEXTY_GUID].Data) + y);
+                    st.ExtendedProperties.Add(TEXTX_GUID, (double)st.ExtendedProperties[TEXTX_GUID].Data + x);
+                    st.ExtendedProperties.Add(TEXTY_GUID, (double)st.ExtendedProperties[TEXTY_GUID].Data + y);
                 }
                 if (st.ExtendedProperties.Contains(IMAGE_GUID))
                 {
-                    pt.X = (int)(st.ExtendedProperties[IMAGE_X_GUID].Data) + pt1.X;
-                    pt.Y = (int)(st.ExtendedProperties[IMAGE_Y_GUID].Data) + pt1.Y;
-                    st.ExtendedProperties.Add(IMAGE_X_GUID, pt.X);
-                    st.ExtendedProperties.Add(IMAGE_Y_GUID, pt.Y);
+                    pt.X = (int)(double)(st.ExtendedProperties[IMAGE_X_GUID].Data) + pt1.X;
+                    pt.Y = (int)(double)(st.ExtendedProperties[IMAGE_Y_GUID].Data) + pt1.Y;
+                    st.ExtendedProperties.Add(IMAGE_X_GUID, (double)pt.X);
+                    st.ExtendedProperties.Add(IMAGE_Y_GUID, (double)pt.Y);
                 }
             }
             FormDisplay.ClearCanvus();
@@ -1040,6 +1043,9 @@ namespace gInk
                             break;
                         case "HOTKEY_PAN":
                             Hotkey_Pan.Parse(sPara);
+                            break;
+                        case "HOTKEY_SCALE_ROTATE":
+                            Hotkey_ScaleRotate.Parse(sPara);
                             break;
                         case "HOTKEY_UNDO":
                             Hotkey_Undo.Parse(sPara);
@@ -1704,7 +1710,10 @@ namespace gInk
 							break;
 						case "HOTKEY_PAN":
 							sPara = Hotkey_Pan.ToStringInvariant();
-							break;
+                            break;
+                        case "HOTKEY_SCALE_ROTATE":
+                            sPara = Hotkey_ScaleRotate.ToStringInvariant();                            
+                            break;
 						case "HOTKEY_UNDO":
 							sPara = Hotkey_Undo.ToStringInvariant();
 							break;

@@ -23,7 +23,8 @@ namespace gInk
         public string ButtonNamePenwidth = "Pen width";
 		public string ButtonNameErasor = "Eraser";
 		public string ButtonNamePan = "move one drawing | Pan all drawings";
-		public string ButtonNameMousePointer = "Mouse pointer";
+        public string ButtonNameScaleRotate = "Scale | Rotate";
+        public string ButtonNameMousePointer = "Mouse pointer";
 		public string ButtonNameInkVisible = "Ink visible";
 		public string ButtonNameSnapshot = "Snapshot";
 		public string ButtonNameUndo = "Undo";

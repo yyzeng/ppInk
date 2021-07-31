@@ -87,7 +87,7 @@ namespace gInk
         public Bitmap image_eraser_act, image_eraser;
         public Bitmap image_visible_not, image_visible;
         public Bitmap image_lasso_act, image_lasso;
-        public System.Windows.Forms.Cursor cursorred, cursorsnap, cursorerase;
+        public System.Windows.Forms.Cursor cursorred, cursortarget, cursorsnap, cursorerase;
         public System.Windows.Forms.Cursor cursortip;
         public System.Windows.Forms.Cursor tempArrowCursor = null;
         public bool Initializing;
@@ -1065,6 +1065,15 @@ namespace gInk
             }
             try
             {
+                cursortarget?.Dispose();
+            }
+            catch { }
+            finally
+            {
+                cursortarget = getCursFromDiskOrRes("cursortarget", System.Windows.Forms.Cursors.SizeNWSE);
+            }
+            try
+            {
                 cursorerase?.Dispose();
             }
             catch { }
@@ -1488,10 +1497,11 @@ namespace gInk
                 Filling = Root.ImageStamp.Filling;
             Stroke st = AddRectStroke(CursorX0, CursorY0, CursorX, CursorY, Filling);
             st.ExtendedProperties.Add(Root.IMAGE_GUID, fn);
-            st.ExtendedProperties.Add(Root.IMAGE_X_GUID, CursorX0);
-            st.ExtendedProperties.Add(Root.IMAGE_Y_GUID, CursorY0);
-            st.ExtendedProperties.Add(Root.IMAGE_W_GUID, CursorX - CursorX0);
-            st.ExtendedProperties.Add(Root.IMAGE_H_GUID, CursorY - CursorY0);
+            st.ExtendedProperties.Add(Root.IMAGE_X_GUID, (double)CursorX0);
+            st.ExtendedProperties.Add(Root.IMAGE_Y_GUID, (double)CursorY0);
+            st.ExtendedProperties.Add(Root.IMAGE_W_GUID, (double)(CursorX - CursorX0));
+            st.ExtendedProperties.Add(Root.IMAGE_H_GUID, (double)(CursorY - CursorY0));
+            st.ExtendedProperties.Add(Root.ROTATION_GUID, 0.0D);
             if (st.ExtendedProperties.Contains(Root.FADING_PEN))
                 FadingList.Add(st);
 
@@ -1616,13 +1626,13 @@ namespace gInk
             IC.Renderer.PixelToInkSpace(Root.FormDisplay.gOneStrokeCanvus, ref pt);
             st.ExtendedProperties.Add(Root.ISTAG_GUID, true);
             st.ExtendedProperties.Add(Root.TEXT_GUID, txt);
-            st.ExtendedProperties.Add(Root.TEXTX_GUID, pt.X);
-            st.ExtendedProperties.Add(Root.TEXTY_GUID, pt.Y);
+            st.ExtendedProperties.Add(Root.TEXTX_GUID, (double)pt.X);
+            st.ExtendedProperties.Add(Root.TEXTY_GUID, (double)pt.Y);
             //st.ExtendedProperties.Add(Root.TEXTFORMAT_GUID, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.WordBreak);
             st.ExtendedProperties.Add(Root.TEXTHALIGN_GUID, StringAlignment.Center);
             st.ExtendedProperties.Add(Root.TEXTVALIGN_GUID, StringAlignment.Center);
             st.ExtendedProperties.Add(Root.TEXTFONT_GUID, TagFont);
-            st.ExtendedProperties.Add(Root.TEXTFONTSIZE_GUID, (float)TagSize);
+            st.ExtendedProperties.Add(Root.TEXTFONTSIZE_GUID, (double)TagSize);
             st.ExtendedProperties.Add(Root.TEXTFONTSTYLE_GUID, (TagItalic ? FontStyle.Italic : FontStyle.Regular) | (TagBold ? FontStyle.Bold : FontStyle.Regular));
             return st;
         }
@@ -1640,13 +1650,14 @@ namespace gInk
             st.DrawingAttributes.Width = 100; // no width to hide the point;
             st.DrawingAttributes.FitToCurve = false;
             st.ExtendedProperties.Add(Root.TEXT_GUID, txt);
-            st.ExtendedProperties.Add(Root.TEXTX_GUID, pt.X);
-            st.ExtendedProperties.Add(Root.TEXTY_GUID, pt.Y);
+            st.ExtendedProperties.Add(Root.TEXTX_GUID, (double)pt.X);
+            st.ExtendedProperties.Add(Root.TEXTY_GUID, (double)pt.Y);
             st.ExtendedProperties.Add(Root.TEXTHALIGN_GUID, Align);
             st.ExtendedProperties.Add(Root.TEXTVALIGN_GUID, StringAlignment.Near);
             st.ExtendedProperties.Add(Root.TEXTFONT_GUID, TextFont);
-            st.ExtendedProperties.Add(Root.TEXTFONTSIZE_GUID, (float)TextSize);
+            st.ExtendedProperties.Add(Root.TEXTFONTSIZE_GUID, (double)TextSize);
             st.ExtendedProperties.Add(Root.TEXTFONTSTYLE_GUID, (TextItalic ? FontStyle.Italic : FontStyle.Regular) | (TextBold ? FontStyle.Bold : FontStyle.Regular));
+            st.ExtendedProperties.Add(Root.ROTATION_GUID, 0.0D);
             setStrokeProperties(ref st, Filling.NoFrame);
             Root.FormCollection.IC.Ink.Strokes.Add(st);
             if (st.ExtendedProperties.Contains(Root.FADING_PEN))
@@ -1762,26 +1773,26 @@ namespace gInk
                 {
                     if (stk.ExtendedProperties.Contains(Root.TEXTWIDTH_GUID))
                     {
-                        int x0 = Root.HiMetricToPixel((int)stk.ExtendedProperties[Root.TEXTX_GUID].Data);
-                        int y0 = Root.HiMetricToPixel((int)stk.ExtendedProperties[Root.TEXTY_GUID].Data);
+                        int x0 = Root.HiMetricToPixel((int)(double)stk.ExtendedProperties[Root.TEXTX_GUID].Data);
+                        int y0 = Root.HiMetricToPixel((int)(double)stk.ExtendedProperties[Root.TEXTY_GUID].Data);
                         int x1, y1;
                         if ((System.Drawing.StringAlignment)stk.ExtendedProperties[Root.TEXTHALIGN_GUID].Data == StringAlignment.Near)
                         {
-                            x1 = (int)(x0 + (float)stk.ExtendedProperties[Root.TEXTWIDTH_GUID].Data);
+                            x1 = (int)(x0 + (double)(stk.ExtendedProperties[Root.TEXTWIDTH_GUID].Data));
                         }
                         else
                         {
                             x1 = x0;
-                            x0 = (int)(x1 - (float)stk.ExtendedProperties[Root.TEXTWIDTH_GUID].Data);
+                            x0 = (int)(x1 - (double)(stk.ExtendedProperties[Root.TEXTWIDTH_GUID].Data));
                         }
                         if ((System.Drawing.StringAlignment)stk.ExtendedProperties[Root.TEXTVALIGN_GUID].Data == StringAlignment.Near)
                         {
-                            y1 = (int)(y0 + (float)stk.ExtendedProperties[Root.TEXTHEIGHT_GUID].Data);
+                            y1 = (int)(y0 + (double)stk.ExtendedProperties[Root.TEXTHEIGHT_GUID].Data);
                         }
                         else
                         {
                             y1 = y0;
-                            y0 = (int)(y1 - (float)stk.ExtendedProperties[Root.TEXTHEIGHT_GUID].Data);
+                            y0 = (int)(y1 - (double)stk.ExtendedProperties[Root.TEXTHEIGHT_GUID].Data);
                         }
                         //Console.WriteLine("{0},{1}   {2},{3}    {4},{5}       <= {6},{7}", x0, y0, cursorX, cursorY, x1, y1, (float)stk.ExtendedProperties[Root.TEXTWIDTH_GUID].Data, (float)stk.ExtendedProperties[Root.TEXTHEIGHT_GUID].Data);
                         if ((x0 - Root.MinMagneticRadius()) <= cursorX && cursorX <= (x1 + Root.MinMagneticRadius())
@@ -1876,6 +1887,122 @@ namespace gInk
             }
         }
 
+        int TransformXc = int.MinValue;
+        int TransformYc = int.MinValue;
+
+        private void Scale(Strokes Sel, Stroke Hover, int Xc, int Yc, int X0, int Y0, int X, int Y)
+        {
+            if (Xc == int.MinValue || Xc == int.MaxValue)
+            {
+                if (Sel != null && Sel.Count > 0)
+                {
+                    Rectangle r = Sel.GetBoundingBox();
+                    Xc = (r.Left + r.Right) / 2;
+                    Yc = (r.Top + r.Bottom) / 2;
+                }
+                else if (Hover != null)
+                {
+                    Rectangle r = Hover.GetBoundingBox();
+                    Xc = (r.Left + r.Right) / 2;
+                    Yc = (r.Top + r.Bottom) / 2;
+                }
+                else
+                    return;
+            }
+            double k = Math.Sqrt((X0 - Xc) * (X0 - Xc) + (Y0 - Yc) * (Y0 - Yc));
+            k = Math.Sqrt((X - Xc) * (X - Xc) + (Y - Yc) * (Y - Yc)) / k;
+
+            // alpha kept but not usable for the moment : X,Y is current point where as X0 Y0 is prev : k is factor between current and previous mot original
+            //    double alpha = Math.Atan2(Y0 - Yc,  X0 - Xc) - Math.Atan2(Y - Yc, X - Xc);
+            ScaleRotate(Sel, Hover, Xc, Yc, k,0.0);
+        }
+
+        private void Rotate(Strokes Sel, Stroke Hover, int Xc, int Yc, int X0, int Y0, int X, int Y)
+        {
+            if (Xc == int.MinValue || Xc == int.MaxValue)
+            {
+                if (Sel != null && Sel.Count > 0)
+                {
+                    Rectangle r = Sel.GetBoundingBox();
+                    Xc = (r.Left + r.Right) / 2;
+                    Yc = (r.Top + r.Bottom) / 2;
+                }
+                else if (Hover != null)
+                {
+                    Rectangle r = Hover.GetBoundingBox();
+                    Xc = (r.Left + r.Right) / 2;
+                    Yc = (r.Top + r.Bottom) / 2;
+                }
+                else
+                    return;
+            }
+            double alpha = Math.Atan2(Y - Yc,  X - Xc) - Math.Atan2(Y0 - Yc, X0 - Xc);
+            //double k = Math.Sqrt((X0 - Xc) * (X0 - Xc) + (Y0 - Yc) * (Y0 - Yc));
+            //k = Math.Sqrt((X - Xc) * (X - Xc) + (Y - Yc) * (Y - Yc)) / k;
+
+            // alpha kept but not usable for the moment : X,Y is current point where as X0 Y0 is prev : k is factor between current and previous mot original
+            //    double alpha = Math.Atan2(Y0 - Yc,  X0 - Xc) - Math.Atan2(Y - Yc, X - Xc);
+            ScaleRotate(Sel, Hover, Xc, Yc, 1.0,alpha/Math.PI*180.0);
+        }
+
+        private void ScaleRotate(Strokes Sel, Stroke Hover, int Xc, int Yc, Double k, Double deg, bool applyOnPen=true)
+        {
+            void ModifyProperties(Stroke s)
+            {
+                if (s.ExtendedProperties.Contains(Root.IMAGE_GUID))
+                {
+                    Point p = s.GetPoint(0);
+                    IC.Renderer.InkSpaceToPixel(Root.FormDisplay.gOneStrokeCanvus, ref p);
+                    s.ExtendedProperties.Add(Root.IMAGE_X_GUID, (double)p.X);
+                    s.ExtendedProperties.Add(Root.IMAGE_Y_GUID, (double)p.Y);
+                    s.ExtendedProperties.Add(Root.IMAGE_H_GUID, ((double)(s.ExtendedProperties[Root.IMAGE_H_GUID].Data) * k));
+                    s.ExtendedProperties.Add(Root.IMAGE_W_GUID, ((double)(s.ExtendedProperties[Root.IMAGE_W_GUID].Data) * k));
+                    s.ExtendedProperties.Add(Root.ROTATION_GUID, (double)s.ExtendedProperties[Root.ROTATION_GUID].Data + deg);
+                }
+                if (s.ExtendedProperties.Contains(Root.TEXTFONT_GUID))
+                {
+                    Point p = s.GetPoint(0);
+                    //IC.Renderer.InkSpaceToPixel(Root.FormDisplay.gOneStrokeCanvus, ref p);
+                    s.ExtendedProperties.Add(Root.TEXTX_GUID, (double)p.X);
+                    s.ExtendedProperties.Add(Root.TEXTY_GUID, (double)p.Y);
+                    s.ExtendedProperties.Add(Root.TEXTFONTSIZE_GUID, ((double)(s.ExtendedProperties[Root.TEXTFONTSIZE_GUID].Data) * k));
+                    s.ExtendedProperties.Add(Root.TEXTWIDTH_GUID, ((double)(s.ExtendedProperties[Root.TEXTWIDTH_GUID].Data) * k));
+                    s.ExtendedProperties.Add(Root.TEXTHEIGHT_GUID, ((double)(s.ExtendedProperties[Root.TEXTHEIGHT_GUID].Data) * k));
+                    s.ExtendedProperties.Add(Root.ROTATION_GUID, (double)s.ExtendedProperties[Root.ROTATION_GUID].Data + deg);
+                }
+            }
+
+            Matrix m = new Matrix(1, 0, 0, 1, 0, 0);
+            m.Translate(+Xc, +Yc);
+            m.Scale((float)k, (float)k);
+            m.Rotate((float)deg);
+            m.Translate(-Xc, -Yc);
+            if (Sel != null && Sel.Count > 0)
+            {
+                if (double.IsNaN(Sel.GetBoundingBox().Width * k))
+                    return;
+                Sel.Transform(m, applyOnPen);
+                foreach (Stroke s in Sel)
+                {
+                    if (s.Deleted)
+                        continue;
+                    ModifyProperties(s);
+                }
+            }
+            else if (Hover != null)
+            {
+                if (double.IsNaN(Hover.GetBoundingBox().Width * k))
+                    return;
+                Hover.Transform(m, applyOnPen);
+                ModifyProperties(Hover);
+            }
+        }
+        private void mInkObject_StrokesDeleting(object sender, InkOverlayStrokesDeletingEventArgs e)
+        {
+            // Store strokes for later undo. They must be stored in 
+            // a separate Ink object. 
+            Console.WriteLine("deleting ");
+        }
         int dbgcpt = 0;
 
         private void IC_Stroke(object sender, InkCollectorStrokeEventArgs e)
@@ -2122,13 +2249,13 @@ namespace gInk
             stf.LineAlignment = (System.Drawing.StringAlignment)(st.ExtendedProperties[Root.TEXTVALIGN_GUID].Data);
             SizeF layoutSize = new SizeF(2000.0F, 2000.0F);
             layoutSize = Root.FormDisplay.gOneStrokeCanvus.MeasureString((string)(st.ExtendedProperties[Root.TEXT_GUID].Data),
-                            new Font((string)st.ExtendedProperties[Root.TEXTFONT_GUID].Data, (float)st.ExtendedProperties[Root.TEXTFONTSIZE_GUID].Data,
+                            new Font((string)st.ExtendedProperties[Root.TEXTFONT_GUID].Data, (float)(double)st.ExtendedProperties[Root.TEXTFONTSIZE_GUID].Data,
                             (System.Drawing.FontStyle)(int)st.ExtendedProperties[Root.TEXTFONTSTYLE_GUID].Data), layoutSize, stf);
-            st.ExtendedProperties.Add(Root.TEXTWIDTH_GUID, layoutSize.Width);
-            st.ExtendedProperties.Add(Root.TEXTHEIGHT_GUID, layoutSize.Height);
+            st.ExtendedProperties.Add(Root.TEXTWIDTH_GUID, (double)layoutSize.Width);
+            st.ExtendedProperties.Add(Root.TEXTHEIGHT_GUID, (double)layoutSize.Height);
             if (!st.ExtendedProperties.Contains(Root.ISTAG_GUID))
             {
-                Point pt = new Point((int)(st.ExtendedProperties[Root.TEXTX_GUID].Data), (int)(st.ExtendedProperties[Root.TEXTY_GUID].Data));
+                Point pt = new Point((int)(double)(st.ExtendedProperties[Root.TEXTX_GUID].Data), (int)(double)(st.ExtendedProperties[Root.TEXTY_GUID].Data));
                 //IC.Renderer.PixelToInkSpace(IC.Handle, ref pt);
                 Point pt2 = new Point((int)layoutSize.Width, (int)layoutSize.Height);
                 IC.Renderer.PixelToInkSpace(Root.FormDisplay.gOneStrokeCanvus, ref pt2);
@@ -2308,14 +2435,15 @@ namespace gInk
 
                 SavHoveredForSelection = Root.LassoMode ? Root.StrokeHovered : null;
 
-            if (((Root.ToolSelected == Tools.Move) || (Root.ToolSelected == Tools.Copy)))  // Move
+            if (Root.ToolSelected == Tools.Move || Root.ToolSelected == Tools.Copy || Root.ToolSelected == Tools.Scale || Root.ToolSelected == Tools.Rotate)  // Scale & Rotate here to init movedStroke
             {
                 float pos;
                 if (StrokesSelection.Count > 0)
                 {
                     movedStroke = null;
                     //Console.WriteLine("## " + StrokesSelection.Count.ToString() + " / " + IC.Ink.Strokes.Count.ToString());
-                    if (Root.ToolSelected == Tools.Copy)
+                    if ((Root.ToolSelected == Tools.Copy && (((int)e.Button == 1) || (e.Button == MouseButtons.Left)))||
+                        (Root.ToolSelected == Tools.Move && (((int)e.Button == 2) || (e.Button == MouseButtons.Right))))
                     {
                         foreach(Stroke s in StrokesSelection) // to ensure no deleted strokes
                             try
@@ -2361,15 +2489,17 @@ namespace gInk
             }
             if (!(Root.EraserMode || Root.ToolSelected == Tools.Edit || Root.ToolSelected == Tools.Move || Root.ToolSelected == Tools.Copy || Root.LassoMode))
                 MetricToolTip.Hide(this);
+
         }
 
 
         public Point LasteXY;
+
         private void IC_MouseMove(object sender, CancelMouseEventArgs e)
         {
             float pos;
             //Console.WriteLine("MouseMove");
-            if(Root.ColorPickerMode)
+            if (Root.ColorPickerMode)
             {
                 using (Bitmap bmp = new Bitmap(1, 1))
                     try
@@ -2388,24 +2518,11 @@ namespace gInk
                     catch { }
             }
 
-            /*if (Root.LassoMode && e.Button != MouseButtons.None && IC.Ink.Strokes.Count>0)
-            {
-                AppendToSelection = ((int)e.Button == 1) || (e.Button == MouseButtons.Left);
-                Stroke st = IC.Ink.Strokes[IC.Ink.Strokes.Count - 1];
-                if (st.ExtendedProperties.Contains(Root.ISLASSO_GUID))
-                    try
-                    {
-                        //Point[] pts;
-                        //InprogressSelection = IC.Ink.HitTest(st.GetPoints(), Root.LassoPercent, out pts);
-                    }
-                    catch { }
-            }*/
-
-
             Root.StrokeHovered = null;
             if (e.Button == MouseButtons.None)
             {
-                if (Root.EraserMode || Root.ToolSelected == Tools.Edit || Root.ToolSelected == Tools.Move || Root.ToolSelected == Tools.Copy || Root.LassoMode)
+                if (Root.EraserMode || Root.ToolSelected == Tools.Edit || Root.ToolSelected == Tools.Move || Root.ToolSelected == Tools.Copy || Root.LassoMode 
+                    || Root.ToolSelected == Tools.Scale || Root.ToolSelected == Tools.Rotate)
                 {
                     if (NearestStroke(new Point(e.X, e.Y), true, out Root.StrokeHovered, out pos, false) > Root.PixelToHiMetric(Root.MinMagneticRadius()))
                     {
@@ -2488,15 +2605,15 @@ namespace gInk
                                 continue;
                             if (st.ExtendedProperties.Contains(Root.TEXT_GUID))
                             {
-                                st.ExtendedProperties.Add(Root.TEXTX_GUID, ((int)st.ExtendedProperties[Root.TEXTX_GUID].Data) + (currentxy.X - LasteXY.X));
-                                st.ExtendedProperties.Add(Root.TEXTY_GUID, ((int)st.ExtendedProperties[Root.TEXTY_GUID].Data) + (currentxy.Y - LasteXY.Y));
+                                st.ExtendedProperties.Add(Root.TEXTX_GUID, ((double)st.ExtendedProperties[Root.TEXTX_GUID].Data) + (currentxy.X - LasteXY.X));
+                                st.ExtendedProperties.Add(Root.TEXTY_GUID, ((double)st.ExtendedProperties[Root.TEXTY_GUID].Data) + (currentxy.Y - LasteXY.Y));
                             }
                             if (st.ExtendedProperties.Contains(Root.IMAGE_X_GUID))
                             {
                                 Point pt = new Point(st.GetPoint(0).X, st.GetPoint(0).Y);
                                 IC.Renderer.InkSpaceToPixel(Root.FormDisplay.gOneStrokeCanvus, ref pt);
-                                st.ExtendedProperties.Add(Root.IMAGE_X_GUID, pt.X);
-                                st.ExtendedProperties.Add(Root.IMAGE_Y_GUID, pt.Y);
+                                st.ExtendedProperties.Add(Root.IMAGE_X_GUID, (double)pt.X);
+                                st.ExtendedProperties.Add(Root.IMAGE_Y_GUID, (double)pt.Y);
                             }
                         }
                     } catch { }
@@ -2515,20 +2632,33 @@ namespace gInk
 
                     if (movedStroke.ExtendedProperties.Contains(Root.TEXT_GUID))
                     {
-                        movedStroke.ExtendedProperties.Add(Root.TEXTX_GUID, ((int)movedStroke.ExtendedProperties[Root.TEXTX_GUID].Data) + (currentxy.X - LasteXY.X));
-                        movedStroke.ExtendedProperties.Add(Root.TEXTY_GUID, ((int)movedStroke.ExtendedProperties[Root.TEXTY_GUID].Data) + (currentxy.Y - LasteXY.Y));
+                        movedStroke.ExtendedProperties.Add(Root.TEXTX_GUID, ((double)movedStroke.ExtendedProperties[Root.TEXTX_GUID].Data) + (currentxy.X - LasteXY.X));
+                        movedStroke.ExtendedProperties.Add(Root.TEXTY_GUID, ((double)movedStroke.ExtendedProperties[Root.TEXTY_GUID].Data) + (currentxy.Y - LasteXY.Y));
                     }
                     if (movedStroke.ExtendedProperties.Contains(Root.IMAGE_X_GUID))
                     {
                         Point pt = new Point(movedStroke.GetPoint(0).X, movedStroke.GetPoint(0).Y);
                         IC.Renderer.InkSpaceToPixel(Root.FormDisplay.gOneStrokeCanvus, ref pt);
-                        movedStroke.ExtendedProperties.Add(Root.IMAGE_X_GUID, pt.X);
-                        movedStroke.ExtendedProperties.Add(Root.IMAGE_Y_GUID, pt.Y);
+                        movedStroke.ExtendedProperties.Add(Root.IMAGE_X_GUID, (double)pt.X);
+                        movedStroke.ExtendedProperties.Add(Root.IMAGE_Y_GUID, (double)pt.Y);
                     }
                     Root.FormDisplay.ClearCanvus();
                     Root.FormDisplay.DrawStrokes();
                     Root.FormDisplay.UpdateFormDisplay(true);
                 }
+            }
+
+            if (Root.ToolSelected == Tools.Scale && TransformXc != int.MinValue  && (((int)e.Button == 1) || (e.Button == MouseButtons.Left)))
+            {
+                //Console.WriteLine(String.Format("{0}.{1}   {2}.{3}   {4}.{5}", TransformXc, TransformYc, LasteXY.X, LasteXY.Y, currentxy.X, currentxy.Y));
+                Scale(StrokesSelection, movedStroke, TransformXc, TransformYc, LasteXY.X, LasteXY.Y, currentxy.X, currentxy.Y);
+                Root.UponAllDrawingUpdate = true;
+            }
+            if (Root.ToolSelected == Tools.Rotate && TransformXc != int.MinValue && (((int)e.Button == 1) || (e.Button == MouseButtons.Left)))
+            {
+                Console.WriteLine(String.Format("{0}.{1}   {2}.{3}   {4}.{5}", TransformXc, TransformYc, LasteXY.X, LasteXY.Y, currentxy.X, currentxy.Y));
+                Rotate(StrokesSelection, movedStroke, TransformXc, TransformYc, LasteXY.X, LasteXY.Y, currentxy.X, currentxy.Y);
+                Root.UponAllDrawingUpdate = true;
             }
 
             LasteXY = currentxy;
@@ -2587,13 +2717,45 @@ namespace gInk
                 } catch { }
                 Root.UponAllDrawingUpdate = true;
             }
-
             else
             {
                 Root.UponAllDrawingUpdate = true;
             }
+
+            if(Root.ToolSelected == Tools.Scale || Root.ToolSelected == Tools.Rotate)
+            {
+                Point p = new Point(e.X, e.Y);
+                IC.Renderer.PixelToInkSpace(Root.FormDisplay.gOneStrokeCanvus, ref p);
+                if (e.Button == MouseButtons.Right || (int)e.Button == 2)
+                {
+                    if(TransformXc == int.MinValue)
+                    {
+                        TransformXc = int.MaxValue;
+                        TransformYc = int.MaxValue;
+                    }
+                    else
+                    {
+                        TransformXc = p.X;
+                        TransformYc = p.Y;
+                    }
+                }
+                else if (TransformXc == int.MaxValue || TransformXc == int.MinValue)
+                {
+                    TransformXc = p.X;
+                    TransformYc = p.Y;
+                }
+                try
+                {
+                    IC.Cursor = cursorred;
+                }
+                catch
+                {
+                    IC.Cursor = getCursFromDiskOrRes("cursorred", System.Windows.Forms.Cursors.NoMove2D);
+                }
+            }
+
             // due to asynchronism, IC_MouseUp Could occur before IC_Stroke and then prevent the special strokes to be created but to be kept for pan,....
-            if(Root.PanMode)
+            if (Root.PanMode)
             {
                 Root.CursorX0 = int.MinValue;
                 Root.CursorY0 = int.MinValue;
@@ -2836,7 +2998,7 @@ namespace gInk
             Root.UponButtonsUpdate |= 0x2;
             EnterEraserMode(false);
 
-            if(tool != Tools.Move && tool != Tools.Copy && tool != Tools.Edit && tool != Tools.Invalid)  // for  all std tools we clear selection
+            if(tool != Tools.Move && tool != Tools.Copy && tool != Tools.Scale && tool != Tools.Rotate && tool != Tools.Edit && tool != Tools.Invalid)  // for  all std tools we clear selection
             {
                 InprogressSelection = null;
                 StrokesSelection.Clear();
@@ -3056,6 +3218,38 @@ namespace gInk
                     IC.Cursor = getCursFromDiskOrRes("cursorarrow", System.Windows.Forms.Cursors.NoMove2D);
                 }
             }
+            else if (tool == Tools.Scale)
+            {
+                TransformXc = int.MinValue;
+                TransformYc = int.MinValue;
+
+                ModifyStrokesSelection(AppendToSelection, ref InprogressSelection, StrokesSelection);
+                btPan.BackgroundImage = getImgFromDiskOrRes("scale_act", ImageExts);
+                try
+                {
+                    IC.Cursor = cursortarget;
+                }
+               catch
+                {
+                    IC.Cursor = getCursFromDiskOrRes("cursortarget", System.Windows.Forms.Cursors.NoMoveHoriz);
+                }
+            }
+            else if (tool == Tools.Rotate)
+            {
+                TransformXc = int.MinValue;
+                TransformYc = int.MinValue;
+
+                ModifyStrokesSelection(AppendToSelection, ref InprogressSelection, StrokesSelection);
+                btPan.BackgroundImage = getImgFromDiskOrRes("rotate_act", ImageExts);
+                try
+                {
+                    IC.Cursor = cursortarget;
+                }
+                catch
+                {
+                    IC.Cursor = getCursFromDiskOrRes("cursortarget", System.Windows.Forms.Cursors.NoMove2D);
+                }
+            }
             Root.UponButtonsUpdate |= 0x2;
             Root.ToolSelected = tool;
         }
@@ -3111,8 +3305,6 @@ namespace gInk
                 {
                     IC.Cursor = getCursFromDiskOrRes("cursorarrow", System.Windows.Forms.Cursors.NoMove2D);
                 }
-
-                IC.Cursor = cursorred;
             }
             else if (pen == -3)
             {
@@ -3634,6 +3826,7 @@ namespace gInk
         bool LastVisibleStatus = false;
         bool LastPointerStatus = false;
         bool LastPanStatus = false;
+        bool LastScaleRotStatus = false;
         bool LastUndoStatus = false;
         bool LastRedoStatus = false;
         bool LastSnapStatus = false;
@@ -4479,6 +4672,16 @@ namespace gInk
                 }
                 LastPanStatus = pressed;
 
+                pressed = (GetKeyState(Root.Hotkey_ScaleRotate.Key) & 0x8000) == 0x8000;
+                if (pressed && !LastScaleRotStatus && Root.Hotkey_ScaleRotate.ModifierMatch(control, alt, shift, win))
+                {
+                    if(Root.ToolSelected != Tools.Scale)
+                        btPan_Click(2, null);
+                    else
+                        btPan_Click(3, null);
+                }
+                LastScaleRotStatus = pressed;
+
                 pressed = (GetKeyState(Root.Hotkey_Clear.Key) & 0x8000) == 0x8000;
                 if (pressed && !LastClearStatus && Root.Hotkey_Clear.ModifierMatch(control, alt, shift, win))
                 {
@@ -5058,7 +5261,8 @@ namespace gInk
                 if ((Button)sender == btPen[b])
                 {
                     SelectPen(b);
-                    if (Root.ToolSelected == Tools.Invalid || Root.ToolSelected == Tools.Move || Root.ToolSelected == Tools.Copy || (Root.ToolSelected == Tools.Edit || Root.PanMode  || Root.EraserMode )) // if move
+                    if (Root.ToolSelected == Tools.Invalid || Root.ToolSelected == Tools.Move || Root.ToolSelected == Tools.Copy || Root.ToolSelected == Tools.Scale || Root.ToolSelected == Tools.Rotate
+                        || (Root.ToolSelected == Tools.Edit || Root.PanMode  || Root.EraserMode )) // if move
                         SelectTool(Tools.Hand, Filling.Empty);
                 }
 		}
@@ -5576,27 +5780,36 @@ namespace gInk
             CustomizeAndOpenSubTools(-1, "PanSubTools",new string[] { "pan1_act" , "pan_copy","pan_act"  } , Root.Local.PanSubToolsHints,
                                      new Func<int, bool>[] { i => { SelectPen(LastPenSelected); SelectTool(Tools.Move); return true; },
                                                              i => { SelectPen(LastPenSelected); SelectTool(Tools.Copy); return true; },
+                                                             i => { SelectPen(LastPenSelected); SelectTool(Tools.Scale); return true; },
+                                                             i => { SelectPen(LastPenSelected); SelectTool(Tools.Rotate); return true; },
                                                              i => { SelectPen(-3); return true; } });
 			if (ToolbarMoved)
 			{
 				ToolbarMoved = false;
 				return;
             }
-            if (Root.ToolSelected == Tools.Move)
+            if(sender is int)
             {
-                //SelectPen(LastPenSelected);
-                //SelectTool(Tools.Copy);
+                changeActiveTool((int)sender, true, Root.SubToolsEnabled ? 1 : -1);
+            }
+            else if (Root.ToolSelected == Tools.Move)
+            {
                 changeActiveTool(1, true, Root.SubToolsEnabled ? 1 : -1);
             }
             else if (Root.ToolSelected == Tools.Copy)
             {
-                //SelectPen(-3);
                 changeActiveTool(2, true, Root.SubToolsEnabled ? 1 : -1);
+            }
+            else if (Root.ToolSelected == Tools.Scale)
+            {
+                changeActiveTool(3, true, Root.SubToolsEnabled ? 1 : -1);
+            }
+            else if (Root.ToolSelected == Tools.Rotate)
+            {
+                changeActiveTool(4, true, Root.SubToolsEnabled ? 1 : -1);
             }
             else
             {
-                //SelectPen(LastPenSelected);
-                //SelectTool(Tools.Move);
                 changeActiveTool(0, true, Root.SubToolsEnabled ? 1 : -1);
             }
             ;
@@ -6117,8 +6330,8 @@ namespace gInk
                             }                           
                         else if (st.Contains("Bool"))
                             obj = bool.Parse(st2);
-                        else if (st.Contains("Single"))
-                            obj = float.Parse(st2);
+                        else if (st.Contains("Single")|| st.Contains("Double"))
+                            obj = double.Parse(st2);
                         else if (st.Contains("String"))
                             obj = st2.Replace('\a','\n');
                         if(guid==Root.IMAGE_GUID && !ClipartsDlg.Originals.ContainsKey(st2))

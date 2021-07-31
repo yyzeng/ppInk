@@ -278,7 +278,7 @@ namespace gInk
             hiEraser.Hotkey = Root.Hotkey_Eraser;
 			hiPan.Hotkey = Root.Hotkey_Pan;
 			hiInkVisible.Hotkey = Root.Hotkey_InkVisible;
-			hiPointer.Hotkey = Root.Hotkey_Pointer;
+			hiScaleRotate.Hotkey = Root.Hotkey_ScaleRotate;
 			hiSnapshot.Hotkey = Root.Hotkey_Snap;
 			hiUndo.Hotkey = Root.Hotkey_Undo;
 			hiRedo.Hotkey = Root.Hotkey_Redo;
@@ -424,7 +424,7 @@ namespace gInk
 			this.lbHkEraser.Text = shortTxt(Root.Local.ButtonNameErasor);
 			this.lbHkInkVisible.Text = shortTxt(Root.Local.ButtonNameInkVisible);
 			this.lbHkPan.Text = shortTxt(Root.Local.ButtonNamePan);
-			this.lbHkPointer.Text = shortTxt(Root.Local.ButtonNameMousePointer);
+            this.lbHkScaleRotate.Text = shortTxt(Root.Local.ButtonNameScaleRotate);
 			this.lbHkRedo.Text = shortTxt(Root.Local.ButtonNameRedo);
 			this.lbHkSnapshot.Text = shortTxt(Root.Local.ButtonNameSnapshot);
             this.lbHkUndo.Text = shortTxt(Root.Local.ButtonNameUndo);
