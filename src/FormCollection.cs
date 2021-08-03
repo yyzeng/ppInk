@@ -1953,7 +1953,7 @@ namespace gInk
             ScaleRotate(Sel, Hover, Xc, Yc, 1.0,alpha/Math.PI*180.0);
         }
 
-        private void ScaleRotate(Strokes Sel, Stroke Hover, int Xc, int Yc, Double k, Double deg, bool applyOnPen=true)
+        public void ScaleRotate(Strokes Sel, Stroke Hover, int Xc, int Yc, Double k, Double deg, bool applyOnPen=true)
         {
             void ModifyProperties(Stroke s)
             {
@@ -2818,7 +2818,7 @@ namespace gInk
             }
         }
 
-        private Double StrokeLength(Stroke st)
+        public Double StrokeLength(Stroke st)
         {
             int j;
             Point pt, pt1;
@@ -2857,7 +2857,7 @@ namespace gInk
             return str;
         }
 
-        public string MeasureAllStrokes(Strokes sts1, Strokes sts2,Stroke Hovered)
+        public string MeasureAllStrokes(Strokes sts1, Strokes sts2,Stroke Hovered,bool LengthOnly=false)
         {
             double sum = 0;
             int c = 0;
@@ -2884,7 +2884,10 @@ namespace gInk
                 sum += StrokeLength(Hovered);
                 c++;
             }
-            return string.Format(MeasureNumberFormat, Root.Local.FormaTotalLength, Root.ConvertMeasureLength(sum), Root.Measure2Unit,c);
+            if (LengthOnly)
+                return Root.ConvertMeasureLength(sum).ToString(CultureInfo.InvariantCulture);// for REST_API
+            else
+                return string.Format(MeasureNumberFormat, Root.Local.FormaTotalLength, Root.ConvertMeasureLength(sum), Root.Measure2Unit,c);
         }
 
         public void ActivateStrokesInput(bool active)
@@ -6553,6 +6556,11 @@ namespace gInk
             {
                 return null;
             }
+        }
+
+        public void ModifyStrokesSelection()
+        {
+            ModifyStrokesSelection(true, ref InprogressSelection, StrokesSelection);
         }
 
         public void ModifyStrokesSelection(bool AppendToSelection, ref Strokes InprogressSelection, Strokes StrokesSelection)
