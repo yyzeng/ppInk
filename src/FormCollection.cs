@@ -4153,6 +4153,8 @@ namespace gInk
                 {
                     Point p = new Point(MousePosition.X - ZoomImage.Width / 2, MousePosition.Y - ZoomImage.Height / 2);
                     Size sz = new Size(ZoomImage.Width, ZoomImage.Height);
+
+                    g.Clear(Color.Black);
                     g.CopyFromScreen(p, Point.Empty, sz);
                     if (ZoomForm.pictureBox1.Visible)
                     {
