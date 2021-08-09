@@ -95,11 +95,11 @@ namespace gInk
             {
                 if (Clip1Btn.BackgroundImage != null)
                     Clip1Btn.BackgroundImage.Dispose();
-                Clip1Btn.BackgroundImage = FormCollection.getImgFromDiskOrRes(Root.ImageStamp1);
+                Clip1Btn.BackgroundImage = FormCollection.getImgFromDiskOrRes(Root.ImageStamp1.ImageStamp);
             }
             catch
             {
-                Program.WriteErrorLog(string.Format("File {0} found but can not be loaded:{1} \n", "Stamp1", Root.ImageStamp1));
+                Program.WriteErrorLog(string.Format("File {0} found but can not be loaded:{1} \n", "Stamp1", Root.ImageStamp1.ImageStamp));
                 Clip1Btn.BackgroundImage = FormCollection.getImgFromDiskOrRes("unknown");
             }
             Clip2Btn.BackColor = ToolbarDwg.BackColor;
@@ -107,11 +107,11 @@ namespace gInk
             {
                 if (Clip2Btn.BackgroundImage != null)
                     Clip2Btn.BackgroundImage.Dispose();
-                Clip2Btn.BackgroundImage = FormCollection.getImgFromDiskOrRes(Root.ImageStamp2);
+                Clip2Btn.BackgroundImage = FormCollection.getImgFromDiskOrRes(Root.ImageStamp2.ImageStamp);
             }
             catch
             {
-                Program.WriteErrorLog(string.Format("File {0} found but can not be loaded:{1} \n", "Stamp2", Root.ImageStamp2));
+                Program.WriteErrorLog(string.Format("File {0} found but can not be loaded:{1} \n", "Stamp2", Root.ImageStamp2.ImageStamp));
                 Clip1Btn.BackgroundImage = FormCollection.getImgFromDiskOrRes("unknown");
             }
             Clip3Btn.BackColor = ToolbarDwg.BackColor;
@@ -119,11 +119,11 @@ namespace gInk
             {
                 if (Clip3Btn.BackgroundImage != null)
                     Clip3Btn.BackgroundImage.Dispose();
-                Clip3Btn.BackgroundImage = FormCollection.getImgFromDiskOrRes(Root.ImageStamp3);
+                Clip3Btn.BackgroundImage = FormCollection.getImgFromDiskOrRes(Root.ImageStamp3.ImageStamp);
             }
             catch
             {
-                Program.WriteErrorLog(string.Format("File {0} found but can not be loaded:{1} \n", "Stamp3", Root.ImageStamp3));
+                Program.WriteErrorLog(string.Format("File {0} found but can not be loaded:{1} \n", "Stamp3", Root.ImageStamp3.ImageStamp));
                 Clip1Btn.BackgroundImage = FormCollection.getImgFromDiskOrRes("unknown");
             }
             SubToolsBar_cb.Checked = Root.SubToolsEnabled;
@@ -970,11 +970,11 @@ namespace gInk
             {
                 ((Button)sender).BackgroundImage = FormCollection.getImgFromDiskOrRes(dlg.ImageStamp);
                 if((string)(((Control)sender).Tag) == "1")
-                    Root.ImageStamp1 = dlg.ImageStamp;
+                    Root.ImageStamp1.ImageStamp = dlg.ImageStamp;
                 else if ((string)(((Control)sender).Tag) == "2")
-                    Root.ImageStamp2 = dlg.ImageStamp;
+                    Root.ImageStamp2.ImageStamp = dlg.ImageStamp;
                 else if ((string)(((Control)sender).Tag) == "3")
-                    Root.ImageStamp3 = dlg.ImageStamp;
+                    Root.ImageStamp3.ImageStamp = dlg.ImageStamp;
             }
             dlg.Dispose();
         }

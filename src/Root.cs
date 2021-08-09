@@ -58,9 +58,15 @@ namespace gInk
     public class ClipArtData
     {
         public string ImageStamp;
-        public int X;
-        public int Y;
-        public int Filling;
+        public int X=-1;
+        public int Y=-1;
+        public int Wstored=-1;
+        public int Hstored=-1;
+        public int Filling=gInk.Filling.NoFrame;
+        public bool PatternLine=false;
+        public double Distance=double.MaxValue;
+        public bool Store = false;
+        public ClipArtData Clone() { return new ClipArtData() { ImageStamp = ImageStamp, X = X, Y = Y, Wstored = Wstored, Hstored = Hstored, Filling = Filling, PatternLine = PatternLine, Distance = Distance, Store = Store }; }
     };
 
     public enum VideoRecordMode {NoVideo=0 , OBSRec=1 , OBSBcst=2 , FfmpegRec=3 };
@@ -353,12 +359,12 @@ namespace gInk
 
         public int StampSize = 128;
         public StringCollection StampFileNames = new StringCollection();
-        public ClipArtData ImageStamp = new ClipArtData { ImageStamp = "", X = -1, Y = -1, Filling = (int)(Filling.NoFrame) };
+        public ClipArtData ImageStamp = new ClipArtData { ImageStamp = "", X = -1, Y = -1, Wstored=-1, Hstored=-1, Filling = (int)(Filling.NoFrame),PatternLine=false,Distance = -1, Store=false};
         public float StampScaleRatio = .1F;
         public int ImageStampFilling = 0;
-        public string ImageStamp1 = "";
-        public string ImageStamp2 = "";
-        public string ImageStamp3 = "";
+        public ClipArtData  ImageStamp1 = new ClipArtData { ImageStamp = "", X = -1, Y = -1, Wstored = -1, Hstored = -1, Filling = (int)(Filling.NoFrame), PatternLine = false, Distance = -1, Store = false };
+        public ClipArtData  ImageStamp2 = new ClipArtData { ImageStamp = "", X = -1, Y = -1, Wstored = -1, Hstored = -1, Filling = (int)(Filling.NoFrame), PatternLine = false, Distance = -1, Store = false };
+        public ClipArtData  ImageStamp3 = new ClipArtData { ImageStamp = "", X = -1, Y = -1, Wstored = -1, Hstored = -1, Filling = (int)(Filling.NoFrame), PatternLine = false, Distance = -1, Store = false };
 
         public float TimeBeforeFading = 5.0F;     //5s default
 
@@ -905,11 +911,9 @@ namespace gInk
 				else
 					trayIcon.Icon = global::gInk.Properties.Resources.icon_red;
 			}
-
-
 		}
 
-		public void ReadOptions(string file)
+        public void ReadOptions(string file)
 		{
 			if (!File.Exists(file))
 				file = AppDomain.CurrentDomain.BaseDirectory + file;
@@ -1476,35 +1480,13 @@ namespace gInk
                             }
                             break;
                         case "IMAGESTAMP1":
-                            if (sPara.Length == 0)
-                                sPara="";
-                            else if (!Path.IsPathRooted(sPara))
-                                    sPara = Global.ProgramFolder + sPara;
-                            sPara=sPara.Replace('\\', '/').ToLower();
-                            //if (!StampFileNames.Contains(sPara,))        // to ensure the files are within the stamfiles;
-                            if (!ContainsInsensitive(StampFileNames, sPara)) 
-                                StampFileNames.Insert(StampFileNames.Count, sPara);
-                            ImageStamp1 = sPara;
+                            FillImageStampFromConfig(sPara,ref ImageStamp1);
                             break;
                         case "IMAGESTAMP2":
-                            if (sPara.Length == 0)
-                                sPara = "";
-                            else if (!Path.IsPathRooted(sPara))
-                                sPara = Global.ProgramFolder + sPara;
-                            sPara = sPara.Replace('\\', '/').ToLower();
-                            if (!ContainsInsensitive(StampFileNames, sPara)) 
-                                StampFileNames.Insert(StampFileNames.Count, sPara);
-                            ImageStamp2 = sPara;
+                            FillImageStampFromConfig(sPara, ref ImageStamp2);
                             break;
                         case "IMAGESTAMP3":
-                            if (sPara.Length == 0)
-                                sPara = "";
-                            else if (!Path.IsPathRooted(sPara))
-                                sPara = Global.ProgramFolder + sPara;
-                            sPara = sPara.Replace('\\', '/').ToLower();
-                            if (!ContainsInsensitive(StampFileNames, sPara)) 
-                                StampFileNames.Insert(StampFileNames.Count, sPara);
-                            ImageStamp3 = sPara;
+                            FillImageStampFromConfig(sPara, ref ImageStamp3);
                             break;
                         case "TOOLBAR_DIRECTION":
                             if (sPara.ToUpper() == "LEFT")
@@ -1593,7 +1575,70 @@ namespace gInk
 			fini.Close();
 		}
 
-		public void SaveOptions(string file)
+        private string FillImageStampFromConfig(string sPara, ref ClipArtData ImgStamp)
+        {
+            if (sPara.Length == 0)
+                sPara = "";
+            string[] lst = sPara.Split(';');
+            try { ImgStamp.X = int.Parse(lst[1]); }
+                catch { ImgStamp.X = -1; }
+            ImgStamp.Wstored = ImgStamp.X;
+            try { ImgStamp.Y = int.Parse(lst[2]); }
+                catch { ImgStamp.Y = -1; }
+            ImgStamp.Hstored = ImgStamp.Y;
+            try
+            {
+                switch(lst[3][0])
+                {
+                    case 'B':
+                        ImgStamp.Filling = Filling.BlackFilled;
+                        break;
+                    case 'E':
+                        ImgStamp.Filling = Filling.Empty;
+                        break;
+                    case 'N':
+                        ImgStamp.Filling = Filling.NoFrame;
+                        break;
+                    case 'W':
+                        ImgStamp.Filling = Filling.WhiteFilled;
+                        break;
+                    case 'P':
+                        ImgStamp.Filling = Filling.PenColorFilled;
+                        break;
+                    default:
+                        ImgStamp.Filling = Filling.NoFrame;
+                        break;
+                }
+            }
+            catch { ImgStamp.Filling = Filling.NoFrame; }
+
+            try { ImgStamp.PatternLine = lst[4][0] == 'L'; }
+                catch { ImgStamp.PatternLine = false; }
+
+            try { ImgStamp.Distance = double.Parse(lst[5],CultureInfo.InvariantCulture); }
+                catch { ImgStamp.Distance = Double.MaxValue; }
+
+            sPara = lst[0];
+            if (!Path.IsPathRooted(sPara))
+                sPara = Global.ProgramFolder + sPara;
+            sPara = sPara.Replace('\\', '/').ToLower();
+            if (!ContainsInsensitive(StampFileNames, sPara))
+                StampFileNames.Insert(StampFileNames.Count, sPara);
+            ImgStamp.ImageStamp = sPara;
+            return sPara;
+        }
+
+        private string Fill2Str(int i)
+        {
+            if (i == Filling.NoFrame) return "NoFrame";
+            else if (i == Filling.Empty) return "Empty";
+            else if (i == Filling.PenColorFilled) return "PenColor";
+            else if (i == Filling.WhiteFilled) return "White";
+            else if (i == Filling.BlackFilled) return "Black";
+            else return "????";
+        }
+
+        public void SaveOptions(string file)
 		{
             bool StampFileNamesAlreadyFilled = false;
 			if (!File.Exists(file))
@@ -2044,13 +2089,16 @@ namespace gInk
                                 sPara = " ";
                             break;
                         case "IMAGESTAMP1":
-                            sPara = MakeRelativePath(Global.ProgramFolder, ImageStamp1).Replace('\\', '/');
+                            sPara = MakeRelativePath(Global.ProgramFolder, ImageStamp1.ImageStamp).Replace('\\', '/') + ";" + ImageStamp1.Wstored.ToString() + ";" + ImageStamp1.Hstored.ToString() + ";" 
+                                                        + Fill2Str(ImageStamp1.Filling) + ";" + (ImageStamp1.PatternLine ? "Line;"+ImageStamp1.Distance.ToString() : "Point");
                             break;
                         case "IMAGESTAMP2":
-                            sPara = MakeRelativePath(Global.ProgramFolder, ImageStamp2).Replace('\\', '/');
+                            sPara = MakeRelativePath(Global.ProgramFolder, ImageStamp2.ImageStamp).Replace('\\', '/') + ";" + ImageStamp2.Wstored.ToString() + ";" + ImageStamp2.Hstored.ToString() + ";" 
+                                                        + Fill2Str(ImageStamp2.Filling) + ";" + (ImageStamp2.PatternLine ? "Line;" + ImageStamp2.Distance.ToString() : "Point");
                             break;
                         case "IMAGESTAMP3":
-                            sPara = MakeRelativePath(Global.ProgramFolder, ImageStamp3).Replace('\\', '/');
+                            sPara = MakeRelativePath(Global.ProgramFolder, ImageStamp3.ImageStamp).Replace('\\', '/') + ";" + ImageStamp3.Wstored.ToString() + ";" + ImageStamp3.Hstored.ToString() + ";" 
+                                                        + Fill2Str(ImageStamp3.Filling) + ";" + (ImageStamp3.PatternLine ? "Line;" + ImageStamp3.Distance.ToString() : "Point");
                             break;
                         case "TOOLBAR_DIRECTION":
                             if (ToolbarOrientation == Orientation.toLeft)

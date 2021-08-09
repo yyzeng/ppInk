@@ -687,7 +687,7 @@ namespace gInk
                 SetSmallButtonNext(btClipArt, btClip1, dim2s);
                 try
                 {
-                    if ((btClip1.Tag as ClipArtData)?.ImageStamp != Root.ImageStamp1)
+                    if ((btClip1.Tag as ClipArtData)?.ImageStamp != Root.ImageStamp1.ImageStamp)
                     {
                         btClip1.BackgroundImage.Dispose();
                         throw (new Exception("Renew button"));
@@ -695,8 +695,9 @@ namespace gInk
                 }
                 catch
                 {
-                    btClip1.BackgroundImage = getImgFromDiskOrRes(Root.ImageStamp1, ImageExts);
-                    btClip1.Tag = new ClipArtData { ImageStamp = Root.ImageStamp1, X = btClip1.BackgroundImage.Size.Width, Y = btClip1.BackgroundImage.Size.Height, Filling = Root.ImageStampFilling };
+                    btClip1.BackgroundImage = getImgFromDiskOrRes(Root.ImageStamp1.ImageStamp, ImageExts);
+                    //btClip1.Tag = new ClipArtData { ImageStamp = Root.ImageStamp1.ImageStamp, X=Root.ImageStamp1.Wstored, Y = Root.ImageStamp1.Hstored, Filling = Root.ImageStamp1.Filling };
+                    btClip1.Tag = Root.ImageStamp1.Clone();
                 }
                 btClip2.Height = dim1s;
                 btClip2.Width = dim1s;
@@ -704,7 +705,7 @@ namespace gInk
                 SetButtonPosition(btClipArt, btClip2, dim3);
                 try
                 {
-                    if ((btClip2.Tag as ClipArtData)?.ImageStamp != Root.ImageStamp2)
+                    if ((btClip2.Tag as ClipArtData)?.ImageStamp != Root.ImageStamp2.ImageStamp)
                     {
                         btClip2.BackgroundImage.Dispose();
                         throw (new Exception("Renew button"));
@@ -712,8 +713,9 @@ namespace gInk
                 }
                 catch
                 {
-                    btClip2.BackgroundImage = getImgFromDiskOrRes(Root.ImageStamp2, ImageExts);
-                    btClip2.Tag = new ClipArtData { ImageStamp = Root.ImageStamp2, X = btClip2.BackgroundImage.Size.Width, Y = btClip2.BackgroundImage.Size.Height, Filling = Root.ImageStampFilling };
+                    btClip2.BackgroundImage = getImgFromDiskOrRes(Root.ImageStamp2.ImageStamp, ImageExts);
+                    //btClip2.Tag = new ClipArtData { ImageStamp = Root.ImageStamp2.ImageStamp, X = Root.ImageStamp2.Wstored, Y = Root.ImageStamp2.Wstored, Filling = Root.ImageStamp2.Filling };
+                    btClip2.Tag = Root.ImageStamp2.Clone();
                 }
                 btClip3.Height = dim1s;
                 btClip3.Width = dim1s;
@@ -721,7 +723,7 @@ namespace gInk
                 SetSmallButtonNext(btClip2, btClip3, dim2s);
                 try
                 {
-                    if ((btClip3.Tag as ClipArtData)?.ImageStamp != Root.ImageStamp3)
+                    if ((btClip3.Tag as ClipArtData)?.ImageStamp != Root.ImageStamp3.ImageStamp)
                     {
                         btClip3.BackgroundImage.Dispose();
                         throw (new Exception("Renew button"));
@@ -729,8 +731,9 @@ namespace gInk
                 }
                 catch
                 {
-                    btClip3.BackgroundImage = getImgFromDiskOrRes(Root.ImageStamp3, ImageExts);
-                    btClip3.Tag = new ClipArtData { ImageStamp = Root.ImageStamp3, X = btClip3.BackgroundImage.Size.Width, Y = btClip3.BackgroundImage.Size.Height, Filling = Root.ImageStampFilling };
+                    btClip3.BackgroundImage = getImgFromDiskOrRes(Root.ImageStamp3.ImageStamp, ImageExts);
+                    //btClip3.Tag = new ClipArtData { ImageStamp = Root.ImageStamp3.ImageStamp, X = Root.ImageStamp3.Wstored, Y = Root.ImageStamp3.Wstored, Filling = Root.ImageStamp3.Filling};
+                    btClip3.Tag = Root.ImageStamp3.Clone();
                 }
                 prev = btClip2;
             }

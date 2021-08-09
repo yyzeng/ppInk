@@ -394,7 +394,7 @@ namespace gInk
                             if (i==-4 || i == -3 || i == -2 || i == -1)
                                 Root.SelectPen(i);
                             if (!query.ContainsKey("F"))
-                                f = -1;
+                                f = Filling.NoFrame;
                             else if (!(query.TryGetValue("F", out s) && int.TryParse(s, out f) && -1 <= f && f < Filling.Modulo))
                                 resp.StatusCode = 400;
                             if(i == Tools.ClipArt)
