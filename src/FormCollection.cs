@@ -80,12 +80,8 @@ namespace gInk
         public InkOverlay IC;
 
         public Button[] btPen;
-        public Bitmap image_exit, image_clear, image_undo, image_snap, image_penwidth;
         public Bitmap image_dock, image_dockback;
-        //public Bitmap image_pencil, image_highlighter, image_pencil_act, image_highlighter_act;
         public Bitmap image_pointer, image_pointer_act;
-        //public Bitmap[] image_pen;
-        //public Bitmap[] image_pen_act;
         public Bitmap image_eraser_act, image_eraser;
         public Bitmap image_visible_not, image_visible;
         public Bitmap image_lasso_act, image_lasso;
