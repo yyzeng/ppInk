@@ -6430,7 +6430,6 @@ namespace gInk
         {
             string outp = "";
             int l;
-            Point p;
             DrawingAttributes da;
             using (FileStream fileout = File.Create(fn, 10, FileOptions.Asynchronous))
             {
@@ -6491,14 +6490,27 @@ namespace gInk
                 foreach (Stroke st in Root.FormCollection.IC.Ink.Strokes)
                 {
                     l = st.GetPoints().Length;
-                    writeUtf("ID = " + st.Id.ToString() + " {\npts " + l.ToString() + " = ");
+                    writeUtf("ID = " + st.Id.ToString() + "\nguid(" + l.ToString() + ") =");
                     outp = "";
+                    foreach(Guid g in st.PacketDescription)
+                    {
+                        TabletPropertyMetrics m = st.GetPacketDescriptionPropertyMetrics(g);
+                        outp += string.Format(CultureInfo.InvariantCulture,";{0},{1},{2},{3},{4}",g,m.Minimum,m.Resolution,m.Maximum,m.Units);
+                    }
+                    writeUtf(outp.Substring(1));
+                    writeUtf("\n");
+                    /*outp = "";                    
                     for (int i = 0; i < l; i++)
                     {
                         p = st.GetPoint(i);
                         outp += p.X + "," + p.Y + ";";
                     }
-                    writeUtf(outp + "\n");
+                    writeUtf(outp + "\n");*/
+                    foreach (int i in st.GetPacketData())
+                    {
+                        writeUtf(";" + i.ToString());
+                    }
+                    writeUtf("\n");
                     Rectangle r=st.GetBoundingBox();
                     outp = "# boxed in " + r.Location.ToString() + " - " + r.Size.ToString()+"\n";
                     writeUtf(outp);
@@ -6509,12 +6521,37 @@ namespace gInk
                     foreach (ExtendedProperty pr in st.ExtendedProperties)
                     {
                         //outp += pr.Id.ToString() + " (" + pr.Data.GetType() + ") :" + Encoding.UTF8.GetString(Encoding.Default.GetBytes(pr.Data.ToString())).Replace('\n','\r') + "\n";
-                        outp += pr.Id.ToString() + "%" + pr.Data.GetType() + ":" + pr.Data.ToString().Replace("\r", "").Replace('\n', '\a') + "\n";
+                        if(pr.Id == Root.LISTOFPOINTS_GUID)
+                        {
+                            outp += pr.Id.ToString() + "%List:" + string.Join(";", StoredPatternPoints[(int)pr.Data])+"\n";                            
+                        }
+                        else
+                            outp += pr.Id.ToString() + "%" + pr.Data.GetType() + ":" + pr.Data.ToString().Replace("\r", "").Replace('\n', '\a') + "\n";
                     }
                     outp += "}\n";
                     writeUtf(outp);
                 }
             }
+        }
+
+        private TabletPropertyMetricUnit TabletPropertyMetricUnitFromString(string s)
+        {
+            if (s[0] == 'C')
+                return TabletPropertyMetricUnit.Centimeters;
+            else if (s[0] == 'D')
+                return TabletPropertyMetricUnit.Degrees;
+            else if (s[0] == 'G')
+                return TabletPropertyMetricUnit.Grams;
+            else if (s[0] == 'I')
+                return TabletPropertyMetricUnit.Inches;
+            else if (s[0] == 'P')
+                return TabletPropertyMetricUnit.Pounds;
+            else if (s[0] == 'R')
+                return TabletPropertyMetricUnit.Radians;
+            else if (s[0] == 'S')
+                return TabletPropertyMetricUnit.Seconds;
+            else
+                return TabletPropertyMetricUnit.Default;
         }
 
         public void LoadStrokes(string fn = "ppinkSav.txt")
@@ -6542,25 +6579,40 @@ namespace gInk
                         st = fileout.ReadLine();
                     }
                     while (st.StartsWith("#"));
-                    if (!st.StartsWith("pts"))
+                    //                    writeUtf("ID " + st.Id.ToString() + "; guid(" + l.ToString() + ") = ");                    
+                    if (!st.StartsWith("guid"))
                         return;
-                    j = st.IndexOf("=");
-                    l = int.Parse(st.Substring(3, j - 3).Trim());
-                    Point[] pts = new Point[l];
-                    string[] sts = st.Substring(j+1).TrimStart().Split(';');
-
-                    for(int i = 0; i < l; i++)
-                    {
-                        string[] st3 = sts[i].Split(',');
-                        pts[i].X = int.Parse(st3[0]);
-                        pts[i].Y = int.Parse(st3[1]);
+                    j = st.IndexOf("=");                  
+                    TabletPropertyDescriptionCollection td = new TabletPropertyDescriptionCollection();
+                    foreach(string s in st.Substring(j + 1).Split(';'))
+                    {//CultureInfo.InvariantCulture,";{0},{1},{2},{3},{4}",g,m.Minimum,m.Resolution,m.Maximum,m.Units
+                        string[] sa = s.Split(',');
+                        Guid g = Guid.Parse(sa[0]);
+                        TabletPropertyMetrics m = new TabletPropertyMetrics()
+                        {
+                            Minimum = int.Parse(sa[1]),
+                            Resolution = float.Parse(sa[2], CultureInfo.InvariantCulture),
+                            Maximum = int.Parse(sa[3]),
+                            Units = TabletPropertyMetricUnitFromString(sa[4])
+                        };
+                        td.Add(new TabletPropertyDescription(g, m));
                     }
-                    stk = IC.Ink.CreateStroke(pts);
                     do
                     {
                         st = fileout.ReadLine();
                     }
                     while (st.StartsWith("#"));
+                    if(!st.StartsWith(";"))
+                        return;
+                    int[] a = Array.ConvertAll(st.Substring(1).Split(';'), int.Parse);
+                    stk = IC.Ink.CreateStroke(a, td);
+
+                    do
+                    {
+                        st = fileout.ReadLine();
+                    }
+                    while (st.StartsWith("#"));
+
                     if (!st.StartsWith("DA"))
                         return;
                     j = st.IndexOf("R=")+2;
@@ -6606,36 +6658,53 @@ namespace gInk
                         guid = new Guid(st.Substring(0, j));
                         j++;
                         l = st.IndexOf(':', j);
-                        string st1 = st.Substring(j, l-j);
+                        string st1 = st.Substring(j, l - j);
                         string st2 = st.Substring(l + 1);
-                        object obj=null;
-                        if(st.Contains("Int"))
-                            try
+                        object obj = null;
+                        if (guid == Root.LISTOFPOINTS_GUID)
+                        {
+                            st2=st2.Replace("{X=", "").Replace(",Y=", ",").Replace("}", "");
+                            ListPoint pts = new ListPoint();
+                            foreach(String s1 in st2.Split(';'))
                             {
-                                obj = int.Parse(st2);
+                                if (s1 == "") continue;
+                                String[] ss1 = s1.Split(',');
+                                pts.Add(new Point(int.Parse(ss1[0]), int.Parse(ss1[1])));
+                            }
+                            StoredPatternPoints.Add(pts);
+                            obj = StoredPatternPoints.Count-1;
+                        }
+                        else
+                        {
+                            if (st.Contains("Int"))
+                                try
+                                {
+                                    obj = int.Parse(st2);
                             }
                             catch
                             {
                                 obj = Int64.Parse(st2); // for Fading...
-                            }                           
-                        else if (st.Contains("Bool"))
-                            obj = bool.Parse(st2);
-                        else if (st.Contains("Single")|| st.Contains("Double"))
-                            obj = double.Parse(st2);
-                        else if (st.Contains("String"))
-                            obj = st2.Replace('\a','\n');
-                        if(guid==Root.IMAGE_GUID && !ClipartsDlg.Originals.ContainsKey(st2))
-                        {
-                                try{ ClipartsDlg.LoadImage(st2); } catch { }
+                                }
+                            else if (st.Contains("Bool"))
+                                obj = bool.Parse(st2);
+                            else if (st.Contains("Single"))
+                                obj = float.Parse(st2);
+                            else if (st.Contains("Double"))
+                                obj = double.Parse(st2);
+                            else if (st.Contains("String"))
+                                obj = st2.Replace('\a', '\n');
+                            if (guid == Root.IMAGE_GUID && !ClipartsDlg.Originals.ContainsKey(st2))
+                            {
+                                try { ClipartsDlg.LoadImage(st2); } catch { }
+                            }
+                            if (guid == Root.ANIMATIONFRAMEIMG_GUID)
+                            {
+                                AnimationStructure ani = buildAni((string)(stk.ExtendedProperties[Root.IMAGE_GUID].Data));
+                                Animations.Add(AniPoolIdx, ani);
+                                stk.ExtendedProperties.Add(Root.ANIMATIONFRAMEIMG_GUID, AniPoolIdx);
+                                AniPoolIdx++;
+                            }
                         }
-                        if (guid==Root.ANIMATIONFRAMEIMG_GUID)
-                        {
-                            AnimationStructure ani = buildAni((string)(stk.ExtendedProperties[Root.IMAGE_GUID].Data));
-                            Animations.Add(AniPoolIdx, ani);
-                            stk.ExtendedProperties.Add(Root.ANIMATIONFRAMEIMG_GUID, AniPoolIdx);
-                            AniPoolIdx++;
-                        }
-
                         stk.ExtendedProperties.Add(guid, obj);
                         do
                         {
