@@ -767,7 +767,7 @@ namespace gInk
 				return;
             if (ColorPickerMode)
                 FormCollection.StartStopPickUpColor(0);
-
+            FormCollection.ClipartsDlg.Hide();
             PointerChangeDate = DateTime.Now.AddMilliseconds(100);
             PointerMode = true;
             IsDockedBeforePen = Docked;

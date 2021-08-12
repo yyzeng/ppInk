@@ -5967,6 +5967,11 @@ namespace gInk
                 AllowInteractions(true);
                 TextEdited = true;
                 setClipArtDlgPosition();
+                if (ClipartsDlg.Visible)
+                {
+                    ClipartsDlg.Hide();
+                    ClipartsDlg.Visible = false;
+                }
                 i = -1;
                 if (ClipartsDlg.ShowDialog() == DialogResult.OK)
                 {
