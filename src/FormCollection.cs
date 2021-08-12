@@ -2772,22 +2772,7 @@ namespace gInk
                     {
                         StrokesSelection.Move(currentxy.X - LasteXY.X, currentxy.Y - LasteXY.Y);
                         foreach (Stroke st in StrokesSelection)
-                        {
-                            if (st.Deleted)
-                                continue;
-                            if (st.ExtendedProperties.Contains(Root.TEXT_GUID))
-                            {
-                                st.ExtendedProperties.Add(Root.TEXTX_GUID, ((double)st.ExtendedProperties[Root.TEXTX_GUID].Data) + (currentxy.X - LasteXY.X));
-                                st.ExtendedProperties.Add(Root.TEXTY_GUID, ((double)st.ExtendedProperties[Root.TEXTY_GUID].Data) + (currentxy.Y - LasteXY.Y));
-                            }
-                            if (st.ExtendedProperties.Contains(Root.IMAGE_X_GUID))
-                            {
-                                Point pt = new Point(st.GetPoint(0).X, st.GetPoint(0).Y);
-                                IC.Renderer.InkSpaceToPixel(Root.FormDisplay.gOneStrokeCanvus, ref pt);
-                                st.ExtendedProperties.Add(Root.IMAGE_X_GUID, (double)pt.X);
-                                st.ExtendedProperties.Add(Root.IMAGE_Y_GUID, (double)pt.Y);
-                            }
-                        }
+                            MoveStrokeAndProperties(st, currentxy.X - LasteXY.X, currentxy.Y - LasteXY.Y, false);
                     } catch { }
                     Root.FormDisplay.ClearCanvus();
                     Root.FormDisplay.DrawStrokes();
@@ -2800,20 +2785,8 @@ namespace gInk
                     Point xy = new Point(Root.CursorX,Root.CursorY);
                     IC.Renderer.PixelToInkSpace(Root.FormDisplay.gOneStrokeCanvus, ref xy);
                     */
-                    movedStroke.Move(currentxy.X - LasteXY.X, currentxy.Y - LasteXY.Y);
+                    MoveStrokeAndProperties(movedStroke,currentxy.X - LasteXY.X, currentxy.Y - LasteXY.Y,true);
 
-                    if (movedStroke.ExtendedProperties.Contains(Root.TEXT_GUID))
-                    {
-                        movedStroke.ExtendedProperties.Add(Root.TEXTX_GUID, ((double)movedStroke.ExtendedProperties[Root.TEXTX_GUID].Data) + (currentxy.X - LasteXY.X));
-                        movedStroke.ExtendedProperties.Add(Root.TEXTY_GUID, ((double)movedStroke.ExtendedProperties[Root.TEXTY_GUID].Data) + (currentxy.Y - LasteXY.Y));
-                    }
-                    if (movedStroke.ExtendedProperties.Contains(Root.IMAGE_X_GUID))
-                    {
-                        Point pt = new Point(movedStroke.GetPoint(0).X, movedStroke.GetPoint(0).Y);
-                        IC.Renderer.InkSpaceToPixel(Root.FormDisplay.gOneStrokeCanvus, ref pt);
-                        movedStroke.ExtendedProperties.Add(Root.IMAGE_X_GUID, (double)pt.X);
-                        movedStroke.ExtendedProperties.Add(Root.IMAGE_Y_GUID, (double)pt.Y);
-                    }
                     Root.FormDisplay.ClearCanvus();
                     Root.FormDisplay.DrawStrokes();
                     Root.FormDisplay.UpdateFormDisplay(true);
@@ -2961,6 +2934,41 @@ namespace gInk
 					Root.FormDisplay.UpdateFormDisplay();
 				}
 				*/
+            }
+        }
+
+        public void MoveStrokeAndProperties(Stroke movedStroke, int DeltaX, int DeltaY, bool moveStroke = true)
+        {
+            if (movedStroke==null||movedStroke.Deleted)
+                return;
+
+            if (moveStroke)
+                movedStroke.Move(DeltaX, DeltaY);
+
+            if (movedStroke.ExtendedProperties.Contains(Root.TEXT_GUID))
+            {
+                movedStroke.ExtendedProperties.Add(Root.TEXTX_GUID, ((double)movedStroke.ExtendedProperties[Root.TEXTX_GUID].Data) + DeltaX);
+                movedStroke.ExtendedProperties.Add(Root.TEXTY_GUID, ((double)movedStroke.ExtendedProperties[Root.TEXTY_GUID].Data) + DeltaY);
+            }
+            if (movedStroke.ExtendedProperties.Contains(Root.IMAGE_X_GUID))
+            {
+                Point pt = new Point(movedStroke.GetPoint(0).X, movedStroke.GetPoint(0).Y);
+                IC.Renderer.InkSpaceToPixel(Root.FormDisplay.gOneStrokeCanvus, ref pt);
+                movedStroke.ExtendedProperties.Add(Root.IMAGE_X_GUID, (double)pt.X);
+                movedStroke.ExtendedProperties.Add(Root.IMAGE_Y_GUID, (double)pt.Y);
+            }
+            if (movedStroke.ExtendedProperties.Contains(Root.LISTOFPOINTS_GUID))
+            {
+                Point m = new Point(DeltaX, DeltaY);
+                IC.Renderer.InkSpaceToPixel(Root.FormDisplay.gOneStrokeCanvus, ref m);
+                int ii = (int)movedStroke.ExtendedProperties[Root.LISTOFPOINTS_GUID].Data;
+                //StoredPatternPoints[ii].ForEach(pt => pt.Offset(DeltaX, DeltaY));
+                ListPoint lst = StoredPatternPoints[ii];
+                for (int i=0;i< lst.Count;i++)
+                {
+                    Point pt = new Point(lst[i].X+m.X,lst[i].Y+m.Y);
+                    lst[i] = pt;
+                }
             }
         }
 

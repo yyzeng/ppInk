@@ -679,31 +679,13 @@ namespace gInk
 		public void Pan(int x, int y)
 		{
 			if (x == 0 && y == 0)
-				return;
-            
-            //FormCollection.IC.Ink.Strokes.Move(x, y);
-            // for texts
-            Point pt1 = new Point(x,y);
-            FormCollection.IC.Renderer.InkSpaceToPixel(FormDisplay.gOneStrokeCanvus, ref pt1);
-            Point pt = new Point();
+				return;            
+            FormCollection.IC.Ink.Strokes.Move(x, y);
             foreach (Stroke st in FormCollection.IC.Ink.Strokes)
-            {
                 if (st.ExtendedProperties.Contains(ISBACKGROUND_GUID))
                     continue;
-                st.Move(x, y);
-                if (st.ExtendedProperties.Contains(TEXTX_GUID))
-                {
-                    st.ExtendedProperties.Add(TEXTX_GUID, (double)st.ExtendedProperties[TEXTX_GUID].Data + x);
-                    st.ExtendedProperties.Add(TEXTY_GUID, (double)st.ExtendedProperties[TEXTY_GUID].Data + y);
-                }
-                if (st.ExtendedProperties.Contains(IMAGE_GUID))
-                {
-                    pt.X = (int)(double)(st.ExtendedProperties[IMAGE_X_GUID].Data) + pt1.X;
-                    pt.Y = (int)(double)(st.ExtendedProperties[IMAGE_Y_GUID].Data) + pt1.Y;
-                    st.ExtendedProperties.Add(IMAGE_X_GUID, (double)pt.X);
-                    st.ExtendedProperties.Add(IMAGE_Y_GUID, (double)pt.Y);
-                }
-            }
+                else
+                    FormCollection.MoveStrokeAndProperties(st, x, y, false);
             FormDisplay.ClearCanvus();
 			FormDisplay.DrawStrokes();
 			FormDisplay.DrawButtons(true);
