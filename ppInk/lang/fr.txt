@@ -93,7 +93,8 @@ ButtonFromClipBText = "&Du presse-papier"
 ButtonLoadImageText = "&Charge Image"
 ButtonDeleteText = "&Supprimer"
 CheckBoxAutoCloseText =  "Fermeture\nAuto"
-ListFillingsText = "Pas de cadre;Vide;fond de couleur;fond blanc;fond noir"
+PatternStoreParamTxt = "Sauvegarde\nDisposition"
+ListFillingsText = "Pas de cadre;Vide;fond de couleur;fond blanc;fond noir;motifs sur une courbe"
 
 
 MenuEntryExit = "Quitter"

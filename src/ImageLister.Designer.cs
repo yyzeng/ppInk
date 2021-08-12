@@ -39,6 +39,7 @@
             this.FillingCombo = new System.Windows.Forms.ComboBox();
             this.AutoCloseCb = new System.Windows.Forms.CheckBox();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.ParamsToBeSavedCb = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // ImageListViewer
@@ -125,11 +126,12 @@
             "Color Filled",
             "White Filled",
             "Black Filled"});
-            this.FillingCombo.Location = new System.Drawing.Point(438, 353);
+            this.FillingCombo.Location = new System.Drawing.Point(339, 353);
             this.FillingCombo.MaxDropDownItems = 5;
             this.FillingCombo.Name = "FillingCombo";
             this.FillingCombo.Size = new System.Drawing.Size(121, 21);
             this.FillingCombo.TabIndex = 7;
+            this.FillingCombo.SelectedIndexChanged += new System.EventHandler(this.FillingCombo_SelectedIndexChanged);
             // 
             // AutoCloseCb
             // 
@@ -148,6 +150,16 @@
             // 
             this.openFileDialog.FileName = "openFileDialog1";
             // 
+            // PatternLineCb
+            // 
+            this.ParamsToBeSavedCb.AutoSize = true;
+            this.ParamsToBeSavedCb.Location = new System.Drawing.Point(466, 353);
+            this.ParamsToBeSavedCb.Name = "PatternLineCb";
+            this.ParamsToBeSavedCb.Size = new System.Drawing.Size(89, 30);
+            this.ParamsToBeSavedCb.TabIndex = 9;
+            this.ParamsToBeSavedCb.Text = "Images along\r\nstroke";
+            this.ParamsToBeSavedCb.UseVisualStyleBackColor = true;
+            // 
             // ImageLister
             // 
             this.AcceptButton = this.InsertBtn;
@@ -155,6 +167,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.CancelBtn;
             this.ClientSize = new System.Drawing.Size(800, 383);
+            this.Controls.Add(this.ParamsToBeSavedCb);
             this.Controls.Add(this.AutoCloseCb);
             this.Controls.Add(this.FillingCombo);
             this.Controls.Add(this.DelBtn);
@@ -187,5 +200,6 @@
         public System.Windows.Forms.ComboBox FillingCombo;
         public System.Windows.Forms.CheckBox AutoCloseCb;
         private System.Windows.Forms.OpenFileDialog openFileDialog;
+        private System.Windows.Forms.CheckBox ParamsToBeSavedCb;
     }
 }

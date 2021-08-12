@@ -22,6 +22,8 @@ using System.Text.RegularExpressions;
 
 namespace gInk
 {
+    using ListPoint = List<Point>;
+
     public partial class FormCollection : Form
     {
         [Flags, Serializable]
@@ -146,6 +148,16 @@ namespace gInk
 
         public Strokes StrokesSelection,InprogressSelection;
         public bool AppendToSelection;
+
+        public Stroke LineForPatterns = null;
+        public int PatternLineSteps = -1;          //0 = getSize ; 1 = getDistance; 2 = getStroke
+        public Bitmap PatternImage = null;
+        public ListPoint PatternPoints = new List<Point>();
+        public List<ListPoint> StoredPatternPoints = new List<ListPoint>();
+        public int PatternLastPtIndex = -1;
+        public double PatternLastPtRemain = 0;
+        public double PatternDist = double.MaxValue;
+
 
         // http://www.csharp411.com/hide-form-from-alttab/
         protected override CreateParams CreateParams
@@ -680,10 +692,14 @@ namespace gInk
                 btClipArt.Height = dim1s;
                 btClipArt.Width = dim1s;
                 btClipArt.Visible = true;
+                btClipArt.Text = "";
+                btClipArt.Font = new Font(btClipArt.Font.Name, dim1s * .5F,btClipArt.Font.Style);
                 SetButtonPosition(btText, btClipArt, dim3);
                 btClip1.Height = dim1s;
                 btClip1.Width = dim1s;
                 btClip1.Visible = true;
+                btClip1.Text = "";
+                btClip1.Font = btClipArt.Font;
                 SetSmallButtonNext(btClipArt, btClip1, dim2s);
                 try
                 {
@@ -702,6 +718,8 @@ namespace gInk
                 btClip2.Height = dim1s;
                 btClip2.Width = dim1s;
                 btClip2.Visible = true;
+                btClip2.Text = "";
+                btClip2.Font = btClipArt.Font;
                 SetButtonPosition(btClipArt, btClip2, dim3);
                 try
                 {
@@ -720,6 +738,8 @@ namespace gInk
                 btClip3.Height = dim1s;
                 btClip3.Width = dim1s;
                 btClip3.Visible = true;
+                btClip3.Text = "";
+                btClip3.Font = btClipArt.Font;
                 SetSmallButtonNext(btClip2, btClip3, dim2s);
                 try
                 {
@@ -1191,7 +1211,14 @@ namespace gInk
 
             SaveStrokeFile = "";
 
-            Console.WriteLine("C=" + (DateTime.Now.Ticks / 1e7).ToString());
+            PatternLineSteps = -1;
+            LineForPatterns = null;
+            PatternLastPtIndex = -1;
+            PatternLastPtRemain = 0;
+            PatternPoints.Clear();
+            StoredPatternPoints.Clear();
+
+        Console.WriteLine("C=" + (DateTime.Now.Ticks / 1e7).ToString());
         }
 
         private void SetSubBarPosition(Panel Tb, Button RefButton)
@@ -2089,6 +2116,33 @@ namespace gInk
                 if (st.ExtendedProperties.Contains(Root.FADING_PEN))
                     FadingList.Add(st);
             }
+            else if (Root.ToolSelected == Tools.PatternLine && PatternLineSteps == 2) //Draw the stroke and is ready for a new one ; the remaing is below
+            {
+                if(PatternPoints.Count==0)
+                {
+                    IC.Ink.DeleteStroke(e.Stroke); // the stroke that was just inserted has to be replaced.                    
+                }
+                else
+                {
+                    e.Stroke.DrawingAttributes.Color = Color.Transparent;
+                    try { e.Stroke.ExtendedProperties.Remove(Root.ISHIDDEN_GUID); } catch { }
+                    //e.Stroke.ExtendedProperties.Add(Root.ISSTROKE_GUID, true);
+                    e.Stroke.ExtendedProperties.Add(Root.IMAGE_GUID, Root.ImageStamp.ImageStamp);
+                    e.Stroke.ExtendedProperties.Add(Root.IMAGE_X_GUID, (double)Root.CursorX0); // just to ensure no bug
+                    e.Stroke.ExtendedProperties.Add(Root.IMAGE_Y_GUID, (double)Root.CursorY0);
+                    e.Stroke.ExtendedProperties.Add(Root.IMAGE_W_GUID, (double)Root.ImageStamp.X);
+                    e.Stroke.ExtendedProperties.Add(Root.IMAGE_H_GUID, (double)Root.ImageStamp.Y);
+                    e.Stroke.ExtendedProperties.Add(Root.ROTATION_GUID, 0.0D);
+                    if (e.Stroke.ExtendedProperties.Contains(Root.FADING_PEN))
+                        FadingList.Add(e.Stroke);
+                    e.Stroke.ExtendedProperties.Add(Root.REPETITIONDISTANCE_GUID, PatternDist);
+                    StoredPatternPoints.Add(new ListPoint(PatternPoints));
+                    e.Stroke.ExtendedProperties.Add(Root.LISTOFPOINTS_GUID, StoredPatternPoints.Count - 1);
+                    Root.ImageStamp.Store = false;
+                }
+                LineForPatterns = null;
+                PatternPoints.Clear();
+            }
             else
             {
                 //#if (Root.CursorX0 == Int32.MinValue) // process when clicking touchscreen with just a short press;
@@ -2126,12 +2180,13 @@ namespace gInk
                     else
                         AddRectStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY, Root.FilledSelected);
                 }
-                else if (Root.ToolSelected == Tools.ClipArt)
+                else if (Root.ToolSelected == Tools.ClipArt || (Root.ToolSelected == Tools.PatternLine && PatternLineSteps == 0))
                 {
                     Console.WriteLine("ClipArt");
                     //int idx = ClipartsDlg.Images.Images.IndexOfKey(Root.ImageStamp.ImageStamp);
-                    int w = Root.ImageStamp.X;
-                    int h = Root.ImageStamp.Y;
+                    // we get directly data 
+                    int w = ClipartsDlg.ImgSizes[ClipartsDlg.ImageListViewer.LargeImageList.Images.IndexOfKey(Root.ImageStamp.ImageStamp)].X;
+                    int h = ClipartsDlg.ImgSizes[ClipartsDlg.ImageListViewer.LargeImageList.Images.IndexOfKey(Root.ImageStamp.ImageStamp)].Y;
                     //#if ((Root.CursorX0 == Int32.MinValue) || ((Root.CursorX0 == Root.CursorX) && (Root.CursorY0 == Root.CursorY)))
                     if (HitTouch || ((Root.CursorX0 == Root.CursorX) && (Root.CursorY0 == Root.CursorY)) || ((Root.CursorX0 == Int32.MinValue)))
                     {
@@ -2158,9 +2213,46 @@ namespace gInk
                             Root.CursorY0 -= (Root.CursorY - Root.CursorY0) / 2;
                         }
                     }
-                    AddImageStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY, Root.ImageStamp.ImageStamp);
+                    if (Root.ToolSelected == Tools.ClipArt)
+                        AddImageStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY, Root.ImageStamp.ImageStamp);
+                    else if (Root.ToolSelected == Tools.PatternLine)
+                    {
+                        Root.ImageStamp.X = Math.Abs(Root.CursorX - Root.CursorX0);
+                        Root.ImageStamp.Y = Math.Abs(Root.CursorY - Root.CursorY0);
+                        if (Root.ImageStamp.Store)
+                        {
+                            Root.ImageStamp.Wstored = Root.ImageStamp.X;
+                            Root.ImageStamp.Hstored = Root.ImageStamp.Y;
+                        }
+                            PatternLineSteps = 1; // nextStep 
+                        PatternImage?.Dispose();
+                        PatternImage = new Bitmap(Root.ImageStamp.ImageStamp);
+                        PatternPoints.Clear();
+                    }
                 }
-                //#else if ((Root.ToolSelected == Tools.Oval) && (Root.CursorX0 != Int32.MinValue))
+                else if (Root.ToolSelected == Tools.PatternLine && PatternLineSteps == 1) // Measure distance
+                {
+                    Point p = new Point() { X = Root.CursorX0 - Root.CursorX, Y = Root.CursorY0 - Root.CursorY };
+                    IC.Renderer.PixelToInkSpace(Root.FormDisplay.gOneStrokeCanvus, ref p);                    
+                    PatternDist = Math.Sqrt(p.X*p.X+p.Y*p.Y);
+                    p.X = Root.ImageStamp.X;
+                    p.Y = Root.ImageStamp.Y;
+                    IC.Renderer.PixelToInkSpace(Root.FormDisplay.gOneStrokeCanvus, ref p);
+                    PatternDist = Math.Max(PatternDist, 0.5 * Math.Min(p.X,p.Y));
+                    if(Root.ImageStamp.Store)
+                        Root.ImageStamp.Distance = PatternDist;
+                    PatternLineSteps = 2;
+                    try
+                    {
+                        IC.Cursor = cursorred;
+                    }
+                 
+   catch
+                    {
+                        IC.Cursor = getCursFromDiskOrRes("cursorred", System.Windows.Forms.Cursors.NoMove2D);
+                    }
+
+                }
                 else if ((Root.ToolSelected == Tools.Oval) && !HitTouch)
                 {
                     Console.WriteLine("Oval");
@@ -2260,6 +2352,39 @@ namespace gInk
             Root.CursorY0 = Int32.MinValue;
             Console.WriteLine("------------------ "+(dbgcpt++).ToString());
         }
+
+        private List<Point> getEquiPointsFromStroke(Stroke stk, double dist, ref int Start, ref double Remain,int Xoff=0,int Yoff=0,bool ConvertInkSpaceToPixel=true)
+            // remain indicates how much length remains previous extractions at position Start, updated to match new array
+        {
+            List<Point> o = new List<Point>();
+            Point[] pts = stk.GetPoints(Start, stk.PacketCount - Start);        // hope that PacketCount==
+            int i = 1;
+            double x, y, p;
+            while(i<pts.Length)
+            {
+                x = pts[i].X - pts[i - 1].X;
+                y = pts[i].Y - pts[i - 1].Y;
+                p =Remain - Math.Sqrt(x * x + y * y);
+                if(p<0) // the new point is on latest segment
+                {
+                    //TODO : Point pt = new Point() { X = (int)(pts[i].X + x * (0*p / Remain - p)), Y = (int)(pts[i].Y + y * (0*p / Remain - p)) };
+                    Point pt = new Point(pts[i].X, pts[i].Y);
+                    Console.Write(pts[i-1]); Console.Write(pts[i]); Console.Write(pt);
+                    Console.WriteLine(" - {0} - {1}", Remain, p);
+                    IC.Renderer.InkSpaceToPixel(Root.FormDisplay.gOneStrokeCanvus, ref pt);
+                    pt.X += Xoff;
+                    pt.Y += Yoff;
+                    o.Add(pt);
+                    p += dist;
+                }
+                Remain = p; // for next Loop
+                i++;
+            }
+            Start += pts.Length - 1;
+            Console.WriteLine(Remain.ToString() + "*");
+            return o;
+        }
+
 
         public void ComputeTextBoxSize(ref Stroke st)
         {
@@ -2385,6 +2510,12 @@ namespace gInk
                     IC.Ink.DeleteStroke(minStroke);
                 }
             }
+            else if (Root.ToolSelected == Tools.PatternLine && PatternLineSteps==2) // we are now drawing the final "stroke"
+            {
+                LineForPatterns = e.Stroke;
+                PatternLastPtIndex = 0;
+                PatternLastPtRemain = 0;
+            }
         }
 
         private Stroke SavHoveredForSelection;
@@ -2486,7 +2617,13 @@ namespace gInk
                             lst[i].DrawingAttributes = StrokesSelection[i].DrawingAttributes.Clone();
                             foreach (ExtendedProperty prop in StrokesSelection[i].ExtendedProperties)
                             {
-                                lst[i].ExtendedProperties.Add(prop.Id, prop.Data);
+                                if (prop.Id == Root.LISTOFPOINTS_GUID)
+                                {
+                                    StoredPatternPoints.Add(new ListPoint(StoredPatternPoints[(int)prop.Data]));
+                                    lst[i].ExtendedProperties.Add(prop.Id, StoredPatternPoints.Count-1);
+                                }
+                                else
+                                    lst[i].ExtendedProperties.Add(prop.Id, prop.Data);
                             }
                             Root.FormCollection.IC.Ink.Strokes.Add(lst[i]);
                         }
@@ -2511,7 +2648,13 @@ namespace gInk
                     movedStroke.DrawingAttributes = copied.DrawingAttributes.Clone();
                     foreach (ExtendedProperty prop in copied.ExtendedProperties)
                     {
-                        movedStroke.ExtendedProperties.Add(prop.Id, prop.Data);
+                        if(prop.Id==Root.LISTOFPOINTS_GUID)
+                        {
+                            StoredPatternPoints.Add(new ListPoint(StoredPatternPoints[(int)prop.Data]));
+                            movedStroke.ExtendedProperties.Add(prop.Id, StoredPatternPoints.Count-1);
+                        }
+                        else
+                            movedStroke.ExtendedProperties.Add(prop.Id, prop.Data);
                     }
                     Root.FormCollection.IC.Ink.Strokes.Add(movedStroke);
                 }
@@ -3003,11 +3146,17 @@ namespace gInk
             btText.BackgroundImage = getImgFromDiskOrRes("tool_txtL", ImageExts);
             btEdit.BackgroundImage = getImgFromDiskOrRes("tool_edit", ImageExts);
             btClipArt.BackgroundImage = getImgFromDiskOrRes("tool_clipart", ImageExts);
+            btClipArt.Text = (tool == Tools.PatternLine && (btClipSel != btClip1.Tag) && (btClipSel != btClip2.Tag) && (btClipSel != btClip3.Tag)) ? "S" : "";
+
             btScaleRot.BackgroundImage = getImgFromDiskOrRes("scale", ImageExts);
 
             btClip1.FlatAppearance.BorderSize = btClipSel == btClip1.Tag ? 3 : 0;
+            btClip1.Text = (tool == Tools.PatternLine && (btClipSel == btClip1.Tag)) ? "S" : "";
             btClip2.FlatAppearance.BorderSize = btClipSel == btClip2.Tag ? 3 : 0;
+            btClip2.Text = (tool == Tools.PatternLine && (btClipSel == btClip2.Tag)) ? "S" : "";
             btClip3.FlatAppearance.BorderSize = btClipSel == btClip3.Tag ? 3 : 0;
+            btClip3.Text = (tool == Tools.PatternLine && (btClipSel == btClip3.Tag)) ? "S" : "";
+
             btClipSel = null;
 
             if (AltKeyPressed() && Root.AltAsOneCommand>=1)
@@ -3283,6 +3432,45 @@ namespace gInk
                     IC.Cursor = getCursFromDiskOrRes("cursortarget", System.Windows.Forms.Cursors.NoMove2D);
                 }
             }
+            else if (tool == Tools.PatternLine)
+            {
+                StrokesSelection.Clear();
+
+                TransformXc = int.MinValue;
+                TransformYc = int.MinValue;
+
+                if (Root.ImageStamp.Wstored > 0)
+                {
+                    Root.ImageStamp.X = Root.ImageStamp.Wstored;
+                    Root.ImageStamp.Y = Root.ImageStamp.Hstored;
+                    if(Root.ImageStamp.Distance > 0)
+                    {
+                        PatternDist = Root.ImageStamp.Distance;
+                        PatternLineSteps = 2;
+                    }
+                    else
+                        PatternLineSteps = 1;
+                }
+                else
+                    PatternLineSteps = 0;
+
+                PatternPoints.Clear();
+                LineForPatterns = null;
+                PatternLastPtIndex = -1;
+                PatternLastPtRemain = 0;
+                PatternImage?.Dispose();
+                PatternImage = new Bitmap(Root.ImageStamp.ImageStamp);
+
+                // no button image to be modified already done earlier in SelectTool
+                try
+                {
+                    IC.Cursor = PatternLineSteps<2?cursortarget:cursorred;
+                }
+                catch
+                {
+                    IC.Cursor = getCursFromDiskOrRes(PatternLineSteps < 2 ? "cursortarget": "cursorred", System.Windows.Forms.Cursors.NoMoveHoriz);
+                }
+            }
             Root.UponButtonsUpdate |= 0x2;
             Root.ToolSelected = tool;
         }
@@ -3525,6 +3713,12 @@ namespace gInk
             if (ZoomForm.Visible)
                 ZoomBtn_Click(btZoom, null);
             gpSubTools.Visible = false;
+            if (((ClipArtData)btClip1.Tag).Wstored > 0)
+                Root.ImageStamp1 = ((ClipArtData)btClip1.Tag).Clone();
+            if (((ClipArtData)btClip2.Tag).Wstored > 0)
+                Root.ImageStamp2 = ((ClipArtData)btClip2.Tag).Clone();
+            if (((ClipArtData)btClip3.Tag).Wstored > 0)
+                Root.ImageStamp3 = ((ClipArtData)btClip3.Tag).Clone();
             try
             {
                 string st = Path.GetFullPath(Environment.ExpandEnvironmentVariables(Root.SnapshotBasePath));
@@ -4105,6 +4299,12 @@ namespace gInk
             Tick++;
 
             if (!Root.FormDisplay.Visible)
+            if(Root.ToolSelected == Tools.PatternLine && PatternLineSteps==2 && LineForPatterns!=null)
+            {
+                Console.Write("Pat "); Console.WriteLine(PatternLastPtIndex);
+                List<Point> r=getEquiPointsFromStroke(LineForPatterns, PatternDist, ref PatternLastPtIndex, ref PatternLastPtRemain, -Root.ImageStamp.X / 2, -Root.ImageStamp.Y / 2, true);
+                PatternPoints.AddRange(r);
+            }
                 return;
 
             //if (Tick % 50 == 0) Console.WriteLine("AW."+Tick.ToString()+"="+ GetCaptionOfActiveWindow());
@@ -5762,8 +5962,16 @@ namespace gInk
                 i = -1;
                 if (ClipartsDlg.ShowDialog() == DialogResult.OK)
                 {
-                    i = Tools.ClipArt;
-                    Root.ImageStamp = new ClipArtData { ImageStamp = ClipartsDlg.ImageStamp, X = ClipartsDlg.ImgSizeX, Y = ClipartsDlg.ImgSizeY, Filling = ClipartsDlg.ImageStampFilling };
+                    //Root.ImageStamp = new ClipArtData { ImageStamp = ClipartsDlg.ImageStamp, X = ClipartsDlg.ImgSizeX, Y = ClipartsDlg.ImgSizeY, Filling = ClipartsDlg.ImageStampFilling,PatternLine = ClipartsDlg.PutClipartOnLine };
+                    Root.ImageStamp = ClipartsDlg.getClipArtData();
+                    if (ClipartsDlg.PutClipartOnLine)
+                        i = Tools.PatternLine;
+                    else
+                        i = Tools.ClipArt;
+                    
+                    LineForPatterns = null;
+                    PatternLastPtIndex = -1;
+                    PatternLastPtRemain = 0;
                 }
                 AllowInteractions(false);
                 if (i < 0) return;
@@ -5787,8 +5995,12 @@ namespace gInk
                         try
                         {
                             ((Button)sender).BackgroundImage = getImgFromDiskOrRes(dlg.ImageStamp, ImageExts);
-                            ((Button)sender).Tag = new ClipArtData { ImageStamp = dlg.ImageStamp, X = dlg.ImgSizeX, Y = dlg.ImgSizeY, Filling = dlg.ImageStampFilling };
-                            i = Tools.ClipArt;
+                            //((Button)sender).Tag = new ClipArtData { ImageStamp = dlg.ImageStamp, X = dlg.ImgSizeX, Y = dlg.ImgSizeY, Filling = dlg.ImageStampFilling, PatternLine = ClipartsDlg.PutClipartOnLine };
+                            ((Button)sender).Tag = dlg.getClipArtData();
+                            if (dlg.PutClipartOnLine)
+                                i = Tools.PatternLine;
+                            else
+                                i = Tools.ClipArt;
                         }
                         catch
                         { // case of failure : image from Clipboard but normally handled;
@@ -5800,7 +6012,10 @@ namespace gInk
                 }
                 btClipSel = ((Button)sender).Tag;
                 Root.ImageStamp = (ClipArtData)btClipSel;
-                i = Tools.ClipArt;
+                if (((ClipArtData)btClipSel).PatternLine)
+                    i = Tools.PatternLine;
+                else
+                    i = Tools.ClipArt;
             }
             int f = -1;
             if (!AltKeyPressed() && Root.AltAsOneCommand>=1 & (Root.PointerMode || Root.EraserEnabled || Root.PanMode || Root.LassoMode) & SavedTool != -1) 

@@ -103,7 +103,9 @@ namespace gInk
         public string ButtonLoadImageText = "&Load Image";
         public string ButtonDeleteText = "&Delete entry";
         public string CheckBoxAutoCloseText =  "Auto\nClose";
-        public string ListFillingsText = "No Frame;Empty;Color filled;White filled;Black filled";
+        public string PatternStoreParamTxt = "Save\nPattern Setup";
+        public string ListFillingsText = "No Frame;Empty;Color filled;White filled;Black filled;Line Of Patterns";
+        public int LineOfPatternsListPos = 5; // provide Line Of Patterns Positions in list above
 
 
         public string MenuEntryExit = "Exit";

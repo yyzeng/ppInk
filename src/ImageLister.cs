@@ -22,6 +22,7 @@ namespace gInk
         public string ImageStamp;
         public int ImgSizeX = -1;
         public int ImgSizeY = -1;
+        public bool PutClipartOnLine = false;
         public Dictionary<string,Image> Originals = new Dictionary<string, Image>();
         public Dictionary<string, ApngImage> Animations = new Dictionary<string, ApngImage>();
 
@@ -46,6 +47,10 @@ namespace gInk
             FillingCombo.Items.Clear();
             FillingCombo.Items.AddRange(Root.Local.ListFillingsText.Split(';'));
             FillingCombo.Text = (string)FillingCombo.Items[Root.ImageStampFilling + 1];
+
+            ParamsToBeSavedCb.Checked = false;
+            ParamsToBeSavedCb.Text = Root.Local.PatternStoreParamTxt;
+
             AutoCloseCb.Text = Root.Local.CheckBoxAutoCloseText;
             ImageListViewer.Items.Clear();
             ImageListViewer.LargeImageList.Images.Clear();
@@ -202,6 +207,14 @@ namespace gInk
             {
                 ImageStamp = ImageListViewer.SelectedItems[0].ImageKey;
                 ImageStampFilling = Array.IndexOf(Root.Local.ListFillingsText.Split(';'), FillingCombo.Text) - 1;
+                if (ImageStampFilling == Root.Local.LineOfPatternsListPos-1)
+                {
+                    PutClipartOnLine = true;
+                    ImageStampFilling = Filling.NoFrame;
+                }
+                else
+                    PutClipartOnLine = false;
+
                 ImgSizeX = ImgSizes[ImageListViewer.LargeImageList.Images.IndexOfKey(ImageStamp)].X;
                 ImgSizeY = ImgSizes[ImageListViewer.LargeImageList.Images.IndexOfKey(ImageStamp)].Y;
                 DialogResult = DialogResult.OK;
@@ -215,17 +228,27 @@ namespace gInk
             }
         }
 
-        public ClipArtData getClipArtData(string fn,int fill=-2)
+        public ClipArtData getClipArtData(string fn=null,int fill=-2)
         {
             int ImgX, ImgY;
+            bool PL;
             //ImageStamp = fn;
+            if (fn == null)
+                fn = ImageListViewer.SelectedItems[0].ImageKey;
             if (!fn.Contains("/"))
                 fn = ImageListViewer.FindItemWithText(fn).ImageKey;
             if (fill == -2)
                 fill = Array.IndexOf(Root.Local.ListFillingsText.Split(';'), FillingCombo.Text) - 1;
             ImgX = ImgSizes[ImageListViewer.LargeImageList.Images.IndexOfKey(fn)].X;
             ImgY = ImgSizes[ImageListViewer.LargeImageList.Images.IndexOfKey(fn)].Y;
-            return new ClipArtData { ImageStamp = fn, X = ImgX, Y = ImgY, Filling = fill };
+            if (fill == Root.Local.LineOfPatternsListPos-1)
+            {
+                PL= true;
+                fill = Filling.NoFrame;
+            }
+            else
+                PL = false;
+            return new ClipArtData { ImageStamp = fn, X = -1, Y = -1, Wstored=-1,Hstored=-1, Filling = fill, PatternLine = PL, Distance = -1, Store = ParamsToBeSavedCb.Checked };
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)
@@ -240,6 +263,11 @@ namespace gInk
                 e.SuppressKeyPress  = true;
                 FromClipB_Click(null, null);
             }
+        }
+
+        private void FillingCombo_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ParamsToBeSavedCb.Enabled = FillingCombo.SelectedIndex == Root.Local.LineOfPatternsListPos;
         }
     }
 }

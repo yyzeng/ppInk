@@ -29,10 +29,10 @@ namespace gInk
         public const int StartArrow = 4; public const int EndArrow = 5; public const int NumberTag = 6;
         public const int Edit = 7; public const int txtLeftAligned = 8; public const int txtRightAligned = 9;
         public const int Move = 10; public const int Copy = 11; public const int Scale = 12; public const int Rotate = 13;
-        public const int Poly = 21; public const int ClipArt = 22;
-        public static readonly int[] All = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 21, 22 };
+        public const int Poly = 21; public const int ClipArt = 22; public const int PatternLine = 23;
+        public static readonly int[] All = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 21, 22, 23 };
         public static readonly string[] Names = { "Hand", "Line", "Rect", "Oval", "StartArrow", "EndArrow", "Numbering", "Edit", "Text Left Aligned", "Text Right Aligned",
-                                                  "Move", "Copy", "Resize", "Rotate", "PolyLine", "ClipArt" };
+                                                  "Move", "Copy", "Resize", "Rotate", "PolyLine", "ClipArt", "PatternLine"};
     }
     public class Filling {
         public const int NoFrame = -1;      // for Stamps
@@ -162,6 +162,8 @@ namespace gInk
         public static Guid ISHIDDEN_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 10);
         public static Guid ISBACKGROUND_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 11);
         public static Guid ANIMATIONFRAMEIMG_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 12);
+        public static Guid REPETITIONDISTANCE_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 20);
+        public static Guid LISTOFPOINTS_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 21);
 
         public static Guid FADING_PEN = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 3, 1);
         public static Guid DASHED_LINE_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 3, 2);        // will contain DashStyle style

@@ -441,15 +441,24 @@ namespace gInk
                         int Y = (int)(double)(st.ExtendedProperties[Root.IMAGE_Y_GUID].Data);
                         int W = (int)(double)(st.ExtendedProperties[Root.IMAGE_W_GUID].Data);
                         int H = (int)(double)(st.ExtendedProperties[Root.IMAGE_H_GUID].Data);
-                        if (st.ExtendedProperties.Contains(Root.ROTATION_GUID))
+                        if (st.ExtendedProperties.Contains(Root.LISTOFPOINTS_GUID))
                         {
-                            Double Rotation = (double)st.ExtendedProperties[Root.ROTATION_GUID].Data;
+                            List<Point> pts = Root.FormCollection.StoredPatternPoints[(int)(st.ExtendedProperties[Root.LISTOFPOINTS_GUID].Data)];
+                            foreach(Point pt in pts)
+                                g.DrawImage(img, new Rectangle(pt.X, pt.Y, W, H));
+                        }
+                        else
+                        {
+                            if (st.ExtendedProperties.Contains(Root.ROTATION_GUID))
+                            {
+                                Double Rotation = (double)st.ExtendedProperties[Root.ROTATION_GUID].Data;
                             g.TranslateTransform(X, Y);
                             g.RotateTransform((float)Rotation);
                             g.TranslateTransform(-X, -Y);
                         }
-                        g.DrawImage(img, new Rectangle(X, Y, W, H));
-                        g.ResetTransform();
+                            g.DrawImage(img, new Rectangle(X, Y, W, H));
+                            g.ResetTransform();
+                        }
                     }
                     /*else */
                     if (st.ExtendedProperties.Contains(Root.ISSTROKE_GUID))
@@ -486,9 +495,13 @@ namespace gInk
         public void DrawStrokes(Bitmap bmp, bool IgnoreBackground=false)
         {
             Graphics g = Graphics.FromImage(bmp);
+
+            Ink Ink2 = Root.FormCollection.IC.Ink.ExtractStrokes(Root.FormCollection.IC.Ink.Strokes, ExtractFlags.CopyFromOriginal);
+
             if (Root.InkVisible)
             {
-                foreach (Stroke st in Root.FormCollection.IC.Ink.Strokes)
+                //foreach (Stroke st in Root.FormCollection.IC.Ink.Strokes)
+                foreach (Stroke st in Ink2.Strokes)
                 {
                     if (IgnoreBackground && st.ExtendedProperties.Contains(Root.ISBACKGROUND_GUID))
                         continue;
@@ -563,15 +576,24 @@ namespace gInk
                         int Y = (int)(double)(st.ExtendedProperties[Root.IMAGE_Y_GUID].Data);
                         int W = (int)(double)(st.ExtendedProperties[Root.IMAGE_W_GUID].Data);
                         int H = (int)(double)(st.ExtendedProperties[Root.IMAGE_H_GUID].Data);
-                        if (st.ExtendedProperties.Contains(Root.ROTATION_GUID))
+                        if (st.ExtendedProperties.Contains(Root.LISTOFPOINTS_GUID))
                         {
-                            Double Rotation = (double)st.ExtendedProperties[Root.ROTATION_GUID].Data;
+                            List<Point> pts = Root.FormCollection.StoredPatternPoints[(int)(st.ExtendedProperties[Root.LISTOFPOINTS_GUID].Data)];
+                            foreach (Point pt in pts)
+                                g.DrawImage(img, new Rectangle(pt.X, pt.Y, W, H));
+                        }
+                        else
+                        {
+                            if (st.ExtendedProperties.Contains(Root.ROTATION_GUID))
+                            {
+                                Double Rotation = (double)st.ExtendedProperties[Root.ROTATION_GUID].Data;
                             g.TranslateTransform(X, Y);
                             g.RotateTransform((float)Rotation);
                             g.TranslateTransform(-X, -Y);
                         }
-                        g.DrawImage(img, new Rectangle(X, Y, W, H));
-                        g.ResetTransform();
+                            g.DrawImage(img, new Rectangle(X, Y, W, H));
+                            g.ResetTransform();
+                        }
                     }
                     /*else */
                     if (st.ExtendedProperties.Contains(Root.ISSTROKE_GUID))
@@ -602,7 +624,9 @@ namespace gInk
                     }
                 }
             }
+            Ink2?.Dispose();
         }
+
 
         public void MoveStrokes(int dy)
 		{
@@ -756,7 +780,17 @@ namespace gInk
             Pen p = PenForDrawOn(dr, st);
             gOutCanvus.DrawRectangle(p,Math.Min(CursorX0,CursorX), Math.Min(CursorY0, CursorY), dX, dY);
             p.Dispose();
-
+        }
+        public void DrawImagesOnGraphic(Graphics g, List<Point> pts, Image img, int W, int H, DrawingAttributes dr = null, DashStyle st = DashStyle.Solid)
+        {
+            if (pts == null)
+                return;
+            //Pen p = PenForDrawOn(dr, st);
+            foreach(Point pt in pts)
+            {
+                gOutCanvus.DrawImage(img, pt.X, pt.Y, W, H);
+            }
+            //p.Dispose();
         }
         public void DrawEllipseOnGraphic(Graphics g, int CursorX0, int CursorY0, int CursorX, int CursorY, DrawingAttributes dr = null, DashStyle st = DashStyle.Solid)
         {
@@ -804,11 +838,21 @@ namespace gInk
                 //DrawRectOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY,Root.FormCollection.IC.Ink.Strokes[Root.FormCollection.IC.Ink.Strokes.Count-1].DrawingAttributes);
                 else if ((Root.ToolSelected == Tools.Line) || (Root.ToolSelected == Tools.Poly))
                     DrawLineOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY, da, ds);
-                else if ((Root.ToolSelected == Tools.Rect) || (Root.ToolSelected == Tools.ClipArt))
+                else if ((Root.ToolSelected == Tools.Rect) || (Root.ToolSelected == Tools.ClipArt) || (Root.ToolSelected == Tools.PatternLine && Root.FormCollection.PatternLineSteps == 0))
                     if ((Root.FormCollection.CurrentMouseButton == MouseButtons.Right) || ((int)(Root.FormCollection.CurrentMouseButton) == 2))
                         DrawRectOnGraphic(g, 2 * CursorX0 - CursorX, 2 * CursorY0 - CursorY, CursorX, CursorY, da, ds);
                     else
                         DrawRectOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY, da, ds);
+                else if (Root.ToolSelected == Tools.PatternLine && Root.FormCollection.PatternLineSteps == 1)
+                {
+                    bool m = (Root.FormCollection.CurrentMouseButton == MouseButtons.Right) || ((int)(Root.FormCollection.CurrentMouseButton) == 2);
+                    List<Point> pts = new List<Point>();
+                    pts.Add(new Point() { X = CursorX0 - (m ? (Root.ImageStamp.X / 2) : 0), Y = CursorY0 - (m ? (Root.ImageStamp.Y / 2) : 0) });
+                    pts.Add(new Point() { X = CursorX - (m ? (Root.ImageStamp.X / 2) : 0), Y = CursorY - (m ? (Root.ImageStamp.Y / 2) : 0) });
+                    DrawImagesOnGraphic(g, pts, Root.FormCollection.PatternImage, Root.ImageStamp.X, Root.ImageStamp.Y);
+                }
+                else if (Root.ToolSelected == Tools.PatternLine && Root.FormCollection.PatternLineSteps == 2)
+                    DrawImagesOnGraphic(g, Root.FormCollection.PatternPoints,Root.FormCollection.PatternImage, Root.ImageStamp.X, Root.ImageStamp.Y);
                 else if (Root.ToolSelected == Tools.Oval)
                     if ((Root.FormCollection.CurrentMouseButton == MouseButtons.Right) || ((int)(Root.FormCollection.CurrentMouseButton) == 2))
                         DrawEllipseOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY, da, ds);

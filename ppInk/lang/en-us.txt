@@ -97,7 +97,8 @@ ButtonFromClipBText = "&From Clipboard"
 ButtonLoadImageText = "&Load Image"
 ButtonDeleteText = "&Delete"
 CheckBoxAutoCloseText =  "Auto\nClose"
-ListFillingsText = "No frame;Frame only;Color filled;White filled;Black filled"
+PatternStoreParamTxt = "Save\nPattern Setup"
+ListFillingsText = "No frame;Frame only;Color filled;White filled;Black filled;Line Of Patterns"
 
 
 MenuEntryExit = "Exit"
