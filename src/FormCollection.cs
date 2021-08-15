@@ -1986,12 +1986,27 @@ namespace gInk
                 if (s.ExtendedProperties.Contains(Root.IMAGE_GUID))
                 {
                     Point p = s.GetPoint(0);
+                    Double W, H,rot;
                     IC.Renderer.InkSpaceToPixel(Root.FormDisplay.gOneStrokeCanvus, ref p);
                     s.ExtendedProperties.Add(Root.IMAGE_X_GUID, (double)p.X);
                     s.ExtendedProperties.Add(Root.IMAGE_Y_GUID, (double)p.Y);
-                    s.ExtendedProperties.Add(Root.IMAGE_H_GUID, ((double)(s.ExtendedProperties[Root.IMAGE_H_GUID].Data) * k));
-                    s.ExtendedProperties.Add(Root.IMAGE_W_GUID, ((double)(s.ExtendedProperties[Root.IMAGE_W_GUID].Data) * k));
-                    s.ExtendedProperties.Add(Root.ROTATION_GUID, (double)s.ExtendedProperties[Root.ROTATION_GUID].Data + deg);
+                    W = (double)(s.ExtendedProperties[Root.IMAGE_W_GUID].Data) * k;
+                    H = (double)(s.ExtendedProperties[Root.IMAGE_H_GUID].Data) * k;
+                    s.ExtendedProperties.Add(Root.IMAGE_W_GUID, W);
+                    s.ExtendedProperties.Add(Root.IMAGE_H_GUID, H);
+                    rot = (double)s.ExtendedProperties[Root.ROTATION_GUID].Data + deg;
+                    s.ExtendedProperties.Add(Root.ROTATION_GUID, rot);
+                    rot = rot * Math.PI / 180.0;
+                    if(s.ExtendedProperties.Contains(Root.LISTOFPOINTS_GUID))
+                    {
+                        int i1 = 0;
+                        double d1 = 0;
+                        double d2 = (double)(s.ExtendedProperties[Root.REPETITIONDISTANCE_GUID].Data) * k;
+                        s.ExtendedProperties.Add(Root.REPETITIONDISTANCE_GUID, d2);
+                        ListPoint pts = getEquiPointsFromStroke(s, d2, ref i1, ref d1,-(int)(W*Math.Cos(rot)-H*Math.Sin(rot)) / 2, -(int)(W * Math.Sin(rot) + H * Math.Cos(rot)) / 2, true);
+                        StoredPatternPoints[(int)s.ExtendedProperties[Root.LISTOFPOINTS_GUID].Data].Clear();
+                        StoredPatternPoints[(int)s.ExtendedProperties[Root.LISTOFPOINTS_GUID].Data].AddRange(pts);
+                    }
                 }
                 if (s.ExtendedProperties.Contains(Root.TEXTFONT_GUID))
                 {
@@ -2181,8 +2196,8 @@ namespace gInk
                     Console.WriteLine("ClipArt");
                     //int idx = ClipartsDlg.Images.Images.IndexOfKey(Root.ImageStamp.ImageStamp);
                     // we get directly data 
-                    int w = ClipartsDlg.ImgSizes[ClipartsDlg.ImageListViewer.LargeImageList.Images.IndexOfKey(Root.ImageStamp.ImageStamp)].X;
-                    int h = ClipartsDlg.ImgSizes[ClipartsDlg.ImageListViewer.LargeImageList.Images.IndexOfKey(Root.ImageStamp.ImageStamp)].Y;
+                    int w = Root.ImageStamp.X > 0 ? Root.ImageStamp.X : ClipartsDlg.ImgSizes[ClipartsDlg.ImageListViewer.LargeImageList.Images.IndexOfKey(Root.ImageStamp.ImageStamp)].X;
+                    int h = Root.ImageStamp.Y > 0 ? Root.ImageStamp.Y : ClipartsDlg.ImgSizes[ClipartsDlg.ImageListViewer.LargeImageList.Images.IndexOfKey(Root.ImageStamp.ImageStamp)].Y;
                     //#if ((Root.CursorX0 == Int32.MinValue) || ((Root.CursorX0 == Root.CursorX) && (Root.CursorY0 == Root.CursorY)))
                     if (HitTouch || ((Root.CursorX0 == Root.CursorX) && (Root.CursorY0 == Root.CursorY)) || ((Root.CursorX0 == Int32.MinValue)))
                     {
@@ -2241,9 +2256,8 @@ namespace gInk
                     try
                     {
                         IC.Cursor = cursorred;
-                    }
-                 
-   catch
+                    }                 
+                    catch
                     {
                         IC.Cursor = getCursFromDiskOrRes("cursorred", System.Windows.Forms.Cursors.NoMove2D);
                     }

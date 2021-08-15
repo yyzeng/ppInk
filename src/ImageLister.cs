@@ -71,6 +71,14 @@ namespace gInk
             ImageListViewer.Select();
         }
 
+        public void SetFillingOrPattern(bool Pattern = false, int f=Filling.NoFrame)
+        {
+            if (Pattern)
+                FillingCombo.SelectedIndex = Root.Local.LineOfPatternsListPos;
+            else
+                FillingCombo.SelectedIndex = f + 1;
+        }
+
         private bool OpaqueCorner(Bitmap img, int x0, int y0)
         {
             try
@@ -236,7 +244,14 @@ namespace gInk
             if (fn == null)
                 fn = ImageListViewer.SelectedItems[0].ImageKey;
             if (!fn.Contains("/"))
-                fn = ImageListViewer.FindItemWithText(fn).ImageKey;
+                try
+                {
+                    fn = ImageListViewer.FindItemWithText(fn).ImageKey;
+                }
+                catch
+                {
+                    throw new Exception(fn + " not loaded; prefer to use full path filename");
+                }
             if (fill == -2)
                 fill = Array.IndexOf(Root.Local.ListFillingsText.Split(';'), FillingCombo.Text) - 1;
             ImgX = ImgSizes[ImageListViewer.LargeImageList.Images.IndexOfKey(fn)].X;

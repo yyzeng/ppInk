@@ -443,9 +443,19 @@ namespace gInk
                         int H = (int)(double)(st.ExtendedProperties[Root.IMAGE_H_GUID].Data);
                         if (st.ExtendedProperties.Contains(Root.LISTOFPOINTS_GUID))
                         {
+                            Double Rotation = st.ExtendedProperties.Contains(Root.ROTATION_GUID) ? (double)st.ExtendedProperties[Root.ROTATION_GUID].Data : 0;
                             List<Point> pts = Root.FormCollection.StoredPatternPoints[(int)(st.ExtendedProperties[Root.LISTOFPOINTS_GUID].Data)];
-                            foreach(Point pt in pts)
+                            foreach (Point pt in pts)
+                            {
+                                if (Rotation != 0)
+                                {
+                                    g.TranslateTransform(pt.X, pt.Y);
+                                    g.RotateTransform((float)Rotation);
+                                    g.TranslateTransform(-pt.X, -pt.Y);
+                                }
                                 g.DrawImage(img, new Rectangle(pt.X, pt.Y, W, H));
+                                g.ResetTransform();
+                            }
                         }
                         else
                         {
@@ -578,9 +588,19 @@ namespace gInk
                         int H = (int)(double)(st.ExtendedProperties[Root.IMAGE_H_GUID].Data);
                         if (st.ExtendedProperties.Contains(Root.LISTOFPOINTS_GUID))
                         {
+                            Double Rotation = st.ExtendedProperties.Contains(Root.ROTATION_GUID)?(double)st.ExtendedProperties[Root.ROTATION_GUID].Data:0;
                             List<Point> pts = Root.FormCollection.StoredPatternPoints[(int)(st.ExtendedProperties[Root.LISTOFPOINTS_GUID].Data)];
                             foreach (Point pt in pts)
+                            {
+                                if(Rotation!=0)
+                                {
+                                    g.TranslateTransform(pt.X, pt.Y);
+                                    g.RotateTransform((float)Rotation);
+                                    g.TranslateTransform(-pt.X, -pt.Y);
+                                }
                                 g.DrawImage(img, new Rectangle(pt.X, pt.Y, W, H));
+                                g.ResetTransform();
+                            }
                         }
                         else
                         {
