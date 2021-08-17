@@ -384,6 +384,8 @@ namespace gInk
                     {
                         string s;
                         int i = 0, f = 0;
+                        int w = -1, h = -1;
+                        double dist = -1;
                         if (!(Root.FormDisplay.Visible || Root.FormCollection.Visible))
                         {
                             resp.StatusCode = 409;
@@ -394,10 +396,16 @@ namespace gInk
                             if (i==-4 || i == -3 || i == -2 || i == -1)
                                 Root.SelectPen(i);
                             if (!query.ContainsKey("F"))
-                                f = -1;
+                                f = Filling.NoFrame;
                             else if (!(query.TryGetValue("F", out s) && int.TryParse(s, out f) && -1 <= f && f < Filling.Modulo))
                                 resp.StatusCode = 400;
-                            if(i == Tools.ClipArt)
+                            if (!(query.TryGetValue("W", out s) && int.TryParse(s, out w)))
+                                w = -1;
+                            if (!(query.TryGetValue("H", out s) && int.TryParse(s, out h)))
+                                h = -1;
+                            if (!(query.TryGetValue("D", out s) && double.TryParse(s, out dist)))
+                                dist = -1;
+                            if (i == Tools.ClipArt || i==Tools.PatternLine)
                                 if (query.TryGetValue("I", out s))
                                 {
                                     if (s.Contains('\\'))
@@ -405,11 +413,27 @@ namespace gInk
                                     if (s.Contains('/'))
                                         s = Root.FormCollection.ClipartsDlg.LoadImage(s);
                                     Root.ImageStamp = Root.FormCollection.ClipartsDlg.getClipArtData(s);
+
                                     Root.ImageStamp.Filling = f;
+                                    if (w > 0)
+                                    {
+                                        Root.ImageStamp.Wstored = w;
+                                        Root.ImageStamp.X = w;
+                                    }
+                                    if (h > 0)
+                                    {
+                                        Root.ImageStamp.Hstored = h;
+                                        Root.ImageStamp.Y = h;
+                                    }
+                                    if (dist > 0)
+                                    {
+                                        Root.ImageStamp.Distance = dist;
+                                    }
                                 }
                                 else
                                 {
                                     Root.FormCollection.MouseTimeDown = DateTime.FromBinary(0);
+                                    Root.FormCollection.ClipartsDlg.SetFillingOrPattern(i == Tools.PatternLine, f);
                                     Root.FormCollection.btTool_Click(Root.FormCollection.btClipArt, null);
                                 }
                             bool b = false;
@@ -430,7 +454,6 @@ namespace gInk
                                 if (i >= Tools.Hand)
                                     Root.SelectPen(Root.FormCollection.LastPenSelected);
                                 Root.FormCollection.SelectTool(i, f);
-
                             }
 
                             if (Root.FormCollection.Visible)
@@ -457,12 +480,13 @@ namespace gInk
                             else
                             {
                                 string st_i="";
-                                if (Root.ToolSelected == Tools.ClipArt)
+                                if (Root.ToolSelected == Tools.ClipArt || Root.ToolSelected == Tools.PatternLine)
                                     st_i = string.Format(",\n \"Image\":\"{0}\" ", Root.ImageStamp.ImageStamp);
-                                f = Root.ToolSelected == Tools.ClipArt ? Root.ImageStamp.Filling : Root.FilledSelected;
+                                f = (Root.ToolSelected == Tools.ClipArt || Root.ToolSelected == Tools.PatternLine )? Root.ImageStamp.Filling : Root.FilledSelected;
                                 ret = string.Format("{{\"Tool\":{0},\"ToolInText\":\"{2}\", \"Filling\":{1}, \"FillingInText\":\"{3}\"{4} }}",
                                                         Root.ToolSelected, f , Tools.Names[Array.IndexOf(Tools.All,Root.ToolSelected)], Filling.Names[f+1],st_i);
                             }
+                            Console.WriteLine(Root.ImageStamp.X);
                         }
                         else if (resp.StatusCode == 400)
                             ret = string.Format("!!!! Error in Query ({0}) - {1} ", req.HttpMethod, req.Url.AbsoluteUri);
