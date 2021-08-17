@@ -56,6 +56,10 @@ OptionsZoomDim = "Dim."
 OptionsZoomScale = "Facteur"
 OptionsZoomContinous = "Continue"
 
+OptionsSpotLightBox = "Curseur illuminé"
+OptionsSpotLightRadius = "Rayon(%Ecr)"
+OptionsSpotOnAlt = "Affiche sur Alt"
+
 OptionMeasureGroup = "Outils de mesure"
 OptionMeasureLenLabel = "1 pixel ="
 OptionMeasureAngle = "sens trigonométrique"

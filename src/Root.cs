@@ -378,6 +378,10 @@ namespace gInk
         public bool ZoomContinous = false;
         public int ZoomEnabled = 3;
 
+        public Color SpotLightColor = Color.FromArgb(128, Color.Orange);
+        public int SpotLightRadius = 200;
+        public bool SpotOnAlt = true;
+
         public Rectangle WindowRect = new Rectangle(Int32.MinValue, Int32.MinValue, -1, -1);
         public bool ResizeDrawingWindow = false;
 
@@ -1410,6 +1414,26 @@ namespace gInk
                                     ToolbarBGColor[i] = Int32.Parse(tab[i]);
                             };
                             break;
+                        case "SPOT_COLOR": // if not defined, no window else 2 to 4 integers Top,Left,[Width/Height,[Opacity]]
+                            tab = sPara.Split(',');
+                            if (tab.Length == 4)
+                            {
+                                int[] sco = new int[4];
+                                for (int i = 0; i < 4; i++)
+                                    sco[i] = Int32.Parse(tab[i]);
+                                SpotLightColor = Color.FromArgb(sco[0], sco[1], sco[2], sco[3]);
+                            };
+                            break;
+                        case "SPOT_RADIUS":
+                            if (float.TryParse(sPara, out tempf))
+                            {
+                                SpotLightRadius = (int)(tempf / 100.0 * System.Windows.SystemParameters.PrimaryScreenWidth);
+                            }
+                            break;
+                        case "SPOT_ON_ALT":
+                            if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
+                                SpotOnAlt  = false;
+                            break;
                         case "BOARDATOPENING":
                             if (Int32.TryParse(sPara, out tempi))
                                 BoardAtOpening  = tempi;
@@ -2034,6 +2058,15 @@ namespace gInk
                             break;
                         case "TOOLBAR_COLOR":
                             sPara = ToolbarBGColor[0].ToString() + "," + ToolbarBGColor[1].ToString() + "," + ToolbarBGColor[2].ToString() + "," + ToolbarBGColor[3].ToString();
+                            break;
+                        case "SPOT_COLOR": // if not defined, no window else 2 to 4 integers Top,Left,[Width/Height,[Opacity]]
+                            sPara = SpotLightColor.A.ToString() + "," + SpotLightColor.R.ToString() + "," + SpotLightColor.G.ToString() + "," + SpotLightColor.B.ToString();
+                            break;
+                        case "SPOT_RADIUS":
+                            sPara = (SpotLightRadius / System.Windows.SystemParameters.PrimaryScreenWidth * 100.0).ToString(CultureInfo.InvariantCulture);
+                            break;
+                        case "SPOT_ON_ALT":
+                            sPara = SpotOnAlt ? "True" : "False";
                             break;
                         case "BOARDATOPENING":
                             sPara = BoardAtOpening.ToString();

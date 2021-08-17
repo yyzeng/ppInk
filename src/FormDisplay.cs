@@ -982,6 +982,7 @@ namespace gInk
 			return maxdj;
 		}
 
+        private bool MemoSpotLight = false;
 		public void UpdateFormDisplay(bool draw,bool prepared=false)
 		{
 			IntPtr screenDc = GetDC(IntPtr.Zero);
@@ -1017,6 +1018,21 @@ namespace gInk
                 else if (Root.Snapping<=0)
                     DrawCustomOnGraphic(gOutCanvus, Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY);
             }
+
+            if (Root.FormCollection.SpotLightMode || Root.FormCollection.SpotLightTemp)
+            {
+                GraphicsPath gp = new GraphicsPath();
+                Brush bru = new SolidBrush(Root.SpotLightColor);
+                gp.AddRectangle(new Rectangle(0, 0, this.Width, this.Height));
+                Point pt = PointToClient(MousePosition);
+                pt.Offset(-Root.SpotLightRadius, -Root.SpotLightRadius);
+                gp.AddEllipse(new Rectangle(pt.X, pt.Y, 2 * Root.SpotLightRadius, 2 * Root.SpotLightRadius));
+                gOutCanvus.FillPath(bru, gp);
+                MemoSpotLight = true;
+            }
+            else
+                MemoSpotLight = false;
+
 
             if (draw)
                 UpdateLayeredWindow(this.Handle, screenDc, ref topPos, ref size, OutcanvusDc, ref pointSource, 0, ref blend, ULW_ALPHA);
@@ -1200,8 +1216,13 @@ namespace gInk
 				UpdateFormDisplay(true);
 				Root.UponSubPanelUpdate = false;
 			}
+            else if (Root.FormCollection.SpotLightMode || Root.FormCollection.SpotLightTemp || MemoSpotLight)
+            {
+                UpdateFormDisplay(true);
+            }
 
-			if (Root.AutoScroll && Root.PointerMode)
+
+            if (Root.AutoScroll && Root.PointerMode)
 			{
 				int moved = Test();
 				stackmove += moved;

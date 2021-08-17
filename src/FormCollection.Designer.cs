@@ -181,7 +181,7 @@ namespace gInk
             this.btZoom.TabIndex = 12;
             this.toolTip.SetToolTip(this.btZoom, "Zoom");
             this.btZoom.UseVisualStyleBackColor = true;
-            this.btZoom.Click += new System.EventHandler(this.ZoomBtn_Click);
+            this.btZoom.Click += new System.EventHandler(this.btZoom_click);
             this.btZoom.MouseDown += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseDown);
             this.btZoom.MouseMove += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseMove);
             this.btZoom.MouseUp += new System.Windows.Forms.MouseEventHandler(this.gpButtons_MouseUp);

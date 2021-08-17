@@ -353,6 +353,16 @@ namespace gInk.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap flashLight {
+            get {
+                object obj = ResourceManager.GetObject("flashLight", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap garbage {
             get {
                 object obj = ResourceManager.GetObject("garbage", resourceCulture);

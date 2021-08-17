@@ -57,6 +57,10 @@ OptionsZoomDim = "Dim."
 OptionsZoomScale = "Scale"
 OptionsZoomContinous = "Continuous"
 
+OptionsSpotLightBox = "Spot On Cursor"
+OptionsSpotLightRadius = "Rad. (%Scr)"
+OptionsSpotOnAlt = "Display On Alt"
+
 OptionMeasureGroup = "Measurement Tools"
 OptionMeasureLenLabel = "1 pixel ="
 OptionMeasureAngle = "Angle CounterClockwise"

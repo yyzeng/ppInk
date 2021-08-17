@@ -82,6 +82,11 @@ namespace gInk
         public string OptionsZoomScale = "Scale";
         public string OptionsZoomContinous = "Continous";
 
+        public string OptionsSpotLightBox = "Spot On Cursor";
+        public string OptionsSpotLightRadius = "Rad. (%Scr)";
+        public string OptionsSpotOnAlt = "Display On Alt";
+
+
         public string OptionMeasureGroup = "Measurement Tools";
         public string OptionMeasureLenLabel = "1 pixel =";
         public string OptionMeasureAngle = "Angle CounterClockwise";

@@ -319,6 +319,7 @@
     <None Include="lasso.png" />
     <None Include="cursorHSI.png" />
     <None Include="cursortarget.ico" />
+    <None Include="flashLight.png" />
     <Content Include="Magnetic.png" />
     <Content Include="Magnetic_act.png" />
     <None Include="pan1_act.png" />

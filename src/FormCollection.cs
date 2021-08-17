@@ -3739,7 +3739,7 @@ namespace gInk
         {
             ToThrough();
             if (ZoomForm.Visible)
-                ZoomBtn_Click(btZoom, null);
+                btZoom_click(btZoom, null);
             gpSubTools.Visible = false;
             if (((ClipArtData)btClip1.Tag).Wstored > 0)
                 Root.ImageStamp1 = ((ClipArtData)btClip1.Tag).Clone();
@@ -3813,7 +3813,7 @@ namespace gInk
             Root.gpPenWidthVisible = false;
             ActivateStrokesInput(false);
             if (ZoomForm.Visible)
-                ZoomBtn_Click(btZoom, null);
+                btZoom_click(btZoom, null);
             try
             {
                 this.Cursor = cursorred;
@@ -3983,7 +3983,7 @@ namespace gInk
         public void StartSnapshot(bool Continue)
         {
             if (ZoomForm.Visible)
-                ZoomBtn_Click(btZoom, null);
+                btZoom_click(btZoom, null);
 
             if (Root.Snapping > 0)
                 return;
@@ -4031,7 +4031,7 @@ namespace gInk
             }
 
             if (ZoomForm.Visible)
-                ZoomBtn_Click(btZoom, null);
+                btZoom_click(btZoom, null);
 
             TimeSpan tsp = DateTime.Now - MouseTimeDown;
 
@@ -4825,6 +4825,8 @@ namespace gInk
 
             if (((AltKeyPressed() || Root.APIRestAltPressed) && !Root.FingerInAction) && tempArrowCursor is null)
             {
+                if (Root.SpotOnAlt)
+                    SpotLightTemp = true;
                 tempArrowCursor = IC.Cursor;
                 try
                 {
@@ -4838,6 +4840,7 @@ namespace gInk
             }
             else if (!(tempArrowCursor is null) && !(AltKeyPressed() || Root.APIRestAltPressed))
             {
+                SpotLightTemp = false;
                 try
                 {
                     IC.Cursor = tempArrowCursor;
@@ -5096,7 +5099,7 @@ namespace gInk
                 pressed = (GetKeyState(Root.Hotkey_Zoom.Key) & 0x8000) == 0x8000;
                 if (pressed && !LastZoomStatus && Root.Hotkey_Zoom.ModifierMatch(control, alt, shift, win))
                 {
-                    ZoomBtn_Click(null, null);
+                    btZoom_click(null, null);
                 }
                 LastZoomStatus = pressed;
 
@@ -6153,7 +6156,9 @@ namespace gInk
 
         public bool ZoomCapturing=false;
         public bool ZoomCaptured=false;
-        private void ZoomBtn_Click(object sender, EventArgs e)
+        public bool SpotLightMode = false;
+        public bool SpotLightTemp = false;
+        private void btZoom_click(object sender, EventArgs e)
         {
             if (ToolbarMoved)
             {
@@ -6169,11 +6174,20 @@ namespace gInk
                 }
                 else
                 {
-                    btZoom.BackgroundImage = getImgFromDiskOrRes("Zoom");
+                    SpotLightMode = true;
+                    btZoom.BackgroundImage = getImgFromDiskOrRes("flashLight");
                 }
             }
             else if (ZoomCapturing || ZoomCaptured)
+            {
                 StopAllZooms();
+                SpotLightMode = true;
+                btZoom.BackgroundImage = getImgFromDiskOrRes("flashLight");
+            }
+            else if (SpotLightMode)
+            {
+                StopAllZooms();
+            }
             else
             {
                 if ((Root.ZoomEnabled & 1) != 0)
@@ -6198,6 +6212,7 @@ namespace gInk
             ZoomCaptured = false;
             //if (Root.CanvasCursor == 1)
             SetPenTipCursor();
+            SpotLightMode = false;
             btZoom.BackgroundImage = getImgFromDiskOrRes("Zoom");
             Root.UponButtonsUpdate |= 0x2;
         }
