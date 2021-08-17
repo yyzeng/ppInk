@@ -38,10 +38,11 @@ namespace gInk
         public const int NoFrame = -1;      // for Stamps
         public const int Empty = 0;
         public const int PenColorFilled = 1;
-        public const int WhiteFilled = 2;
-        public const int BlackFilled = 3;
-        public const int Modulo = 4;
-        public static readonly string[] Names = { "NoFrames","Empty", "Pen Colored", "White Colored", "Black Colored" };  //starting at -1
+        public const int Outside = 2;
+        public const int WhiteFilled = 3;
+        public const int BlackFilled = 4;
+        public const int Modulo = 5;
+        public static readonly string[] Names = { "NoFrames","Empty", "Pen Colored", "Outside", "White Colored", "Black Colored" };  //starting at -1
     } // applicable to Hand,Rect,Oval
 
     public class Orientation{
@@ -151,9 +152,10 @@ namespace gInk
         //public Guid ISRECT_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 1, 2);
         //public Guid ISOVAL_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 1, 3);
 
-        public static Guid ISFILLEDCOLOR_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 1);
-        public static Guid ISFILLEDWHITE_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 2);
-        public static Guid ISFILLEDBLACK_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 3);
+        public static Guid ISFILLEDCOLOR_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 12, 1);
+        public static Guid ISFILLEDWHITE_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 12, 2);
+        public static Guid ISFILLEDBLACK_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 12, 3);
+        public static Guid ISFILLEDOUTSIDE_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 12, 4);
         public static Guid IMAGE_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 4);
         public static Guid IMAGE_X_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 5);
         public static Guid IMAGE_Y_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 6);

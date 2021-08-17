@@ -373,7 +373,21 @@ namespace gInk
                     if (st.ExtendedProperties.Contains(Root.ISHIDDEN_GUID))
                         continue;
                     //else //Should not be drawn as a stroke : for the moment only filled values.
-                    if(st.ExtendedProperties.Contains(Root.ISFILLEDCOLOR_GUID) || st.ExtendedProperties.Contains(Root.ISFILLEDWHITE_GUID) || st.ExtendedProperties.Contains(Root.ISFILLEDBLACK_GUID) )
+                    if (st.ExtendedProperties.Contains(Root.ISFILLEDOUTSIDE_GUID))
+                    {
+                        SolidBrush bru = new SolidBrush(Color.FromArgb(255 - st.DrawingAttributes.Transparency, st.DrawingAttributes.Color));
+                        try
+                        {
+                            GraphicsPath gp = new GraphicsPath();
+                            gp.AddRectangle(new Rectangle(0, 0, this.Width, this.Height));
+                            Point[] pts = st.DrawingAttributes.FitToCurve ? st.GetFlattenedBezierPoints(0) : st.GetPoints();
+                            Root.FormCollection.IC.Renderer.InkSpaceToPixel(gOneStrokeCanvus, ref pts);
+                            gp.AddPolygon(pts);
+                            g.FillPath(bru, gp);
+                        }
+                        catch { }
+                    }
+                    else if (st.ExtendedProperties.Contains(Root.ISFILLEDCOLOR_GUID) || st.ExtendedProperties.Contains(Root.ISFILLEDWHITE_GUID) || st.ExtendedProperties.Contains(Root.ISFILLEDBLACK_GUID) )
                     {
                         SolidBrush bru;
                         if (st.ExtendedProperties.Contains(Root.ISFILLEDCOLOR_GUID))
@@ -404,7 +418,6 @@ namespace gInk
                         }
 
                     }
-                    /*else */
                     if (st.ExtendedProperties.Contains(Root.IMAGE_GUID))
                     {
                         //Image img = Root.FormCollection.ClipartsDlg.Images.Images[(int)(st.ExtendedProperties[Root.IMAGE_GUID].Data)];
@@ -518,7 +531,21 @@ namespace gInk
                     if (st.ExtendedProperties.Contains(Root.ISHIDDEN_GUID))
                         continue;
                     //else //Should not be drawn as a stroke : for the moment only filled values.
-                    if (st.ExtendedProperties.Contains(Root.ISFILLEDCOLOR_GUID) || st.ExtendedProperties.Contains(Root.ISFILLEDWHITE_GUID) || st.ExtendedProperties.Contains(Root.ISFILLEDBLACK_GUID))
+                    if (st.ExtendedProperties.Contains(Root.ISFILLEDOUTSIDE_GUID))
+                    {
+                        SolidBrush bru = new SolidBrush(Color.FromArgb(255 - st.DrawingAttributes.Transparency, st.DrawingAttributes.Color));
+                        try
+                        {
+                            GraphicsPath gp = new GraphicsPath();
+                            gp.AddRectangle(new Rectangle(0, 0, this.Width, this.Height));
+                            Point[] pts = st.DrawingAttributes.FitToCurve ? st.GetFlattenedBezierPoints(0) : st.GetPoints();
+                            Root.FormCollection.IC.Renderer.InkSpaceToPixel(gOneStrokeCanvus, ref pts);
+                            gp.AddPolygon(pts);
+                            g.FillPath(bru, gp);
+                        }
+                        catch { }
+                    }
+                    else if (st.ExtendedProperties.Contains(Root.ISFILLEDCOLOR_GUID) || st.ExtendedProperties.Contains(Root.ISFILLEDWHITE_GUID) || st.ExtendedProperties.Contains(Root.ISFILLEDBLACK_GUID))
                     {
                         SolidBrush bru;
                         if (st.ExtendedProperties.Contains(Root.ISFILLEDCOLOR_GUID))

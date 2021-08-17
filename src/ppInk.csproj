@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -205,19 +205,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <EmbeddedResource Include="Root.resx">
       <DependentUpon>Root.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="gInk.exe.manifest" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -356,11 +352,13 @@
     <None Include="tool_hand_filledB.png" />
     <None Include="tool_hand_filledC.png" />
     <None Include="tool_hand_filledW.png" />
+    <None Include="tool_hand_out.png" />
     <Content Include="tool_line_act.png" />
     <None Include="tool_mlines.png" />
     <None Include="tool_mlines_filledB.png" />
     <None Include="tool_mlines_filledC.png" />
     <None Include="tool_mlines_filledW.png" />
+    <None Include="tool_mlines_out.png" />
     <Content Include="tool_numb.png" />
     <Content Include="tool_numb_act.png" />
     <Content Include="tool_numb_fillB.png" />
@@ -370,10 +368,12 @@
     <Content Include="tool_oval_filledB.png" />
     <Content Include="tool_oval_filledC.png" />
     <Content Include="tool_oval_filledW.png" />
+    <None Include="tool_oval_out.png" />
     <Content Include="tool_rect_act.png" />
     <Content Include="tool_rect_filledB.png" />
     <Content Include="tool_rect_filledC.png" />
     <Content Include="tool_rect_filledW.png" />
+    <None Include="tool_rect_out.png" />
     <Content Include="tool_StAr.png" />
     <Content Include="tool_StAr_act.png" />
     <Content Include="tool_txtL.png" />

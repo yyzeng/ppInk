@@ -1464,6 +1464,8 @@ namespace gInk
                 st.ExtendedProperties.Add(Root.ISFILLEDWHITE_GUID, true);
             else if (FilledSelected == Filling.BlackFilled)
                 st.ExtendedProperties.Add(Root.ISFILLEDBLACK_GUID, true);
+            else if (FilledSelected == Filling.Outside)
+                st.ExtendedProperties.Add(Root.ISFILLEDOUTSIDE_GUID, true);
             try
             {
                 // if the penattributes is not fading there is no properties and it will turn into an exception
@@ -3221,6 +3223,8 @@ namespace gInk
                     btHand.BackgroundImage = getImgFromDiskOrRes("tool_hand_filledW", ImageExts);
                 else if (Root.FilledSelected == Filling.BlackFilled)
                     btHand.BackgroundImage = getImgFromDiskOrRes("tool_hand_filledB", ImageExts);
+                else if (Root.FilledSelected == Filling.Outside)
+                    btHand.BackgroundImage = getImgFromDiskOrRes("tool_hand_out", ImageExts);
                 if (gpSubTools.Visible && subTools_title.Contains("Hand"))
                     changeActiveTool(Root.FilledSelected, false, 1);
             }
@@ -3237,7 +3241,7 @@ namespace gInk
                     if (gpSubTools.Visible && subTools_title.Contains("Line"))
                         changeActiveTool(1, false, 1);
                 }
-                else if ((Root.ToolSelected == Tools.Poly && (Root.FilledSelected == Filling.Empty || Root.FilledSelected > Filling.BlackFilled)) || (Root.ToolSelected != Tools.Poly))
+                else if ((Root.ToolSelected == Tools.Poly && (Root.FilledSelected == Filling.Empty || Root.FilledSelected > Filling.Outside)) || (Root.ToolSelected != Tools.Poly))
                 {
                     tool = Tools.Line;
                     Root.FilledSelected = Filling.Empty;
@@ -3261,6 +3265,8 @@ namespace gInk
                     btLine.BackgroundImage = getImgFromDiskOrRes("tool_mlines_filledW", ImageExts);
                 else if (Root.FilledSelected == Filling.BlackFilled)
                     btLine.BackgroundImage = getImgFromDiskOrRes("tool_mlines_filledB", ImageExts);
+                else if (Root.FilledSelected == Filling.Outside)
+                    btLine.BackgroundImage = getImgFromDiskOrRes("tool_mlines_out", ImageExts);
 
             }
             else if (tool == Tools.Rect)
@@ -3273,6 +3279,8 @@ namespace gInk
                     btRect.BackgroundImage = getImgFromDiskOrRes("tool_rect_filledW", ImageExts);
                 else if (Root.FilledSelected == Filling.BlackFilled)
                     btRect.BackgroundImage = getImgFromDiskOrRes("tool_rect_filledB", ImageExts);
+                else if (Root.FilledSelected == Filling.Outside)
+                    btRect.BackgroundImage = getImgFromDiskOrRes("tool_rect_out", ImageExts);
                 if (gpSubTools.Visible && subTools_title.Contains("Rect"))
                     changeActiveTool(Root.FilledSelected, false, 1);
             }
@@ -3290,6 +3298,8 @@ namespace gInk
                     btOval.BackgroundImage = getImgFromDiskOrRes("tool_oval_filledW", ImageExts);
                 else if (Root.FilledSelected == Filling.BlackFilled)
                     btOval.BackgroundImage = getImgFromDiskOrRes("tool_oval_filledB", ImageExts);
+                else if (Root.FilledSelected == Filling.Outside)
+                    btOval.BackgroundImage = getImgFromDiskOrRes("tool_oval_out", ImageExts);
                 if (gpSubTools.Visible && subTools_title.Contains("Oval"))
                     changeActiveTool(Root.FilledSelected, false, 1);
             }
@@ -5892,9 +5902,10 @@ namespace gInk
             int i = -1;
             if (((Button)sender).Name.Contains("Hand"))
             {
-                CustomizeAndOpenSubTools(-1 , "SubToolsHand", new string[] { "tool_hand_act", "tool_hand_filledC", "tool_hand_filledW", "tool_hand_filledB" },Root.Local.HandSubToolsHints,
+                CustomizeAndOpenSubTools(-1 , "SubToolsHand", new string[] { "tool_hand_act", "tool_hand_filledC", "tool_hand_out", "tool_hand_filledW", "tool_hand_filledB" },Root.Local.HandSubToolsHints,
                                      new Func<int, bool>[] { ii => { SelectTool(Tools.Hand,Filling.Empty); return true; },
                                                              ii => { SelectTool(Tools.Hand,Filling.PenColorFilled); return true; },
+                                                             ii => { SelectTool(Tools.Hand,Filling.Outside ); return true; },
                                                              ii => { SelectTool(Tools.Hand,Filling.WhiteFilled); return true; },
                                                              ii => { SelectTool(Tools.Hand,Filling.BlackFilled ); return true; } });
                 i = Tools.Hand;
@@ -5902,30 +5913,33 @@ namespace gInk
             }
             else if (((Button)sender).Name.Contains("Line"))
             {
-                CustomizeAndOpenSubTools(-1, "SubToolsLines", new string[] { "tool_line_act", "tool_mlines", "tool_mlines_filledC", "tool_mlines_filledW", "tool_mlines_filledB" }, Root.Local.LineSubToolsHints,
+                CustomizeAndOpenSubTools(-1, "SubToolsLines", new string[] { "tool_line_act", "tool_mlines", "tool_mlines_filledC", "tool_mlines_out", "tool_mlines_filledW", "tool_mlines_filledB" }, Root.Local.LineSubToolsHints,
                                      new Func<int, bool>[] { ii => { SelectTool(Tools.Line,Filling.Empty); return true; },
                                                              ii => { SelectTool(Tools.Poly ,Filling.Empty); return true; },
                                                              ii => { SelectTool(Tools.Poly ,Filling.PenColorFilled); return true; },
+                                                             ii => { SelectTool(Tools.Poly, Filling.Outside); return true; },
                                                              ii => { SelectTool(Tools.Poly,Filling.WhiteFilled); return true; },
                                                              ii => { SelectTool(Tools.Poly,Filling.BlackFilled ); return true; } });
-                i = Root.ToolSelected == Tools.Poly ? Tools.Poly : Tools.Line;    // to keep filled
+            i = Root.ToolSelected == Tools.Poly ? Tools.Poly : Tools.Line;    // to keep filled
             }
 
             else if (((Button)sender).Name.Contains("Rect"))
             {
-                CustomizeAndOpenSubTools(-1, "SubToolsRect", new string[] { "tool_rect_act", "tool_rect_filledC", "tool_rect_filledW", "tool_rect_filledB" }, Root.Local.RectSubToolsHints,
+                CustomizeAndOpenSubTools(-1, "SubToolsRect", new string[] { "tool_rect_act", "tool_rect_filledC", "tool_rect_out", "tool_rect_filledW", "tool_rect_filledB" }, Root.Local.RectSubToolsHints,
                                      new Func<int, bool>[] { ii => { SelectTool(Tools.Rect,Filling.Empty); return true; },
                                                              ii => { SelectTool(Tools.Rect,Filling.PenColorFilled); return true; },
+                                                             ii => { SelectTool(Tools.Rect,Filling.Outside); return true; },
                                                              ii => { SelectTool(Tools.Rect,Filling.WhiteFilled); return true; },
-                                                             ii => { SelectTool(Tools.Rect,Filling.BlackFilled ); return true; } });
+                                                             ii => { SelectTool(Tools.Rect,Filling.BlackFilled); return true; } });
                 i = Tools.Rect;
 
             }
             else if (((Button)sender).Name.Contains("Oval"))
             {
-                CustomizeAndOpenSubTools(-1, "SubToolsOval", new string[] { "tool_oval_act", "tool_oval_filledC", "tool_oval_filledW", "tool_oval_filledB" }, Root.Local.OvalSubToolsHints,
+                CustomizeAndOpenSubTools(-1, "SubToolsOval", new string[] { "tool_oval_act", "tool_oval_filledC", "tool_oval_out", "tool_oval_filledW", "tool_oval_filledB" }, Root.Local.OvalSubToolsHints,
                                      new Func<int, bool>[] { ii => { SelectTool(Tools.Oval,Filling.Empty); return true; },
                                                              ii => { SelectTool(Tools.Oval,Filling.PenColorFilled); return true; },
+                                                             ii => { SelectTool(Tools.Oval,Filling.Outside ); return true; },
                                                              ii => { SelectTool(Tools.Oval,Filling.WhiteFilled); return true; },
                                                              ii => { SelectTool(Tools.Oval,Filling.BlackFilled ); return true; } });
                 i = Tools.Oval;

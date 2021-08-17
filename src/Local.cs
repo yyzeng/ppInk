@@ -33,10 +33,10 @@ namespace gInk
 		public string ButtonNameExit = "Exit drawing";
 		public string ButtonNameDock = "Dock/Undock";
         public string ButtonNameClose = "Close\n(in addition to Alt+F4)";
-        public string ButtonNameHand = "Handfree drawing (standard | color filled | White filled | Black filled)";
+        public string ButtonNameHand = "Handfree drawing (standard | color filled | Outside | White filled | Black filled)";
         public string ButtonNameLine = "Line Shape";
-        public string ButtonNameRect = "Rectangle shape (empty | color filled | White filled | Black filled)";
-        public string ButtonNameOval = "Ellipsis shape (empty | color filled | White filled | Black filled)";
+        public string ButtonNameRect = "Rectangle shape (empty | color filled | Outside | White filled | Black filled)";
+        public string ButtonNameOval = "Ellipsis shape (empty | color filled | Outside | White filled | Black filled)";
         public string ButtonNameArrow = "Arrow shape (head at start | at end)";
         public string ButtonNameNumb = "Numbered chip (put | reset number)";
         public string ButtonNameText = "Text (Left|Right aligned)";
@@ -193,10 +193,10 @@ namespace gInk
 
         public string PanSubToolsHints = "Move one stroke\nPan all strokes\nCopy one stroke";
         public string ScaleSubToolsHints = "Resize one stroke/group\nRotate one stroke/group";
-        public string HandSubToolsHints = "Handfree drawing\nColor filled drawing\nWhite filled drawing\nBlack filled drawing";
-        public string LineSubToolsHints = "Segment\nPolyLine\nColored Polygon\nWhite Polygon\nBlack Polygon";
-        public string RectSubToolsHints = "Rectangle\nColor filled Rectangle\nWhite filled Rectangle\nBlack filled Rectangle";
-        public string OvalSubToolsHints = "Ellipsis\nColored  Ellipsis\nWhite Ellipsis\nBlack Ellipsis";
+        public string HandSubToolsHints = "Handfree drawing\nColor filled drawing\nEmpty Drawing\nWhite filled drawing\nBlack filled drawing";
+        public string LineSubToolsHints = "Segment\nPolyLine\nColored Polygon\nEmpty Polygon\nWhite Polygon\nBlack Polygon";
+        public string RectSubToolsHints = "Rectangle\nColor filled Rectangle\nEmpty Rectangle\nWhite filled Rectangle\nBlack filled Rectangle";
+        public string OvalSubToolsHints = "Ellipsis\nColored Ellipsis\nEmpty Ellipsis\nWhite Ellipsis\nBlack Ellipsis";
         public string ArrowSubToolsHints = "Arrow starting by head\nArrow starting by tail";
         public string TextSubToolsHints = "Left Aligned Text\nRight Aligned Text";
 
