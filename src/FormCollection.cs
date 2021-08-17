@@ -2135,9 +2135,9 @@ namespace gInk
                 }
                 else
                 {
-                    e.Stroke.DrawingAttributes.Color = Color.Transparent;
                     try { e.Stroke.ExtendedProperties.Remove(Root.ISHIDDEN_GUID); } catch { }
-                    //e.Stroke.ExtendedProperties.Add(Root.ISSTROKE_GUID, true);
+                    e.Stroke.DrawingAttributes.Transparency = 255;
+                    e.Stroke.ExtendedProperties.Add(Root.ISSTROKE_GUID, true);                  // Declared as stroke but with empy : that way after edition you make le line visible
                     e.Stroke.ExtendedProperties.Add(Root.IMAGE_GUID, Root.ImageStamp.ImageStamp);
                     e.Stroke.ExtendedProperties.Add(Root.IMAGE_X_GUID, (double)Root.CursorX0); // just to ensure no bug
                     e.Stroke.ExtendedProperties.Add(Root.IMAGE_Y_GUID, (double)Root.CursorY0);
