@@ -819,6 +819,8 @@ namespace gInk
                                 Root.FormCollection.ActivateZoomDyn();
                             else if (s == "capt")//Capture
                                 Root.FormCollection.StartZoomCapt();
+                            else if (s == "spot")//Spot on Cursor
+                                Root.FormCollection.ActivateSpot();
                             else
                                 resp.StatusCode = 400;
                         }
@@ -830,6 +832,8 @@ namespace gInk
                                 s = "Capt";
                             else if (Root.FormCollection.ZoomForm.Visible)
                                 s = "Dyn";
+                            else if (Root.FormCollection.SpotLightMode)
+                                s = "Spot";
                             else
                                 s = "No";
                             ret = "{ \"Zoom\": \""+s+"\" }";

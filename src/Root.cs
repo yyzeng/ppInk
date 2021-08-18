@@ -784,6 +784,7 @@ namespace gInk
             FormButtonHitter.timer1_Tick(null,null); // Force Size recomputation for alt+tab processing
             if (ColorPickerMode)
                 FormCollection.StartStopPickUpColor(0);
+            FormCollection.SpotLightTemp = false;
         }
 
         public void UnPointer()

@@ -6158,6 +6158,7 @@ namespace gInk
         public bool ZoomCaptured=false;
         public bool SpotLightMode = false;
         public bool SpotLightTemp = false;
+       
         private void btZoom_click(object sender, EventArgs e)
         {
             if (ToolbarMoved)
@@ -6240,6 +6241,13 @@ namespace gInk
             ZoomForm.Height = (int)(Root.ZoomHeight * Root.ZoomScale);
             ZoomForm.Show();
             btZoom.BackgroundImage = getImgFromDiskOrRes("Zoom_act");
+        }
+
+        public void ActivateSpot()
+        {
+            StopAllZooms();
+            SpotLightMode = true;
+            btZoom.BackgroundImage = getImgFromDiskOrRes("flashLight");
         }
 
         private void FormCollection_FormClosing(object sender, FormClosingEventArgs e)
