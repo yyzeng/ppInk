@@ -597,8 +597,8 @@ namespace gInk
                     if (dlg.ModifyPen(ref Root.PenAttr[p]))
                     {
                         (sender as PictureBox).BackColor = Color.FromArgb(255, Root.PenAttr[p].Color);
-                        comboPensAlpha[p].Text = string.Format("{0}", Root.PenAttr[p].Transparency);
-                        comboPensWidth[p].Text = string.Format("{0}", Root.PenAttr[p].Width);
+                        comboPensAlpha[p].Text = string.Format("{0}", 255-Root.PenAttr[p].Transparency);
+                        comboPensWidth[p].Text = string.Format("{0:N0}", Root.PenAttr[p].Width);
                         comboPensFading[p].Checked = Root.PenAttr[p].ExtendedProperties.Contains(Root.FADING_PEN);
                         comboPensLineStyle[p].BackgroundImage = FormCollection.getImgFromDiskOrRes("DashStyle" + Root.LineStyleToString(Root.PenAttr[p].ExtendedProperties));
                     }
