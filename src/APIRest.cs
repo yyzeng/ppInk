@@ -383,7 +383,7 @@ namespace gInk
                     else if (req.Url.AbsolutePath == "/CurrentTool")
                     {
                         string s;
-                        int i = 0, f = 0;
+                        int i = 0, f = 0, a = 0;
                         int w = -1, h = -1;
                         double dist = -1;
                         if (!(Root.FormDisplay.Visible || Root.FormCollection.Visible))
@@ -399,6 +399,11 @@ namespace gInk
                                 f = Filling.NoFrame;
                             else if (!(query.TryGetValue("F", out s) && int.TryParse(s, out f) && -1 <= f && f < Filling.Modulo))
                                 resp.StatusCode = 400;
+                            if ((query.TryGetValue("A", out s) && int.TryParse(s, out a)))
+                            {
+                                if (a >= 1 && a <= Root.ArrowHead.Count)
+                                    Root.CurrentArrow = a-1;
+                            }
                             if (!(query.TryGetValue("W", out s) && int.TryParse(s, out w)))
                                 w = -1;
                             if (!(query.TryGetValue("H", out s) && int.TryParse(s, out h)))

@@ -154,6 +154,8 @@ namespace gInk
         public double PatternLastPtRemain = 0;
         public double PatternDist = double.MaxValue;
 
+        public List<Bitmap> StoredArrowImages = new List<Bitmap>();
+
 
         // http://www.csharp411.com/hide-form-from-alttab/
         protected override CreateParams CreateParams
@@ -246,6 +248,37 @@ namespace gInk
             {
                 return getImgFromDiskOrRes("unknown");
             }
+        }
+
+        private double WidthForHalfDiag = 18.0 * global::gInk.Properties.Resources._null.Width * Math.Sqrt(2) / 2.0 / 300.0;
+        private Bitmap BuildArrowBtn(string head,string tail,Color col)
+        {
+            Bitmap b = new Bitmap(global::gInk.Properties.Resources._null);
+            Graphics g = Graphics.FromImage(b);
+
+            g.CompositingQuality = CompositingQuality.HighQuality;
+            g.PixelOffsetMode = PixelOffsetMode.Half;
+            int i,j;
+            Bitmap b1 = PrepareArrowBitmap(head, col, 0, (int)Math.Round(WidthForHalfDiag), (float)(-225.0*Math.PI/180.0),out i);
+
+/*            g.DrawImage(b1, new Rectangle(b.Width / 2, 0, b.Width / 2, b.Height / 2), 0, b1.Height / 2, b1.Width / 2, b1.Height / 2,GraphicsUnit.Pixel);
+            b1.Dispose();
+            b1 = PrepareArrowBitmap(tail, col, 0, (int)Math.Round(WidthForHalfDiag), (float)(-45.0 * Math.PI / 180.0), out j);
+
+            g.DrawImage(b1, new Rectangle(0, b.Height / 2, b.Width / 2, b.Height / 2), b1.Width / 2, 0, b1.Width / 2, b1.Height / 2, GraphicsUnit.Pixel);
+            Pen p = new Pen(col,2);
+            g.DrawLine(p, (1F - .25F * i / 150.0F) * b.Width, ( .25F * i / 150.0F) * b.Height, (.25F * j / 150.0F) * b.Width, (1F - .25F * j / 150.0F) * b.Height);
+*/
+            g.DrawImage(b1, new Rectangle((int)(.375 * b.Width), 0, (int)(.75 * b.Width), (int)(.75 * b.Height)), 0, (int)(.375 * b1.Height), (int)(.75 * b1.Width), (int)(.75 * b1.Height),GraphicsUnit.Pixel);
+            b1.Dispose();
+            b1 = PrepareArrowBitmap(tail, col, 0, (int)Math.Round(WidthForHalfDiag), (float)(-45.0 * Math.PI / 180.0), out j);
+
+            g.DrawImage(b1, new Rectangle(0, (int)(.375 * b.Height), (int)(.75 * b.Width), (int)(.75 * b.Height)), (int)(.375 * b1.Width), 0,(int)(.75 * b1.Width), (int)(.75 * b1.Height), GraphicsUnit.Pixel);
+            Pen p = new Pen(col,2);
+            g.DrawLine(p, (1F - .25F * i / 150.0F) * b.Width, ( .25F * i / 150.0F) * b.Height, (.25F * j / 150.0F) * b.Width, (1F - .25F * j / 150.0F) * b.Height);
+            b1.Dispose();
+            g.Dispose();
+            return b;
         }
 
         private void SetButtonPosition(Button previous, Button current, int spacing, int Orient = -1)
@@ -464,6 +497,10 @@ namespace gInk
 
             MeasureNumberFormat = (NumberFormatInfo) NumberFormatInfo.CurrentInfo.Clone();
             MeasureNumberFormat.NumberDecimalDigits = Root.Measure2Digits;
+
+            for (int i = 0; i < StoredArrowImages.Count; i++)
+                try { StoredArrowImages[i].Dispose(); } catch { }
+            StoredArrowImages.Clear();
 
             Root.Snapping = 0;
             Root.ColorPickerMode = false;
@@ -1626,19 +1663,76 @@ namespace gInk
             return Root.ArrowLen * Math.Max(.5, Math.Pow(IC.DefaultDrawingAttributes.Width / Root.PenWidthNormal,.7));
         }
 
+        public Bitmap PrepareArrowBitmap(string fn, Color col, int transparency, int PenWidth_p, float angle_r,out int conn_len)
+        {
+            Bitmap bmpi = getImgFromDiskOrRes(fn, ImageExts);
+            ImageAttributes imageAttributes = new ImageAttributes();
+
+            conn_len = 0;
+            int i = bmpi.Height / 2 + 1; //normally line 101
+            while (conn_len < bmpi.Width && !bmpi.GetPixel(conn_len, i).ToArgb().Equals(Color.Blue.ToArgb()))
+                conn_len++;
+            if (conn_len == bmpi.Width)
+                conn_len = bmpi.Width / 2;
+            conn_len = bmpi.Width / 2 - conn_len;
+
+            float[][] colorMatrixElements = {
+                       new float[] {col.R/255.0f,  0,  0,  0, 0},
+                       new float[] {0,  col.G / 255.0f,  0,  0, 0},
+                       new float[] {0,  0,  col.B / 255.0f,  0, 0},
+                       new float[] {0,  0,  0, (255 - transparency) / 255.0f, 0},
+                       new float[] {0,  0,  0,     0,  1}};
+            ColorMatrix colorMatrix = new ColorMatrix(colorMatrixElements);
+            imageAttributes.SetColorMatrix(colorMatrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+
+            float f = PenWidth_p / 18.0F;
+            float w = (float)(Math.Abs(Math.Cos(angle_r)) * f * bmpi.Width + Math.Abs(Math.Sin(angle_r)) * f * bmpi.Height);
+            float h = (float)(Math.Abs(Math.Sin(angle_r)) * f * bmpi.Width + Math.Abs(Math.Cos(angle_r)) * f * bmpi.Height);
+
+            Bitmap bmpo = new Bitmap((int)Math.Round(w, 0), (int)Math.Round(h, 0), PixelFormat.Format32bppPArgb);
+            Graphics g = Graphics.FromImage(bmpo);
+
+            g.TranslateTransform(-bmpi.Width / 2, -bmpi.Height / 2);
+            g.ScaleTransform(f, f, MatrixOrder.Append);
+            if(Path.GetFileName(fn)[0]!='!')
+                g.RotateTransform(180+angle_r/(float)Math.PI * 180.0F, MatrixOrder.Append);
+            g.TranslateTransform(w/2, h/2, MatrixOrder.Append);
+            g.CompositingQuality = CompositingQuality.HighQuality;
+            g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
+            g.DrawImage(bmpi, new Rectangle(0, 0, bmpi.Width, bmpi.Height), 0,0, bmpi.Width, bmpi.Height, GraphicsUnit.Pixel, imageAttributes);
+
+            g.Dispose();
+            bmpi.Dispose();
+            return bmpo;
+        }
+
         private Stroke AddArrowStroke(int CursorX0, int CursorY0, int CursorX, int CursorY)
         // arrow at starting point
         {
-            Point[] pts = new Point[5];
+            Point[] pts = new Point[2];
             double theta = Math.Atan2(CursorY - CursorY0, CursorX - CursorX0);
+            double len = Math.Sqrt((CursorX - CursorX0) * (CursorX - CursorX0)+(CursorY - CursorY0)*(CursorY - CursorY0));
+            double scale = (Root.FormCollection.IC.DefaultDrawingAttributes.Width * 0.037795280352161) / 18.0;
 
             double l = ArrowVarLen();
 
-            pts[0] = new Point((int)(CursorX0 + Math.Cos(theta + Root.ArrowAngle) * l), (int)(CursorY0 + Math.Sin(theta + Root.ArrowAngle) * l));
+            /*pts[0] = new Point((int)(CursorX0 + Math.Cos(theta + Root.ArrowAngle) * l), (int)(CursorY0 + Math.Sin(theta + Root.ArrowAngle) * l));
             pts[1] = new Point(CursorX0, CursorY0);
             pts[2] = new Point((int)(CursorX0 + Math.Cos(theta - Root.ArrowAngle) * l), (int)(CursorY0 + Math.Sin(theta - Root.ArrowAngle) * l));
             pts[3] = new Point(CursorX0, CursorY0);
-            pts[4] = new Point(CursorX, CursorY);
+            pts[4] = new Point(CursorX, CursorY);*/
+            int l1, l2;
+            Bitmap bmp =PrepareArrowBitmap(Root.ArrowHead[Root.CurrentArrow], Root.FormCollection.IC.DefaultDrawingAttributes.Color, Root.FormCollection.IC.DefaultDrawingAttributes.Transparency, 
+                                       Root.HiMetricToPixel(Root.FormCollection.IC.DefaultDrawingAttributes.Width), (float)theta, out l1);
+            StoredArrowImages.Add(bmp);
+            int i = StoredArrowImages.Count - 1;
+            bmp = PrepareArrowBitmap(Root.ArrowTail[Root.CurrentArrow], Root.FormCollection.IC.DefaultDrawingAttributes.Color, Root.FormCollection.IC.DefaultDrawingAttributes.Transparency, 
+                                       Root.HiMetricToPixel(Root.FormCollection.IC.DefaultDrawingAttributes.Width), (float)(Math.PI + theta),out l2);
+            StoredArrowImages.Add(bmp);
+            int j = StoredArrowImages.Count - 1;
+
+            pts[0] = new Point((int)Math.Round(CursorX0 + Math.Cos(theta) * scale * l1), (int)Math.Round(CursorY0 + Math.Sin(theta) * scale * l1));
+            pts[1] = new Point((int)Math.Round(CursorX - Math.Cos(theta) * scale * l2), (int)Math.Round(CursorY - Math.Sin(theta) * scale * l2));
 
             IC.Renderer.PixelToInkSpace(Root.FormDisplay.gOneStrokeCanvus, ref pts);
             Stroke st = Root.FormCollection.IC.Ink.CreateStroke(pts);
@@ -1646,6 +1740,15 @@ namespace gInk
             st.DrawingAttributes.AntiAliased = true;
             st.DrawingAttributes.FitToCurve = false;
             setStrokeProperties(ref st, 0);
+            st.ExtendedProperties.Add(Root.ARROWSTART_GUID, i);
+            st.ExtendedProperties.Add(Root.ARROWSTART_X_GUID, CursorX0);
+            st.ExtendedProperties.Add(Root.ARROWSTART_Y_GUID, CursorY0);
+            st.ExtendedProperties.Add(Root.ARROWSTART_FN_GUID, Root.ArrowHead[Root.CurrentArrow]);
+            st.ExtendedProperties.Add(Root.ARROWEND_GUID, j);
+            st.ExtendedProperties.Add(Root.ARROWEND_X_GUID, CursorX);
+            st.ExtendedProperties.Add(Root.ARROWEND_Y_GUID, CursorY);
+            st.ExtendedProperties.Add(Root.ARROWEND_FN_GUID, Root.ArrowTail[Root.CurrentArrow]);
+
             Root.FormCollection.IC.Ink.Strokes.Add(st);
             if (st.ExtendedProperties.Contains(Root.FADING_PEN))
                 FadingList.Add(st);
@@ -2278,9 +2381,9 @@ namespace gInk
                 {
                     Console.WriteLine("Arrow");
                     if (((CurrentMouseButton == MouseButtons.Right) || ((int)CurrentMouseButton == 2)) ^ (Root.ToolSelected == Tools.StartArrow))
-                        AddArrowStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY);
-                    else
                         AddArrowStroke(Root.CursorX, Root.CursorY, Root.CursorX0, Root.CursorY0);
+                    else
+                        AddArrowStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY);
                 }
                 else if (Root.ToolSelected == Tools.NumberTag)
                 {
@@ -2302,11 +2405,17 @@ namespace gInk
                         }
                         else
                         {
-                            DrawingAttributes da = minStroke.DrawingAttributes.Clone();
                             AllowInteractions(true);
+                            DrawingAttributes da = minStroke.DrawingAttributes.Clone();
                             if (PenModifyDlg.ModifyPen(ref da))
                             {
                                 minStroke.DrawingAttributes = da;
+                            }
+                            if (minStroke.ExtendedProperties.Contains(Root.ARROWSTART_GUID))
+                            {
+                                ArrowSelDlg dlg = new ArrowSelDlg(Root);
+                                dlg.Initialize(minStroke);
+                                dlg.ShowDialog();
                             }
                             AllowInteractions(false);
                         }
@@ -3158,10 +3267,11 @@ namespace gInk
             btLine.BackgroundImage = getImgFromDiskOrRes("tool_line", ImageExts);
             btRect.BackgroundImage = getImgFromDiskOrRes("tool_rect", ImageExts);
             btOval.BackgroundImage = getImgFromDiskOrRes("tool_oval", ImageExts);
-            if (Root.DefaultArrow_start)
-                btArrow.BackgroundImage = getImgFromDiskOrRes("tool_stAr", ImageExts);
-            else
-                btArrow.BackgroundImage = getImgFromDiskOrRes("tool_enAr", ImageExts);
+            if(Root.ToolSelected != Tools.StartArrow)
+            {
+                btArrow.BackgroundImage.Dispose();
+                btArrow.BackgroundImage = BuildArrowBtn(Root.ArrowHead[Root.CurrentArrow], Root.ArrowTail[Root.CurrentArrow], Color.Black);
+            }
             btNumb.BackgroundImage = getImgFromDiskOrRes("tool_numb", ImageExts);
             btText.BackgroundImage = getImgFromDiskOrRes("tool_txtL", ImageExts);
             btEdit.BackgroundImage = getImgFromDiskOrRes("tool_edit", ImageExts);
@@ -3303,20 +3413,16 @@ namespace gInk
                 if (gpSubTools.Visible && subTools_title.Contains("Oval"))
                     changeActiveTool(Root.FilledSelected, false, 1);
             }
-            else if ((tool == Tools.StartArrow) || (tool == Tools.EndArrow)) // also include tool=5
-                if ((tool == Tools.EndArrow) || (Root.ToolSelected == Tools.StartArrow))
-                {
-                    btArrow.BackgroundImage = getImgFromDiskOrRes("tool_enAr_act", ImageExts);
-                    tool = Tools.EndArrow;
-                    if (gpSubTools.Visible && subTools_title.Contains("Arrow"))
-                        changeActiveTool(1, false, 1);
-                }
-                else
-                {
-                    btArrow.BackgroundImage = getImgFromDiskOrRes("tool_stAr_act", ImageExts);
-                    tool = Tools.StartArrow;
-                    if (gpSubTools.Visible && subTools_title.Contains("Arrow"))
-                        changeActiveTool(0, false, 1);
+            else if (tool == Tools.StartArrow) // also include tool=5
+            {
+                if (Root.ToolSelected == Tools.StartArrow)
+                    if (++Root.CurrentArrow >= Root.ArrowHead.Count)
+                        Root.CurrentArrow = 0;
+                btArrow.BackgroundImage.Dispose();
+                btArrow.BackgroundImage = BuildArrowBtn(Root.ArrowHead[Root.CurrentArrow], Root.ArrowTail[Root.CurrentArrow],Color.Orange);
+                tool = Tools.StartArrow;
+                if (gpSubTools.Visible && subTools_title.Contains("Arrow"))
+                    changeActiveTool(0, false, 1);
                 }
             else if (tool == Tools.NumberTag)
             {
@@ -5054,6 +5160,20 @@ namespace gInk
                 pressed = (GetKeyState(Root.Hotkey_Arrow.Key) & 0x8000) == 0x8000;
                 if (pressed && !LastArrowStatus && Root.Hotkey_Arrow.ModifierMatch(control, alt, shift, win))
                 {
+                    MouseTimeDown = DateTime.Now;
+                    LongHkPress = DateTime.Now.AddSeconds(Root.LongHKPressDelay);
+                }
+                if (LastArrowStatus && !pressed && DateTime.Now.CompareTo(LongHkPress) < 0)
+                {
+                    LongHkPress = DateTime.Now.AddYears(1);
+                    MouseTimeDown = DateTime.Now;
+                    LastArrowStatus = pressed; // btSave will be long... to prevent to restart process...
+                    btTool_Click(btArrow, null);
+                }
+                if (LastArrowStatus && pressed && DateTime.Now.CompareTo(LongHkPress) > 0)
+                {
+                    LongHkPress = DateTime.Now.AddYears(1);
+                    MouseTimeDown = DateTime.FromBinary(0);
                     btTool_Click(btArrow, null);
                 }
                 LastArrowStatus = pressed;
@@ -5953,14 +6073,16 @@ namespace gInk
                 CustomizeAndOpenSubTools(-1, "SubToolsArrow", new string[] { "tool_stAr_act", "tool_enAr_act" }, Root.Local.ArrowSubToolsHints,
                                      new Func<int, bool>[] { ii => { SelectTool(Tools.StartArrow ,Filling.Empty); return true; },
                                                              ii => { SelectTool(Tools.EndArrow ,Filling.Empty); return true; } });
-                if (Root.ToolSelected == Tools.EndArrow)
-                    i = Tools.StartArrow;
-                else if (Root.ToolSelected == Tools.StartArrow)
-                    i = Tools.EndArrow;
-                else if (Root.DefaultArrow_start)
-                    i = Tools.StartArrow;
-                else
-                    i = Tools.EndArrow;
+                if (sender != null && tsp.TotalSeconds > Root.LongClickTime)
+                {
+                    AllowInteractions(true);
+                    ArrowSelDlg dlg = new ArrowSelDlg(Root);
+                    dlg.ShowDialog();//==DialogResult.Cancel
+                    if(--Root.CurrentArrow<0)
+                        Root.CurrentArrow=Root.ArrowHead.Count-1;
+                    AllowInteractions(false);
+                }
+                i = Tools.StartArrow;
             }
             //               i = (Root.DefaultArrow_start ||Root.ToolSelected==5) ?4:5 ;
             else if (((Button)sender).Name.Contains("Numb"))
@@ -6763,6 +6885,25 @@ namespace gInk
                             st = fileout.ReadLine();
                         }
                         while (st.StartsWith("#"));
+                    }
+                    if (stk.ExtendedProperties.Contains(Root.ARROWSTART_GUID))
+                    {
+                        double theta = Math.Atan2((int)stk.ExtendedProperties[Root.ARROWEND_Y_GUID].Data - (int)stk.ExtendedProperties[Root.ARROWSTART_Y_GUID].Data,
+                                                  (int)stk.ExtendedProperties[Root.ARROWEND_X_GUID].Data - (int)stk.ExtendedProperties[Root.ARROWSTART_X_GUID].Data);
+                        Bitmap bmp = PrepareArrowBitmap(Root.ArrowHead[Root.CurrentArrow], Root.FormCollection.IC.DefaultDrawingAttributes.Color, Root.FormCollection.IC.DefaultDrawingAttributes.Transparency,
+                                                   Root.HiMetricToPixel(Root.FormCollection.IC.DefaultDrawingAttributes.Width), (float)theta, out l);
+                        StoredArrowImages.Add(bmp);
+                        stk.ExtendedProperties.Add(Root.ARROWSTART_GUID, StoredArrowImages.Count - 1);
+                    }
+                    if (stk.ExtendedProperties.Contains(Root.ARROWEND_GUID))
+                    {
+                        double theta = Math.Atan2((int)stk.ExtendedProperties[Root.ARROWEND_Y_GUID].Data - (int)stk.ExtendedProperties[Root.ARROWSTART_Y_GUID].Data,
+                                                  (int)stk.ExtendedProperties[Root.ARROWEND_X_GUID].Data - (int)stk.ExtendedProperties[Root.ARROWSTART_X_GUID].Data);
+                        Bitmap bmp = PrepareArrowBitmap(Root.ArrowTail[Root.CurrentArrow], Root.FormCollection.IC.DefaultDrawingAttributes.Color, Root.FormCollection.IC.DefaultDrawingAttributes.Transparency,
+                                                   Root.HiMetricToPixel(Root.FormCollection.IC.DefaultDrawingAttributes.Width), (float)(Math.PI + theta), out l);
+                        StoredArrowImages.Add(bmp);
+                        stk.ExtendedProperties.Add(Root.ARROWEND_GUID, StoredArrowImages.Count - 1);
+
                     }
                     stk.DrawingAttributes = stk.DrawingAttributes.Clone();
                     IC.Ink.Strokes.Add(stk);

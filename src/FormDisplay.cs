@@ -418,6 +418,20 @@ namespace gInk
                         }
 
                     }
+                    if (st.ExtendedProperties.Contains(Root.ARROWSTART_GUID))
+                    {
+                        Point pt = new Point((int)st.ExtendedProperties[Root.ARROWSTART_X_GUID].Data, (int)st.ExtendedProperties[Root.ARROWSTART_Y_GUID].Data);
+                        Bitmap b = Root.FormCollection.StoredArrowImages[(int)st.ExtendedProperties[Root.ARROWSTART_GUID].Data];
+                        pt.Offset(-b.Width/2, -b.Height / 2);
+                        g.DrawImage(b, new Rectangle(pt.X, pt.Y, b.Width, b.Height));
+                    }
+                    if (st.ExtendedProperties.Contains(Root.ARROWEND_GUID))
+                    {
+                        Point pt = new Point((int)st.ExtendedProperties[Root.ARROWEND_X_GUID].Data, (int)st.ExtendedProperties[Root.ARROWEND_Y_GUID].Data);
+                        Bitmap b = Root.FormCollection.StoredArrowImages[(int)st.ExtendedProperties[Root.ARROWEND_GUID].Data];
+                        pt.Offset(-b.Width / 2, -b.Height / 2);
+                        g.DrawImage(b, new Rectangle(pt.X, pt.Y, b.Width, b.Height));
+                    }
                     if (st.ExtendedProperties.Contains(Root.IMAGE_GUID))
                     {
                         //Image img = Root.FormCollection.ClipartsDlg.Images.Images[(int)(st.ExtendedProperties[Root.IMAGE_GUID].Data)];
@@ -907,9 +921,9 @@ namespace gInk
                         DrawEllipseOnGraphic(g, (CursorX0 + CursorX) / 2, (CursorY0 + CursorY) / 2, CursorX, CursorY, da, ds);
                 else if ((Root.ToolSelected == Tools.StartArrow) || (Root.ToolSelected == Tools.EndArrow))
                     if ((Root.ToolSelected == Tools.StartArrow) ^ ((Root.FormCollection.CurrentMouseButton == MouseButtons.Right) || ((int)(Root.FormCollection.CurrentMouseButton) == 2)))
-                        DrawArrowOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY, da, ds);
-                    else
                         DrawArrowOnGraphic(g, CursorX, CursorY, CursorX0, CursorY0, da, ds);
+                    else
+                        DrawArrowOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY, da, ds);
             }
         }
 

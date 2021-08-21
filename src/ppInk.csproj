@@ -103,6 +103,17 @@
       <DependentUpon>CallForm.cs</DependentUpon>
     </Compile>
     <Compile Include="APIRest.cs" />
+    <Compile Include="ArrowSelDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ArrowSelDlg.Designer.cs">
+      <DependentUpon>ArrowSelDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="zoomForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -168,6 +179,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Root.cs" />
+    <EmbeddedResource Include="ArrowSelDlg.resx">
+      <DependentUpon>ArrowSelDlg.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="CallForm.resx">
       <DependentUpon>CallForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -319,7 +333,15 @@
     <None Include="lasso.png" />
     <None Include="cursorHSI.png" />
     <None Include="cursortarget.ico" />
+    <None Include="ArrowHeads\Arw_Circle1.png" />
     <None Include="flashLight.png" />
+    <None Include="ArrowHeads\Arw_Arrow1.png" />
+    <None Include="ArrowHeads\Arw_Arrow2.png" />
+    <None Include="ArrowHeads\Arw_Arrow3.png" />
+    <None Include="ArrowHeads\Arw_None.png" />
+    <None Include="ArrowHeads\Arw_Tail1.png" />
+    <None Include="ArrowHeads\!Arw_Diamond1.png" />
+    <None Include="ArrowHeads\!Arw_Square1.png" />
     <Content Include="Magnetic.png" />
     <Content Include="Magnetic_act.png" />
     <None Include="pan1_act.png" />

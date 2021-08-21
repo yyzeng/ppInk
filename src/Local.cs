@@ -86,6 +86,8 @@ namespace gInk
         public string OptionsSpotLightRadius = "Rad. (%Scr)";
         public string OptionsSpotOnAlt = "Display On Alt";
 
+        public string ArrowDlg = "Arrow Definition";
+
 
         public string OptionMeasureGroup = "Measurement Tools";
         public string OptionMeasureLenLabel = "1 pixel =";
@@ -96,7 +98,13 @@ namespace gInk
 
         public string ButtonOkText = "&OK";
         public string ButtonCancelText = "&Cancel";
+        public string ButtonExitText = "&Exit";
         public string ButtonFontText = "&Font";
+        public string ButtonSaveText = "&Save";
+        public string ButtonPrevText = "&Previous";
+        public string ButtonNextText = "&Next";
+        public string ButtonAddText = "&Add";
+        public string ButtonDelText = "&Delete";
         public string DlgTextCaption = "Edit Text";
         public string DlgTextLabel = "Text Input";
         public string DlgTagCaption = "Tag Numbering";

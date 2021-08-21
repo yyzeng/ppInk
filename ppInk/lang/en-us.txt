@@ -61,6 +61,8 @@ OptionsSpotLightBox = "Spot On Cursor"
 OptionsSpotLightRadius = "Rad. (%Scr)"
 OptionsSpotOnAlt = "Display On Alt"
 
+ArrowDlg = "Arrow Definition"
+
 OptionMeasureGroup = "Measurement Tools"
 OptionMeasureLenLabel = "1 pixel ="
 OptionMeasureAngle = "Angle CounterClockwise"
@@ -88,7 +90,14 @@ BoardCustColorModifyTitle="Board Customed color"
 
 ButtonOkText = "&OK"
 ButtonCancelText = "&Cancel"
+ButtonExitText = "&Close"
 ButtonFontText = "&Font"
+ButtonSaveText = "&Save"
+ButtonPrevText = "&Previous"
+ButtonNextText = "&Next"
+ButtonAddText = "&Add"
+ButtonDelText = "&Delete"
+
 DlgTextCaption = "Edit Text"
 DlgTextLabel = "Text Input"
 DlgTagCaption = "Tag Numbering"

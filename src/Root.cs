@@ -166,6 +166,14 @@ namespace gInk
         public static Guid ANIMATIONFRAMEIMG_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 12);
         public static Guid REPETITIONDISTANCE_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 20);
         public static Guid LISTOFPOINTS_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 21);
+        public static Guid ARROWSTART_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 22);    // pointing head
+        public static Guid ARROWSTART_X_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 23);    // pointing head
+        public static Guid ARROWSTART_Y_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 24);    // pointing head
+        public static Guid ARROWSTART_FN_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 25);    // Original FileName
+        public static Guid ARROWEND_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 32);      // tail
+        public static Guid ARROWEND_X_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 33);      // tail
+        public static Guid ARROWEND_Y_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 34);      // tail
+        public static Guid ARROWEND_FN_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 35);    // 
 
         public static Guid FADING_PEN = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 3, 1);
         public static Guid DASHED_LINE_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 3, 2);        // will contain DashStyle style
@@ -311,7 +319,11 @@ namespace gInk
 		public int UndoP;
 		public int UndoDepth, RedoDepth;
 
-		public NotifyIcon trayIcon;
+        public int CurrentArrow = 0;
+        public List<string> ArrowHead = new List<string>();
+        public List<string> ArrowTail = new List<string>();
+
+        public NotifyIcon trayIcon;
 		public ContextMenu trayMenu;
 		public FormCollection FormCollection;
 		public FormDisplay FormDisplay;
@@ -1475,19 +1487,19 @@ namespace gInk
                                 ImageStampFilling = tempi;
                             break;
                         case "IMAGESTAMP_FILENAMES":
-                            if (sPara.Length == 0) break;
-                            string[] st = sPara.Replace('\\', '/').Trim(';').Split(';');
-                            foreach(string st1 in st)
                             {
-                                string st2;
-                                //if (!Path.IsPathFullyQualified(st1))
-                                if (!Path.IsPathRooted(st1))
-                                    st2 = Global.ProgramFolder + st1;
-                                else
-                                    st2 = st1;
-                                //if (!StampFileNames.Contains(st2))
-                                if (!ContainsInsensitive(StampFileNames,st2))
-                                    StampFileNames.Insert(StampFileNames.Count,st2);
+                                if (sPara.Length == 0) break;
+                                string[] st = sPara.Replace('\\', '/').Trim(';').Split(';');
+                                foreach (string st1 in st)
+                                {
+                                    string st2;
+                                    if (!Path.IsPathRooted(st1))
+                                        st2 = Global.ProgramFolder + st1;
+                                    else
+                                        st2 = st1;
+                                    if (!ContainsInsensitive(StampFileNames, st2))
+                                        StampFileNames.Insert(StampFileNames.Count, st2);
+                                }
                             }
                             break;
                         case "IMAGESTAMP1":
@@ -1498,6 +1510,36 @@ namespace gInk
                             break;
                         case "IMAGESTAMP3":
                             FillImageStampFromConfig(sPara, ref ImageStamp3);
+                            break;
+                        case "ARROW_HEAD":
+                            {
+                                if (sPara.Length == 0) break;
+                                string[] st = sPara.Replace('\\', '/').Trim(';').Split(';');
+                                foreach (string st1 in st)
+                                {
+                                    string st2;
+                                    if (st1.Contains(".") && !Path.IsPathRooted(st1))
+                                        st2 = Global.ProgramFolder + st1;
+                                    else
+                                        st2 = st1;
+                                    ArrowHead.Add(st2);
+                                }
+                            }
+                            break;
+                        case "ARROW_TAIL":
+                            {
+                                if (sPara.Length == 0) break;
+                                string[] st = sPara.Replace('\\', '/').Trim(';').Split(';');
+                                foreach (string st1 in st)
+                                {
+                                    string st2;
+                                    if (st1.Contains(".") && !Path.IsPathRooted(st1))
+                                        st2 = Global.ProgramFolder + st1;
+                                    else
+                                        st2 = st1;
+                                    ArrowTail.Add(st2);
+                                }
+                            }
                             break;
                         case "TOOLBAR_DIRECTION":
                             if (sPara.ToUpper() == "LEFT")
@@ -1652,7 +1694,10 @@ namespace gInk
         public void SaveOptions(string file)
 		{
             bool StampFileNamesAlreadyFilled = false;
-			if (!File.Exists(file))
+            bool ArrowHeadAlreadyFilled = false;
+            bool ArrowTailAlreadyFilled = false;
+
+            if (!File.Exists(file))
 				file = AppDomain.CurrentDomain.BaseDirectory + file;
 			if (!File.Exists(file))
 				return;
@@ -2119,6 +2164,42 @@ namespace gInk
                         case "IMAGESTAMP3":
                             sPara = MakeRelativePath(Global.ProgramFolder, ImageStamp3.ImageStamp).Replace('\\', '/') + ";" + ImageStamp3.Wstored.ToString() + ";" + ImageStamp3.Hstored.ToString() + ";" 
                                                         + Fill2Str(ImageStamp3.Filling) + ";" + (ImageStamp3.PatternLine ? "Line;" + ImageStamp3.Distance.ToString() : "Point");
+                            break;
+                        case "ARROW_HEAD":
+                            if (!ArrowHeadAlreadyFilled)
+                            {
+                                sPara = "";
+                                foreach (string st1 in ArrowHead)
+                                    if (st1.Contains("."))
+                                        sPara += MakeRelativePath(Global.ProgramFolder, st1).Replace('\\', '/') + ";";
+                                    else
+                                        sPara += st1 + ";";
+                                if (sPara.Length > 1)
+                                    sPara = sPara.Remove(sPara.Length - 1, 1); // to suppress last ;
+                                else //if(sPara.Length <=1)
+                                    sPara = " ";
+                                ArrowHeadAlreadyFilled= true;
+                            }
+                            else
+                                sPara = " ";
+                            break;
+                        case "ARROW_TAIL":
+                            if (!ArrowTailAlreadyFilled)
+                            {
+                                sPara = "";
+                                foreach (string st1 in ArrowTail)
+                                    if (st1.Contains("."))
+                                        sPara += MakeRelativePath(Global.ProgramFolder, st1).Replace('\\', '/') + ";";
+                                    else
+                                        sPara += st1 + ";";
+                                if (sPara.Length > 1)
+                                    sPara = sPara.Remove(sPara.Length - 1, 1); // to suppress last ;
+                                else //if(sPara.Length <=1)
+                                    sPara = " ";
+                                ArrowTailAlreadyFilled = true;
+                            }
+                            else
+                                sPara = " ";
                             break;
                         case "TOOLBAR_DIRECTION":
                             if (ToolbarOrientation == Orientation.toLeft)

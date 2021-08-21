@@ -381,6 +381,7 @@ namespace gInk
             this.ArrwGrp.Text = Root.Local.OptionsGeneralArrowHead;
             this.ArrHdAptLbl.Text = Root.Local.OptionsGeneralArrowHeadApt;
             this.ArrHdLenLbl.Text = Root.Local.OptionsGeneralArrowHeadLen;
+            this.NewArrowEditBtn.Text = shortTxt(Root.Local.ButtonNameArrow);
             this.DefTxtLbl.Text = shortTxt(Root.Local.ButtonNameText) + " - " + Root.Local.OptionsGeneralDefaultTextLbl;
             this.DefaultFontBtn.Text = Root.Local.OptionsGeneralDefaultTextBtn;
             this.DefTagLbl.Text = shortTxt(Root.Local.ButtonNameNumb)+" - "+Root.Local.OptionsGeneralDefaultTextLbl;
@@ -1316,6 +1317,12 @@ namespace gInk
         private void SpotRadTb_Validated(object sender, EventArgs e)
         {
             Root.SpotLightRadius = (int)(float.Parse(SpotRadTb.Text)/100.0F*System.Windows.SystemParameters.PrimaryScreenWidth);
+        }
+
+        private void NewArrowEditBtn_Click(object sender, EventArgs e)
+        {
+            ArrowSelDlg dlg = new ArrowSelDlg(Root);
+            dlg.ShowDialog();
         }
     }
 }
