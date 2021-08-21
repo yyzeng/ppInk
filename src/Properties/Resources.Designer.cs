@@ -73,6 +73,66 @@ namespace gInk.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap Arw_Arrow1 {
+            get {
+                object obj = ResourceManager.GetObject("Arw_Arrow1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Arw_Arrow2 {
+            get {
+                object obj = ResourceManager.GetObject("Arw_Arrow2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Arw_Arrow3 {
+            get {
+                object obj = ResourceManager.GetObject("Arw_Arrow3", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Arw_Circle1 {
+            get {
+                object obj = ResourceManager.GetObject("Arw_Circle1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Arw_None {
+            get {
+                object obj = ResourceManager.GetObject("Arw_None", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Arw_Tail1 {
+            get {
+                object obj = ResourceManager.GetObject("Arw_Tail1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap blackboard {
             get {
                 object obj = ResourceManager.GetObject("blackboard", resourceCulture);
@@ -346,6 +406,16 @@ namespace gInk.Properties {
         public static System.Drawing.Bitmap fadingTag {
             get {
                 object obj = ResourceManager.GetObject("fadingTag", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap flashLight {
+            get {
+                object obj = ResourceManager.GetObject("flashLight", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -853,6 +923,16 @@ namespace gInk.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap tool_hand_out {
+            get {
+                object obj = ResourceManager.GetObject("tool_hand_out", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap tool_line {
             get {
                 object obj = ResourceManager.GetObject("tool_line", resourceCulture);
@@ -906,6 +986,16 @@ namespace gInk.Properties {
         public static System.Drawing.Bitmap tool_mlines_filledW {
             get {
                 object obj = ResourceManager.GetObject("tool_mlines_filledW", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap tool_mlines_out {
+            get {
+                object obj = ResourceManager.GetObject("tool_mlines_out", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1013,6 +1103,16 @@ namespace gInk.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap tool_oval_out {
+            get {
+                object obj = ResourceManager.GetObject("tool_oval_out", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap tool_rect {
             get {
                 object obj = ResourceManager.GetObject("tool_rect", resourceCulture);
@@ -1056,6 +1156,16 @@ namespace gInk.Properties {
         public static System.Drawing.Bitmap tool_rect_filledW {
             get {
                 object obj = ResourceManager.GetObject("tool_rect_filledW", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap tool_rect_out {
+            get {
+                object obj = ResourceManager.GetObject("tool_rect_out", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

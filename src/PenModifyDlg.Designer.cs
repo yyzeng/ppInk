@@ -56,6 +56,7 @@
             this.StyleDashRd = new System.Windows.Forms.RadioButton();
             this.SVSquare = new System.Windows.Forms.Panel();
             this.CursorHSI = new System.Windows.Forms.PictureBox();
+            this.WidthTb = new System.Windows.Forms.TextBox();
             this.previewPanel.SuspendLayout();
             this.gpPenWidth.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pboxPenWidthIndicator)).BeginInit();
@@ -149,6 +150,7 @@
             this.pboxPenWidthIndicator.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pboxPenWidthIndicator_MouseDown);
             this.pboxPenWidthIndicator.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pboxPenWidthIndicator_MouseMove);
             this.pboxPenWidthIndicator.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pboxPenWidthIndicator_MouseUp);
+            this.pboxPenWidthIndicator.Move += new System.EventHandler(this.pboxPenWidthIndicator_Move);
             // 
             // CancelBtn
             // 
@@ -355,6 +357,16 @@
             this.CursorHSI.TabStop = false;
             this.CursorHSI.MouseMove += new System.Windows.Forms.MouseEventHandler(this.CursorHSI_MouseMove);
             // 
+            // WidthTb
+            // 
+            this.WidthTb.Location = new System.Drawing.Point(515, 271);
+            this.WidthTb.Name = "WidthTb";
+            this.WidthTb.Size = new System.Drawing.Size(39, 20);
+            this.WidthTb.TabIndex = 36;
+            this.WidthTb.Text = "000";
+            this.WidthTb.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.WidthTb.Validating += new System.ComponentModel.CancelEventHandler(this.WidthTb_Validating);
+            // 
             // PenModifyDlg
             // 
             this.AcceptButton = this.OkBtn;
@@ -362,6 +374,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.CancelBtn;
             this.ClientSize = new System.Drawing.Size(673, 402);
+            this.Controls.Add(this.WidthTb);
             this.Controls.Add(this.SVSquare);
             this.Controls.Add(this.DashStyleGrp);
             this.Controls.Add(this.FadingCB);
@@ -422,5 +435,6 @@
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Panel SVSquare;
         private System.Windows.Forms.PictureBox CursorHSI;
+        private System.Windows.Forms.TextBox WidthTb;
     }
 }

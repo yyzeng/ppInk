@@ -191,6 +191,10 @@ namespace gInk
             ZoomScaleEd.Text = Root.ZoomScale.ToString();
             ZoomContinousCb.Checked = Root.ZoomContinous;
 
+            SpotColorPnl.BackColor = Root.SpotLightColor;
+            SpotOnAltCb.Checked = Root.SpotOnAlt;
+            SpotRadTb.Text = (Root.SpotLightRadius / System.Windows.SystemParameters.PrimaryScreenWidth * 100.0).ToString("#0.00", CultureInfo.InvariantCulture);
+
             CaptStrokesOnlyCb.Checked = Root.StrokesOnlySnapshot;
 
             lbNote.ForeColor = Color.Black;
@@ -377,6 +381,7 @@ namespace gInk
             this.ArrwGrp.Text = Root.Local.OptionsGeneralArrowHead;
             this.ArrHdAptLbl.Text = Root.Local.OptionsGeneralArrowHeadApt;
             this.ArrHdLenLbl.Text = Root.Local.OptionsGeneralArrowHeadLen;
+            this.NewArrowEditBtn.Text = shortTxt(Root.Local.ButtonNameArrow);
             this.DefTxtLbl.Text = shortTxt(Root.Local.ButtonNameText) + " - " + Root.Local.OptionsGeneralDefaultTextLbl;
             this.DefaultFontBtn.Text = Root.Local.OptionsGeneralDefaultTextBtn;
             this.DefTagLbl.Text = shortTxt(Root.Local.ButtonNameNumb)+" - "+Root.Local.OptionsGeneralDefaultTextLbl;
@@ -403,6 +408,10 @@ namespace gInk
             this.ZoomDimLbl.Text = Root.Local.OptionsZoomDim;
             this.ZoomScaleLbl.Text = Root.Local.OptionsZoomScale;
             this.ZoomContinousCb.Text = Root.Local.OptionsZoomContinous;
+
+            this.SpotLightBox.Text = Root.Local.OptionsSpotLightBox;
+            this.SpotOnAltCb.Text = Root.Local.OptionsSpotOnAlt;
+            this.SpotRadLbl.Text = Root.Local.OptionsSpotLightRadius;
 
             this.ActivateDbgWinBtn.Text = Root.Local.ButtonActivateDebug;
 
@@ -588,8 +597,8 @@ namespace gInk
                     if (dlg.ModifyPen(ref Root.PenAttr[p]))
                     {
                         (sender as PictureBox).BackColor = Color.FromArgb(255, Root.PenAttr[p].Color);
-                        comboPensAlpha[p].Text = string.Format("{0}", Root.PenAttr[p].Transparency);
-                        comboPensWidth[p].Text = string.Format("{0}", Root.PenAttr[p].Width);
+                        comboPensAlpha[p].Text = string.Format("{0}", 255-Root.PenAttr[p].Transparency);
+                        comboPensWidth[p].Text = string.Format("{0:N0}", Root.PenAttr[p].Width);
                         comboPensFading[p].Checked = Root.PenAttr[p].ExtendedProperties.Contains(Root.FADING_PEN);
                         comboPensLineStyle[p].BackgroundImage = FormCollection.getImgFromDiskOrRes("DashStyle" + Root.LineStyleToString(Root.PenAttr[p].ExtendedProperties));
                     }
@@ -1280,6 +1289,40 @@ namespace gInk
         private void Click4StrokeCb_CheckedChanged(object sender, EventArgs e)
         {
             Root.ButtonClick_For_LineStyle = Click4StrokeCb.Checked;
+        }
+
+        private void SpotColorPnl_Click(object sender, EventArgs e)
+        {   // Copied from  ToolbarDwg_Click
+            PenModifyDlg dlg = new PenModifyDlg(Root);
+            dlg.Text = "";
+            Microsoft.Ink.DrawingAttributes at = new Microsoft.Ink.DrawingAttributes();
+
+            at.Transparency = (byte)(255 - Root.SpotLightColor.A);
+            at.Color = Color.FromArgb(Root.SpotLightColor.A, Root.SpotLightColor.R, Root.SpotLightColor.G, Root.SpotLightColor.B);
+            at.Width = 0;
+
+            if (dlg.ModifyPen(ref at))
+            {
+                Root.SpotLightColor = Color.FromArgb(255 - at.Transparency, at.Color);
+                SpotColorPnl.BackColor = Root.SpotLightColor;
+            }
+            dlg.Dispose();
+        }
+
+        private void SpotOnAltCb_CheckedChanged(object sender, EventArgs e)
+        {
+            Root.SpotOnAlt = SpotOnAltCb.Checked;
+        }
+
+        private void SpotRadTb_Validated(object sender, EventArgs e)
+        {
+            Root.SpotLightRadius = (int)(float.Parse(SpotRadTb.Text)/100.0F*System.Windows.SystemParameters.PrimaryScreenWidth);
+        }
+
+        private void NewArrowEditBtn_Click(object sender, EventArgs e)
+        {
+            ArrowSelDlg dlg = new ArrowSelDlg(Root);
+            dlg.ShowDialog();
         }
     }
 }

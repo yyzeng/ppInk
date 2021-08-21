@@ -373,7 +373,21 @@ namespace gInk
                     if (st.ExtendedProperties.Contains(Root.ISHIDDEN_GUID))
                         continue;
                     //else //Should not be drawn as a stroke : for the moment only filled values.
-                    if(st.ExtendedProperties.Contains(Root.ISFILLEDCOLOR_GUID) || st.ExtendedProperties.Contains(Root.ISFILLEDWHITE_GUID) || st.ExtendedProperties.Contains(Root.ISFILLEDBLACK_GUID) )
+                    if (st.ExtendedProperties.Contains(Root.ISFILLEDOUTSIDE_GUID))
+                    {
+                        SolidBrush bru = new SolidBrush(Color.FromArgb(255 - st.DrawingAttributes.Transparency, st.DrawingAttributes.Color));
+                        try
+                        {
+                            GraphicsPath gp = new GraphicsPath();
+                            gp.AddRectangle(new Rectangle(0, 0, this.Width, this.Height));
+                            Point[] pts = st.DrawingAttributes.FitToCurve ? st.GetFlattenedBezierPoints(0) : st.GetPoints();
+                            Root.FormCollection.IC.Renderer.InkSpaceToPixel(gOneStrokeCanvus, ref pts);
+                            gp.AddPolygon(pts);
+                            g.FillPath(bru, gp);
+                        }
+                        catch { }
+                    }
+                    else if (st.ExtendedProperties.Contains(Root.ISFILLEDCOLOR_GUID) || st.ExtendedProperties.Contains(Root.ISFILLEDWHITE_GUID) || st.ExtendedProperties.Contains(Root.ISFILLEDBLACK_GUID) )
                     {
                         SolidBrush bru;
                         if (st.ExtendedProperties.Contains(Root.ISFILLEDCOLOR_GUID))
@@ -404,7 +418,20 @@ namespace gInk
                         }
 
                     }
-                    /*else */
+                    if (st.ExtendedProperties.Contains(Root.ARROWSTART_GUID))
+                    {
+                        Point pt = new Point((int)st.ExtendedProperties[Root.ARROWSTART_X_GUID].Data, (int)st.ExtendedProperties[Root.ARROWSTART_Y_GUID].Data);
+                        Bitmap b = Root.FormCollection.StoredArrowImages[(int)st.ExtendedProperties[Root.ARROWSTART_GUID].Data];
+                        pt.Offset(-b.Width/2, -b.Height / 2);
+                        g.DrawImage(b, new Rectangle(pt.X, pt.Y, b.Width, b.Height));
+                    }
+                    if (st.ExtendedProperties.Contains(Root.ARROWEND_GUID))
+                    {
+                        Point pt = new Point((int)st.ExtendedProperties[Root.ARROWEND_X_GUID].Data, (int)st.ExtendedProperties[Root.ARROWEND_Y_GUID].Data);
+                        Bitmap b = Root.FormCollection.StoredArrowImages[(int)st.ExtendedProperties[Root.ARROWEND_GUID].Data];
+                        pt.Offset(-b.Width / 2, -b.Height / 2);
+                        g.DrawImage(b, new Rectangle(pt.X, pt.Y, b.Width, b.Height));
+                    }
                     if (st.ExtendedProperties.Contains(Root.IMAGE_GUID))
                     {
                         //Image img = Root.FormCollection.ClipartsDlg.Images.Images[(int)(st.ExtendedProperties[Root.IMAGE_GUID].Data)];
@@ -518,7 +545,21 @@ namespace gInk
                     if (st.ExtendedProperties.Contains(Root.ISHIDDEN_GUID))
                         continue;
                     //else //Should not be drawn as a stroke : for the moment only filled values.
-                    if (st.ExtendedProperties.Contains(Root.ISFILLEDCOLOR_GUID) || st.ExtendedProperties.Contains(Root.ISFILLEDWHITE_GUID) || st.ExtendedProperties.Contains(Root.ISFILLEDBLACK_GUID))
+                    if (st.ExtendedProperties.Contains(Root.ISFILLEDOUTSIDE_GUID))
+                    {
+                        SolidBrush bru = new SolidBrush(Color.FromArgb(255 - st.DrawingAttributes.Transparency, st.DrawingAttributes.Color));
+                        try
+                        {
+                            GraphicsPath gp = new GraphicsPath();
+                            gp.AddRectangle(new Rectangle(0, 0, this.Width, this.Height));
+                            Point[] pts = st.DrawingAttributes.FitToCurve ? st.GetFlattenedBezierPoints(0) : st.GetPoints();
+                            Root.FormCollection.IC.Renderer.InkSpaceToPixel(gOneStrokeCanvus, ref pts);
+                            gp.AddPolygon(pts);
+                            g.FillPath(bru, gp);
+                        }
+                        catch { }
+                    }
+                    else if (st.ExtendedProperties.Contains(Root.ISFILLEDCOLOR_GUID) || st.ExtendedProperties.Contains(Root.ISFILLEDWHITE_GUID) || st.ExtendedProperties.Contains(Root.ISFILLEDBLACK_GUID))
                     {
                         SolidBrush bru;
                         if (st.ExtendedProperties.Contains(Root.ISFILLEDCOLOR_GUID))
@@ -880,9 +921,9 @@ namespace gInk
                         DrawEllipseOnGraphic(g, (CursorX0 + CursorX) / 2, (CursorY0 + CursorY) / 2, CursorX, CursorY, da, ds);
                 else if ((Root.ToolSelected == Tools.StartArrow) || (Root.ToolSelected == Tools.EndArrow))
                     if ((Root.ToolSelected == Tools.StartArrow) ^ ((Root.FormCollection.CurrentMouseButton == MouseButtons.Right) || ((int)(Root.FormCollection.CurrentMouseButton) == 2)))
-                        DrawArrowOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY, da, ds);
-                    else
                         DrawArrowOnGraphic(g, CursorX, CursorY, CursorX0, CursorY0, da, ds);
+                    else
+                        DrawArrowOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY, da, ds);
             }
         }
 
@@ -955,6 +996,7 @@ namespace gInk
 			return maxdj;
 		}
 
+        private bool MemoSpotLight = false;
 		public void UpdateFormDisplay(bool draw,bool prepared=false)
 		{
 			IntPtr screenDc = GetDC(IntPtr.Zero);
@@ -990,6 +1032,21 @@ namespace gInk
                 else if (Root.Snapping<=0)
                     DrawCustomOnGraphic(gOutCanvus, Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY);
             }
+
+            if (Root.FormCollection.SpotLightMode || Root.FormCollection.SpotLightTemp)
+            {
+                GraphicsPath gp = new GraphicsPath();
+                Brush bru = new SolidBrush(Root.SpotLightColor);
+                gp.AddRectangle(new Rectangle(0, 0, this.Width, this.Height));
+                Point pt = PointToClient(MousePosition);
+                pt.Offset(-Root.SpotLightRadius, -Root.SpotLightRadius);
+                gp.AddEllipse(new Rectangle(pt.X, pt.Y, 2 * Root.SpotLightRadius, 2 * Root.SpotLightRadius));
+                gOutCanvus.FillPath(bru, gp);
+                MemoSpotLight = true;
+            }
+            else
+                MemoSpotLight = false;
+
 
             if (draw)
                 UpdateLayeredWindow(this.Handle, screenDc, ref topPos, ref size, OutcanvusDc, ref pointSource, 0, ref blend, ULW_ALPHA);
@@ -1173,8 +1230,13 @@ namespace gInk
 				UpdateFormDisplay(true);
 				Root.UponSubPanelUpdate = false;
 			}
+            else if (Root.FormCollection.SpotLightMode || Root.FormCollection.SpotLightTemp || MemoSpotLight)
+            {
+                UpdateFormDisplay(true);
+            }
 
-			if (Root.AutoScroll && Root.PointerMode)
+
+            if (Root.AutoScroll && Root.PointerMode)
 			{
 				int moved = Test();
 				stackmove += moved;
