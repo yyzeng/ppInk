@@ -4122,6 +4122,7 @@ namespace gInk
             longClickTimer.Stop(); // for an unkown reason the mouse arrives later
 
             StrokesSelection.Clear();
+            SpotLightMode = false;
             Root.StrokeHovered = null;
             Root.UponAllDrawingUpdate = true;
 
