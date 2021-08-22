@@ -31,6 +31,7 @@ namespace gInk
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormDisplay));
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.timerDirectX = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // timer1
@@ -38,6 +39,11 @@ namespace gInk
             this.timer1.Enabled = true;
             this.timer1.Interval = 20;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
+            // timerDirectX
+            // 
+            this.timerDirectX.Interval = 20;
+            this.timerDirectX.Tick += new System.EventHandler(this.timerDX_Tick);
             // 
             // FormDisplay
             // 
@@ -63,6 +69,7 @@ namespace gInk
 
 		#endregion
 		public System.Windows.Forms.Timer timer1;
+        public System.Windows.Forms.Timer timerDirectX;
     }
 }
 

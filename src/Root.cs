@@ -282,6 +282,8 @@ namespace gInk
 
         public bool ButtonClick_For_LineStyle = false;
 
+        public bool DirectX = true;
+
         public int ToolSelected = Tools.Hand;        // indicates which tool (Hand,Line,...) is currently selected
         public int FilledSelected = 0;      // indicates which filling (None, Selected color, ...) is currently select
         public bool EraserMode = false;
@@ -451,7 +453,7 @@ namespace gInk
 			trayMenu.MenuItems.Add("-");
 			trayMenu.MenuItems.Add(Local.MenuEntryExit, OnExit);
 
-			SetDefaultPens();
+            SetDefaultPens();
 			SetDefaultConfig();
 			ReadOptions("config.ini");
 			ReadOptions("pens.ini");
@@ -1018,7 +1020,7 @@ namespace gInk
 
 					}
 
-					int tempi = 0;
+                    int tempi = 0;
 					float tempf = 0;
                     double tempd = 0;
                     string[] tab;
@@ -1621,6 +1623,9 @@ namespace gInk
                         case "PENWIDTH_THICK_DEFAULT":
                             if (float.TryParse(sPara, out tempf))
                                 PenWidthThick = tempf;
+                            break;
+                        case "DIRECTX":
+                            DirectX = (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON");
                             break;
                     }
                 }
@@ -2240,10 +2245,13 @@ namespace gInk
                             sPara = Measure2Unit;
                             break;
                         case "MEASURE_ANGLE_DIR":
-                            sPara= MeasureAnglCounterClockwise?"True":"False";
+                            sPara = MeasureAnglCounterClockwise ? "True" : "False";
                             break;
                         case "SWAP_SNAPSHOT_BEHAVIORS":
-                            sPara = SwapSnapsBehaviors?"True":"False";
+                            sPara = SwapSnapsBehaviors ? "True" : "False";
+                            break;
+                        case "DIRECTX":
+                            sPara = DirectX ? "True" : "False";
                             break;
                     }
                 }

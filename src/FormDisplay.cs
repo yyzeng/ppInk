@@ -10,6 +10,9 @@ using System.Drawing.Imaging;
 using System.Diagnostics;
 using System.Drawing.Drawing2D;
 
+//using GameOverlay.Drawing;
+using GameOverlay.Windows;
+
 namespace gInk
 {
 	public partial class FormDisplay : Form
@@ -40,6 +43,16 @@ namespace gInk
 
 		byte[] screenbits;
 		byte[] lastscreenbits;
+
+        OverlayWindow DXwindow;
+        GameOverlay.Drawing.Graphics DXgfx;
+        GameOverlay.Drawing.IBrush DXselectionFramePen;
+        Bitmap DXCapturedBmp,DXInprogressBmp;
+        Graphics DXCaptureGraphics, DXInProgressGraphics;
+        System.IO.MemoryStream DXCaptureMemIO;
+        Ink LocalCopyInk=null;
+        bool DXAllUpdate;
+
 
 		// http://www.csharp411.com/hide-form-from-alttab/
 		protected override CreateParams CreateParams
@@ -142,7 +155,65 @@ namespace gInk
             SemiTransparentBrush = new SolidBrush(Color.FromArgb(120, 255, 255, 255));
 
             timer1.Enabled = true;
-            ToTopMostThrough();        
+            ToTopMostThrough();
+
+            if (Root.DirectX)
+            {
+                DXCapturedBmp = new Bitmap(this.Width, this.Height, PixelFormat.Format32bppArgb);
+                DXInprogressBmp = new Bitmap(this.Width, this.Height, PixelFormat.Format32bppArgb);
+                DXCaptureGraphics = Graphics.FromImage(DXCapturedBmp);
+                DXInProgressGraphics = Graphics.FromImage(DXInprogressBmp);
+                DXCaptureMemIO = new System.IO.MemoryStream();
+                if (DXwindow == null)
+                {
+                    DXwindow = new OverlayWindow(this.Left, this.Right, this.Width, this.Height)
+                    {
+                        IsTopmost = true,
+                        IsVisible = true,
+                        Title = "ppInk DX"
+                    };
+                    DXwindow.Create();
+                    DXwindow.PlaceAbove(this.Handle);
+                }
+                if (DXgfx == null)
+                {
+                    DXgfx = new GameOverlay.Drawing.Graphics(DXwindow.Handle, DXwindow.Width, DXwindow.Height)
+                    {
+                        MeasureFPS = true,
+                        PerPrimitiveAntiAliasing = true,
+                        TextAntiAliasing = true
+                    };
+                    DXgfx.Setup();
+                }
+                if (DXselectionFramePen == null)
+                    DXselectionFramePen = DXgfx.CreateSolidBrush(255, 0, 0, 255);
+                DXAllUpdate = true;
+                timerDirectX.Enabled = true;
+                LocalCopyInk?.Dispose();
+                LocalCopyInk = null;
+            }
+            else
+            {
+                timerDirectX.Enabled = false;
+                DXwindow?.Dispose();
+                DXwindow = null;
+                DXgfx?.Dispose();
+                DXgfx = null;
+                DXselectionFramePen = null;
+                DXCaptureGraphics?.Dispose();
+                DXInProgressGraphics?.Dispose();
+                DXCapturedBmp?.Dispose();
+                DXInprogressBmp?.Dispose();
+                DXCapturedBmp = null;
+                DXInprogressBmp = null;
+                DXCaptureGraphics = null;
+                DXInProgressGraphics = null;
+                DXCaptureMemIO?.Dispose();
+                DXCaptureMemIO = null;
+                DXAllUpdate = false;
+                LocalCopyInk?.Dispose();
+                LocalCopyInk = null;
+            }
         }
 
         public void ToTopMostThrough()
@@ -489,10 +560,10 @@ namespace gInk
                             if (st.ExtendedProperties.Contains(Root.ROTATION_GUID))
                             {
                                 Double Rotation = (double)st.ExtendedProperties[Root.ROTATION_GUID].Data;
-                            g.TranslateTransform(X, Y);
-                            g.RotateTransform((float)Rotation);
-                            g.TranslateTransform(-X, -Y);
-                        }
+                                g.TranslateTransform(X, Y);
+                                g.RotateTransform((float)Rotation);
+                                g.TranslateTransform(-X, -Y);
+                            }
                             g.DrawImage(img, new Rectangle(X, Y, W, H));
                             g.ResetTransform();
                         }
@@ -648,10 +719,10 @@ namespace gInk
                             if (st.ExtendedProperties.Contains(Root.ROTATION_GUID))
                             {
                                 Double Rotation = (double)st.ExtendedProperties[Root.ROTATION_GUID].Data;
-                            g.TranslateTransform(X, Y);
-                            g.RotateTransform((float)Rotation);
-                            g.TranslateTransform(-X, -Y);
-                        }
+                                g.TranslateTransform(X, Y);
+                                g.RotateTransform((float)Rotation);
+                                g.TranslateTransform(-X, -Y);
+                            }
                             g.DrawImage(img, new Rectangle(X, Y, W, H));
                             g.ResetTransform();
                         }
@@ -927,7 +998,7 @@ namespace gInk
             }
         }
 
-    public int Test()
+        public int Test()
 		{
 			IntPtr screenDc = GetDC(IntPtr.Zero);
 
@@ -1064,6 +1135,7 @@ namespace gInk
 
 		public void timer1_Tick(object sender, EventArgs e)
 		{
+            DXAllUpdate |= Root.UponAllDrawingUpdate;
             if (Root.FormCollection == null || !Root.FormCollection.Visible)
                 return; // the initialisation is not yet completed. we wait for
 			Tick++;
@@ -1110,13 +1182,13 @@ namespace gInk
                 }
 
             if (Root.UponAllDrawingUpdate)
-			{
+            {
                 ClearCanvus();
-				DrawStrokes();
+                DrawStrokes();
                 DrawButtons(Root.UponButtonsUpdate > 0);
                 Root.UponButtonsUpdate = 0;
-				if (Root.Snapping > 0)
-					DrawSnapping(Root.SnappingRect);
+                if (Root.Snapping > 0)
+                    DrawSnapping(Root.SnappingRect);
 				UpdateFormDisplay(true);
 				Root.UponAllDrawingUpdate = false;
 			}
@@ -1252,6 +1324,82 @@ namespace gInk
 				}
 			}
 		}
+
+        public void DrawInProgressStroke(GameOverlay.Drawing.Graphics g)
+        {
+            Bitmap bmp = new Bitmap(this.Width, this.Height, PixelFormat.Format32bppArgb);
+            DrawStrokes(bmp, true);
+            System.IO.MemoryStream io = new System.IO.MemoryStream();
+            bmp.Save(io, ImageFormat.Png);
+            g.BeginScene();
+            g.ClearScene();
+            g.DrawImage(new GameOverlay.Drawing.Image(g, io.GetBuffer()), new GameOverlay.Drawing.Point(0, 0));
+            g.EndScene();
+        }
+
+        public void DXUpdateFormDisplay(bool prepared = false)
+        {
+            if (!prepared)
+            {
+                if (Root.Snapping <= 0)
+                    DrawCustomOnGraphic(gOutCanvus, Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY);
+            }
+        }
+
+        public void timerDX_Tick(object sender, EventArgs e)
+        {
+            //string st = "DX " + Root.FormCollection.ButtonsEntering.ToString();
+            //Console.WriteLine(st);
+            DateTime dt = DateTime.Now;
+            if (!this.Visible)
+                return;
+
+            if (Root.FingerInAction)
+            {
+                if (Root.FormCollection.IC.Ink.Strokes.Count > 0)
+                {                    
+                    Stroke stroke = Root.FormCollection.IC.Ink.Strokes[Root.FormCollection.IC.Ink.Strokes.Count - 1];
+                    if ((!stroke.Deleted) && (!Root.FormCollection.ZoomCapturing))
+                    {
+                        DXInProgressGraphics.Clear(Color.Transparent);
+                        if (Root.ToolSelected == Tools.Hand)
+                            DrawOneStroke(DXInProgressGraphics, stroke, Root.FormCollection.IC.DefaultDrawingAttributes, DXInprogressBmp);
+                        else
+                            DrawCustomOnGraphic(DXInProgressGraphics, Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY);
+                        System.IO.MemoryStream io = new System.IO.MemoryStream();
+                        DXInprogressBmp.Save(io, ImageFormat.Png);
+                        DXgfx.BeginScene();
+                        DXgfx.ClearScene();
+                        DXgfx.DrawImage(new GameOverlay.Drawing.Image(DXgfx, DXCaptureMemIO.GetBuffer()), new GameOverlay.Drawing.Point(0, 0));
+                        DXgfx.DrawImage(new GameOverlay.Drawing.Image(DXgfx, io.GetBuffer()), new GameOverlay.Drawing.Point(0, 0));
+                        DXgfx.EndScene();
+                    }
+                }
+                Console.WriteLine("dxi = " + (DateTime.Now - dt).TotalMilliseconds.ToString());
+            }
+            else if (DXgfx != null && DXAllUpdate && Root.FormCollection.ButtonsEntering == 0)
+            {
+                DXAllUpdate = false;
+                Console.WriteLine("DX");
+                LocalCopyInk?.Dispose();
+                LocalCopyInk = Root.FormCollection.IC.Ink.Clone();
+                DXCaptureGraphics.Clear(Color.Transparent);
+                DrawStrokes(DXCapturedBmp);
+                Console.WriteLine("dx1 = " + (DateTime.Now - dt).TotalMilliseconds.ToString());
+                DXCaptureMemIO.Position = 0;
+                Console.WriteLine("dx2 = " + (DateTime.Now - dt).TotalMilliseconds.ToString());
+                DXCaptureMemIO.SetLength(0);
+                DXCapturedBmp.Save(DXCaptureMemIO, ImageFormat.Png);
+                Console.WriteLine("dx3 = " + (DateTime.Now - dt).TotalMilliseconds.ToString());
+                DXgfx.BeginScene();
+                DXgfx.ClearScene();
+                DXgfx.DrawImage(new GameOverlay.Drawing.Image(DXgfx, DXCaptureMemIO.GetBuffer()), new GameOverlay.Drawing.Point(0, 0));
+                DXgfx.EndScene();
+
+                //DXUpdateFormDisplay();
+                Console.WriteLine("dx = "+(DateTime.Now-dt).TotalMilliseconds.ToString());
+            }
+        }
 
         private void FormDisplay_VisibleChanged(object sender, EventArgs e)
         {
