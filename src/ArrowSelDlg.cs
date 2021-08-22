@@ -109,11 +109,13 @@ namespace gInk
                 Bitmap bmp = Root.FormCollection.PrepareArrowBitmap(ArrowHead, EditStroke.DrawingAttributes.Color, EditStroke.DrawingAttributes.Transparency,
                            Root.HiMetricToPixel(EditStroke.DrawingAttributes.Width), (float)theta, out l1);
                 Root.FormCollection.StoredArrowImages[(int)EditStroke.ExtendedProperties[Root.ARROWSTART_GUID].Data]=bmp;
+                EditStroke.ExtendedProperties.Add(Root.ARROWSTART_FN_GUID, ArrowHead);
 
                 Root.FormCollection.StoredArrowImages[(int)EditStroke.ExtendedProperties[Root.ARROWEND_GUID].Data].Dispose();
                 bmp = Root.FormCollection.PrepareArrowBitmap(ArrowTail, EditStroke.DrawingAttributes.Color, EditStroke.DrawingAttributes.Transparency,
                            Root.HiMetricToPixel(EditStroke.DrawingAttributes.Width), (float)(Math.PI + theta), out l1);
                 Root.FormCollection.StoredArrowImages[(int)EditStroke.ExtendedProperties[Root.ARROWEND_GUID].Data] = bmp;
+                EditStroke.ExtendedProperties.Add(Root.ARROWEND_FN_GUID, ArrowTail);
 
                 Root.UponAllDrawingUpdate = true;
                 DialogResult = DialogResult.Cancel;

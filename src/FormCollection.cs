@@ -2124,8 +2124,48 @@ namespace gInk
                     s.ExtendedProperties.Add(Root.TEXTHEIGHT_GUID, ((double)(s.ExtendedProperties[Root.TEXTHEIGHT_GUID].Data) * k));
                     s.ExtendedProperties.Add(Root.ROTATION_GUID, (double)s.ExtendedProperties[Root.ROTATION_GUID].Data + deg);
                 }
+                if (s.ExtendedProperties.Contains(Root.ARROWSTART_GUID))
+                {
+                    //Point p = new Point((int)s.ExtendedProperties[Root.ARROWSTART_X_GUID].Data,(int)s.ExtendedProperties[Root.ARROWSTART_Y_GUID].Data);
+                    Double theta;
+                    Point p = s.GetPoint(0);
+                    Point p1 = s.GetPoint(1);
+                    theta = Math.Atan2(p1.Y - p.Y, p1.X - p.X);
+                    int i = (int)s.ExtendedProperties[Root.ARROWSTART_GUID].Data;
+                    string fn = (string)s.ExtendedProperties[Root.ARROWSTART_FN_GUID].Data;
+                    int l;
+                    StoredArrowImages[i].Dispose();
+                    Console.WriteLine("W= {0}", s.DrawingAttributes.Width);
+                    double kk = Math.Max(1,s.DrawingAttributes.Width * 0.037795280352161);// code copied from Root.HiMetricToPixel in order to not have rounding;
+                    StoredArrowImages[i] = PrepareArrowBitmap(fn, s.DrawingAttributes.Color, s.DrawingAttributes.Transparency, (int)Math.Ceiling(kk), (float)theta, out l);
+                    kk = kk / 18.0f;
+                    IC.Renderer.InkSpaceToPixel(Root.FormDisplay.gOneStrokeCanvus, ref p);
+                    p.Offset((int)Math.Round(-kk*(300.0/2-l) * Math.Cos(theta)),(int)Math.Round(-kk*(300.0 / 2 - l) * Math.Sin(theta)));
+                    s.ExtendedProperties.Add(Root.ARROWSTART_X_GUID, (int)p.X);
+                    s.ExtendedProperties.Add(Root.ARROWSTART_Y_GUID, (int)p.Y);
+                }
+                if (s.ExtendedProperties.Contains(Root.ARROWEND_GUID))
+                {
+                    //Point p = new Point((int)s.ExtendedProperties[Root.ARROWEND_X_GUID].Data,(int)s.ExtendedProperties[Root.ARROWEND_Y_GUID].Data);
+                    Double theta;
+                    Point p = s.GetPoint(1);
+                    Point p1 = s.GetPoint(0);
+                    theta = Math.Atan2(p1.Y - p.Y, p1.X - p.X);
+                    int i = (int)s.ExtendedProperties[Root.ARROWEND_GUID].Data;
+                    string fn = (string)s.ExtendedProperties[Root.ARROWEND_FN_GUID].Data;
+                    int l;
+                    StoredArrowImages[i].Dispose();
+                    double kk = Math.Max(1, s.DrawingAttributes.Width * 0.037795280352161);// code copied from Root.HiMetricToPixel in order to not have rounding;
+                    StoredArrowImages[i] = PrepareArrowBitmap(fn, s.DrawingAttributes.Color, s.DrawingAttributes.Transparency, (int)Math.Ceiling(kk), (float)theta, out l);
+                    kk = kk / 18.0f;
+                    IC.Renderer.InkSpaceToPixel(Root.FormDisplay.gOneStrokeCanvus, ref p);
+                    p.Offset((int)Math.Round(-kk * (300.0 / 2 - l) * Math.Cos(theta)), (int)Math.Round(-kk * (300.0 / 2 - l) * Math.Sin(theta)));
+                    s.ExtendedProperties.Add(Root.ARROWEND_X_GUID, (int)p.X);
+                    s.ExtendedProperties.Add(Root.ARROWEND_Y_GUID, (int)p.Y);
+                }
             }
-
+            if (k == 0)
+                return;
             Matrix m = new Matrix(1, 0, 0, 1, 0, 0);
             m.Translate(+Xc, +Yc);
             m.Scale((float)k, (float)k);
@@ -2135,9 +2175,11 @@ namespace gInk
             {
                 if (double.IsNaN(Sel.GetBoundingBox().Width * k))
                     return;
-                Sel.Transform(m, applyOnPen);
+                Sel.Transform(m, false);
                 foreach (Stroke s in Sel)
                 {
+                    if (applyOnPen)
+                        s.DrawingAttributes.Width = (float)(s.DrawingAttributes.Width * k);
                     if (s.Deleted)
                         continue;
                     ModifyProperties(s);
@@ -2147,7 +2189,9 @@ namespace gInk
             {
                 if (double.IsNaN(Hover.GetBoundingBox().Width * k))
                     return;
-                Hover.Transform(m, applyOnPen);
+                if (applyOnPen)
+                    Hover.DrawingAttributes.Width = (float)(Hover.DrawingAttributes.Width * k);
+                Hover.Transform(m, false);
                 ModifyProperties(Hover);
             }
         }
@@ -3060,6 +3104,8 @@ namespace gInk
 
         public void MoveStrokeAndProperties(Stroke movedStroke, int DeltaX, int DeltaY, bool moveStroke = true)
         {
+            Point m = new Point(DeltaX, DeltaY);
+            IC.Renderer.InkSpaceToPixel(Root.FormDisplay.gOneStrokeCanvus, ref m);
             if (movedStroke==null||movedStroke.Deleted)
                 return;
 
@@ -3080,8 +3126,6 @@ namespace gInk
             }
             if (movedStroke.ExtendedProperties.Contains(Root.LISTOFPOINTS_GUID))
             {
-                Point m = new Point(DeltaX, DeltaY);
-                IC.Renderer.InkSpaceToPixel(Root.FormDisplay.gOneStrokeCanvus, ref m);
                 int ii = (int)movedStroke.ExtendedProperties[Root.LISTOFPOINTS_GUID].Data;
                 //StoredPatternPoints[ii].ForEach(pt => pt.Offset(DeltaX, DeltaY));
                 ListPoint lst = StoredPatternPoints[ii];
@@ -3090,6 +3134,16 @@ namespace gInk
                     Point pt = new Point(lst[i].X+m.X,lst[i].Y+m.Y);
                     lst[i] = pt;
                 }
+            }
+            if(movedStroke.ExtendedProperties.Contains(Root.ARROWSTART_X_GUID))
+            {
+                movedStroke.ExtendedProperties.Add(Root.ARROWSTART_X_GUID, (int)movedStroke.ExtendedProperties[Root.ARROWSTART_X_GUID].Data + m.X);
+                movedStroke.ExtendedProperties.Add(Root.ARROWSTART_Y_GUID, (int)movedStroke.ExtendedProperties[Root.ARROWSTART_Y_GUID].Data + m.Y);
+            }
+            if (movedStroke.ExtendedProperties.Contains(Root.ARROWEND_X_GUID))
+            {
+                movedStroke.ExtendedProperties.Add(Root.ARROWEND_X_GUID, (int)movedStroke.ExtendedProperties[Root.ARROWEND_X_GUID].Data + m.X);
+                movedStroke.ExtendedProperties.Add(Root.ARROWEND_Y_GUID, (int)movedStroke.ExtendedProperties[Root.ARROWEND_Y_GUID].Data + m.Y);
             }
         }
 
