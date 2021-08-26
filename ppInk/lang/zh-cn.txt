@@ -1,4 +1,4 @@
-﻿LanguageName = "简体中文 by zyc101/52fisher"
+LanguageName = "简体中文"
 
 ButtonNamePen0 = "0号笔"
 ButtonNamePen1 = "1号笔"
@@ -15,6 +15,7 @@ ButtonNamePenwidth = "画笔宽度"
 ButtonNameToogle = "自动淡出"
 ButtonNameErasor = "橡皮擦"
 ButtonNamePan = "平移 (单个|全部)"
+ButtonNameScaleRotate = "缩放/旋转"
 ButtonNameMousePointer = "鼠标指针"
 ButtonNameInkVisible = "显示/隐藏墨迹"
 ButtonNameSnapshot = "截屏"
@@ -56,6 +57,12 @@ OptionsZoomDim = "尺寸"
 OptionsZoomScale = "放大比例"
 OptionsZoomContinous = "连续"
 
+OptionsSpotLightBox = "聚光灯"
+OptionsSpotLightRadius = "半径 (%)"
+OptionsSpotOnAlt = "长按Alt使用"
+
+ArrowDlg = "自定义箭头"
+
 OptionMeasureGroup = "测量工具"
 OptionMeasureLenLabel = "1 px ="
 OptionMeasureAngle = "逆时针角度"
@@ -83,6 +90,14 @@ BoardCustColorModifyTitle="颜色板自定义"
 
 ButtonOkText = "&确定"
 ButtonCancelText = "&取消"
+uttonExitText = "&关闭"
+ButtonFontText = "&字体"
+ButtonSaveText = "&保存"
+ButtonPrevText = "&上一个"
+ButtonNextText = "&下一个"
+ButtonAddText = "&新增"
+ButtonDelText = "&删除"
+
 ButtonFontText = "&字体"
 DlgTextCaption = "编辑 文本"
 DlgTextLabel = "Text 输入"
@@ -143,6 +158,7 @@ OptionsPensWidthAtSelection = "应用宽度在笔刷选择上\n(即使使用宽�
 OptionsInverseMouseWheel = "切换鼠标滚轮控制\n滚轮 = 切换笔宽\nShift+滚轮 = 切换笔"
 OptionsInverseMouseWheelChecked = "切换鼠标滚轮控制\n滚轮 = 切换笔\nShift+滚轮 = 切换笔宽"
 OptionsFitToCurve = "墨迹平滑处理"
+OptionsClick4Stroke = "点击画笔按钮以改变线条样式"
 
 OptionsHotKeySnapInPointerGrp = "在指针模式下截屏"
 OptionsHotKeySnapInPointerLbl = "长按                 双击\n\n\n两个选项设置 无 = 禁用"
@@ -168,6 +184,7 @@ LblFfmpegNote= "注意 :命令行可用的替换语句\n            $xx$ $yy$   
 NotificationSnapshot = "快照已保存，单击此处浏览快照... "
 
 PanSubToolsHints = "移动墨迹\n平移所有墨迹\n复制墨迹"
+ScaleSubToolsHints = "缩放/旋转一个墨迹（组）"
 HandSubToolsHints = "自由绘画\n填充颜色\n填充白色\n填充黑色"
 LineSubToolsHints = "直线\n多边形\n彩色多边形\n白色多边形\n黑色多边形"
 RectSubToolsHints = "矩形\n彩色矩形\n白色矩形\n黑色矩形"
