@@ -52,7 +52,16 @@ namespace gInk
 			Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
 			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledException);
 
-			Application.EnableVisualStyles();
+            // add some debug the help analysis for some testcase reports
+            Console.WriteLine();
+            foreach (Screen sc in Screen.AllScreens)
+            {
+                Console.WriteLine("Screen #" + sc.DeviceName);
+                Console.WriteLine(sc.Bounds.ToString()+" == "+ sc.WorkingArea.ToString());
+            }
+            Console.WriteLine();
+
+            Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 
             DateTime n = DateTime.Now;

@@ -95,11 +95,11 @@ namespace gInk
             {
                 if (Clip1Btn.BackgroundImage != null)
                     Clip1Btn.BackgroundImage.Dispose();
-                Clip1Btn.BackgroundImage = FormCollection.getImgFromDiskOrRes(Root.ImageStamp1);
+                Clip1Btn.BackgroundImage = FormCollection.getImgFromDiskOrRes(Root.ImageStamp1.ImageStamp);
             }
             catch
             {
-                Program.WriteErrorLog(string.Format("File {0} found but can not be loaded:{1} \n", "Stamp1", Root.ImageStamp1));
+                Program.WriteErrorLog(string.Format("File {0} found but can not be loaded:{1} \n", "Stamp1", Root.ImageStamp1.ImageStamp));
                 Clip1Btn.BackgroundImage = FormCollection.getImgFromDiskOrRes("unknown");
             }
             Clip2Btn.BackColor = ToolbarDwg.BackColor;
@@ -107,11 +107,11 @@ namespace gInk
             {
                 if (Clip2Btn.BackgroundImage != null)
                     Clip2Btn.BackgroundImage.Dispose();
-                Clip2Btn.BackgroundImage = FormCollection.getImgFromDiskOrRes(Root.ImageStamp2);
+                Clip2Btn.BackgroundImage = FormCollection.getImgFromDiskOrRes(Root.ImageStamp2.ImageStamp);
             }
             catch
             {
-                Program.WriteErrorLog(string.Format("File {0} found but can not be loaded:{1} \n", "Stamp2", Root.ImageStamp2));
+                Program.WriteErrorLog(string.Format("File {0} found but can not be loaded:{1} \n", "Stamp2", Root.ImageStamp2.ImageStamp));
                 Clip1Btn.BackgroundImage = FormCollection.getImgFromDiskOrRes("unknown");
             }
             Clip3Btn.BackColor = ToolbarDwg.BackColor;
@@ -119,11 +119,11 @@ namespace gInk
             {
                 if (Clip3Btn.BackgroundImage != null)
                     Clip3Btn.BackgroundImage.Dispose();
-                Clip3Btn.BackgroundImage = FormCollection.getImgFromDiskOrRes(Root.ImageStamp3);
+                Clip3Btn.BackgroundImage = FormCollection.getImgFromDiskOrRes(Root.ImageStamp3.ImageStamp);
             }
             catch
             {
-                Program.WriteErrorLog(string.Format("File {0} found but can not be loaded:{1} \n", "Stamp3", Root.ImageStamp3));
+                Program.WriteErrorLog(string.Format("File {0} found but can not be loaded:{1} \n", "Stamp3", Root.ImageStamp3.ImageStamp));
                 Clip1Btn.BackgroundImage = FormCollection.getImgFromDiskOrRes("unknown");
             }
             SubToolsBar_cb.Checked = Root.SubToolsEnabled;
@@ -191,6 +191,10 @@ namespace gInk
             ZoomScaleEd.Text = Root.ZoomScale.ToString();
             ZoomContinousCb.Checked = Root.ZoomContinous;
 
+            SpotColorPnl.BackColor = Root.SpotLightColor;
+            SpotOnAltCb.Checked = Root.SpotOnAlt;
+            SpotRadTb.Text = (Root.SpotLightRadius / System.Windows.SystemParameters.PrimaryScreenWidth * 100.0).ToString("#0.00", CultureInfo.InvariantCulture);
+
             CaptStrokesOnlyCb.Checked = Root.StrokesOnlySnapshot;
 
             lbNote.ForeColor = Color.Black;
@@ -246,6 +250,7 @@ namespace gInk
             FadingTimeEd.Text = Root.TimeBeforeFading.ToString();
             InverseWheelCb.Checked = Root.InverseMousewheel;
             FitToCurveEd.Checked = Root.FitToCurve;
+            Click4StrokeCb.Checked = Root.ButtonClick_For_LineStyle;
 
             //cbAllowHotkeyInPointer.Top = (int)(this.Height * 0.18);
 
@@ -278,7 +283,7 @@ namespace gInk
             hiEraser.Hotkey = Root.Hotkey_Eraser;
 			hiPan.Hotkey = Root.Hotkey_Pan;
 			hiInkVisible.Hotkey = Root.Hotkey_InkVisible;
-			hiPointer.Hotkey = Root.Hotkey_Pointer;
+			hiScaleRotate.Hotkey = Root.Hotkey_ScaleRotate;
 			hiSnapshot.Hotkey = Root.Hotkey_Snap;
 			hiUndo.Hotkey = Root.Hotkey_Undo;
 			hiRedo.Hotkey = Root.Hotkey_Redo;
@@ -310,6 +315,13 @@ namespace gInk
             hiColorEdit.Hotkey = Root.Hotkey_ColorEdit;
             hiLineStyle.Hotkey = Root.Hotkey_LineStyle;
             hiLasso.Hotkey = Root.Hotkey_Lasso;
+
+            CbHKRot_Stroke.Checked = (Root.LineStyleRotateEnabled & (int)(CbHKRot_Stroke.Tag)) != 0;
+            CbHKRot_Solid.Checked = (Root.LineStyleRotateEnabled & (int)(CbHKRot_Solid.Tag)) != 0;
+            CbHKRot_Dash.Checked = (Root.LineStyleRotateEnabled & (int)(CbHKRot_Dash.Tag)) != 0;
+            CbHKRot_Dot.Checked = (Root.LineStyleRotateEnabled & (int)(CbHKRot_Dot.Tag)) != 0;
+            CbHKRot_DashDot.Checked = (Root.LineStyleRotateEnabled & (int)(CbHKRot_DashDot.Tag)) != 0;
+            CbHKRot_DashDotDot.Checked = (Root.LineStyleRotateEnabled & (int)(CbHKRot_DashDotDot.Tag)) != 0;
 
             WsUrlTxt.Text = Root.ObsUrl;
             WsPwdTxt.Text = Root.ObsPwd;
@@ -369,6 +381,7 @@ namespace gInk
             this.ArrwGrp.Text = Root.Local.OptionsGeneralArrowHead;
             this.ArrHdAptLbl.Text = Root.Local.OptionsGeneralArrowHeadApt;
             this.ArrHdLenLbl.Text = Root.Local.OptionsGeneralArrowHeadLen;
+            this.NewArrowEditBtn.Text = shortTxt(Root.Local.ButtonNameArrow);
             this.DefTxtLbl.Text = shortTxt(Root.Local.ButtonNameText) + " - " + Root.Local.OptionsGeneralDefaultTextLbl;
             this.DefaultFontBtn.Text = Root.Local.OptionsGeneralDefaultTextBtn;
             this.DefTagLbl.Text = shortTxt(Root.Local.ButtonNameNumb)+" - "+Root.Local.OptionsGeneralDefaultTextLbl;
@@ -396,6 +409,10 @@ namespace gInk
             this.ZoomScaleLbl.Text = Root.Local.OptionsZoomScale;
             this.ZoomContinousCb.Text = Root.Local.OptionsZoomContinous;
 
+            this.SpotLightBox.Text = Root.Local.OptionsSpotLightBox;
+            this.SpotOnAltCb.Text = Root.Local.OptionsSpotOnAlt;
+            this.SpotRadLbl.Text = Root.Local.OptionsSpotLightRadius;
+
             this.ActivateDbgWinBtn.Text = Root.Local.ButtonActivateDebug;
 
             this.SnapInPointerGrp.Text = Root.Local.OptionsHotKeySnapInPointerGrp;
@@ -417,7 +434,7 @@ namespace gInk
 			this.lbHkEraser.Text = shortTxt(Root.Local.ButtonNameErasor);
 			this.lbHkInkVisible.Text = shortTxt(Root.Local.ButtonNameInkVisible);
 			this.lbHkPan.Text = shortTxt(Root.Local.ButtonNamePan);
-			this.lbHkPointer.Text = shortTxt(Root.Local.ButtonNameMousePointer);
+            this.lbHkScaleRotate.Text = shortTxt(Root.Local.ButtonNameScaleRotate);
 			this.lbHkRedo.Text = shortTxt(Root.Local.ButtonNameRedo);
 			this.lbHkSnapshot.Text = shortTxt(Root.Local.ButtonNameSnapshot);
             this.lbHkUndo.Text = shortTxt(Root.Local.ButtonNameUndo);
@@ -504,6 +521,7 @@ namespace gInk
             InverseWheelCb.Text = Root.InverseMousewheel ? Root.Local.OptionsInverseMouseWheelChecked : Root.Local.OptionsInverseMouseWheel;
             FitToCurveEd.Text = Root.Local.OptionsFitToCurve;
             lbLineStyle.Text = Root.Local.OptionsLineStyle;
+            Click4StrokeCb.Text = Root.Local.OptionsClick4Stroke;
 
             comboLanguage.Items.Clear();
 			List<string> langs = Root.Local.GetLanguagenames();
@@ -579,8 +597,8 @@ namespace gInk
                     if (dlg.ModifyPen(ref Root.PenAttr[p]))
                     {
                         (sender as PictureBox).BackColor = Color.FromArgb(255, Root.PenAttr[p].Color);
-                        comboPensAlpha[p].Text = string.Format("{0}", Root.PenAttr[p].Transparency);
-                        comboPensWidth[p].Text = string.Format("{0}", Root.PenAttr[p].Width);
+                        comboPensAlpha[p].Text = string.Format("{0}", 255-Root.PenAttr[p].Transparency);
+                        comboPensWidth[p].Text = string.Format("{0:N0}", Root.PenAttr[p].Width);
                         comboPensFading[p].Checked = Root.PenAttr[p].ExtendedProperties.Contains(Root.FADING_PEN);
                         comboPensLineStyle[p].BackgroundImage = FormCollection.getImgFromDiskOrRes("DashStyle" + Root.LineStyleToString(Root.PenAttr[p].ExtendedProperties));
                     }
@@ -674,7 +692,7 @@ namespace gInk
 				tbSnapPath.Text = folderBrowserDialog1.SelectedPath.Replace('\\','/');
                 if (!tbSnapPath.Text.EndsWith("/"))
                     tbSnapPath.Text += '/';
-                Root.SnapshotBasePath = folderBrowserDialog1.SelectedPath;
+                Root.SnapshotBasePath = tbSnapPath.Text;
 			}
 		}
 
@@ -961,11 +979,11 @@ namespace gInk
             {
                 ((Button)sender).BackgroundImage = FormCollection.getImgFromDiskOrRes(dlg.ImageStamp);
                 if((string)(((Control)sender).Tag) == "1")
-                    Root.ImageStamp1 = dlg.ImageStamp;
+                    Root.ImageStamp1.ImageStamp = dlg.ImageStamp;
                 else if ((string)(((Control)sender).Tag) == "2")
-                    Root.ImageStamp2 = dlg.ImageStamp;
+                    Root.ImageStamp2.ImageStamp = dlg.ImageStamp;
                 else if ((string)(((Control)sender).Tag) == "3")
-                    Root.ImageStamp3 = dlg.ImageStamp;
+                    Root.ImageStamp3.ImageStamp = dlg.ImageStamp;
             }
             dlg.Dispose();
         }
@@ -1253,6 +1271,58 @@ namespace gInk
         {
             if (e.Button == MouseButtons.Right)
                 AltAsOneCommandCb.CheckState = CheckState.Indeterminate;
+        }
+
+        private void CbHKRot_CheckedChanged(object sender, EventArgs e)
+        {
+            CheckBox cb = (CheckBox)sender;
+            if (cb.Checked)
+            {
+                Root.LineStyleRotateEnabled |= Convert.ToUInt32((int)(cb.Tag));                
+            }
+            else
+            {
+                Root.LineStyleRotateEnabled &= 0xFF ^ Convert.ToUInt32((int)(cb.Tag));
+            }
+        }
+
+        private void Click4StrokeCb_CheckedChanged(object sender, EventArgs e)
+        {
+            Root.ButtonClick_For_LineStyle = Click4StrokeCb.Checked;
+        }
+
+        private void SpotColorPnl_Click(object sender, EventArgs e)
+        {   // Copied from  ToolbarDwg_Click
+            PenModifyDlg dlg = new PenModifyDlg(Root);
+            dlg.Text = "";
+            Microsoft.Ink.DrawingAttributes at = new Microsoft.Ink.DrawingAttributes();
+
+            at.Transparency = (byte)(255 - Root.SpotLightColor.A);
+            at.Color = Color.FromArgb(Root.SpotLightColor.A, Root.SpotLightColor.R, Root.SpotLightColor.G, Root.SpotLightColor.B);
+            at.Width = 0;
+
+            if (dlg.ModifyPen(ref at))
+            {
+                Root.SpotLightColor = Color.FromArgb(255 - at.Transparency, at.Color);
+                SpotColorPnl.BackColor = Root.SpotLightColor;
+            }
+            dlg.Dispose();
+        }
+
+        private void SpotOnAltCb_CheckedChanged(object sender, EventArgs e)
+        {
+            Root.SpotOnAlt = SpotOnAltCb.Checked;
+        }
+
+        private void SpotRadTb_Validated(object sender, EventArgs e)
+        {
+            Root.SpotLightRadius = (int)(float.Parse(SpotRadTb.Text)/100.0F*System.Windows.SystemParameters.PrimaryScreenWidth);
+        }
+
+        private void NewArrowEditBtn_Click(object sender, EventArgs e)
+        {
+            ArrowSelDlg dlg = new ArrowSelDlg(Root);
+            dlg.ShowDialog();
         }
     }
 }

@@ -38,12 +38,14 @@ ButtonNameVideo = "錄製視頻"
 SaveStroke = "儲存手繪\n(長按=對話框 ; 短按 = {0})"
 LoadStroke = "載入手繪\n(長按=對話框 ; 短按 = {0})"
 ButtonNameZoom = "縮放"
+ButtonNameLasso = "套索選擇(左=添加;右=移除;按鈕=重置選擇)"
 
 QuestionClipArtUpdate = "剪貼畫似乎在版本中已更新.\n您是否要更新預設清單?"
 ButtonActivateDebug ="調試"
 
 SubToolsBarCbText = "啟用輔助工具列"
 OptionPensOnTwoLinesCb = "畫筆顯示兩行"
+OptionsSwapSnapshotBehavior = "短按 = 擷圖 && 離開\n長按 = 擷圖 && 繼續"
 
 StrokeFileExists = "{0} 已存在\n你想覆蓋它嗎?"
 FileCanNotWrite = "{0}\n無法覆蓋."
@@ -61,6 +63,7 @@ FormatLength = "長度 : {0:N1} {1}"
 FormatAngle = "角度 : {0:N1}°"
 OptionsHotkeysColorPicker = "選色器"
 OptionsHotkeysColorEdit = "顏色/筆編輯"
+OptionsLineStyle = "直線樣式"
 
 OptionsGeneralAPIRest = "伺服器網址"
 
@@ -120,9 +123,9 @@ OptionsGeneralDefaultTextLbl = "預設文字"
 OptionsGeneralDefaultTextBtn = "選擇 &字型 &&大小"
 OptionsGeneralDefaultArrHdBtn = "預設箭頭於起始點"
 OptionsGeneralMagnetLbl = "吸附半徑 (<=0 = 禁用)"
-OptionsGeneralSaveConfigToFile = "儲存設置"
+OptionsGeneralSaveConfigToFile = "儲存設置檔"
 OptionsCaptureStrokesOnly = "僅擷取畫布"
-OptionsGeneralNotePenwidth = "提醒: (1)工具列的筆寬設置 會忽略 config.ini 每支筆的筆寬設置\n          (2)浮動視窗的透明度和大小. 請直接修改 config.ini 配置"
+OptionsGeneralNotePenwidth = "\n\n\n注意: 在下一個工具欄重新打開時，參數更改將被刪除, 但保存到文件.\n     您確實需要使用下一個按鈕保存以使它們成為永久有效."
 
 OptionsPensShow = "顯示"
 OptionsPensColor = "顏色"
@@ -148,7 +151,6 @@ OptionsHotkeysEnableinpointer = "允許在 滑鼠游標 下使用下列快捷鍵
 
 OptionsHotkeysPenWidthPlus = "筆寬度 +"
 OptionsHotkeysPenWidthMinus = "筆寬度 -"
-OptionsLineStyle = "劇情風格"
 
 VideoTab="視頻"
 OptNoVideo="無視頻記錄"

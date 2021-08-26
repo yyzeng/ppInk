@@ -10,6 +10,9 @@ using System.Drawing.Imaging;
 using System.Diagnostics;
 using System.Drawing.Drawing2D;
 
+//using GameOverlay.Drawing;
+using GameOverlay.Windows;
+
 namespace gInk
 {
 	public partial class FormDisplay : Form
@@ -40,6 +43,16 @@ namespace gInk
 
 		byte[] screenbits;
 		byte[] lastscreenbits;
+
+        OverlayWindow DXwindow;
+        GameOverlay.Drawing.Graphics DXgfx;
+        GameOverlay.Drawing.IBrush DXselectionFramePen;
+        Bitmap DXCapturedBmp,DXInprogressBmp;
+        Graphics DXCaptureGraphics, DXInProgressGraphics;
+        System.IO.MemoryStream DXCaptureMemIO;
+        Ink LocalCopyInk=null;
+        bool DXAllUpdate;
+
 
 		// http://www.csharp411.com/hide-form-from-alttab/
 		protected override CreateParams CreateParams
@@ -142,7 +155,65 @@ namespace gInk
             SemiTransparentBrush = new SolidBrush(Color.FromArgb(120, 255, 255, 255));
 
             timer1.Enabled = true;
-            ToTopMostThrough();        
+            ToTopMostThrough();
+
+            if (Root.DirectX)
+            {
+                DXCapturedBmp = new Bitmap(this.Width, this.Height, PixelFormat.Format32bppArgb);
+                DXInprogressBmp = new Bitmap(this.Width, this.Height, PixelFormat.Format32bppArgb);
+                DXCaptureGraphics = Graphics.FromImage(DXCapturedBmp);
+                DXInProgressGraphics = Graphics.FromImage(DXInprogressBmp);
+                DXCaptureMemIO = new System.IO.MemoryStream();
+                if (DXwindow == null)
+                {
+                    DXwindow = new OverlayWindow(this.Left, this.Right, this.Width, this.Height)
+                    {
+                        IsTopmost = true,
+                        IsVisible = true,
+                        Title = "ppInk DX"
+                    };
+                    DXwindow.Create();
+                    DXwindow.PlaceAbove(this.Handle);
+                }
+                if (DXgfx == null)
+                {
+                    DXgfx = new GameOverlay.Drawing.Graphics(DXwindow.Handle, DXwindow.Width, DXwindow.Height)
+                    {
+                        MeasureFPS = true,
+                        PerPrimitiveAntiAliasing = true,
+                        TextAntiAliasing = true
+                    };
+                    DXgfx.Setup();
+                }
+                if (DXselectionFramePen == null)
+                    DXselectionFramePen = DXgfx.CreateSolidBrush(255, 0, 0, 255);
+                DXAllUpdate = true;
+                timerDirectX.Enabled = true;
+                LocalCopyInk?.Dispose();
+                LocalCopyInk = null;
+            }
+            else
+            {
+                timerDirectX.Enabled = false;
+                DXwindow?.Dispose();
+                DXwindow = null;
+                DXgfx?.Dispose();
+                DXgfx = null;
+                DXselectionFramePen = null;
+                DXCaptureGraphics?.Dispose();
+                DXInProgressGraphics?.Dispose();
+                DXCapturedBmp?.Dispose();
+                DXInprogressBmp?.Dispose();
+                DXCapturedBmp = null;
+                DXInprogressBmp = null;
+                DXCaptureGraphics = null;
+                DXInProgressGraphics = null;
+                DXCaptureMemIO?.Dispose();
+                DXCaptureMemIO = null;
+                DXAllUpdate = false;
+                LocalCopyInk?.Dispose();
+                LocalCopyInk = null;
+            }
         }
 
         public void ToTopMostThrough()
@@ -373,7 +444,21 @@ namespace gInk
                     if (st.ExtendedProperties.Contains(Root.ISHIDDEN_GUID))
                         continue;
                     //else //Should not be drawn as a stroke : for the moment only filled values.
-                    if(st.ExtendedProperties.Contains(Root.ISFILLEDCOLOR_GUID) || st.ExtendedProperties.Contains(Root.ISFILLEDWHITE_GUID) || st.ExtendedProperties.Contains(Root.ISFILLEDBLACK_GUID) )
+                    if (st.ExtendedProperties.Contains(Root.ISFILLEDOUTSIDE_GUID))
+                    {
+                        SolidBrush bru = new SolidBrush(Color.FromArgb(255 - st.DrawingAttributes.Transparency, st.DrawingAttributes.Color));
+                        try
+                        {
+                            GraphicsPath gp = new GraphicsPath();
+                            gp.AddRectangle(new Rectangle(0, 0, this.Width, this.Height));
+                            Point[] pts = st.DrawingAttributes.FitToCurve ? st.GetFlattenedBezierPoints(0) : st.GetPoints();
+                            Root.FormCollection.IC.Renderer.InkSpaceToPixel(gOneStrokeCanvus, ref pts);
+                            gp.AddPolygon(pts);
+                            g.FillPath(bru, gp);
+                        }
+                        catch { }
+                    }
+                    else if (st.ExtendedProperties.Contains(Root.ISFILLEDCOLOR_GUID) || st.ExtendedProperties.Contains(Root.ISFILLEDWHITE_GUID) || st.ExtendedProperties.Contains(Root.ISFILLEDBLACK_GUID) )
                     {
                         SolidBrush bru;
                         if (st.ExtendedProperties.Contains(Root.ISFILLEDCOLOR_GUID))
@@ -404,7 +489,20 @@ namespace gInk
                         }
 
                     }
-                    /*else */
+                    if (st.ExtendedProperties.Contains(Root.ARROWSTART_GUID))
+                    {
+                        Point pt = new Point((int)st.ExtendedProperties[Root.ARROWSTART_X_GUID].Data, (int)st.ExtendedProperties[Root.ARROWSTART_Y_GUID].Data);
+                        Bitmap b = Root.FormCollection.StoredArrowImages[(int)st.ExtendedProperties[Root.ARROWSTART_GUID].Data];
+                        pt.Offset(-b.Width/2, -b.Height / 2);
+                        g.DrawImage(b, new Rectangle(pt.X, pt.Y, b.Width, b.Height));
+                    }
+                    if (st.ExtendedProperties.Contains(Root.ARROWEND_GUID))
+                    {
+                        Point pt = new Point((int)st.ExtendedProperties[Root.ARROWEND_X_GUID].Data, (int)st.ExtendedProperties[Root.ARROWEND_Y_GUID].Data);
+                        Bitmap b = Root.FormCollection.StoredArrowImages[(int)st.ExtendedProperties[Root.ARROWEND_GUID].Data];
+                        pt.Offset(-b.Width / 2, -b.Height / 2);
+                        g.DrawImage(b, new Rectangle(pt.X, pt.Y, b.Width, b.Height));
+                    }
                     if (st.ExtendedProperties.Contains(Root.IMAGE_GUID))
                     {
                         //Image img = Root.FormCollection.ClipartsDlg.Images.Images[(int)(st.ExtendedProperties[Root.IMAGE_GUID].Data)];
@@ -437,11 +535,38 @@ namespace gInk
                                 img = gInk.Properties.Resources.unknown;
                             }
                         // I came back to this solution of using IMAGE_?_GUID in order to have a more accurate position and therefore prevent blurry image
-                        int X = (int)(st.ExtendedProperties[Root.IMAGE_X_GUID].Data);
-                        int Y = (int)(st.ExtendedProperties[Root.IMAGE_Y_GUID].Data);
-                        int W = (int)(st.ExtendedProperties[Root.IMAGE_W_GUID].Data);
-                        int H = (int)(st.ExtendedProperties[Root.IMAGE_H_GUID].Data);
-                        g.DrawImage(img, new Rectangle(X, Y, W, H));
+                        int X = (int)(double)(st.ExtendedProperties[Root.IMAGE_X_GUID].Data);
+                        int Y = (int)(double)(st.ExtendedProperties[Root.IMAGE_Y_GUID].Data);
+                        int W = (int)(double)(st.ExtendedProperties[Root.IMAGE_W_GUID].Data);
+                        int H = (int)(double)(st.ExtendedProperties[Root.IMAGE_H_GUID].Data);
+                        if (st.ExtendedProperties.Contains(Root.LISTOFPOINTS_GUID))
+                        {
+                            Double Rotation = st.ExtendedProperties.Contains(Root.ROTATION_GUID) ? (double)st.ExtendedProperties[Root.ROTATION_GUID].Data : 0;
+                            List<Point> pts = Root.FormCollection.StoredPatternPoints[(int)(st.ExtendedProperties[Root.LISTOFPOINTS_GUID].Data)];
+                            foreach (Point pt in pts)
+                            {
+                                if (Rotation != 0)
+                                {
+                                    g.TranslateTransform(pt.X, pt.Y);
+                                    g.RotateTransform((float)Rotation);
+                                    g.TranslateTransform(-pt.X, -pt.Y);
+                                }
+                                g.DrawImage(img, new Rectangle(pt.X, pt.Y, W, H));
+                                g.ResetTransform();
+                            }
+                        }
+                        else
+                        {
+                            if (st.ExtendedProperties.Contains(Root.ROTATION_GUID))
+                            {
+                                Double Rotation = (double)st.ExtendedProperties[Root.ROTATION_GUID].Data;
+                                g.TranslateTransform(X, Y);
+                                g.RotateTransform((float)Rotation);
+                                g.TranslateTransform(-X, -Y);
+                            }
+                            g.DrawImage(img, new Rectangle(X, Y, W, H));
+                            g.ResetTransform();
+                        }
                     }
                     /*else */
                     if (st.ExtendedProperties.Contains(Root.ISSTROKE_GUID))
@@ -449,17 +574,25 @@ namespace gInk
 
                     if (st.ExtendedProperties.Contains(Root.TEXT_GUID))
                     {
-                        Point pt = new Point((int)(st.ExtendedProperties[Root.TEXTX_GUID].Data), (int)(st.ExtendedProperties[Root.TEXTY_GUID].Data));
+                        Point pt = new Point((int)(double)st.ExtendedProperties[Root.TEXTX_GUID].Data, (int)(double)st.ExtendedProperties[Root.TEXTY_GUID].Data);
                         Root.FormCollection.IC.Renderer.InkSpaceToPixel(gOneStrokeCanvus, ref pt);
                         System.Drawing.StringFormat stf = new System.Drawing.StringFormat(System.Drawing.StringFormatFlags.NoClip);
                         stf.Alignment = (System.Drawing.StringAlignment)(st.ExtendedProperties[Root.TEXTHALIGN_GUID].Data);
                         stf.LineAlignment = (System.Drawing.StringAlignment)(st.ExtendedProperties[Root.TEXTVALIGN_GUID].Data);
                         g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
+                        if (st.ExtendedProperties.Contains(Root.ROTATION_GUID))
+                        {
+                            Double Rotation = (double)st.ExtendedProperties[Root.ROTATION_GUID].Data;
+                            int W = 0, H = 0;
+                            g.TranslateTransform(pt.X + W / 2, pt.Y + H / 2);
+                            g.RotateTransform((float)Rotation);
+                            g.TranslateTransform(-pt.X - W / 2, -pt.Y - H / 2);
+                        }
                         g.DrawString((string)(st.ExtendedProperties[Root.TEXT_GUID].Data),
-                                     new Font((string)st.ExtendedProperties[Root.TEXTFONT_GUID].Data, (float)st.ExtendedProperties[Root.TEXTFONTSIZE_GUID].Data,
+                                     new Font((string)st.ExtendedProperties[Root.TEXTFONT_GUID].Data, (float)(double)st.ExtendedProperties[Root.TEXTFONTSIZE_GUID].Data,
                                         (System.Drawing.FontStyle)(int)st.ExtendedProperties[Root.TEXTFONTSTYLE_GUID].Data),
                                      new SolidBrush(Color.FromArgb(255 - st.DrawingAttributes.Transparency, st.DrawingAttributes.Color)), pt.X, pt.Y, stf);
-
+                        g.ResetTransform();
                     }
                 }
             }
@@ -470,16 +603,34 @@ namespace gInk
         public void DrawStrokes(Bitmap bmp, bool IgnoreBackground=false)
         {
             Graphics g = Graphics.FromImage(bmp);
+
+            Ink Ink2 = Root.FormCollection.IC.Ink.ExtractStrokes(Root.FormCollection.IC.Ink.Strokes, ExtractFlags.CopyFromOriginal);
+
             if (Root.InkVisible)
             {
-                foreach (Stroke st in Root.FormCollection.IC.Ink.Strokes)
+                //foreach (Stroke st in Root.FormCollection.IC.Ink.Strokes)
+                foreach (Stroke st in Ink2.Strokes)
                 {
                     if (IgnoreBackground && st.ExtendedProperties.Contains(Root.ISBACKGROUND_GUID))
                         continue;
                     if (st.ExtendedProperties.Contains(Root.ISHIDDEN_GUID))
                         continue;
                     //else //Should not be drawn as a stroke : for the moment only filled values.
-                    if (st.ExtendedProperties.Contains(Root.ISFILLEDCOLOR_GUID) || st.ExtendedProperties.Contains(Root.ISFILLEDWHITE_GUID) || st.ExtendedProperties.Contains(Root.ISFILLEDBLACK_GUID))
+                    if (st.ExtendedProperties.Contains(Root.ISFILLEDOUTSIDE_GUID))
+                    {
+                        SolidBrush bru = new SolidBrush(Color.FromArgb(255 - st.DrawingAttributes.Transparency, st.DrawingAttributes.Color));
+                        try
+                        {
+                            GraphicsPath gp = new GraphicsPath();
+                            gp.AddRectangle(new Rectangle(0, 0, this.Width, this.Height));
+                            Point[] pts = st.DrawingAttributes.FitToCurve ? st.GetFlattenedBezierPoints(0) : st.GetPoints();
+                            Root.FormCollection.IC.Renderer.InkSpaceToPixel(gOneStrokeCanvus, ref pts);
+                            gp.AddPolygon(pts);
+                            g.FillPath(bru, gp);
+                        }
+                        catch { }
+                    }
+                    else if (st.ExtendedProperties.Contains(Root.ISFILLEDCOLOR_GUID) || st.ExtendedProperties.Contains(Root.ISFILLEDWHITE_GUID) || st.ExtendedProperties.Contains(Root.ISFILLEDBLACK_GUID))
                     {
                         SolidBrush bru;
                         if (st.ExtendedProperties.Contains(Root.ISFILLEDCOLOR_GUID))
@@ -543,11 +694,38 @@ namespace gInk
                                 img = gInk.Properties.Resources.unknown;
                             }
                         // I came back to this solution of using IMAGE_?_GUID in order to have a more accurate position and therefore prevent blurry image
-                        int X = (int)(st.ExtendedProperties[Root.IMAGE_X_GUID].Data);
-                        int Y = (int)(st.ExtendedProperties[Root.IMAGE_Y_GUID].Data);
-                        int W = (int)(st.ExtendedProperties[Root.IMAGE_W_GUID].Data);
-                        int H = (int)(st.ExtendedProperties[Root.IMAGE_H_GUID].Data);
-                        g.DrawImage(img, new Rectangle(X, Y, W, H));
+                        int X = (int)(double)(st.ExtendedProperties[Root.IMAGE_X_GUID].Data);
+                        int Y = (int)(double)(st.ExtendedProperties[Root.IMAGE_Y_GUID].Data);
+                        int W = (int)(double)(st.ExtendedProperties[Root.IMAGE_W_GUID].Data);
+                        int H = (int)(double)(st.ExtendedProperties[Root.IMAGE_H_GUID].Data);
+                        if (st.ExtendedProperties.Contains(Root.LISTOFPOINTS_GUID))
+                        {
+                            Double Rotation = st.ExtendedProperties.Contains(Root.ROTATION_GUID)?(double)st.ExtendedProperties[Root.ROTATION_GUID].Data:0;
+                            List<Point> pts = Root.FormCollection.StoredPatternPoints[(int)(st.ExtendedProperties[Root.LISTOFPOINTS_GUID].Data)];
+                            foreach (Point pt in pts)
+                            {
+                                if(Rotation!=0)
+                                {
+                                    g.TranslateTransform(pt.X, pt.Y);
+                                    g.RotateTransform((float)Rotation);
+                                    g.TranslateTransform(-pt.X, -pt.Y);
+                                }
+                                g.DrawImage(img, new Rectangle(pt.X, pt.Y, W, H));
+                                g.ResetTransform();
+                            }
+                        }
+                        else
+                        {
+                            if (st.ExtendedProperties.Contains(Root.ROTATION_GUID))
+                            {
+                                Double Rotation = (double)st.ExtendedProperties[Root.ROTATION_GUID].Data;
+                                g.TranslateTransform(X, Y);
+                                g.RotateTransform((float)Rotation);
+                                g.TranslateTransform(-X, -Y);
+                            }
+                            g.DrawImage(img, new Rectangle(X, Y, W, H));
+                            g.ResetTransform();
+                        }
                     }
                     /*else */
                     if (st.ExtendedProperties.Contains(Root.ISSTROKE_GUID))
@@ -556,21 +734,31 @@ namespace gInk
 
                     if (st.ExtendedProperties.Contains(Root.TEXT_GUID))
                     {
-                        Point pt = new Point((int)(st.ExtendedProperties[Root.TEXTX_GUID].Data), (int)(st.ExtendedProperties[Root.TEXTY_GUID].Data));
+                        Point pt = new Point((int)(double)st.ExtendedProperties[Root.TEXTX_GUID].Data, (int)(double)st.ExtendedProperties[Root.TEXTY_GUID].Data);
                         Root.FormCollection.IC.Renderer.InkSpaceToPixel(gOneStrokeCanvus, ref pt);
                         System.Drawing.StringFormat stf = new System.Drawing.StringFormat(System.Drawing.StringFormatFlags.NoClip);
                         stf.Alignment = (System.Drawing.StringAlignment)(st.ExtendedProperties[Root.TEXTHALIGN_GUID].Data);
                         stf.LineAlignment = (System.Drawing.StringAlignment)(st.ExtendedProperties[Root.TEXTVALIGN_GUID].Data);
                         g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
+                        if (st.ExtendedProperties.Contains(Root.ROTATION_GUID))
+                        {
+                            Double Rotation = (double)st.ExtendedProperties[Root.ROTATION_GUID].Data;
+                            int W = 0, H = 0;
+                            g.TranslateTransform(pt.X + W / 2, pt.Y + H / 2);
+                            g.RotateTransform((float)Rotation);
+                            g.TranslateTransform(-pt.X - W / 2, -pt.Y - H / 2);
+                        }
                         g.DrawString((string)(st.ExtendedProperties[Root.TEXT_GUID].Data),
-                                     new Font((string)st.ExtendedProperties[Root.TEXTFONT_GUID].Data, (float)st.ExtendedProperties[Root.TEXTFONTSIZE_GUID].Data,
+                                     new Font((string)st.ExtendedProperties[Root.TEXTFONT_GUID].Data, (float)(double)st.ExtendedProperties[Root.TEXTFONTSIZE_GUID].Data,
                                         (System.Drawing.FontStyle)(int)st.ExtendedProperties[Root.TEXTFONTSTYLE_GUID].Data),
                                      new SolidBrush(Color.FromArgb(255 - st.DrawingAttributes.Transparency, st.DrawingAttributes.Color)), pt.X, pt.Y, stf);
-
+                        g.ResetTransform();
                     }
                 }
             }
+            Ink2?.Dispose();
         }
+
 
         public void MoveStrokes(int dy)
 		{
@@ -724,7 +912,17 @@ namespace gInk
             Pen p = PenForDrawOn(dr, st);
             gOutCanvus.DrawRectangle(p,Math.Min(CursorX0,CursorX), Math.Min(CursorY0, CursorY), dX, dY);
             p.Dispose();
-
+        }
+        public void DrawImagesOnGraphic(Graphics g, List<Point> pts, Image img, int W, int H, DrawingAttributes dr = null, DashStyle st = DashStyle.Solid)
+        {
+            if (pts == null)
+                return;
+            //Pen p = PenForDrawOn(dr, st);
+            foreach(Point pt in pts)
+            {
+                gOutCanvus.DrawImage(img, pt.X, pt.Y, W, H);
+            }
+            //p.Dispose();
         }
         public void DrawEllipseOnGraphic(Graphics g, int CursorX0, int CursorY0, int CursorX, int CursorY, DrawingAttributes dr = null, DashStyle st = DashStyle.Solid)
         {
@@ -772,11 +970,21 @@ namespace gInk
                 //DrawRectOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY,Root.FormCollection.IC.Ink.Strokes[Root.FormCollection.IC.Ink.Strokes.Count-1].DrawingAttributes);
                 else if ((Root.ToolSelected == Tools.Line) || (Root.ToolSelected == Tools.Poly))
                     DrawLineOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY, da, ds);
-                else if ((Root.ToolSelected == Tools.Rect) || (Root.ToolSelected == Tools.ClipArt))
+                else if ((Root.ToolSelected == Tools.Rect) || (Root.ToolSelected == Tools.ClipArt) || (Root.ToolSelected == Tools.PatternLine && Root.FormCollection.PatternLineSteps == 0))
                     if ((Root.FormCollection.CurrentMouseButton == MouseButtons.Right) || ((int)(Root.FormCollection.CurrentMouseButton) == 2))
                         DrawRectOnGraphic(g, 2 * CursorX0 - CursorX, 2 * CursorY0 - CursorY, CursorX, CursorY, da, ds);
                     else
                         DrawRectOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY, da, ds);
+                else if (Root.ToolSelected == Tools.PatternLine && Root.FormCollection.PatternLineSteps == 1)
+                {
+                    bool m = (Root.FormCollection.CurrentMouseButton == MouseButtons.Right) || ((int)(Root.FormCollection.CurrentMouseButton) == 2);
+                    List<Point> pts = new List<Point>();
+                    pts.Add(new Point() { X = CursorX0 - (m ? (Root.ImageStamp.X / 2) : 0), Y = CursorY0 - (m ? (Root.ImageStamp.Y / 2) : 0) });
+                    pts.Add(new Point() { X = CursorX - (m ? (Root.ImageStamp.X / 2) : 0), Y = CursorY - (m ? (Root.ImageStamp.Y / 2) : 0) });
+                    DrawImagesOnGraphic(g, pts, Root.FormCollection.PatternImage, Root.ImageStamp.X, Root.ImageStamp.Y);
+                }
+                else if (Root.ToolSelected == Tools.PatternLine && Root.FormCollection.PatternLineSteps == 2)
+                    DrawImagesOnGraphic(g, Root.FormCollection.PatternPoints,Root.FormCollection.PatternImage, Root.ImageStamp.X, Root.ImageStamp.Y);
                 else if (Root.ToolSelected == Tools.Oval)
                     if ((Root.FormCollection.CurrentMouseButton == MouseButtons.Right) || ((int)(Root.FormCollection.CurrentMouseButton) == 2))
                         DrawEllipseOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY, da, ds);
@@ -784,13 +992,13 @@ namespace gInk
                         DrawEllipseOnGraphic(g, (CursorX0 + CursorX) / 2, (CursorY0 + CursorY) / 2, CursorX, CursorY, da, ds);
                 else if ((Root.ToolSelected == Tools.StartArrow) || (Root.ToolSelected == Tools.EndArrow))
                     if ((Root.ToolSelected == Tools.StartArrow) ^ ((Root.FormCollection.CurrentMouseButton == MouseButtons.Right) || ((int)(Root.FormCollection.CurrentMouseButton) == 2)))
-                        DrawArrowOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY, da, ds);
-                    else
                         DrawArrowOnGraphic(g, CursorX, CursorY, CursorX0, CursorY0, da, ds);
+                    else
+                        DrawArrowOnGraphic(g, CursorX0, CursorY0, CursorX, CursorY, da, ds);
             }
         }
 
-    public int Test()
+        public int Test()
 		{
 			IntPtr screenDc = GetDC(IntPtr.Zero);
 
@@ -859,6 +1067,7 @@ namespace gInk
 			return maxdj;
 		}
 
+        private bool MemoSpotLight = false;
 		public void UpdateFormDisplay(bool draw,bool prepared=false)
 		{
 			IntPtr screenDc = GetDC(IntPtr.Zero);
@@ -895,6 +1104,21 @@ namespace gInk
                     DrawCustomOnGraphic(gOutCanvus, Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY);
             }
 
+            if (Root.FormCollection.SpotLightMode || Root.FormCollection.SpotLightTemp)
+            {
+                GraphicsPath gp = new GraphicsPath();
+                Brush bru = new SolidBrush(Root.SpotLightColor);
+                gp.AddRectangle(new Rectangle(0, 0, this.Width, this.Height));
+                Point pt = PointToClient(MousePosition);
+                pt.Offset(-Root.SpotLightRadius, -Root.SpotLightRadius);
+                gp.AddEllipse(new Rectangle(pt.X, pt.Y, 2 * Root.SpotLightRadius, 2 * Root.SpotLightRadius));
+                gOutCanvus.FillPath(bru, gp);
+                MemoSpotLight = true;
+            }
+            else
+                MemoSpotLight = false;
+
+
             if (draw)
                 UpdateLayeredWindow(this.Handle, screenDc, ref topPos, ref size, OutcanvusDc, ref pointSource, 0, ref blend, ULW_ALPHA);
             else
@@ -911,6 +1135,7 @@ namespace gInk
 
 		public void timer1_Tick(object sender, EventArgs e)
 		{
+            DXAllUpdate |= Root.UponAllDrawingUpdate;
             if (Root.FormCollection == null || !Root.FormCollection.Visible)
                 return; // the initialisation is not yet completed. we wait for
 			Tick++;
@@ -957,13 +1182,13 @@ namespace gInk
                 }
 
             if (Root.UponAllDrawingUpdate)
-			{
+            {
                 ClearCanvus();
-				DrawStrokes();
+                DrawStrokes();
                 DrawButtons(Root.UponButtonsUpdate > 0);
                 Root.UponButtonsUpdate = 0;
-				if (Root.Snapping > 0)
-					DrawSnapping(Root.SnappingRect);
+                if (Root.Snapping > 0)
+                    DrawSnapping(Root.SnappingRect);
 				UpdateFormDisplay(true);
 				Root.UponAllDrawingUpdate = false;
 			}
@@ -1077,8 +1302,13 @@ namespace gInk
 				UpdateFormDisplay(true);
 				Root.UponSubPanelUpdate = false;
 			}
+            else if (Root.FormCollection.SpotLightMode || Root.FormCollection.SpotLightTemp || MemoSpotLight)
+            {
+                UpdateFormDisplay(true);
+            }
 
-			if (Root.AutoScroll && Root.PointerMode)
+
+            if (Root.AutoScroll && Root.PointerMode)
 			{
 				int moved = Test();
 				stackmove += moved;
@@ -1094,6 +1324,82 @@ namespace gInk
 				}
 			}
 		}
+
+        public void DrawInProgressStroke(GameOverlay.Drawing.Graphics g)
+        {
+            Bitmap bmp = new Bitmap(this.Width, this.Height, PixelFormat.Format32bppArgb);
+            DrawStrokes(bmp, true);
+            System.IO.MemoryStream io = new System.IO.MemoryStream();
+            bmp.Save(io, ImageFormat.Png);
+            g.BeginScene();
+            g.ClearScene();
+            g.DrawImage(new GameOverlay.Drawing.Image(g, io.GetBuffer()), new GameOverlay.Drawing.Point(0, 0));
+            g.EndScene();
+        }
+
+        public void DXUpdateFormDisplay(bool prepared = false)
+        {
+            if (!prepared)
+            {
+                if (Root.Snapping <= 0)
+                    DrawCustomOnGraphic(gOutCanvus, Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY);
+            }
+        }
+
+        public void timerDX_Tick(object sender, EventArgs e)
+        {
+            //string st = "DX " + Root.FormCollection.ButtonsEntering.ToString();
+            //Console.WriteLine(st);
+            DateTime dt = DateTime.Now;
+            if (!this.Visible)
+                return;
+
+            if (Root.FingerInAction)
+            {
+                if (Root.FormCollection.IC.Ink.Strokes.Count > 0)
+                {                    
+                    Stroke stroke = Root.FormCollection.IC.Ink.Strokes[Root.FormCollection.IC.Ink.Strokes.Count - 1];
+                    if ((!stroke.Deleted) && (!Root.FormCollection.ZoomCapturing))
+                    {
+                        DXInProgressGraphics.Clear(Color.Transparent);
+                        if (Root.ToolSelected == Tools.Hand)
+                            DrawOneStroke(DXInProgressGraphics, stroke, Root.FormCollection.IC.DefaultDrawingAttributes, DXInprogressBmp);
+                        else
+                            DrawCustomOnGraphic(DXInProgressGraphics, Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY);
+                        System.IO.MemoryStream io = new System.IO.MemoryStream();
+                        DXInprogressBmp.Save(io, ImageFormat.Png);
+                        DXgfx.BeginScene();
+                        DXgfx.ClearScene();
+                        DXgfx.DrawImage(new GameOverlay.Drawing.Image(DXgfx, DXCaptureMemIO.GetBuffer()), new GameOverlay.Drawing.Point(0, 0));
+                        DXgfx.DrawImage(new GameOverlay.Drawing.Image(DXgfx, io.GetBuffer()), new GameOverlay.Drawing.Point(0, 0));
+                        DXgfx.EndScene();
+                    }
+                }
+                Console.WriteLine("dxi = " + (DateTime.Now - dt).TotalMilliseconds.ToString());
+            }
+            else if (DXgfx != null && DXAllUpdate && Root.FormCollection.ButtonsEntering == 0)
+            {
+                DXAllUpdate = false;
+                Console.WriteLine("DX");
+                LocalCopyInk?.Dispose();
+                LocalCopyInk = Root.FormCollection.IC.Ink.Clone();
+                DXCaptureGraphics.Clear(Color.Transparent);
+                DrawStrokes(DXCapturedBmp);
+                Console.WriteLine("dx1 = " + (DateTime.Now - dt).TotalMilliseconds.ToString());
+                DXCaptureMemIO.Position = 0;
+                Console.WriteLine("dx2 = " + (DateTime.Now - dt).TotalMilliseconds.ToString());
+                DXCaptureMemIO.SetLength(0);
+                DXCapturedBmp.Save(DXCaptureMemIO, ImageFormat.Png);
+                Console.WriteLine("dx3 = " + (DateTime.Now - dt).TotalMilliseconds.ToString());
+                DXgfx.BeginScene();
+                DXgfx.ClearScene();
+                DXgfx.DrawImage(new GameOverlay.Drawing.Image(DXgfx, DXCaptureMemIO.GetBuffer()), new GameOverlay.Drawing.Point(0, 0));
+                DXgfx.EndScene();
+
+                //DXUpdateFormDisplay();
+                Console.WriteLine("dx = "+(DateTime.Now-dt).TotalMilliseconds.ToString());
+            }
+        }
 
         private void FormDisplay_VisibleChanged(object sender, EventArgs e)
         {

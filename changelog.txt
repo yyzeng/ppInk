@@ -1,4 +1,21 @@
-p1.6 (in progress)	
+p1.7 (in progress)	
+=================
+
+---> RC1
+* New : Allow to change pen color/width on selection
+* New : Alt as temporary now applies to line style(dashed) and fading activation
+* New : add animations from APNG/animated GIF ; time or loop can be defined in filename in square brackets
+* Enh : allow tab/delete/backspace in hotkeys; ctrl+shitft+delete or ctrl+shift+backspare to clean current hotkey
+* Enh : arrow head grows/shrinks when pen width increases/decreases
+* New : add HSI square in pen dialog
+* Enh : total length reported with multiple strokes selected
+* New : Add multiple selection and Lasso mode with shortcut and Rest API
+* Enh : Add option to swap long and short press to reach snapshot and exit and snapshot and continue
+* Enh : Mousewheel changes font size with number tool
+* Enh : add hotkeys for save/load strokes 
+* fix : multiple fixes, see commits history for details
+
+p1.6 (RC1)	
 =================
 
 ---> RC1

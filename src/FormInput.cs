@@ -60,7 +60,7 @@ namespace gInk
                 ColorBtn.Visible = true;
                 boxingCb.Visible = true;// !stk.ExtendedProperties.Contains(Root.ISTAG_GUID);
 
-                FontDlg.Font = new Font((string)stk.ExtendedProperties[Root.TEXTFONT_GUID].Data, (float)stk.ExtendedProperties[Root.TEXTFONTSIZE_GUID].Data,
+                FontDlg.Font = new Font((string)stk.ExtendedProperties[Root.TEXTFONT_GUID].Data, (float)(double)stk.ExtendedProperties[Root.TEXTFONTSIZE_GUID].Data,
                                         (System.Drawing.FontStyle)stk.ExtendedProperties[Root.TEXTFONTSTYLE_GUID].Data);
                 InputML.TextChanged += new System.EventHandler(this.InputML_TextChanged);
                 int i = (stk.ExtendedProperties.Contains(Root.ISSTROKE_GUID) ? 1 : 0) +
@@ -102,7 +102,7 @@ namespace gInk
             if (FontDlg.ShowDialog() == DialogResult.OK)
             {
                 stroke.ExtendedProperties.Add(Root.TEXTFONT_GUID, FontDlg.Font.Name);
-                stroke.ExtendedProperties.Add(Root.TEXTFONTSIZE_GUID, (float)FontDlg.Font.Size);
+                stroke.ExtendedProperties.Add(Root.TEXTFONTSIZE_GUID, (double)FontDlg.Font.Size);
                 stroke.ExtendedProperties.Add(Root.TEXTFONTSTYLE_GUID, FontDlg.Font.Style);
                 string st=InputML.Text;
                 // to run event for refresh
@@ -153,7 +153,7 @@ namespace gInk
             {
                 InputML.Text = Saved_Txt;
                 stroke.ExtendedProperties.Add(Root.TEXTFONT_GUID, Saved_Font.Name);
-                stroke.ExtendedProperties.Add(Root.TEXTFONTSIZE_GUID, Saved_Font.Size);
+                stroke.ExtendedProperties.Add(Root.TEXTFONTSIZE_GUID, (double)Saved_Font.Size);
                 stroke.ExtendedProperties.Add(Root.TEXTFONTSTYLE_GUID, Saved_Font.Style);
                 Root.FormCollection.ComputeTextBoxSize(ref stroke);
                 stroke.DrawingAttributes = Saved_Da;

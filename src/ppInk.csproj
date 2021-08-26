@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -71,12 +71,24 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ppInk\Cyotek.Windows.Forms.ColorPicker.dll</HintPath>
     </Reference>
+    <Reference Include="GameOverlay, Version=4.3.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\GameOverlay.Net.4.3.1\lib\net45\GameOverlay.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Ink.64, Version=6.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ppInk\Microsoft.Ink.64.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="SharpDX, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpDX.4.2.0\lib\net45\SharpDX.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct2D1, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpDX.Direct2D1.4.2.0\lib\net45\SharpDX.Direct2D1.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.DXGI, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpDX.DXGI.4.2.0\lib\net45\SharpDX.DXGI.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -103,6 +115,17 @@
       <DependentUpon>CallForm.cs</DependentUpon>
     </Compile>
     <Compile Include="APIRest.cs" />
+    <Compile Include="ArrowSelDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ArrowSelDlg.Designer.cs">
+      <DependentUpon>ArrowSelDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="zoomForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -168,6 +191,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Root.cs" />
+    <EmbeddedResource Include="ArrowSelDlg.resx">
+      <DependentUpon>ArrowSelDlg.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="CallForm.resx">
       <DependentUpon>CallForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -205,19 +231,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <EmbeddedResource Include="Root.resx">
       <DependentUpon>Root.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="gInk.exe.manifest" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -322,6 +344,16 @@
     <None Include="lasso_act.png" />
     <None Include="lasso.png" />
     <None Include="cursorHSI.png" />
+    <None Include="cursortarget.ico" />
+    <None Include="ArrowHeads\Arw_Circle1.png" />
+    <None Include="flashLight.png" />
+    <None Include="ArrowHeads\Arw_Arrow1.png" />
+    <None Include="ArrowHeads\Arw_Arrow2.png" />
+    <None Include="ArrowHeads\Arw_Arrow3.png" />
+    <None Include="ArrowHeads\Arw_None.png" />
+    <None Include="ArrowHeads\Arw_Tail1.png" />
+    <None Include="ArrowHeads\!Arw_Diamond1.png" />
+    <None Include="ArrowHeads\!Arw_Square1.png" />
     <Content Include="Magnetic.png" />
     <Content Include="Magnetic_act.png" />
     <None Include="pan1_act.png" />
@@ -344,6 +376,10 @@
     <None Include="picker.png" />
     <None Include="SolidLSTag.png" />
     <None Include="StrokeLSTag.png" />
+    <None Include="rotate_act.png" />
+    <None Include="scale_act.png" />
+    <Compile Include="ToDoList.cs" />
+    <None Include="scale.png" />
     <Content Include="tool_edit.png" />
     <Content Include="tool_edit_act.png" />
     <Content Include="tool_enAr.png" />
@@ -351,11 +387,13 @@
     <None Include="tool_hand_filledB.png" />
     <None Include="tool_hand_filledC.png" />
     <None Include="tool_hand_filledW.png" />
+    <None Include="tool_hand_out.png" />
     <Content Include="tool_line_act.png" />
     <None Include="tool_mlines.png" />
     <None Include="tool_mlines_filledB.png" />
     <None Include="tool_mlines_filledC.png" />
     <None Include="tool_mlines_filledW.png" />
+    <None Include="tool_mlines_out.png" />
     <Content Include="tool_numb.png" />
     <Content Include="tool_numb_act.png" />
     <Content Include="tool_numb_fillB.png" />
@@ -365,10 +403,12 @@
     <Content Include="tool_oval_filledB.png" />
     <Content Include="tool_oval_filledC.png" />
     <Content Include="tool_oval_filledW.png" />
+    <None Include="tool_oval_out.png" />
     <Content Include="tool_rect_act.png" />
     <Content Include="tool_rect_filledB.png" />
     <Content Include="tool_rect_filledC.png" />
     <Content Include="tool_rect_filledW.png" />
+    <None Include="tool_rect_out.png" />
     <Content Include="tool_StAr.png" />
     <Content Include="tool_StAr_act.png" />
     <Content Include="tool_txtL.png" />

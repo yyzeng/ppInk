@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -53,6 +53,10 @@ namespace gInk
             {
                 //Console.WriteLine(DateTime.Now.ToString() + " !msgH " + msg.Msg.ToString()+" - "+ msg.WParam.ToString());
                 //if ((msg.Msg == 6) || ((msg.Msg == 0x001C) && (msg.WParam != IntPtr.Zero))
+                if (DateTime.Now < Root.PointerChangeDate || msg.WParam==IntPtr.Zero)
+                    //                    if (DateTime.Now < Root.PointerChangeDate || !Root.FormDisplay.HasFocus())
+                    return;
+                if(Root.PointerMode)
                 {
                     //Console.WriteLine("activating from hitter " + (Root.PointerMode ? "pointer" : "not") + (Root.Docked ? "docked" : "not"));
                     Root.FormCollection.AltTabActivate();

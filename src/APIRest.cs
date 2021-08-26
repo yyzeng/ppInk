@@ -7,6 +7,7 @@ using System.Net;
 using System.Drawing;
 using System.Diagnostics;
 using System.Drawing.Drawing2D;
+using System.Globalization;
 
 namespace gInk
 {
@@ -382,7 +383,9 @@ namespace gInk
                     else if (req.Url.AbsolutePath == "/CurrentTool")
                     {
                         string s;
-                        int i = 0, f = 0;
+                        int i = 0, f = 0, a = 0;
+                        int w = -1, h = -1;
+                        double dist = -1;
                         if (!(Root.FormDisplay.Visible || Root.FormCollection.Visible))
                         {
                             resp.StatusCode = 409;
@@ -393,10 +396,21 @@ namespace gInk
                             if (i==-4 || i == -3 || i == -2 || i == -1)
                                 Root.SelectPen(i);
                             if (!query.ContainsKey("F"))
-                                f = -1;
+                                f = Filling.NoFrame;
                             else if (!(query.TryGetValue("F", out s) && int.TryParse(s, out f) && -1 <= f && f < Filling.Modulo))
                                 resp.StatusCode = 400;
-                            if(i == Tools.ClipArt)
+                            if ((query.TryGetValue("A", out s) && int.TryParse(s, out a)))
+                            {
+                                if (a >= 1 && a <= Root.ArrowHead.Count)
+                                    Root.CurrentArrow = a-1;
+                            }
+                            if (!(query.TryGetValue("W", out s) && int.TryParse(s, out w)))
+                                w = -1;
+                            if (!(query.TryGetValue("H", out s) && int.TryParse(s, out h)))
+                                h = -1;
+                            if (!(query.TryGetValue("D", out s) && double.TryParse(s, out dist)))
+                                dist = -1;
+                            if (i == Tools.ClipArt || i==Tools.PatternLine)
                                 if (query.TryGetValue("I", out s))
                                 {
                                     if (s.Contains('\\'))
@@ -404,11 +418,27 @@ namespace gInk
                                     if (s.Contains('/'))
                                         s = Root.FormCollection.ClipartsDlg.LoadImage(s);
                                     Root.ImageStamp = Root.FormCollection.ClipartsDlg.getClipArtData(s);
+
                                     Root.ImageStamp.Filling = f;
+                                    if (w > 0)
+                                    {
+                                        Root.ImageStamp.Wstored = w;
+                                        Root.ImageStamp.X = w;
+                                    }
+                                    if (h > 0)
+                                    {
+                                        Root.ImageStamp.Hstored = h;
+                                        Root.ImageStamp.Y = h;
+                                    }
+                                    if (dist > 0)
+                                    {
+                                        Root.ImageStamp.Distance = dist;
+                                    }
                                 }
                                 else
                                 {
                                     Root.FormCollection.MouseTimeDown = DateTime.FromBinary(0);
+                                    Root.FormCollection.ClipartsDlg.SetFillingOrPattern(i == Tools.PatternLine, f);
                                     Root.FormCollection.btTool_Click(Root.FormCollection.btClipArt, null);
                                 }
                             bool b = false;
@@ -429,7 +459,6 @@ namespace gInk
                                 if (i >= Tools.Hand)
                                     Root.SelectPen(Root.FormCollection.LastPenSelected);
                                 Root.FormCollection.SelectTool(i, f);
-
                             }
 
                             if (Root.FormCollection.Visible)
@@ -456,12 +485,13 @@ namespace gInk
                             else
                             {
                                 string st_i="";
-                                if (Root.ToolSelected == Tools.ClipArt)
+                                if (Root.ToolSelected == Tools.ClipArt || Root.ToolSelected == Tools.PatternLine)
                                     st_i = string.Format(",\n \"Image\":\"{0}\" ", Root.ImageStamp.ImageStamp);
-                                f = Root.ToolSelected == Tools.ClipArt ? Root.ImageStamp.Filling : Root.FilledSelected;
+                                f = (Root.ToolSelected == Tools.ClipArt || Root.ToolSelected == Tools.PatternLine )? Root.ImageStamp.Filling : Root.FilledSelected;
                                 ret = string.Format("{{\"Tool\":{0},\"ToolInText\":\"{2}\", \"Filling\":{1}, \"FillingInText\":\"{3}\"{4} }}",
                                                         Root.ToolSelected, f , Tools.Names[Array.IndexOf(Tools.All,Root.ToolSelected)], Filling.Names[f+1],st_i);
                             }
+                            Console.WriteLine(Root.ImageStamp.X);
                         }
                         else if (resp.StatusCode == 400)
                             ret = string.Format("!!!! Error in Query ({0}) - {1} ", req.HttpMethod, req.Url.AbsoluteUri);
@@ -676,6 +706,106 @@ namespace gInk
                     }
 
 
+                    else if (req.Url.AbsolutePath == "/Resize")
+                    {
+                        string s;
+                        double d=1.0;
+                        //int i = 0;
+                        if (!(Root.FormDisplay.Visible || Root.FormCollection.Visible))
+                        {
+                            resp.StatusCode = 409;
+                            ret = "!!!!! Not in Inking mode";
+                        }
+                        else if (query.TryGetValue("K", out s) && double.TryParse(s,out d))
+                        {
+                            Root.FormCollection.ModifyStrokesSelection(); // true, ref Root.FormCollection.InprogressSelection, Root.FormCollection.StrokesSelection);
+                            if (Root.FormCollection.StrokesSelection.Count == 0 && Root.StrokeHovered == null)
+                            {
+                                resp.StatusCode = 500;
+                                ret = "!!! No Strokes Selected";
+                            }
+                        }
+                        else
+                        {
+                            resp.StatusCode = 400;
+                            //ret = "!!! Scale factor as float is mandatory";
+                        }
+
+                        if (resp.StatusCode == 200)
+                        {
+                            Rectangle r;
+                            try
+                            {
+                                if (Root.FormCollection.StrokesSelection.Count > 0)
+                                    r = Root.FormCollection.StrokesSelection.GetBoundingBox();
+                                else
+                                    r = Root.StrokeHovered.GetBoundingBox();
+                                Root.FormCollection.ScaleRotate(Root.FormCollection.StrokesSelection, Root.StrokeHovered, (r.Left + r.Right) / 2, (r.Top + r.Bottom) / 2, d, 0);
+                                Root.UponAllDrawingUpdate = false;
+                                ret = "{ \"Result\": \"OK\" }";
+                            }
+                            catch(Exception ex)
+                            {
+                                resp.StatusCode = 500;
+                                ret = "!!! resizing failed : " + ex.Message;
+
+                            }
+                        }
+                        else if (resp.StatusCode == 400)
+                            ret = string.Format("!!!! Error in Query ({0}) - {1} ", req.HttpMethod, req.Url.AbsoluteUri);
+                    }
+
+
+                    else if (req.Url.AbsolutePath == "/Rotate")
+                    {
+                        string s;
+                        double d = 1.0;
+                        //int i = 0;
+                        if (!(Root.FormDisplay.Visible || Root.FormCollection.Visible))
+                        {
+                            resp.StatusCode = 409;
+                            ret = "!!!!! Not in Inking mode";
+                        }
+                        else if (query.TryGetValue("A", out s) && double.TryParse(s, out d))
+                        {
+                            Root.FormCollection.ModifyStrokesSelection(); // true, ref Root.FormCollection.InprogressSelection, Root.FormCollection.StrokesSelection);
+                            if (Root.FormCollection.StrokesSelection.Count == 0 && Root.StrokeHovered == null)
+                            {
+                                resp.StatusCode = 500;
+                                ret = "!!! No Strokes Selected";
+                            }
+                        }
+                        else
+                        {
+                            resp.StatusCode = 400;
+                            //ret = "!!! Angle as float is mandatory";
+                        }
+
+                        if (resp.StatusCode == 200)
+                        {
+                            Rectangle r;
+                            try
+                            {
+                                if (Root.FormCollection.StrokesSelection.Count > 0)
+                                    r = Root.FormCollection.StrokesSelection.GetBoundingBox();
+                                else
+                                    r = Root.StrokeHovered.GetBoundingBox();
+                                Root.FormCollection.ScaleRotate(Root.FormCollection.StrokesSelection, Root.StrokeHovered, (r.Left + r.Right) / 2, (r.Top + r.Bottom) / 2, 1.0, d);
+                                Root.UponAllDrawingUpdate = false;
+                                ret = "{ \"Result\": \"OK\" }";
+                            }
+                            catch (Exception ex)
+                            {
+                                resp.StatusCode = 500;
+                                ret = "!!! resizing failed : " + ex.Message;
+
+                            }
+                        }
+                        else if (resp.StatusCode == 400)
+                            ret = string.Format("!!!! Error in Query ({0}) - {1} ", req.HttpMethod, req.Url.AbsoluteUri);
+                    }
+
+
                     else if (req.Url.AbsolutePath == "/Magnify")
                     {
                         string s;
@@ -694,6 +824,8 @@ namespace gInk
                                 Root.FormCollection.ActivateZoomDyn();
                             else if (s == "capt")//Capture
                                 Root.FormCollection.StartZoomCapt();
+                            else if (s == "spot")//Spot on Cursor
+                                Root.FormCollection.ActivateSpot();
                             else
                                 resp.StatusCode = 400;
                         }
@@ -705,6 +837,8 @@ namespace gInk
                                 s = "Capt";
                             else if (Root.FormCollection.ZoomForm.Visible)
                                 s = "Dyn";
+                            else if (Root.FormCollection.SpotLightMode)
+                                s = "Spot";
                             else
                                 s = "No";
                             ret = "{ \"Zoom\": \""+s+"\" }";
@@ -713,6 +847,49 @@ namespace gInk
                             ret = string.Format("!!!! Error in Query ({0}) - {1} ", req.HttpMethod, req.Url.AbsoluteUri);
                     }
 
+
+                    else if (req.Url.AbsolutePath == "/GetSelection")
+                    {
+                        string s="";
+                        bool c = false;
+                        bool l = false;
+                        if (!(Root.FormDisplay.Visible || Root.FormCollection.Visible))
+                        {
+                            resp.StatusCode = 409;
+                            ret = "!!!!! Not in Inking mode";
+                        }
+                        if (query.Keys.Contains("C"))
+                        {
+                            c = true;
+                        }
+                        if (query.Keys.Contains("L"))
+                        {
+                            l = true;
+                        }
+
+                        if (resp.StatusCode == 200)
+                        {
+                            Root.FormCollection.ModifyStrokesSelection();
+                            if(Root.FormCollection.StrokesSelection.Count>0)
+                            {
+                                if (c)
+                                    s += "\"Count\" : " + Root.FormCollection.StrokesSelection.Count.ToString() + (l?", ":"");
+                                if (l)
+                                    s += "\"TotalLength\" : " + Root.FormCollection.MeasureAllStrokes(Root.FormCollection.StrokesSelection,null,null,true);
+                                ret = "{\"Type\" : \"Selection\", " + s + " }";
+                            }
+                            else
+                            {
+                                if (c)
+                                    s += "\"Count\" : " + (Root.StrokeHovered != null ? "1" : "0") + (l ? ", " : "");
+                                if (l)
+                                    s += "\"TotalLength\" : " + Root.FormCollection.MeasureAllStrokes(null, null,Root.StrokeHovered, true);
+                                ret = "{\"Type\" : \"Hovered\", " + s + " }";
+                            }
+                        }
+                        else if (resp.StatusCode == 400)
+                            ret = string.Format("!!!! Error in Query ({0}) - {1} ", req.HttpMethod, req.Url.AbsoluteUri);
+                    }
 
                     else if (req.Url.AbsolutePath == "/Snapshot")
                     {

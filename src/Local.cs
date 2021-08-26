@@ -23,7 +23,8 @@ namespace gInk
         public string ButtonNamePenwidth = "Pen width";
 		public string ButtonNameErasor = "Eraser";
 		public string ButtonNamePan = "move one drawing | Pan all drawings";
-		public string ButtonNameMousePointer = "Mouse pointer";
+        public string ButtonNameScaleRotate = "Scale | Rotate";
+        public string ButtonNameMousePointer = "Mouse pointer";
 		public string ButtonNameInkVisible = "Ink visible";
 		public string ButtonNameSnapshot = "Snapshot";
 		public string ButtonNameUndo = "Undo";
@@ -32,10 +33,10 @@ namespace gInk
 		public string ButtonNameExit = "Exit drawing";
 		public string ButtonNameDock = "Dock/Undock";
         public string ButtonNameClose = "Close\n(in addition to Alt+F4)";
-        public string ButtonNameHand = "Handfree drawing (standard | color filled | White filled | Black filled)";
+        public string ButtonNameHand = "Handfree drawing (standard | color filled | Outside | White filled | Black filled)";
         public string ButtonNameLine = "Line Shape";
-        public string ButtonNameRect = "Rectangle shape (empty | color filled | White filled | Black filled)";
-        public string ButtonNameOval = "Ellipsis shape (empty | color filled | White filled | Black filled)";
+        public string ButtonNameRect = "Rectangle shape (empty | color filled | Outside | White filled | Black filled)";
+        public string ButtonNameOval = "Ellipsis shape (empty | color filled | Outside | White filled | Black filled)";
         public string ButtonNameArrow = "Arrow shape (head at start | at end)";
         public string ButtonNameNumb = "Numbered chip (put | reset number)";
         public string ButtonNameText = "Text (Left|Right aligned)";
@@ -81,6 +82,13 @@ namespace gInk
         public string OptionsZoomScale = "Scale";
         public string OptionsZoomContinous = "Continous";
 
+        public string OptionsSpotLightBox = "Spot On Cursor";
+        public string OptionsSpotLightRadius = "Rad. (%Scr)";
+        public string OptionsSpotOnAlt = "Display On Alt";
+
+        public string ArrowDlg = "Arrow Definition";
+
+
         public string OptionMeasureGroup = "Measurement Tools";
         public string OptionMeasureLenLabel = "1 pixel =";
         public string OptionMeasureAngle = "Angle CounterClockwise";
@@ -90,7 +98,13 @@ namespace gInk
 
         public string ButtonOkText = "&OK";
         public string ButtonCancelText = "&Cancel";
+        public string ButtonExitText = "&Exit";
         public string ButtonFontText = "&Font";
+        public string ButtonSaveText = "&Save";
+        public string ButtonPrevText = "&Previous";
+        public string ButtonNextText = "&Next";
+        public string ButtonAddText = "&Add";
+        public string ButtonDelText = "&Delete";
         public string DlgTextCaption = "Edit Text";
         public string DlgTextLabel = "Text Input";
         public string DlgTagCaption = "Tag Numbering";
@@ -102,7 +116,9 @@ namespace gInk
         public string ButtonLoadImageText = "&Load Image";
         public string ButtonDeleteText = "&Delete entry";
         public string CheckBoxAutoCloseText =  "Auto\nClose";
-        public string ListFillingsText = "No Frame;Empty;Color filled;White filled;Black filled";
+        public string PatternStoreParamTxt = "Save\nPattern Setup";
+        public string ListFillingsText = "No Frame;Empty;Color filled;White filled;Black filled;Line Of Patterns";
+        public int LineOfPatternsListPos = 5; // provide Line Of Patterns Positions in list above
 
 
         public string MenuEntryExit = "Exit";
@@ -149,6 +165,7 @@ namespace gInk
         public string OptionsInverseMouseWheel = "Inverse MouseWheel control\nWheel = Pen Width\nShift+Wheel = Pen Selection";
         public string OptionsInverseMouseWheelChecked = "Inverse MouseWheel control\nWheel = Pen Selection\nShift+Wheel = Pen Width";
         public string OptionsFitToCurve = "Smooth Curves";
+        public string OptionsClick4Stroke = "Click on Pen Buttons to change Line Style";
 
         public string OptionsPensThin = "Thin";
 		public string OptionsPensNormal = "Normal";
@@ -188,10 +205,11 @@ namespace gInk
 		public string NotificationSnapshot = "Snapshot saved. Click here to browse snapshots.";
 
         public string PanSubToolsHints = "Move one stroke\nPan all strokes\nCopy one stroke";
-        public string HandSubToolsHints = "Handfree drawing\nColor filled drawing\nWhite filled drawing\nBlack filled drawing";
-        public string LineSubToolsHints = "Segment\nPolyLine\nColored Polygon\nWhite Polygon\nBlack Polygon";
-        public string RectSubToolsHints = "Rectangle\nColor filled Rectangle\nWhite filled Rectangle\nBlack filled Rectangle";
-        public string OvalSubToolsHints = "Ellipsis\nColored  Ellipsis\nWhite Ellipsis\nBlack Ellipsis";
+        public string ScaleSubToolsHints = "Resize one stroke/group\nRotate one stroke/group";
+        public string HandSubToolsHints = "Handfree drawing\nColor filled drawing\nEmpty Drawing\nWhite filled drawing\nBlack filled drawing";
+        public string LineSubToolsHints = "Segment\nPolyLine\nColored Polygon\nEmpty Polygon\nWhite Polygon\nBlack Polygon";
+        public string RectSubToolsHints = "Rectangle\nColor filled Rectangle\nEmpty Rectangle\nWhite filled Rectangle\nBlack filled Rectangle";
+        public string OvalSubToolsHints = "Ellipsis\nColored Ellipsis\nEmpty Ellipsis\nWhite Ellipsis\nBlack Ellipsis";
         public string ArrowSubToolsHints = "Arrow starting by head\nArrow starting by tail";
         public string TextSubToolsHints = "Left Aligned Text\nRight Aligned Text";
 

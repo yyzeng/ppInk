@@ -28,18 +28,21 @@ namespace gInk
         public const int Hand = 0; public const int Line = 1; public const int Rect = 2; public const int Oval = 3;
         public const int StartArrow = 4; public const int EndArrow = 5; public const int NumberTag = 6;
         public const int Edit = 7; public const int txtLeftAligned = 8; public const int txtRightAligned = 9;
-        public const int Move = 10; public const int Copy = 11; public const int Poly = 21; public const int ClipArt = 22;
-        public static readonly int[] All = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 21, 22 };
-        public static readonly string[] Names = { "Hand", "Line", "Rect", "Oval", "StartArrow", "EndArrow", "Numbering", "Edit", "Text Left Aligned", "Text Right Aligned", "Move", "Copy", "PolyLine", "ClipArt" };
+        public const int Move = 10; public const int Copy = 11; public const int Scale = 12; public const int Rotate = 13;
+        public const int Poly = 21; public const int ClipArt = 22; public const int PatternLine = 23;
+        public static readonly int[] All = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 21, 22, 23 };
+        public static readonly string[] Names = { "Hand", "Line", "Rect", "Oval", "StartArrow", "EndArrow", "Numbering", "Edit", "Text Left Aligned", "Text Right Aligned",
+                                                  "Move", "Copy", "Resize", "Rotate", "PolyLine", "ClipArt", "PatternOnStroke"};
     }
     public class Filling {
         public const int NoFrame = -1;      // for Stamps
         public const int Empty = 0;
         public const int PenColorFilled = 1;
-        public const int WhiteFilled = 2;
-        public const int BlackFilled = 3;
-        public const int Modulo = 4;
-        public static readonly string[] Names = { "NoFrames","Empty", "Pen Colored", "White Colored", "Black Colored" };  //starting at -1
+        public const int Outside = 2;
+        public const int WhiteFilled = 3;
+        public const int BlackFilled = 4;
+        public const int Modulo = 5;
+        public static readonly string[] Names = { "NoFrames","Empty", "Pen Colored", "Outside", "White Colored", "Black Colored" };  //starting at -1
     } // applicable to Hand,Rect,Oval
 
     public class Orientation{
@@ -56,9 +59,15 @@ namespace gInk
     public class ClipArtData
     {
         public string ImageStamp;
-        public int X;
-        public int Y;
-        public int Filling;
+        public int X=-1;
+        public int Y=-1;
+        public int Wstored=-1;
+        public int Hstored=-1;
+        public int Filling=gInk.Filling.NoFrame;
+        public bool PatternLine=false;
+        public double Distance=double.MaxValue;
+        public bool Store = false;
+        public ClipArtData Clone() { return new ClipArtData() { ImageStamp = ImageStamp, X = X, Y = Y, Wstored = Wstored, Hstored = Hstored, Filling = Filling, PatternLine = PatternLine, Distance = Distance, Store = Store }; }
     };
 
     public enum VideoRecordMode {NoVideo=0 , OBSRec=1 , OBSBcst=2 , FfmpegRec=3 };
@@ -100,7 +109,7 @@ namespace gInk
                 if (activePointer)           // StartInkingMsg is received twice, therefore we have to froce pointerMode at that time...
                 {
                     Root.FormCollection.btPointer_Click(null,null);
-                    if (Root.AltTabPointer && !Root.PointerMode && !Root.FormCollection.Initializing) // to unfold the bar if AltTabPointer option has been set
+                    if (Root.AltTabPointer && !Root.PointerMode && !Root.IsDockedBeforePen && !Root.FormCollection.Initializing) // to unfold the bar if AltTabPointer option has been set
                     {
                         Root.UnDock();
                     }
@@ -143,9 +152,10 @@ namespace gInk
         //public Guid ISRECT_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 1, 2);
         //public Guid ISOVAL_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 1, 3);
 
-        public static Guid ISFILLEDCOLOR_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 1);
-        public static Guid ISFILLEDWHITE_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 2);
-        public static Guid ISFILLEDBLACK_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 3);
+        public static Guid ISFILLEDCOLOR_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 12, 1);
+        public static Guid ISFILLEDWHITE_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 12, 2);
+        public static Guid ISFILLEDBLACK_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 12, 3);
+        public static Guid ISFILLEDOUTSIDE_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 12, 4);
         public static Guid IMAGE_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 4);
         public static Guid IMAGE_X_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 5);
         public static Guid IMAGE_Y_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 6);
@@ -154,9 +164,20 @@ namespace gInk
         public static Guid ISHIDDEN_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 10);
         public static Guid ISBACKGROUND_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 11);
         public static Guid ANIMATIONFRAMEIMG_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 12);
+        public static Guid REPETITIONDISTANCE_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 20);
+        public static Guid LISTOFPOINTS_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 21);
+        public static Guid ARROWSTART_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 22);    // pointing head
+        public static Guid ARROWSTART_X_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 23);    // pointing head
+        public static Guid ARROWSTART_Y_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 24);    // pointing head
+        public static Guid ARROWSTART_FN_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 25);    // Original FileName
+        public static Guid ARROWEND_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 32);      // tail
+        public static Guid ARROWEND_X_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 33);      // tail
+        public static Guid ARROWEND_Y_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 34);      // tail
+        public static Guid ARROWEND_FN_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 2, 35);    // 
 
         public static Guid FADING_PEN = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 3, 1);
         public static Guid DASHED_LINE_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 3, 2);        // will contain DashStyle style
+        public static Guid ROTATION_GUID = new Guid(10, 11, 12, 10, 0, 0, 0, 0, 0, 3, 3);           // applies to both Text and Images
 
         public static int MIN_MAGNETIC = 25;
         // options
@@ -241,6 +262,7 @@ namespace gInk
         public Hotkey Hotkey_Text = new Hotkey();
         public Hotkey Hotkey_Edit = new Hotkey();
         public Hotkey Hotkey_Move = new Hotkey();
+        public Hotkey Hotkey_ScaleRotate = new Hotkey();
         public Hotkey Hotkey_Magnet = new Hotkey();
         public Hotkey Hotkey_ClipArt = new Hotkey();
         public Hotkey Hotkey_ClipArt1 = new Hotkey();
@@ -251,19 +273,26 @@ namespace gInk
         public Hotkey Hotkey_ColorEdit = new Hotkey();
         public Hotkey Hotkey_LineStyle = new Hotkey();
         public Hotkey Hotkey_Lasso = new Hotkey();
-
+        public UInt32 LineStyleRotateEnabled= 0xFF;  // field of bits
+        
         public Hotkey Hotkey_LoadStrokes = new Hotkey();
         public Hotkey Hotkey_SaveStrokes = new Hotkey();
 
-
         public float LongHKPressDelay = 2.5F;
+
+        public bool ButtonClick_For_LineStyle = false;
+
+        public bool DirectX = true;
 
         public int ToolSelected = Tools.Hand;        // indicates which tool (Hand,Line,...) is currently selected
         public int FilledSelected = 0;      // indicates which filling (None, Selected color, ...) is currently select
         public bool EraserMode = false;
 		public bool Docked = false;
 		public bool PointerMode = false;
-		public bool FingerInAction = false;  // true when mouse down, either drawing or snapping or whatever
+        public bool IsDockedBeforePen = false;
+        public DateTime PointerChangeDate = DateTime.MinValue;
+
+        public bool FingerInAction = false;  // true when mouse down, either drawing or snapping or whatever
 		public int Snapping = 0;  // <=0: not snapping, 1: waiting finger, 2:dragging
 		public int SnappingX = -1, SnappingY = -1;
 		public Rectangle SnappingRect;
@@ -292,7 +321,11 @@ namespace gInk
 		public int UndoP;
 		public int UndoDepth, RedoDepth;
 
-		public NotifyIcon trayIcon;
+        public int CurrentArrow = 0;
+        public List<string> ArrowHead = new List<string>();
+        public List<string> ArrowTail = new List<string>();
+
+        public NotifyIcon trayIcon;
 		public ContextMenu trayMenu;
 		public FormCollection FormCollection;
 		public FormDisplay FormDisplay;
@@ -344,12 +377,12 @@ namespace gInk
 
         public int StampSize = 128;
         public StringCollection StampFileNames = new StringCollection();
-        public ClipArtData ImageStamp = new ClipArtData { ImageStamp = "", X = -1, Y = -1, Filling = (int)(Filling.NoFrame) };
+        public ClipArtData ImageStamp = new ClipArtData { ImageStamp = "", X = -1, Y = -1, Wstored=-1, Hstored=-1, Filling = (int)(Filling.NoFrame),PatternLine=false,Distance = -1, Store=false};
         public float StampScaleRatio = .1F;
         public int ImageStampFilling = 0;
-        public string ImageStamp1 = "";
-        public string ImageStamp2 = "";
-        public string ImageStamp3 = "";
+        public ClipArtData  ImageStamp1 = new ClipArtData { ImageStamp = "", X = -1, Y = -1, Wstored = -1, Hstored = -1, Filling = (int)(Filling.NoFrame), PatternLine = false, Distance = -1, Store = false };
+        public ClipArtData  ImageStamp2 = new ClipArtData { ImageStamp = "", X = -1, Y = -1, Wstored = -1, Hstored = -1, Filling = (int)(Filling.NoFrame), PatternLine = false, Distance = -1, Store = false };
+        public ClipArtData  ImageStamp3 = new ClipArtData { ImageStamp = "", X = -1, Y = -1, Wstored = -1, Hstored = -1, Filling = (int)(Filling.NoFrame), PatternLine = false, Distance = -1, Store = false };
 
         public float TimeBeforeFading = 5.0F;     //5s default
 
@@ -358,6 +391,10 @@ namespace gInk
         public float ZoomScale = 3.0F;
         public bool ZoomContinous = false;
         public int ZoomEnabled = 3;
+
+        public Color SpotLightColor = Color.FromArgb(128, Color.Orange);
+        public int SpotLightRadius = 200;
+        public bool SpotOnAlt = true;
 
         public Rectangle WindowRect = new Rectangle(Int32.MinValue, Int32.MinValue, -1, -1);
         public bool ResizeDrawingWindow = false;
@@ -416,7 +453,7 @@ namespace gInk
 			trayMenu.MenuItems.Add("-");
 			trayMenu.MenuItems.Add(Local.MenuEntryExit, OnExit);
 
-			SetDefaultPens();
+            SetDefaultPens();
 			SetDefaultConfig();
 			ReadOptions("config.ini");
 			ReadOptions("pens.ini");
@@ -662,22 +699,14 @@ namespace gInk
 		public void Pan(int x, int y)
 		{
 			if (x == 0 && y == 0)
-				return;
-
-			//FormCollection.IC.Ink.Strokes.Move(x, y);
-            // for texts
-            foreach(Stroke st in FormCollection.IC.Ink.Strokes)
-            {
+				return;            
+            FormCollection.IC.Ink.Strokes.Move(x, y);
+            foreach (Stroke st in FormCollection.IC.Ink.Strokes)
                 if (st.ExtendedProperties.Contains(ISBACKGROUND_GUID))
                     continue;
-                st.Move(x, y);
-                if (st.ExtendedProperties.Contains(TEXTX_GUID))
-                {
-                    st.ExtendedProperties.Add(TEXTX_GUID, (int)(st.ExtendedProperties[TEXTX_GUID].Data) + x);
-                    st.ExtendedProperties.Add(TEXTY_GUID, (int)(st.ExtendedProperties[TEXTY_GUID].Data) + y);
-                }
-            }
-			FormDisplay.ClearCanvus();
+                else
+                    FormCollection.MoveStrokeAndProperties(st, x, y, false);
+            FormDisplay.ClearCanvus();
 			FormDisplay.DrawStrokes();
 			FormDisplay.DrawButtons(true);
 			FormDisplay.UpdateFormDisplay(true);
@@ -758,27 +787,37 @@ namespace gInk
 				return;
             if (ColorPickerMode)
                 FormCollection.StartStopPickUpColor(0);
+            FormCollection.ClipartsDlg.Hide();
+            PointerChangeDate = DateTime.Now.AddMilliseconds(100);
             PointerMode = true;
+            IsDockedBeforePen = Docked;
+
             FormDisplay.DrawBorder(false);
 			FormCollection.ToThrough();
 			FormButtonHitter.Show();
             FormButtonHitter.timer1_Tick(null,null); // Force Size recomputation for alt+tab processing
+            if (ColorPickerMode)
+                FormCollection.StartStopPickUpColor(0);
+            FormCollection.SpotLightTemp = false;
         }
 
-		public void UnPointer()
+        public void UnPointer()
 		{
 			if (PointerMode == false)
 				return;
             if (FormCollection == null)
                 return;
+
+            PointerChangeDate = DateTime.Now.AddMilliseconds(100);
+            PointerMode = false;
+
             FormCollection.AddPointerSnaps();
 			FormButtonHitter.Hide();
 			FormCollection.ToUnThrough();
             FormCollection.ToTopMost();
+            AppGetFocus();
 			FormCollection.Activate();
-			PointerMode = false;
-            if (ColorPickerMode)
-                FormCollection.StartStopPickUpColor(0);
+            FormCollection.Select();                       
 		}
 
 		public void SelectPen(int pen)
@@ -877,11 +916,9 @@ namespace gInk
 				else
 					trayIcon.Icon = global::gInk.Properties.Resources.icon_red;
 			}
-
-
 		}
 
-		public void ReadOptions(string file)
+        public void ReadOptions(string file)
 		{
 			if (!File.Exists(file))
 				file = AppDomain.CurrentDomain.BaseDirectory + file;
@@ -983,7 +1020,7 @@ namespace gInk
 
 					}
 
-					int tempi = 0;
+                    int tempi = 0;
 					float tempf = 0;
                     double tempd = 0;
                     string[] tab;
@@ -1017,6 +1054,9 @@ namespace gInk
                             break;
                         case "HOTKEY_PAN":
                             Hotkey_Pan.Parse(sPara);
+                            break;
+                        case "HOTKEY_SCALE_ROTATE":
+                            Hotkey_ScaleRotate.Parse(sPara);
                             break;
                         case "HOTKEY_UNDO":
                             Hotkey_Undo.Parse(sPara);
@@ -1107,6 +1147,24 @@ namespace gInk
                             break;
                         case "HOTKEY_LASSO":
                             Hotkey_Lasso.Parse(sPara);
+                            break;
+
+                        case "BUTTONCLICK_FOR_LINESTYLE":
+                            if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
+                                ButtonClick_For_LineStyle = true;
+                            else
+                                ButtonClick_For_LineStyle = false;
+                            break;
+
+                        case "LINESTYLEROTATE":
+                            try
+                            {
+                                LineStyleRotateEnabled = Convert.ToUInt32(Convert.ToInt32(sPara, 2));
+                            }
+                            catch
+                            {
+                                LineStyleRotateEnabled = 0xFF;
+                            }
                             break;
 
                         case "PENS_ON_TWO_LINES":
@@ -1371,6 +1429,26 @@ namespace gInk
                                     ToolbarBGColor[i] = Int32.Parse(tab[i]);
                             };
                             break;
+                        case "SPOT_COLOR": // if not defined, no window else 2 to 4 integers Top,Left,[Width/Height,[Opacity]]
+                            tab = sPara.Split(',');
+                            if (tab.Length == 4)
+                            {
+                                int[] sco = new int[4];
+                                for (int i = 0; i < 4; i++)
+                                    sco[i] = Int32.Parse(tab[i]);
+                                SpotLightColor = Color.FromArgb(sco[0], sco[1], sco[2], sco[3]);
+                            };
+                            break;
+                        case "SPOT_RADIUS":
+                            if (float.TryParse(sPara, out tempf))
+                            {
+                                SpotLightRadius = (int)(tempf / 100.0 * System.Windows.SystemParameters.PrimaryScreenWidth);
+                            }
+                            break;
+                        case "SPOT_ON_ALT":
+                            if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
+                                SpotOnAlt  = false;
+                            break;
                         case "BOARDATOPENING":
                             if (Int32.TryParse(sPara, out tempi))
                                 BoardAtOpening  = tempi;
@@ -1411,46 +1489,59 @@ namespace gInk
                                 ImageStampFilling = tempi;
                             break;
                         case "IMAGESTAMP_FILENAMES":
-                            if (sPara.Length == 0) break;
-                            string[] st = sPara.Replace('\\', '/').Trim(';').Split(';');
-                            foreach(string st1 in st)
                             {
-                                string st2;
-                                //if (!Path.IsPathFullyQualified(st1))
-                                if (!Path.IsPathRooted(st1))
-                                    st2 = Global.ProgramFolder + st1;
-                                else
-                                    st2 = st1;
-                                if (!StampFileNames.Contains(st2))
-                                    StampFileNames.Insert(StampFileNames.Count,st2);
+                                if (sPara.Length == 0) break;
+                                string[] st = sPara.Replace('\\', '/').Trim(';').Split(';');
+                                foreach (string st1 in st)
+                                {
+                                    string st2;
+                                    if (!Path.IsPathRooted(st1))
+                                        st2 = Global.ProgramFolder + st1;
+                                    else
+                                        st2 = st1;
+                                    if (!ContainsInsensitive(StampFileNames, st2))
+                                        StampFileNames.Insert(StampFileNames.Count, st2);
+                                }
                             }
                             break;
                         case "IMAGESTAMP1":
-                            if (sPara.Length == 0)
-                                sPara="";
-                            else if (!Path.IsPathRooted(sPara))
-                                    sPara = Global.ProgramFolder + sPara;
-                            if (!StampFileNames.Contains(sPara))        // to ensure the files are within the stamfiles;
-                                StampFileNames.Insert(StampFileNames.Count, sPara);
-                            ImageStamp1 = sPara;
+                            FillImageStampFromConfig(sPara,ref ImageStamp1);
                             break;
                         case "IMAGESTAMP2":
-                            if (sPara.Length == 0)
-                                sPara = "";
-                            else if (!Path.IsPathRooted(sPara))
-                                sPara = Global.ProgramFolder + sPara;
-                            if (!StampFileNames.Contains(sPara))
-                                StampFileNames.Insert(StampFileNames.Count, sPara);
-                            ImageStamp2 = sPara;
+                            FillImageStampFromConfig(sPara, ref ImageStamp2);
                             break;
                         case "IMAGESTAMP3":
-                            if (sPara.Length == 0)
-                                sPara = "";
-                            else if (!Path.IsPathRooted(sPara))
-                                sPara = Global.ProgramFolder + sPara;
-                            if (!StampFileNames.Contains(sPara))
-                                StampFileNames.Insert(StampFileNames.Count, sPara);
-                            ImageStamp3 = sPara;
+                            FillImageStampFromConfig(sPara, ref ImageStamp3);
+                            break;
+                        case "ARROW_HEAD":
+                            {
+                                if (sPara.Length == 0) break;
+                                string[] st = sPara.Replace('\\', '/').Trim(';').Split(';');
+                                foreach (string st1 in st)
+                                {
+                                    string st2;
+                                    if (st1.Contains(".") && !Path.IsPathRooted(st1))
+                                        st2 = Global.ProgramFolder + st1;
+                                    else
+                                        st2 = st1;
+                                    ArrowHead.Add(st2);
+                                }
+                            }
+                            break;
+                        case "ARROW_TAIL":
+                            {
+                                if (sPara.Length == 0) break;
+                                string[] st = sPara.Replace('\\', '/').Trim(';').Split(';');
+                                foreach (string st1 in st)
+                                {
+                                    string st2;
+                                    if (st1.Contains(".") && !Path.IsPathRooted(st1))
+                                        st2 = Global.ProgramFolder + st1;
+                                    else
+                                        st2 = st1;
+                                    ArrowTail.Add(st2);
+                                }
+                            }
                             break;
                         case "TOOLBAR_DIRECTION":
                             if (sPara.ToUpper() == "LEFT")
@@ -1533,16 +1624,85 @@ namespace gInk
                             if (float.TryParse(sPara, out tempf))
                                 PenWidthThick = tempf;
                             break;
+                        case "DIRECTX":
+                            DirectX = (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON");
+                            break;
                     }
                 }
 			}
 			fini.Close();
 		}
 
-		public void SaveOptions(string file)
+        private string FillImageStampFromConfig(string sPara, ref ClipArtData ImgStamp)
+        {
+            if (sPara.Length == 0)
+                sPara = "";
+            string[] lst = sPara.Split(';');
+            try { ImgStamp.X = int.Parse(lst[1]); }
+                catch { ImgStamp.X = -1; }
+            ImgStamp.Wstored = ImgStamp.X;
+            try { ImgStamp.Y = int.Parse(lst[2]); }
+                catch { ImgStamp.Y = -1; }
+            ImgStamp.Hstored = ImgStamp.Y;
+            try
+            {
+                switch(lst[3][0])
+                {
+                    case 'B':
+                        ImgStamp.Filling = Filling.BlackFilled;
+                        break;
+                    case 'E':
+                        ImgStamp.Filling = Filling.Empty;
+                        break;
+                    case 'N':
+                        ImgStamp.Filling = Filling.NoFrame;
+                        break;
+                    case 'W':
+                        ImgStamp.Filling = Filling.WhiteFilled;
+                        break;
+                    case 'P':
+                        ImgStamp.Filling = Filling.PenColorFilled;
+                        break;
+                    default:
+                        ImgStamp.Filling = Filling.NoFrame;
+                        break;
+                }
+            }
+            catch { ImgStamp.Filling = Filling.NoFrame; }
+
+            try { ImgStamp.PatternLine = lst[4][0] == 'L'; }
+                catch { ImgStamp.PatternLine = false; }
+
+            try { ImgStamp.Distance = double.Parse(lst[5],CultureInfo.InvariantCulture); }
+                catch { ImgStamp.Distance = Double.MaxValue; }
+
+            sPara = lst[0];
+            if (!Path.IsPathRooted(sPara))
+                sPara = Global.ProgramFolder + sPara;
+            sPara = sPara.Replace('\\', '/').ToLower();
+            if (!ContainsInsensitive(StampFileNames, sPara))
+                StampFileNames.Insert(StampFileNames.Count, sPara);
+            ImgStamp.ImageStamp = sPara;
+            return sPara;
+        }
+
+        private string Fill2Str(int i)
+        {
+            if (i == Filling.NoFrame) return "NoFrame";
+            else if (i == Filling.Empty) return "Empty";
+            else if (i == Filling.PenColorFilled) return "PenColor";
+            else if (i == Filling.WhiteFilled) return "White";
+            else if (i == Filling.BlackFilled) return "Black";
+            else return "????";
+        }
+
+        public void SaveOptions(string file)
 		{
             bool StampFileNamesAlreadyFilled = false;
-			if (!File.Exists(file))
+            bool ArrowHeadAlreadyFilled = false;
+            bool ArrowTailAlreadyFilled = false;
+
+            if (!File.Exists(file))
 				file = AppDomain.CurrentDomain.BaseDirectory + file;
 			if (!File.Exists(file))
 				return;
@@ -1665,7 +1825,10 @@ namespace gInk
 							break;
 						case "HOTKEY_PAN":
 							sPara = Hotkey_Pan.ToStringInvariant();
-							break;
+                            break;
+                        case "HOTKEY_SCALE_ROTATE":
+                            sPara = Hotkey_ScaleRotate.ToStringInvariant();                            
+                            break;
 						case "HOTKEY_UNDO":
 							sPara = Hotkey_Undo.ToStringInvariant();
 							break;
@@ -1756,7 +1919,20 @@ namespace gInk
                         case "HOTKEY_LASSO":
                             sPara = Hotkey_Lasso.ToStringInvariant();
                             break;
-                                                       
+
+                        case "BUTTONCLICK_FOR_LINESTYLE":
+                            sPara = ButtonClick_For_LineStyle?"True":"False";
+                            break;
+
+                        case "LINESTYLEROTATE":
+                            string s = "";
+                            for (int i = 0; i < 8; i++)
+                            {
+                                s = (((LineStyleRotateEnabled & (1 << i)) != 0) ? "1" : "0") + s;
+                            }
+                            sPara =s;
+                            break;
+
                         case "PENS_ON_TWO_LINES":
                             sPara = PensOnTwoLines? "True" : "False";
                             break;
@@ -1934,6 +2110,15 @@ namespace gInk
                         case "TOOLBAR_COLOR":
                             sPara = ToolbarBGColor[0].ToString() + "," + ToolbarBGColor[1].ToString() + "," + ToolbarBGColor[2].ToString() + "," + ToolbarBGColor[3].ToString();
                             break;
+                        case "SPOT_COLOR": // if not defined, no window else 2 to 4 integers Top,Left,[Width/Height,[Opacity]]
+                            sPara = SpotLightColor.A.ToString() + "," + SpotLightColor.R.ToString() + "," + SpotLightColor.G.ToString() + "," + SpotLightColor.B.ToString();
+                            break;
+                        case "SPOT_RADIUS":
+                            sPara = (SpotLightRadius / System.Windows.SystemParameters.PrimaryScreenWidth * 100.0).ToString(CultureInfo.InvariantCulture);
+                            break;
+                        case "SPOT_ON_ALT":
+                            sPara = SpotOnAlt ? "True" : "False";
+                            break;
                         case "BOARDATOPENING":
                             sPara = BoardAtOpening.ToString();
                             break;
@@ -1974,13 +2159,52 @@ namespace gInk
                                 sPara = " ";
                             break;
                         case "IMAGESTAMP1":
-                            sPara = MakeRelativePath(Global.ProgramFolder, ImageStamp1).Replace('\\', '/');
+                            sPara = MakeRelativePath(Global.ProgramFolder, ImageStamp1.ImageStamp).Replace('\\', '/') + ";" + ImageStamp1.Wstored.ToString() + ";" + ImageStamp1.Hstored.ToString() + ";" 
+                                                        + Fill2Str(ImageStamp1.Filling) + ";" + (ImageStamp1.PatternLine ? "Line;"+ImageStamp1.Distance.ToString() : "Point");
                             break;
                         case "IMAGESTAMP2":
-                            sPara = MakeRelativePath(Global.ProgramFolder, ImageStamp2).Replace('\\', '/');
+                            sPara = MakeRelativePath(Global.ProgramFolder, ImageStamp2.ImageStamp).Replace('\\', '/') + ";" + ImageStamp2.Wstored.ToString() + ";" + ImageStamp2.Hstored.ToString() + ";" 
+                                                        + Fill2Str(ImageStamp2.Filling) + ";" + (ImageStamp2.PatternLine ? "Line;" + ImageStamp2.Distance.ToString() : "Point");
                             break;
                         case "IMAGESTAMP3":
-                            sPara = MakeRelativePath(Global.ProgramFolder, ImageStamp3).Replace('\\', '/');
+                            sPara = MakeRelativePath(Global.ProgramFolder, ImageStamp3.ImageStamp).Replace('\\', '/') + ";" + ImageStamp3.Wstored.ToString() + ";" + ImageStamp3.Hstored.ToString() + ";" 
+                                                        + Fill2Str(ImageStamp3.Filling) + ";" + (ImageStamp3.PatternLine ? "Line;" + ImageStamp3.Distance.ToString() : "Point");
+                            break;
+                        case "ARROW_HEAD":
+                            if (!ArrowHeadAlreadyFilled)
+                            {
+                                sPara = "";
+                                foreach (string st1 in ArrowHead)
+                                    if (st1.Contains("."))
+                                        sPara += MakeRelativePath(Global.ProgramFolder, st1).Replace('\\', '/') + ";";
+                                    else
+                                        sPara += st1 + ";";
+                                if (sPara.Length > 1)
+                                    sPara = sPara.Remove(sPara.Length - 1, 1); // to suppress last ;
+                                else //if(sPara.Length <=1)
+                                    sPara = " ";
+                                ArrowHeadAlreadyFilled= true;
+                            }
+                            else
+                                sPara = " ";
+                            break;
+                        case "ARROW_TAIL":
+                            if (!ArrowTailAlreadyFilled)
+                            {
+                                sPara = "";
+                                foreach (string st1 in ArrowTail)
+                                    if (st1.Contains("."))
+                                        sPara += MakeRelativePath(Global.ProgramFolder, st1).Replace('\\', '/') + ";";
+                                    else
+                                        sPara += st1 + ";";
+                                if (sPara.Length > 1)
+                                    sPara = sPara.Remove(sPara.Length - 1, 1); // to suppress last ;
+                                else //if(sPara.Length <=1)
+                                    sPara = " ";
+                                ArrowTailAlreadyFilled = true;
+                            }
+                            else
+                                sPara = " ";
                             break;
                         case "TOOLBAR_DIRECTION":
                             if (ToolbarOrientation == Orientation.toLeft)
@@ -2021,10 +2245,13 @@ namespace gInk
                             sPara = Measure2Unit;
                             break;
                         case "MEASURE_ANGLE_DIR":
-                            sPara= MeasureAnglCounterClockwise?"True":"False";
+                            sPara = MeasureAnglCounterClockwise ? "True" : "False";
                             break;
                         case "SWAP_SNAPSHOT_BEHAVIORS":
-                            sPara = SwapSnapsBehaviors?"True":"False";
+                            sPara = SwapSnapsBehaviors ? "True" : "False";
+                            break;
+                        case "DIRECTX":
+                            sPara = DirectX ? "True" : "False";
                             break;
                     }
                 }
@@ -2185,22 +2412,39 @@ namespace gInk
             throw (new Exception("Unknown LineStyle String :" + s));
         }
 
-        public string NextLineStyleString(string s)
+        public string NextLineStyleString(string s,bool CustomList=false)
         {
+            UInt32 u = CustomList ? LineStyleRotateEnabled : 0xFF;
+            if (u == 0)
+                u = 0xFF;
+            String st;
+
             switch (s.ToUpper())
             {
                 case "STROKE":
-                    return "Solid";
+                    st = "Solid";
+                    return ((u & 0x2) != 0) ? st : NextLineStyleString(st, CustomList);
+                    //break;
                 case "SOLID":
-                    return "Dash";
+                    st = "Dash";
+                    return ((u & 0x4) != 0) ? st : NextLineStyleString(st, CustomList);
+                    //break;
                 case "DASH":
-                    return "Dot";
+                    st = "Dot";
+                    return ((u & 0x8) != 0) ? st : NextLineStyleString(st, CustomList);
+                    //break;
                 case "DOT":
-                    return "DashDot";
+                    st = "DashDot";
+                    return ((u & 0x10) != 0) ? st : NextLineStyleString(st, CustomList);
+                    //break;
                 case "DASHDOT":
-                    return "DashDotDot";
+                    st = "DashDotDot";
+                    return ((u & 0x20) != 0) ? st : NextLineStyleString(st, CustomList);
+                    //break;
                 case "DASHDOTDOT":
-                    return "Stroke";
+                    st = "Stroke";
+                    return ((u & 0x1) != 0) ? st : NextLineStyleString(st, CustomList);
+                    //break;
             }
             return "Stroke"; //default : original stroke
         }
@@ -2209,6 +2453,14 @@ namespace gInk
         public void AppGetFocus()
         {
             SetForegroundWindow(Process.GetCurrentProcess().MainWindowHandle);
+        }
+
+        public bool ContainsInsensitive(StringCollection Arr, string key)
+        {
+            foreach (string s in Arr)
+                if (s.Equals(key, StringComparison.InvariantCultureIgnoreCase))
+                    return true;
+            return false;
         }
 
         [DllImport("user32.dll")]

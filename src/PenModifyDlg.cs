@@ -48,15 +48,32 @@ namespace gInk
             return colorEditorManager.Color;
         }
 
+        bool WidthChanging = false;
         public void setWidth(float w)
         {
+            WidthChanging = true;
+            WidthTb.Text = ((int)w).ToString();
             pboxPenWidthIndicator.Left = (int)(Math.Sqrt(w / 1250)* 200);
+            WidthChanging = false;
+        }
+
+        private void WidthTb_Validating(object sender, CancelEventArgs e)
+        {
+            int i;
+            if (int.TryParse(WidthTb.Text, out i))
+                setWidth(i);
+        }
+
+        private void pboxPenWidthIndicator_Move(object sender, EventArgs e)
+        {
+            double f = (pboxPenWidthIndicator.Left / 200.0);
+            if(!WidthChanging)
+                WidthTb.Text = ((int)(f * f * 1250.0)).ToString();
         }
 
         public float getWidth()
         {
-            double f = (pboxPenWidthIndicator.Left/ 200.0);
-            return (float)(f * f * 1250);
+            return float.Parse(WidthTb.Text);
         }
 
         public void setDashStyle(Microsoft.Ink.DrawingAttributes pen)
