@@ -1252,7 +1252,7 @@ namespace gInk
             PatternPoints.Clear();
             StoredPatternPoints.Clear();
 
-        Console.WriteLine("C=" + (DateTime.Now.Ticks / 1e7).ToString());
+            Console.WriteLine("C=" + (DateTime.Now.Ticks / 1e7).ToString());
         }
 
         private void SetSubBarPosition(Panel Tb, Button RefButton)
@@ -2205,6 +2205,12 @@ namespace gInk
 
         private void IC_Stroke(object sender, InkCollectorStrokeEventArgs e)
         {
+            if (e.Cursor.Inverted)
+            {
+                Console.WriteLine("del");
+                e.Cancel = true;
+                return;
+            }
             Rectangle r = e.Stroke.GetBoundingBox(BoundingBoxMode.PointsOnly);
             bool HitTouch = Math.Max(r.Width, r.Height) < 2 * e.Stroke.DrawingAttributes.Width;    // To take into account PenWidth extension done by GetBoundingBox
             //Console.WriteLine(string.Format("IC_Stroke X0={0} X0=X{1} / Type{2} / Hit{3}", Root.CursorX0, (Root.CursorX0== Root.CursorX)&&(Root.CursorY0 == Root.CursorY), e.Cursor.Tablet.DeviceKind.ToString(),HitTouch));
@@ -2329,7 +2335,7 @@ namespace gInk
                 if ((Root.ToolSelected == Tools.Line) && (!HitTouch))
                 {
                     Console.WriteLine("Line");
-                    AddLineStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY);                    
+                    AddLineStroke(Root.CursorX0, Root.CursorY0, Root.CursorX, Root.CursorY);
                 }
                 //#else if ((Root.ToolSelected == Tools.Rect) && (Root.CursorX0 != Int32.MinValue))
                 else if ((Root.ToolSelected == Tools.Rect) && (!HitTouch))
@@ -2362,8 +2368,8 @@ namespace gInk
                             //Console.WriteLine("ratio 2 = " + ((double)(Root.CursorX - Root.CursorX0) / (Root.CursorY - Root.CursorY0)).ToString());
                             Root.CursorX = (int)(Root.CursorX0 + (double)(Root.CursorY - Root.CursorY0) / h * w);
                         }
-                    else if (Math.Abs((double)(Root.CursorY - Root.CursorY0) / (Root.CursorX - Root.CursorX0)) < Root.StampScaleRatio)
-                    {
+                        else if (Math.Abs((double)(Root.CursorY - Root.CursorY0) / (Root.CursorX - Root.CursorX0)) < Root.StampScaleRatio)
+                        {
                             //Console.WriteLine("ratio 1 = " + ((double)(Root.CursorY - Root.CursorY0) / (Root.CursorX - Root.CursorX0)).ToString());
                             Root.CursorY = (int)(Root.CursorY0 + (double)(Root.CursorX - Root.CursorX0) / w * h);
                         }
@@ -2515,7 +2521,8 @@ namespace gInk
             //CurrentMouseButton = MouseButtons.None;
             Root.CursorX0 = Int32.MinValue;
             Root.CursorY0 = Int32.MinValue;
-            Console.WriteLine("------------------ "+(dbgcpt++).ToString());
+            IC.Selection.Clear();
+            Console.WriteLine(" ------------------ "+(dbgcpt++).ToString());
         }
 
         private List<Point> getEquiPointsFromStroke(Stroke stk, double dist, ref int Start, ref double Remain,int Xoff=0,int Yoff=0,bool ConvertInkSpaceToPixel=true)
@@ -2607,6 +2614,11 @@ namespace gInk
         private void IC_CursorDown(object sender, InkCollectorCursorDownEventArgs e)
         {
             Console.WriteLine("CursorDown :" + e.Cursor.Tablet.DeviceKind.ToString());
+            if (e.Cursor.Inverted)
+            {
+                Console.WriteLine("!!!del");
+                return;
+            }
             if (ZoomCapturing)
             {
                 e.Stroke.ExtendedProperties.Add(Root.ISHIDDEN_GUID, true); // we set the ISTROKE_GUID in order to draw the inprogress as a line
@@ -3477,7 +3489,7 @@ namespace gInk
                 tool = Tools.StartArrow;
                 if (gpSubTools.Visible && subTools_title.Contains("Arrow"))
                     changeActiveTool(0, false, 1);
-                }
+            }
             else if (tool == Tools.NumberTag)
             {
                 if (Root.FilledSelected == Filling.Empty)
@@ -4487,13 +4499,16 @@ namespace gInk
             Initializing = false;
             Tick++;
 
-            if (!Root.FormDisplay.Visible)
+            if (IC.EditingMode == InkOverlayEditingMode.Delete && !IC.CollectingInk && !Root.EraserMode)
+                IC.EditingMode = InkOverlayEditingMode.Ink;
             if(Root.ToolSelected == Tools.PatternLine && PatternLineSteps==2 && LineForPatterns!=null)
             {
                 Console.Write("Pat "); Console.WriteLine(PatternLastPtIndex);
                 List<Point> r=getEquiPointsFromStroke(LineForPatterns, PatternDist, ref PatternLastPtIndex, ref PatternLastPtRemain, -Root.ImageStamp.X / 2, -Root.ImageStamp.Y / 2, true);
                 PatternPoints.AddRange(r);
             }
+
+            if (Root.FormDisplay == null || !Root.FormDisplay.Visible)
                 return;
 
             //if (Tick % 50 == 0) Console.WriteLine("AW."+Tick.ToString()+"="+ GetCaptionOfActiveWindow());
@@ -6910,10 +6925,10 @@ namespace gInk
                                 try
                                 {
                                     obj = int.Parse(st2);
-                            }
-                            catch
-                            {
-                                obj = Int64.Parse(st2); // for Fading...
+                                }
+                                catch
+                                {
+                                    obj = Int64.Parse(st2); // for Fading...
                                 }
                             else if (st.Contains("Bool"))
                                 obj = bool.Parse(st2);
