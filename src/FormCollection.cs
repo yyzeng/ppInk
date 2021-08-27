@@ -325,11 +325,12 @@ namespace gInk
             }
         }
 
-        public Bitmap buildPenIcon(Color col, int transparency, bool Sel, bool Fading, string LineStyle="Stroke")
+        public Bitmap buildPenIcon(Color col, int transparency, bool Sel, bool Fading, string LineStyle="Stroke", float width = 100.0F)
         {
             Bitmap fg, img, Overlay;
             ImageAttributes imageAttributes = new ImageAttributes();
-            bool Large = transparency >= 100;
+            bool Highlighter = transparency >= 100;
+            bool Large = width >= (Root.PenWidthNormal+Root.PenWidthThick)/2;
 
             float[][] colorMatrixElements = {
                        new float[] {col.R/255.0f,  0,  0,  0, 0},
@@ -340,8 +341,8 @@ namespace gInk
             ColorMatrix colorMatrix = new ColorMatrix(colorMatrixElements);
             imageAttributes.SetColorMatrix(colorMatrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
 
-            img = getImgFromDiskOrRes((Large ? "Lpen" : "pen") + (Sel ? "S" : "") + "_bg", ImageExts);
-            fg = getImgFromDiskOrRes((Large ? "Lpen" : "pen") + (Sel ? "S" : "") + "_col", ImageExts);
+            img = getImgFromDiskOrRes((Highlighter ? "Lpen" : (Large?"PRpen":"pen")) + (Sel ? "S" : "") + "_bg", ImageExts);
+            fg = getImgFromDiskOrRes((Highlighter ? "Lpen" : (Large ? "PRpen" : "pen")) + (Sel ? "S" : "") + "_col", ImageExts);
 
             Graphics g = Graphics.FromImage(img);
             g.DrawImage(fg, new Rectangle(0, 0, img.Width, img.Height), 0, 0, img.Width, img.Height, GraphicsUnit.Pixel, imageAttributes);
@@ -2135,7 +2136,6 @@ namespace gInk
                     string fn = (string)s.ExtendedProperties[Root.ARROWSTART_FN_GUID].Data;
                     int l;
                     StoredArrowImages[i].Dispose();
-                    Console.WriteLine("W= {0}", s.DrawingAttributes.Width);
                     double kk = Math.Max(1,s.DrawingAttributes.Width * 0.037795280352161);// code copied from Root.HiMetricToPixel in order to not have rounding;
                     StoredArrowImages[i] = PrepareArrowBitmap(fn, s.DrawingAttributes.Color, s.DrawingAttributes.Transparency, (int)Math.Ceiling(kk), (float)theta, out l);
                     kk = kk / 18.0f;
@@ -3692,7 +3692,7 @@ namespace gInk
                     catch { }
                     //btPen[b].Image = image_pen[b];
                     btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, false,
-                                                            Root.PenAttr[b].ExtendedProperties.Contains(Root.FADING_PEN), Root.LineStyleToString(Root.PenAttr[b].ExtendedProperties));// image_pen[b];
+                                                            Root.PenAttr[b].ExtendedProperties.Contains(Root.FADING_PEN), Root.LineStyleToString(Root.PenAttr[b].ExtendedProperties),Root.PenAttr[b].Width);// image_pen[b];
                 }
                 btLasso.BackgroundImage = image_lasso_act;
                 EnterEraserMode(false);
@@ -3731,7 +3731,7 @@ namespace gInk
                     catch { }
                     //btPen[b].Image = image_pen[b];
                     btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, false,
-                                                            Root.PenAttr[b].ExtendedProperties.Contains(Root.FADING_PEN),Root.LineStyleToString(Root.PenAttr[b].ExtendedProperties));// image_pen[b];
+                                                            Root.PenAttr[b].ExtendedProperties.Contains(Root.FADING_PEN),Root.LineStyleToString(Root.PenAttr[b].ExtendedProperties), Root.PenAttr[b].Width);// image_pen[b];
                 }
                 btPan.BackgroundImage = getImgFromDiskOrRes("pan_act", ImageExts);
                 EnterEraserMode(false);
@@ -3751,7 +3751,7 @@ namespace gInk
                 for (int b = 0; b < Root.MaxPenCount; b++)
                     //btPen[b].Image = image_pen[b];
                     btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, false,
-                                                            Root.PenAttr[b].ExtendedProperties.Contains(Root.FADING_PEN),Root.LineStyleToString(Root.PenAttr[b].ExtendedProperties));// image_pen[b];
+                                                            Root.PenAttr[b].ExtendedProperties.Contains(Root.FADING_PEN),Root.LineStyleToString(Root.PenAttr[b].ExtendedProperties), Root.PenAttr[b].Width);// image_pen[b];
                 btPan.BackgroundImage = getImgFromDiskOrRes("pan", ImageExts);
                 btPointer.BackgroundImage = image_pointer_act;
                 EnterEraserMode(false);
@@ -3773,7 +3773,7 @@ namespace gInk
                 for (int b = 0; b < Root.MaxPenCount; b++)
                     //btPen[b].Image = image_pen[b];
                     btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, false,
-                                                            Root.PenAttr[b].ExtendedProperties.Contains(Root.FADING_PEN), Root.LineStyleToString(Root.PenAttr[b].ExtendedProperties));// image_pen[b];
+                                                            Root.PenAttr[b].ExtendedProperties.Contains(Root.FADING_PEN), Root.LineStyleToString(Root.PenAttr[b].ExtendedProperties), Root.PenAttr[b].Width);// image_pen[b];
 
                 btPan.BackgroundImage = getImgFromDiskOrRes("pan", ImageExts);
                 btEraser.BackgroundImage = image_eraser_act;
@@ -3848,7 +3848,7 @@ namespace gInk
                 for (int b = 0; b < Root.MaxPenCount; b++)
                     //btPen[b].Image = image_pen[b];
                     btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, b == pen,
-                                                            Root.PenAttr[b].ExtendedProperties.Contains(Root.FADING_PEN), Root.LineStyleToString(Root.PenAttr[b].ExtendedProperties));// image_pen[b];
+                                                            Root.PenAttr[b].ExtendedProperties.Contains(Root.FADING_PEN), Root.LineStyleToString(Root.PenAttr[b].ExtendedProperties), Root.PenAttr[b].Width);// image_pen[b];
                 //btPen[pen].Image = image_pen_act[pen];
                 EnterEraserMode(false);
                 Root.UnPointer();
@@ -4077,7 +4077,7 @@ namespace gInk
                 Root.PenAttr[Root.CurrentPen].Transparency = Root.PickupTransparency;
                 Root.PenAttr[Root.CurrentPen].Color = Root.PickupColor;
                 btPen[Root.CurrentPen].BackgroundImage = buildPenIcon(Root.PenAttr[Root.CurrentPen].Color, Root.PenAttr[Root.CurrentPen].Transparency, true,
-                                                            Root.PenAttr[Root.CurrentPen].ExtendedProperties.Contains(Root.FADING_PEN), Root.LineStyleToString(Root.PenAttr[Root.CurrentPen].ExtendedProperties));// image_pen[b];
+                                                            Root.PenAttr[Root.CurrentPen].ExtendedProperties.Contains(Root.FADING_PEN), Root.LineStyleToString(Root.PenAttr[Root.CurrentPen].ExtendedProperties), Root.PenAttr[Root.CurrentPen].Width);// image_pen[b];
                 SelectPen(Root.CurrentPen);
                 Active = 0;
             }
@@ -4965,7 +4965,8 @@ namespace gInk
                 {
                     Root.PenAttr[Root.CurrentPen] = Root.PenAttr[Root.SavedPenDA];
                     Root.PenAttr[Root.SavedPenDA] = null;
-                    btPen[Root.CurrentPen].BackgroundImage = buildPenIcon(Root.PenAttr[Root.CurrentPen].Color, Root.PenAttr[Root.CurrentPen].Transparency, true, Root.PenAttr[Root.CurrentPen].ExtendedProperties.Contains(Root.FADING_PEN));
+                    btPen[Root.CurrentPen].BackgroundImage = buildPenIcon(Root.PenAttr[Root.CurrentPen].Color, Root.PenAttr[Root.CurrentPen].Transparency, true, Root.PenAttr[Root.CurrentPen].ExtendedProperties.Contains(Root.FADING_PEN)
+                                                             , Root.LineStyleToString(Root.PenAttr[Root.CurrentPen].ExtendedProperties), Root.PenAttr[Root.CurrentPen].Width);
                     SelectPen(Root.CurrentPen);
                     Root.UponButtonsUpdate |= 0x2;
                 }
@@ -5655,7 +5656,7 @@ namespace gInk
                     else
                         Root.PenAttr[b].ExtendedProperties.Add(Root.DASHED_LINE_GUID, ds);
                     btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, false,
-                                                            Root.PenAttr[b].ExtendedProperties.Contains(Root.FADING_PEN), Root.LineStyleToString(Root.PenAttr[b].ExtendedProperties));
+                                                            Root.PenAttr[b].ExtendedProperties.Contains(Root.FADING_PEN), Root.LineStyleToString(Root.PenAttr[b].ExtendedProperties),Root.PenAttr[b].Width);
                     if(b==Root.CurrentPen)
                         SelectPen(b);
                     Root.UponButtonsUpdate |= 0x2;  // necessary in case b!= from CurrentPen
@@ -5681,9 +5682,9 @@ namespace gInk
                         //PreparePenImages(Root.PenAttr[b].Transparency, ref image_pen[b], ref image_pen_act[b]);
                         //btPen[b].Image = image_pen_act[b];
                         btPen[b].BackgroundImage = buildPenIcon(Root.PenAttr[b].Color, Root.PenAttr[b].Transparency, false,
-                                                                Root.PenAttr[b].ExtendedProperties.Contains(Root.FADING_PEN),Root.LineStyleToString(Root.PenAttr[b].ExtendedProperties));// image_pen[b];
-            btPen[b].FlatAppearance.MouseDownBackColor = Root.PenAttr[b].Color;
-                        btPen[b].FlatAppearance.MouseOverBackColor = Root.PenAttr[b].Color;
+                                                                Root.PenAttr[b].ExtendedProperties.Contains(Root.FADING_PEN),Root.LineStyleToString(Root.PenAttr[b].ExtendedProperties), Root.PenAttr[b].Width);// image_pen[b];
+                        //btPen[b].FlatAppearance.MouseDownBackColor = Root.PenAttr[b].Color;
+                        //btPen[b].FlatAppearance.MouseOverBackColor = Root.PenAttr[b].Color;
                         SelectPen(b);
                         Root.UponButtonsUpdate |= 0x2;
                     };

@@ -380,6 +380,10 @@
     <None Include="scale_act.png" />
     <Compile Include="ToDoList.cs" />
     <None Include="scale.png" />
+    <None Include="PRpen_bg.png" />
+    <None Include="PRpenS_bg.png" />
+    <None Include="PRpenS_col.png" />
+    <None Include="PRpen_col.png" />
     <Content Include="tool_edit.png" />
     <Content Include="tool_edit_act.png" />
     <Content Include="tool_enAr.png" />
