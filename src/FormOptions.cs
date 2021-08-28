@@ -183,6 +183,7 @@ namespace gInk
             ArrHdAperture.Text = (Root.ArrowAngle * 180.0 / Math.PI).ToString("#0",CultureInfo.InvariantCulture);
             ArrHdLength.Text = (Root.ArrowLen / System.Windows.SystemParameters.PrimaryScreenWidth *100.0).ToString("#0.0000",CultureInfo.InvariantCulture);
             Magnet_TB.Text = (Root.MagneticRadius / System.Windows.SystemParameters.PrimaryScreenWidth * 100.0).ToString("#0.0000", CultureInfo.InvariantCulture);
+            MagnetAngleEd.Text= Root.MagneticAngle.ToString();
             DefArrStartCb.Checked = Root.DefaultArrow_start;
 
             ZoomEnabledCb.SelectedIndex = Root.ZoomEnabled;
@@ -1323,6 +1324,11 @@ namespace gInk
         {
             ArrowSelDlg dlg = new ArrowSelDlg(Root);
             dlg.ShowDialog();
+        }
+
+        private void MagnetAngleEd_Validated(object sender, EventArgs e)
+        {
+            Root.MagneticAngle = float.Parse(MagnetAngleEd.Text);
         }
     }
 }

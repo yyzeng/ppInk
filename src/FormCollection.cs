@@ -2014,7 +2014,7 @@ namespace gInk
                 Next : on axis @+/-2 every 15�
             */
             double theta = Math.Atan2(cursorY - cursorY0, cursorX - cursorX0) * 180.0 / Math.PI;
-            double theta2 = ((theta + 2.0 + 360.0) % 15.0) - 2.0;
+            double theta2 = ((theta + 2.0 + 360.0) % Root.MagneticAngle) - 2.0;
             if ((Magnetic || (ModifierKeys & Keys.Shift) != Keys.None) &&
                 (Math.Abs(theta2) < 3.0))
             {
