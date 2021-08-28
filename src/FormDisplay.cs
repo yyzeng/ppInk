@@ -248,7 +248,7 @@ namespace gInk
             if((Root.WindowRect.Width> 0)&&(Root.WindowRect.Width > 0))
             {
                 g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
-                g.DrawRectangle(new Pen(Focus ? Color.Red : Color.Black, 1), new Rectangle(0, 0, this.ClientSize.Width - 1, this.ClientSize.Height - 1));
+                g.DrawRectangle(new Pen(Focus ? Root.WindowModeBorderSelected : Root.WindowModeBorderUnselected, 1), new Rectangle(0, 0, this.ClientSize.Width - 1, this.ClientSize.Height - 1));
             }
         }
 

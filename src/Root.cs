@@ -212,6 +212,10 @@ namespace gInk
         public float ToolbarHeight = 0.06f;
         public int AltAsOneCommand = 2;
 
+        public Color WindowModeBorderUnselected = Color.DarkGray;
+        public Color WindowModeBorderSelected = Color.Black;
+
+
         public int CursorX, CursorY;
         public int CursorX0 = int.MinValue, CursorY0 = int.MinValue;
 
@@ -1627,9 +1631,19 @@ namespace gInk
                         case "DIRECTX":
                             DirectX = (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON");
                             break;
+                        case "WINDOWMODE_UNSELECTED":
+                            tab = sPara.Split(',');
+                            if (tab.Length == 4)
+                                WindowModeBorderUnselected = Color.FromArgb(int.Parse(tab[0]), int.Parse(tab[1]), int.Parse(tab[2]), int.Parse(tab[3]));
+                            break;
+                        case "WINDOWMODE_SELECTED":
+                            tab = sPara.Split(',');
+                            if (tab.Length == 4)
+                                WindowModeBorderSelected = Color.FromArgb(int.Parse(tab[0]), int.Parse(tab[1]), int.Parse(tab[2]), int.Parse(tab[3]));
+                            break;
                     }
                 }
-			}
+            }
 			fini.Close();
 		}
 
