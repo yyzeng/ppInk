@@ -1,4 +1,4 @@
- #### Introduction
+#### Introduction
 
 ppInk is an on-screen annotation software under Windows, forked from gInk.
 
@@ -13,17 +13,19 @@ from pens to draw things instead of changing individual settings of color,
 transparency and tip width everytime. Each pen is a combination of these
 attributes and is configurable to your need.
 
-As another option you can use ppInk to support demonstration:
+As another option you can use ppInk to support demonstrations:
 
 https://user-images.githubusercontent.com/4083478/119278023-16f58b00-bc23-11eb-95de-9dc16505bf43.mp4
+
 (extract from @NOVAinc on Twitch)
+other demo : https://www.twitch.tv/novaaoe/clip/PlacidConcernedBulgogiOptimizePrime-mONUtlMLGvu2uUu1
 
 This tool is intended to be usable through mouse,tablet pen(taking into pressure) but also throug touchscreen or graphic tablet. 
 
 A set of drawing tools are introduced: Hand Writing, Line (2 points and polyline), Rectangular,
-Ellipsis, Arrow, Numbering Tag, Text Left/Right aligned, cliparts
+Ellipsis, Arrow, Numbering Tag, Text Left/Right aligned, cliparts, strokes of patterns and move/copy/resize/rotate.
 
-![](screenshot2.png)
+![image](screenshot2.png)
 
 In order to reduce the number of buttons, some buttons have multiple functions,
 selected my multiple click on those or some through long click (**or right click as an alternative**):
@@ -32,20 +34,24 @@ selected my multiple click on those or some through long click (**or right click
     Short click : select Pen
     Long Click : Open the pen parameters dialog
 
--   Hand / Rectangular / Ellipsis :  
-    unfilled drawing -\> filled with pen color -\> filled with white -\> filled
+-   Hand <IMG src="https://user-images.githubusercontent.com/4083478/130368095-bf41c299-5e27-4e6e-b94a-6959afea9258.png" width=200>
+/ Rectangular <IMG src="https://user-images.githubusercontent.com/4083478/130368108-db7a8dd2-e465-4ebe-923d-bf573cfa53c6.png" width=200>
+/ Ellipsis <IMG src="https://user-images.githubusercontent.com/4083478/130368123-469c7ee4-d28e-44b2-8467-2d70b437e321.png" width=200>
+:  
+    unfilled drawing -\> filled with pen color -\> outside filled with pen color -\> filled with white -\> filled
     with black
     
--   Line:
+-   Line<IMG src="https://user-images.githubusercontent.com/4083478/130368141-ae6d7cd7-af5f-4215-ad59-e1de5c7d97bb.png" width=200>
+:
     2 points -\> polyline -\> pen color filled polygon -\> white filled polygon -\> black filled polygon
 
 -   Numbering :  
     transparent background -\> edit tag Number -\> white background -\> black background
 
 -   Arrow :
-    Arrow draw at the beginning -\> Arrow draw at the end
-    
-    (*) : head position when tool is first selected can be modified by option
+    arrows heads and tails are now customizable. multiple click will scroll through the different arrows. you can select the ends either in options/general, or with a long press on the arrow button. 
+ the definition image shall be 300x201 and a line size of 18px(the image will be shrinked/enlarged to match the curren pen size). the center correspond to the visual end. the line will be ended a little before center by default, but you can define a different position with a blue pixel on line 101 (centered line). normally the ends will be rotated to be aligned with the line, except if the filename of the image is starting with !(eg to have always horizontal square)
+ <IMG src="https://user-images.githubusercontent.com/4083478/130369626-c5693244-e48a-4640-95f5-ff162cfccda4.png" width=300>
 
 -   Text:  
     Text left aligned -\> Text Right aligned
@@ -69,6 +75,12 @@ selected my multiple click on those or some through long click (**or right click
     * engage move/copy to move/copy selection
     * engage edit to modify color/line style/width of the selected strokes
 
+-   Resize / Rotate:
+    Allow to resize or rotate the selection (also applies to stroke under the cursor if no selection has been done first).
+    First the cursor becomes a target in order,waiting for the center for the transformation with left click, or you can right click: in this case the center will be the center of the selected stroke(s)
+    Then the cursor becomes an arrow, and you  adjust the size or the angle.
+    https://user-images.githubusercontent.com/4083478/130367372-233d6d64-06fc-4f0f-a976-d66a621f36ac.mp4
+
 -   Pointer Mode (arrow cursor):
     Short click : engage Pointer Mode
     Long click : engage Window mode (Open a window) or click( to come back to fullscreen) 
@@ -80,7 +92,8 @@ selected my multiple click on those or some through long click (**or right click
 -   Cliparts:
     Open the dialog to select image and the background/frame. This list displayed of cliparts is initialized from the list defined 
     in the options. you can overload adding images for the inking sessions from files or from the clipboard.
-    you can then stamp the images. you just click, the image will be stamped with the images original size. 
+    you can then stamp the images. you just click, the image will be stamped with the images original size. if you use the right click the image will be centered on the cursor click
+
     if you just draw a vertical or horizontal line, the image will be drawn with the drawn width/height respecting 
     proportional size. else you can draw a box which will define the image size (non proportional). 
     If you draw from bottom/right to up/left, the image will be stamped reversed.
@@ -94,7 +107,13 @@ selected my multiple click on those or some through long click (**or right click
        ppInkClipart[-3.1].png -> animated for 3.1 sec and then disappear
        ppInkClipart[3.5x].png -> animated for 3 cycles and a half and then animation stops
        ppInkClipart[-2x].png -> animated for 2 cycles and then disappear
-    
+
+-   Stroke of Patterns:
+    This tools provides capability to draw images along a hand stroke.
+    The function is selected in the clipart dialog box throught the type of filling selection. Then you will be asked for the size of the image
+https://user-images.githubusercontent.com/4083478/130367766-ee6cbd89-34d1-43ac-9f3e-13184b6a0bca.mp4
+Note 1 : the checkbox "save Pattern setup" allows when you modify one of the predefined clipart to bypass the image size and interval in order to go directly to stroke drawing
+
 -   Snapshot:
     Short click : Take a snapshot and exit after
     Long click : Take a snapshot and return to inking mode (keeping data); use alt+Hokey to do that with keyboard 
@@ -111,7 +130,8 @@ The Magnetic distance can be adjusted in the options.
 If only Ctrl or Shift is depressed, the global magnetic effect is switched off to only take into account the magnetic of the pressed key.
 Hotkeys are availables for all tools,pens (configurable throught right click on icon next to clock)
 
-*Move one -> Move All(pan) -> Copy one*
+*Move one -> Copy one-> Move All(pan) *![image](https://user-images.githubusercontent.com/4083478/130367997-51bf0abd-f55e-4c6a-b147-8d6fd2a502b2.png)
+
 
  You can move one stroke when clicking first time on the button. The stroke to be moved/copied will be surrounded by a rectangle to identify it and gets its measurement
  When in Move one/Copy one or Erase, when the cursor flies over a shape, a tool tip indicates the length of the stroke. if the stroke is a 3 point polyline, it will also indicates the drawn angle.
@@ -119,6 +139,12 @@ Hotkeys are availables for all tools,pens (configurable throught right click on 
 *Zoom*
 
 Two zoom can be activated (multiple clicks on the zoom buttom). the first one offers a standard dynamic window following the cursor. with the second one, you select the area that you want to enlarge. this area will be frozen and then full displayed on the screen. You can then carry on drawing on this new enlarged background image. a new click will end working on this image and will show back the screen and will restore the previously drawn strokes.
+ behind the zoom, a spot mode is also available where the screen is masked and a transparent area follows the cursor:
+ ![image](https://user-images.githubusercontent.com/4083478/130369204-8e898181-c456-46f5-9291-ef0122cba2bd.png)
+note 1: if the option is activated, you can activate the spot depressing alt.
+note 2: the spot  remains active during pointer mode
+note 3: color, transparency, spot size, and activation with alt can be adjusted in the options / general tab
+ 
 
 *Save / Load*
 
@@ -163,8 +189,12 @@ through the options or long click on a pen button, or using the edit pen hotkey 
 - Fading : the stroke drawn will disappear after the defined time(adjustable in options dialogbox/pen tab)
 - Line Style (Stroke/Solid/Dash/Dot/DashDot/DashDotDot) : This will apply the define line style on all type of drawings. Stroke keeps the original drawing which uses the pen pressure to adjust the width. Solid,Dash,... ignore pen pressure. 
 ![image](https://user-images.githubusercontent.com/19545604/119908686-8cb26d00-bf29-11eb-9dd3-ec421d216b23.png)
-Note1 :  When drawing with dashed lines,try to not draw too slowly : the number of vertex will increase and make the drawing not very nice
-Note2 : Hotkeys allows to set/unset the fading, linestyle, increase/decrease penwidth and open the pen modify dialog of the current pen
+
+_Note1 :  When drawing with dashed lines,try to not draw too slowly : the number of vertex will increase and make the drawing not very nice_
+
+_Note2 : Hotkeys allows to set/unset the fading, linestyle, increase/decrease penwidth and open the pen modify dialog of the current pen_
+
+_Note3 : an option is now available in options/pen to allow to modify the linestyle when clicking on already selected pen button(or using hotkeys). also an option in hotkeys allow to select which linestyle will be accessible through click/hotkeys (not applicable to Pen Modify dialog box)_
 
 A global option exists also to set/unset smoothing. When off, strokes drawing will not be smoothed. General recommendation is to leave this option on.
 
@@ -225,6 +255,8 @@ You can now run ppink in window mode (engaged through Long/Right Click on pointe
 In this mode ppInk is run in a window and you can access clicks or mousewheel applications out of the window:
 
 https://user-images.githubusercontent.com/4083478/112311221-c656c580-8ca5-11eb-895b-2279366c0fc4.mp4
+  
+  <I>note : the border color can be changed directly in config.ini</I>
 
 *snapshots in pointer mode*
 
@@ -311,29 +343,16 @@ Click the exit button or press ESC to exit drawing.
 
 #### Tips
 
--   There is a known issue for multiple displays of unmatched DPI settings
-    (100%, 125%, 150%, etc.). If you use gInk on a computer with multiple
-    displays of unmatched DPI settings, or you encounter problems such as
-    incorrect snapshot position, unable to drag toolbar to locations etc.,
-    please do the following as a workaround (in Windows 10 version 1903 as an
-    example): right-click ppInk.exe, Properties, Compatibility, Change high DPI
-    settings, Enable override high DPI scaling behavior scaling performed by:
-    Application. (only after v1.0.9, which will be released soon)
+-   **There is a known issue for multiple displays of unmatched DPI settings (100%, 125%, 150%, etc.). If you use ppInk on a computer with multiple displays of unmatched DPI settings, or you encounter problems such as incorrect snapshot position, unable to drag toolbar to locations etc., please do the following as a workaround (in Windows 10 version 1903 as an example): right-click ppInk.exe, Properties, Compatibility, Change high DPI settings, Enable override high DPI scaling behavior scaling performed by: Application.**
 
--   There is a very few hidden options you can tweak in config.ini that are not
-    shown in the options window.
+-   There is a very few hidden options you can tweak in config.ini that are not shown in the options window.
 
 #### How to contribute translation
 
-gInk/ppInk supports multiple languages now (ppInk introduces a few new sentences
-where internationalization has not be implemented.). Here is how you can
-contribute translation. Simply create a duplication of the file "en-us.txt" in
-"bin/lang" folder, rename it and then translate the strings in the file. Check
-in ppInk to make sure your translation shows correctly, and then you can make a
-pull request or use https://github.com/pubpub-zz/ppInk/issues/17 to propose your translation 
+gInk/ppInk supports multiple languages now (ppInk introduces a few new sentences where internationalization has not be implemented.). Here is how you can contribute translation. Simply create a duplication of the file "en-us.txt" in "bin/lang" folder, rename it and then translate the strings in the file. Check in ppInk to make sure your translation shows correctly, and then you can make a pull request or use https://github.com/pubpub-zz/ppInk/issues/17 to propose your translation 
 for the next version of release for others to use.
 
-NEW :  arabic available
+arabic available
 
 gInk  
 https://github.com/geovens/gInk  
@@ -343,7 +362,6 @@ https://github.com/geovens/gInk
 ppInk
 https://github.com/pubpub-zz/ppInk
 &copy; Pubpub-ZZ 2020-2021
-
 
 
 

@@ -1,4 +1,22 @@
-p1.7 (in progress)	
+p1.8 (in progress)	
+=================
+
+---> RC1
+* enh : UI improvement : icons refreshed / Magnetic angle configurable / Window Mode border color configurable
+* new : add new drawing in arrow heads allowing multiple customizable shapes
+* new : add Spot mode to hide all but around cursor (configurable through options/general)
+* new : add new filling to paint outside of shapes
+* new : add tool to draw strokes of patterns
+* fix : clear fickering artefacts during dynamic zoom on screen borders.
+* fix : moving toolbar eased.
+* enh : variable width strokes(drawn with tablet) are now saved/reloaded.
+* enh : right click with clipart selected plots the image centered on the cursor
+* new : add resize and rotate tools
+* enh : add option (on pen tab) to allow to change line style through click (or hotkey) on an already selected pen
+* enh : add option (on hotkey tab) to Enh to select which Linestyle are accessible through Linestyle Hotkey 
+* fix : multiple fixes, see commits history for details
+
+p1.7 (RC1)	
 =================
 
 ---> RC1
