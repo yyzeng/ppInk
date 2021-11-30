@@ -44,7 +44,6 @@ namespace gInk
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.Color.White;
-            this.BackgroundImage = global::gInk.Properties.Resources.draw;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(120, 36);
             this.ControlBox = false;
@@ -64,6 +63,7 @@ namespace gInk
             this.TopMost = true;
             this.TransparencyKey = System.Drawing.Color.White;
             this.Activated += new System.EventHandler(this.CallForm_Activated);
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.CallForm_Paint);
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CallForm_KeyPress);
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this._MouseMove);
             this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.CallForm_MouseUp);

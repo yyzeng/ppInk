@@ -423,29 +423,19 @@ namespace gInk.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap FloatingCall {
+            get {
+                object obj = ResourceManager.GetObject("FloatingCall", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap garbage {
             get {
                 object obj = ResourceManager.GetObject("garbage", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap highlighter {
-            get {
-                object obj = ResourceManager.GetObject("highlighter", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap highlighter_act {
-            get {
-                object obj = ResourceManager.GetObject("highlighter_act", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -636,26 +626,6 @@ namespace gInk.Properties {
         public static System.Drawing.Bitmap pen_col {
             get {
                 object obj = ResourceManager.GetObject("pen_col", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap pencil {
-            get {
-                object obj = ResourceManager.GetObject("pencil", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap pencil_act {
-            get {
-                object obj = ResourceManager.GetObject("pencil_act", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1146,6 +1116,16 @@ namespace gInk.Properties {
         public static System.Drawing.Bitmap tool_oval_out {
             get {
                 object obj = ResourceManager.GetObject("tool_oval_out", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap tool_picker {
+            get {
+                object obj = ResourceManager.GetObject("tool_picker", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

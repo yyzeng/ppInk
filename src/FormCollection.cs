@@ -57,11 +57,17 @@ namespace gInk
         public int AniPoolIdx;
 
         // Button/Tooblar
-        const double NormSizePercent = 0.85;
+        /*const double NormSizePercent = 0.85;
         const double SmallSizePercent = 0.44;
         const double TopPercent = 0.06;
         const double SmallButtonNext = 0.44;
-        const double InterButtonGap = NormSizePercent * .05;
+        const double InterButtonGap = NormSizePercent * .05;*/
+        const double NormSizePercent = 0.96;
+        const double SmallSizePercent = 0.47;
+        const double TopPercent = 0.02;
+        const double SmallButtonNext = 0.98-.47;
+        const double InterButtonGap = .02;
+
 
         // hotkeys
         const int VK_SHIFT = 0x10;
@@ -3437,12 +3443,12 @@ namespace gInk
                     btLine.BackgroundImage = getImgFromDiskOrRes("tool_mlines", ImageExts);
                 else if (Root.FilledSelected == Filling.PenColorFilled)
                     btLine.BackgroundImage = getImgFromDiskOrRes("tool_mlines_filledC", ImageExts);
+                else if (Root.FilledSelected == Filling.Outside)
+                    btLine.BackgroundImage = getImgFromDiskOrRes("tool_mlines_out", ImageExts);
                 else if (Root.FilledSelected == Filling.WhiteFilled)
                     btLine.BackgroundImage = getImgFromDiskOrRes("tool_mlines_filledW", ImageExts);
                 else if (Root.FilledSelected == Filling.BlackFilled)
                     btLine.BackgroundImage = getImgFromDiskOrRes("tool_mlines_filledB", ImageExts);
-                else if (Root.FilledSelected == Filling.Outside)
-                    btLine.BackgroundImage = getImgFromDiskOrRes("tool_mlines_out", ImageExts);
 
             }
             else if (tool == Tools.Rect)
@@ -4080,7 +4086,7 @@ namespace gInk
                 this.Cursor = CreateCursorFromBitmap(buildColorPicker(Root.PickupColor, Root.PickupTransparency));
                 System.Windows.Forms.Cursor.Position = new Point(System.Windows.Forms.Cursor.Position.X, System.Windows.Forms.Cursor.Position.Y); // force cursor refresh
 
-                btPenWidth.BackgroundImage = getImgFromDiskOrRes("picker");
+                btPenWidth.BackgroundImage = getImgFromDiskOrRes("tool_picker");
                 Root.UponButtonsUpdate |= 0x2;
                 return;
             }
@@ -6629,12 +6635,14 @@ namespace gInk
             if((int)(Btn_SubToolPin.Tag) != 1 )
             {
                 Btn_SubToolPin.Tag = 1;
-                Btn_SubToolPin.BackgroundImage = gInk.Properties.Resources.pinned;
+                Btn_SubToolPin.BackgroundImage?.Dispose();
+                Btn_SubToolPin.BackgroundImage = getImgFromDiskOrRes("pinned");
             }
             else
             {
                 Btn_SubToolPin.Tag = 0;
-                Btn_SubToolPin.BackgroundImage = gInk.Properties.Resources.unpinned;
+                Btn_SubToolPin.BackgroundImage?.Dispose();
+                Btn_SubToolPin.BackgroundImage = getImgFromDiskOrRes("unpinned");
             }
             Root.UponButtonsUpdate |= 0x2;
         }

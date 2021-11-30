@@ -17,12 +17,12 @@ namespace gInk
         public Root Root;
         public bool FirstActivation = true;
         private int AltTabPressed = 0;
+        private Image backImg = null;
         public CallForm(Root r)
         {
             InitializeComponent();
             Root = r;
-            if (File.Exists(Global.ProgramFolder + "FloatingCall.png"))
-                BackgroundImage = new Bitmap(Global.ProgramFolder + "FloatingCall.png");
+            backImg = FormCollection.getImgFromDiskOrRes("FloatingCall");
         }
 
         private void timer1_Tick(object sender, EventArgs e)
@@ -77,5 +77,9 @@ namespace gInk
         [DllImport("user32.dll")]
         public static extern short GetAsyncKeyState(int vKey);
 
+        private void CallForm_Paint(object sender, PaintEventArgs e)
+        {
+            e.Graphics.DrawImage(backImg, ClientRectangle);
+        }
     }
 }
