@@ -230,13 +230,27 @@ namespace gInk
                             if (query.ContainsKey("L"))
                             {
                                 query.TryGetValue("L", out ff);
-                                DashStyle ds = Root.LineStyleFromString(ff);
-                                if (ds.ToString().ToUpper() != ff.ToUpper())
+                                DashStyle ds;
+                                try
+                                {
+                                    ds = Root.LineStyleFromString(ff);
+                                    if ((ds != DashStyle.Custom) && (ds.ToString().ToUpper() != ff.ToUpper()))
+                                        resp.StatusCode = 400;
+                                    else if (ds == DashStyle.Custom)
+                                    {
+                                        try
+                                        {
+                                            Root.PenAttr[i].ExtendedProperties.Remove(Root.DASHED_LINE_GUID);
+                                        }
+                                        catch { }
+                                    }
+                                    else
+                                        Root.PenAttr[i].ExtendedProperties.Add(Root.DASHED_LINE_GUID, ds);
+                                }
+                                catch
+                                {
                                     resp.StatusCode = 400;
-                                else if (ds == DashStyle.Custom)
-                                    Root.PenAttr[i].ExtendedProperties.Remove(Root.DASHED_LINE_GUID);
-                                else
-                                    Root.PenAttr[i].ExtendedProperties.Add(Root.DASHED_LINE_GUID,ds);
+                                }
                             }
                             if (i == Root.CurrentPen)
                             {
@@ -264,9 +278,9 @@ namespace gInk
                             }
                             else
                                 ff = "false";
-                            ret = string.Format("{{\"Pen\":{0},\n\"Red\":{1}, \"Green\":{2}, \"Blue\":{3}, \"Transparency\":{4},\n\"Width\":{5},\n\"Fading\":{6},\n\"Enabled\":{7}\n}}",
+                            ret = string.Format("{{\"Pen\":{0},\n\"Red\":{1}, \"Green\":{2}, \"Blue\":{3}, \"Transparency\":{4},\n\"Width\":{5},\n\"Style\":\"{8}\",\n\"Fading\":{6},\n\"Enabled\":{7}\n}}",
                                                 i, Root.PenAttr[i].Color.R, Root.PenAttr[i].Color.G, Root.PenAttr[i].Color.B, Root.PenAttr[i].Transparency,
-                                                Root.PenAttr[i].Width, ff, Root.PenEnabled[i]?"true":"false");
+                                                Root.PenAttr[i].Width, ff, Root.PenEnabled[i]?"true":"false",Root.LineStyleToString(Root.PenAttr[i].ExtendedProperties));
                         }
                         else if (resp.StatusCode == 400)
                             ret = string.Format("!!!! Error in Query ({0}) - {1} ", req.HttpMethod, req.Url.AbsoluteUri);
