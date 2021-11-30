@@ -1363,6 +1363,10 @@ namespace gInk
                 if (msg.WParam == IntPtr.Zero)      // WParam = 0 => losing Focus ; WParam = 1 => Getting Focus
                 {
                     //Console.WriteLine("desactivating " + Root.PointerMode.ToString());
+                    if (Root.EraseOnLoosingFocus)
+                    {
+                        Root.ClearInk();
+                    }
                     if (!Root.PointerMode)
                     {
                         //Console.WriteLine("process ");

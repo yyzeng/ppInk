@@ -403,6 +403,7 @@ namespace gInk
         public bool SpotOnAlt = true;
 
         public Rectangle WindowRect = new Rectangle(Int32.MinValue, Int32.MinValue, -1, -1);
+        public bool EraseOnLoosingFocus = false;
         public bool ResizeDrawingWindow = false;
 
         public SnapInPointerKeys SnapInPointerHoldKey = SnapInPointerKeys.Shift;
@@ -1645,6 +1646,10 @@ namespace gInk
                             tab = sPara.Split(',');
                             if (tab.Length == 4)
                                 WindowModeBorderSelected = Color.FromArgb(int.Parse(tab[0]), int.Parse(tab[1]), int.Parse(tab[2]), int.Parse(tab[3]));
+                            break;
+                        case "ERASE_ON_FOCUSLOST":
+                            if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
+                                EraseOnLoosingFocus = true;
                             break;
                     }
                 }
