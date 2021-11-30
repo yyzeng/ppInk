@@ -1783,6 +1783,7 @@ namespace gInk
             return st;
         }
 
+        double TextTheta = 0.0;
         private Stroke AddTextStroke(int CursorX0, int CursorY0, int CursorX, int CursorY, string txt, StringAlignment Align)
         // arrow at starting point
         {
@@ -1803,7 +1804,7 @@ namespace gInk
             st.ExtendedProperties.Add(Root.TEXTFONT_GUID, TextFont);
             st.ExtendedProperties.Add(Root.TEXTFONTSIZE_GUID, (double)TextSize);
             st.ExtendedProperties.Add(Root.TEXTFONTSTYLE_GUID, (TextItalic ? FontStyle.Italic : FontStyle.Regular) | (TextBold ? FontStyle.Bold : FontStyle.Regular));
-            st.ExtendedProperties.Add(Root.ROTATION_GUID, 0.0D);
+            st.ExtendedProperties.Add(Root.ROTATION_GUID, TextTheta);
             setStrokeProperties(ref st, Filling.NoFrame);
             Root.FormCollection.IC.Ink.Strokes.Add(st);
             if (st.ExtendedProperties.Contains(Root.FADING_PEN))
@@ -2591,6 +2592,12 @@ namespace gInk
                                                new Point((int)(pt.X-pt2.X),(int)(pt.Y+pt2.Y/2)),new Point((int)(pt.X-pt2.X),(int)(pt.Y+pt2.Y)),
                                                new Point((int)(pt.X-pt2.X/2),(int)(pt.Y+pt2.Y)),new Point((int)(pt.X-0),(int)(pt.Y+pt2.Y)),
                                                new Point((int)(pt.X-0),(int)(pt.Y+pt2.Y/2)),pt });
+                if (st.ExtendedProperties.Contains(Root.ROTATION_GUID))
+                {
+                    double d = (double)st.ExtendedProperties[Root.ROTATION_GUID].Data;
+                    st.ExtendedProperties.Add(Root.ROTATION_GUID, 0.0);
+                    ScaleRotate(null, st, pt.X, pt.Y, 1.0, d);
+                }
             }
         }
 
@@ -2677,6 +2684,7 @@ namespace gInk
                 Root.CursorX = p.X;
                 Root.CursorY = p.Y;
             }
+
             if (Root.EraserMode) // we are deleting the nearest object for clicking...
             {
                 e.Stroke.ExtendedProperties.Add(Root.ISDELETION_GUID, true);
@@ -2876,8 +2884,32 @@ namespace gInk
             Root.StrokeHovered = null;
             if (e.Button == MouseButtons.None)
             {
-                if (Root.EraserMode || Root.ToolSelected == Tools.Edit || Root.ToolSelected == Tools.Move || Root.ToolSelected == Tools.Copy || Root.LassoMode 
-                    || Root.ToolSelected == Tools.Scale || Root.ToolSelected == Tools.Rotate)
+                if (Root.ToolSelected == Tools.txtLeftAligned || Root.ToolSelected == Tools.txtRightAligned)
+                {
+                    Stroke ms;
+                    float pos1;
+                    if ((Control.ModifierKeys & Keys.Control) != Keys.None 
+                        && NearestStroke(new Point(e.X, e.Y), true, out ms, out pos1, false, false) < Root.PixelToHiMetric(Root.MinMagneticRadius())
+                        && ms.PacketCount >= 2)
+                    {
+                        Root.StrokeHovered = ms;
+                        int i = (int)Math.Floor(pos1);
+                        if (i == ms.PacketCount - 1)
+                            i--;
+                        Point p = ms.GetPoint(i);
+                        Point p1 = ms.GetPoint(i + 1);
+                        TextTheta = (ms.PacketCount == 2 ? 180.0 : 0.0) + Math.Atan2(p1.Y - p.Y, p1.X - p.X) * 180.0 / Math.PI; // it looks like the arrrow is generated in the reversed order.
+                        if (TextTheta >= 91.0 && TextTheta < 270.0)  // to prevent text upside down
+                            TextTheta -= 180.0;
+                    }
+                    else
+                    {
+                        Root.StrokeHovered = null;
+                        TextTheta = 0;
+                    }
+                }
+                else if (Root.EraserMode || Root.ToolSelected == Tools.Edit || Root.ToolSelected == Tools.Move || Root.ToolSelected == Tools.Copy || Root.LassoMode 
+                         || Root.ToolSelected == Tools.Scale || Root.ToolSelected == Tools.Rotate)
                 {
                     if (NearestStroke(new Point(e.X, e.Y), true, out Root.StrokeHovered, out pos, false) > Root.PixelToHiMetric(Root.MinMagneticRadius()))
                     {
