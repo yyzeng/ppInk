@@ -5895,12 +5895,16 @@ namespace gInk
             CancellationToken ct = frm.Root.ObsCancel.Token;
             frm.Root.VideoRecordWindowInProgress = true;
             if (ct.IsCancellationRequested)
-                return; 
+                return;
+#if !ppInkSmall
             if (frm.Root.ObsWs == null)
             {
                 frm.Root.ObsWs = new ClientWebSocket();
                 //Console.WriteLine("WS Created");
             }
+#else
+            return;
+#endif
             var rcvBytes = new byte[4096];
             var rcvBuffer = new ArraySegment<byte>(rcvBytes);
             WebSocketReceiveResult rcvResult;
@@ -5978,6 +5982,9 @@ namespace gInk
         static async Task ObsStartRecording(FormCollection frm)
         {
             //Console.WriteLine("StartRec");
+#if ppInkSmall
+            return;
+#endif
             while ((frm.Root.ObsWs == null || frm.Root.VideoRecordWindowInProgress) && !frm.Root.ObsCancel.Token.IsCancellationRequested)// frm.Root.ObsWs.State != WebSocketState.Open)
                 await Task.Delay(50);
             if (frm.Root.VideoRecordMode == VideoRecordMode.OBSRec)

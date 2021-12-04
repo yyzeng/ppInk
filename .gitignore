@@ -4,6 +4,7 @@ build
 release
 bin/crash.txt
 ppink/ppink.exe
+ppinks
 
 *.pdb
 *.exp

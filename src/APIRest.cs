@@ -19,8 +19,11 @@ namespace gInk
         public APIRest(Root root)
         {
             Root = root;
+#if !ppInkSmall
             http = new HttpListener();
-
+#else
+            return;
+#endif
             if(Root.APIRestUrl !="")
                 ChangeAddress(Root.APIRestUrl);
 
@@ -60,7 +63,14 @@ namespace gInk
 
         public bool IsListening()
         {
-            return http.IsListening;
+            try
+            {
+                return http.IsListening;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public bool Start()
