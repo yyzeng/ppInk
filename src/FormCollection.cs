@@ -2455,7 +2455,7 @@ namespace gInk
                 {
                     float pos;
                     Stroke minStroke;
-                    if (NearestStroke(new Point(Root.CursorX, Root.CursorY), true, out minStroke, out pos, false, false) < Root.PixelToHiMetric(Root.MinMagneticRadius()))
+                    if (NearestStroke(new Point(Root.CursorX, Root.CursorY), true, out minStroke, out pos, false, false) <= 1+Root.PixelToHiMetric(Root.MinMagneticRadius()/(Root.MagneticRadius >= 0 ^ ((GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0)?1:10)))
                     {
                         if (minStroke.ExtendedProperties.Contains(Root.TEXT_GUID))
                         {
@@ -2694,7 +2694,7 @@ namespace gInk
                 e.Stroke.ExtendedProperties.Add(Root.ISDELETION_GUID, true);
                 float pos;
                 Stroke minStroke;
-                if (NearestStroke(new Point(Root.CursorX, Root.CursorY), true, out minStroke, out pos, false, false) < Root.PixelToHiMetric(Root.MinMagneticRadius()))
+                if (NearestStroke(new Point(Root.CursorX, Root.CursorY), true, out minStroke, out pos, false, false) < 1 + Root.PixelToHiMetric(Root.MinMagneticRadius() / (Root.MagneticRadius >= 0 ^ ((GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0) ? 1 : 10)))
                 {
                     try
                     {
@@ -2830,7 +2830,7 @@ namespace gInk
                     }
                     //Console.WriteLine("$$ " + StrokesSelection.Count.ToString() + " / " + IC.Ink.Strokes.Count.ToString());
                 }
-                else if (NearestStroke(new Point(Root.CursorX, Root.CursorY), true, out movedStroke, out pos, false, true) > Root.PixelToHiMetric(Root.MinMagneticRadius())) //not hovering a stroke
+                else if (NearestStroke(new Point(Root.CursorX, Root.CursorY), true, out movedStroke, out pos, false, true) > 1 + Root.PixelToHiMetric(Root.MinMagneticRadius() / (Root.MagneticRadius >= 0 ^ ((GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0) ? 1 : 10))) //not hovering a stroke
                     movedStroke = null;
                 else if (Root.ToolSelected == Tools.Copy)
                 {
@@ -2893,7 +2893,7 @@ namespace gInk
                     Stroke ms;
                     float pos1;
                     if ((Control.ModifierKeys & Keys.Control) != Keys.None 
-                        && NearestStroke(new Point(e.X, e.Y), true, out ms, out pos1, false, false) < Root.PixelToHiMetric(Root.MinMagneticRadius())
+                        && NearestStroke(new Point(e.X, e.Y), true, out ms, out pos1, false, false) < 1 + Root.PixelToHiMetric(Root.MinMagneticRadius() / (Root.MagneticRadius >= 0 ^ ((GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0) ? 1 : 10))
                         && ms.PacketCount >= 2)
                     {
                         Root.StrokeHovered = ms;
@@ -2915,7 +2915,7 @@ namespace gInk
                 else if (Root.EraserMode || Root.ToolSelected == Tools.Edit || Root.ToolSelected == Tools.Move || Root.ToolSelected == Tools.Copy || Root.LassoMode 
                          || Root.ToolSelected == Tools.Scale || Root.ToolSelected == Tools.Rotate)
                 {
-                    if (NearestStroke(new Point(e.X, e.Y), true, out Root.StrokeHovered, out pos, false) > Root.PixelToHiMetric(Root.MinMagneticRadius()))
+                    if (NearestStroke(new Point(e.X, e.Y), true, out Root.StrokeHovered, out pos, false) > 1 + Root.PixelToHiMetric(Root.MinMagneticRadius() / (Root.MagneticRadius >= 0 ^ ((GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0) ? 1 : 10)))
                     {
                         Root.StrokeHovered = null;
                         SavHoveredForSelection = null;
