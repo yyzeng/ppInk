@@ -3375,7 +3375,7 @@ namespace gInk
             btLine.BackgroundImage = getImgFromDiskOrRes("tool_line", ImageExts);
             btRect.BackgroundImage = getImgFromDiskOrRes("tool_rect", ImageExts);
             btOval.BackgroundImage = getImgFromDiskOrRes("tool_oval", ImageExts);
-            if(Root.ToolSelected != Tools.StartArrow)
+            if(tool != Tools.StartArrow)
             {
                 btArrow.BackgroundImage.Dispose();
                 btArrow.BackgroundImage = BuildArrowBtn(Root.ArrowHead[Root.CurrentArrow], Root.ArrowTail[Root.CurrentArrow], Color.Black);
@@ -3459,7 +3459,7 @@ namespace gInk
                     if (gpSubTools.Visible && subTools_title.Contains("Line"))
                         changeActiveTool(1, false, 1);
                 }
-                else if ((Root.ToolSelected == Tools.Poly && (Root.FilledSelected == Filling.Empty || Root.FilledSelected > Filling.Outside)) || (Root.ToolSelected != Tools.Poly))
+                else if ((Root.ToolSelected == Tools.Poly && (Root.FilledSelected == Filling.Empty || Root.FilledSelected > Filling.BlackFilled)) || (Root.ToolSelected != Tools.Poly))
                 {
                     tool = Tools.Line;
                     Root.FilledSelected = Filling.Empty;
