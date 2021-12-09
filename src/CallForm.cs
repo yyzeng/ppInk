@@ -50,7 +50,7 @@ namespace gInk
                 return;
             }
             Console.WriteLine(AltTabPressed);
-            if (AltTabPressed>0)
+            if (AltTabPressed>0 && (Root.AltTabStart || Root.FormCollection.Visible ))
                 Root.callshortcut();
         }
 

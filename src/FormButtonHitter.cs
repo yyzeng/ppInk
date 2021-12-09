@@ -51,10 +51,9 @@ namespace gInk
             //if ((msg.Msg == 0x001C) || (msg.Msg == 6)) //WM_ACTIVATEAPP : generated through alt+tab
             if ((msg.Msg == 6)) //WM_ACTIVATE : generated through alt+tab
             {
-                //Console.WriteLine(DateTime.Now.ToString() + " !msgH " + msg.Msg.ToString()+" - "+ msg.WParam.ToString());
-                //if ((msg.Msg == 6) || ((msg.Msg == 0x001C) && (msg.WParam != IntPtr.Zero))
-                if (DateTime.Now < Root.PointerChangeDate || msg.WParam==IntPtr.Zero)
-                    //                    if (DateTime.Now < Root.PointerChangeDate || !Root.FormDisplay.HasFocus())
+                // Console.WriteLine(DateTime.Now.ToString() + " !msgH " + msg.Msg.ToString()+" - "+ msg.WParam.ToString());
+                Form f = Control.FromHandle(msg.LParam) as Form;
+                if (DateTime.Now < Root.PointerChangeDate || (msg.WParam == IntPtr.Zero && msg.LParam != IntPtr.Zero && f.CompanyName != CompanyName))
                     return;
                 if(Root.PointerMode)
                 {

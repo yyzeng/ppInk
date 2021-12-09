@@ -283,6 +283,7 @@ namespace gInk
         public Hotkey Hotkey_SaveStrokes = new Hotkey();
 
         public float LongHKPressDelay = 2.5F;
+        public bool AltTabStart = false;
 
         public bool ButtonClick_For_LineStyle = false;
 
@@ -1297,6 +1298,9 @@ namespace gInk
                             else
                                 AltTabPointer = false;
                             break;
+                        case "ALTTAB_START":
+                            AltTabStart = (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON");
+                            break;
                         case "PEN_WIDTH_AT_SELECTION":
                             if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
                                 WidthAtPenSel = false;
@@ -2023,6 +2027,9 @@ namespace gInk
 							break;
                         case "ALTTAB_POINTER":
                             sPara = AltTabPointer?"True":"False";
+                            break;
+                        case "ALTTAB_START":
+                            sPara = AltTabStart ? "True" : "False";
                             break;
                         case "PEN_WIDTH_AT_SELECTION":
                             sPara = WidthAtPenSel ? "True" : "False";

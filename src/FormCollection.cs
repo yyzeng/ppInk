@@ -1367,6 +1367,8 @@ namespace gInk
                     {
                         Root.ClearInk();
                     }
+                    Root.Snapping = 0;
+                    Root.ColorPickerMode = false;
                     if (!Root.PointerMode)
                     {
                         //Console.WriteLine("process ");
