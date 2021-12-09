@@ -6553,7 +6553,14 @@ namespace gInk
                     Btn_SubTools[i].Visible = true;
                     Btn_SubTools[i].BackgroundImage = getImgFromDiskOrRes(icons[i]);
                     Btn_SubTools[i].FlatAppearance.BorderSize = i == active ? ACTIVE_SUBTOOL_BORDERSIZE : 0;
-                    toolTip.SetToolTip(Btn_SubTools[i], TextHints[i]);
+                    try
+                    {
+                        toolTip.SetToolTip(Btn_SubTools[i], TextHints[i]);
+                    }
+                    catch
+                    {
+                        toolTip.SetToolTip(Btn_SubTools[i], "");
+                    }
                 }
                 else
                 {
