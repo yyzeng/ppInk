@@ -3957,11 +3957,11 @@ namespace gInk
             if (ZoomForm.Visible)
                 btZoom_click(btZoom, null);
             gpSubTools.Visible = false;
-            if (((ClipArtData)btClip1.Tag).Wstored > 0)
+            if (((ClipArtData)btClip1.Tag)?.Wstored > 0)
                 Root.ImageStamp1 = ((ClipArtData)btClip1.Tag).Clone();
-            if (((ClipArtData)btClip2.Tag).Wstored > 0)
+            if (((ClipArtData)btClip2.Tag)?.Wstored > 0)
                 Root.ImageStamp2 = ((ClipArtData)btClip2.Tag).Clone();
-            if (((ClipArtData)btClip3.Tag).Wstored > 0)
+            if (((ClipArtData)btClip3.Tag)?.Wstored > 0)
                 Root.ImageStamp3 = ((ClipArtData)btClip3.Tag).Clone();
             try
             {
