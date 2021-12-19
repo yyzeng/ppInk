@@ -392,7 +392,7 @@ namespace gInk
             System.Windows.Forms.Cursor cu = new System.Windows.Forms.Cursor(ptr);
             cu.Tag = 2;
             return cu;
-        }
+        }        
 
         public Bitmap buildColorPicker(Color col,int transparency)
         {
@@ -1320,7 +1320,7 @@ namespace gInk
 
         public void AltTabActivate()
         {
-            if (Initializing)
+             if (Initializing)
             {
                 Initializing = false;
                 return;
@@ -5930,7 +5930,10 @@ namespace gInk
             CancellationToken ct = frm.Root.ObsCancel.Token;
             frm.Root.VideoRecordWindowInProgress = true;
             if (ct.IsCancellationRequested)
+            {
+                frm.Root.VideoRecordWindowInProgress = false;
                 return;
+            }
 #if !ppInkSmall
             if (frm.Root.ObsWs == null)
             {
@@ -5945,45 +5948,68 @@ namespace gInk
             WebSocketReceiveResult rcvResult;
             if (frm.Root.ObsWs.State != WebSocketState.Open)
             {
-                await frm.Root.ObsWs.ConnectAsync(new Uri(frm.Root.ObsUrl), ct);
-                //Console.WriteLine("WS Connected");
-                await SendInWs(frm.Root.ObsWs, "GetAuthRequired", ct);
-                rcvResult = await frm.Root.ObsWs.ReceiveAsync(rcvBuffer, ct);
-                string st = Encoding.UTF8.GetString(rcvBuffer.Array, 0, rcvResult.Count);
-                //Console.WriteLine("getAuth => " + st);
-                if (st.Contains("authRequired\": t"))
+                try
                 {
-                    int i = st.IndexOf("\"challenge\":");
-                    i = st.IndexOf("\"", i + "\"challenge\":".Length + 1) + 1;
-                    int j = st.IndexOf("\"", i + 1);
-                    string challenge = st.Substring(i, j - i);
-                    i = st.IndexOf("\"salt\":");
-                    i = st.IndexOf("\"", i + "\"salt\":".Length + 1) + 1;
-                    j = st.IndexOf("\"", i + 1);
-                    string salt = st.Substring(i, j - i);
-                    //Console.WriteLine(challenge + " - " + salt);
+                    await frm.Root.ObsWs.ConnectAsync(new Uri(frm.Root.ObsUrl), new CancellationTokenSource(200).Token);
+
+                    await SendInWs(frm.Root.ObsWs, "GetAuthRequired", ct);
+                    rcvResult = await frm.Root.ObsWs.ReceiveAsync(rcvBuffer, ct);
+                    string st = Encoding.UTF8.GetString(rcvBuffer.Array, 0, rcvResult.Count);
+
+                    var ReturnStructure = (Dictionary<string, object>)st.FromJson<object>();
+                    if ((ReturnStructure["authRequired"] as bool?) != true)
+                        throw new Exception("authentification not required whereas mandatory");
+                    string challenge = ReturnStructure["challenge"] as string;// st.Substring(i, j - i);
+                    string salt = ReturnStructure["salt"] as string;// st.Substring(i, j - i);
+
                     string authResponse = HashEncode(HashEncode(frm.Root.ObsPwd + salt) + challenge);
                     await SendInWs(frm.Root.ObsWs, "Authenticate", ct, ",\"auth\": \"" + authResponse + "\"");
                     rcvResult = await frm.Root.ObsWs.ReceiveAsync(rcvBuffer, ct);
                     st = Encoding.UTF8.GetString(rcvBuffer.Array, 0, rcvResult.Count);
                     if (!st.Contains("\"ok\""))
-                    {
-                        await frm.Root.ObsWs.CloseAsync(WebSocketCloseStatus.PolicyViolation, "Authentication failed", ct);
-                        frm.Root.ObsWs = null;
-                        frm.Root.ObsRecvTask = null;
-                        frm.btVideo.BackgroundImage = FormCollection.getImgFromDiskOrRes("VidDead", frm.ImageExts);
-                    }
+                        throw new Exception("authentification failed");
                 }
-
+                catch
+                {
+                    try
+                    {
+                        await frm.Root.ObsWs.CloseAsync(WebSocketCloseStatus.PolicyViolation, "Authentication failed", new CancellationTokenSource(200).Token);
+                    }
+                    catch { };
+                    frm.Root.ObsWs = null;
+                    frm.Root.ObsRecvTask = null;
+                    frm.Root.VideoRecInProgress = VideoRecInProgress.Dead;
+                    frm.Root.VideoRecordWindowInProgress = false;
+                    frm.Root.ObsCancel.Cancel();
+                    frm.btVideo.BackgroundImage = FormCollection.getImgFromDiskOrRes("VidDead", frm.ImageExts);
+                }
             }
             frm.Root.VideoRecordWindowInProgress = false;
             while (frm.Root.ObsWs != null && frm.Root.ObsWs.State == WebSocketState.Open && !ct.IsCancellationRequested) // && frm.Root.VideoRecInProgress == VideoRecInProgress.Recording )
             {
+                //Console.WriteLine("Awaiting....");
                 rcvResult = await frm.Root.ObsWs.ReceiveAsync(rcvBuffer, ct);
+                //Console.WriteLine("Received....");
                 if (ct.IsCancellationRequested)
                     return;
                 string st = Encoding.UTF8.GetString(rcvBuffer.Array, 0, rcvResult.Count);
-                //Console.WriteLine("ObsReturned " + st);
+                //Console.WriteLine("resp = " + st);
+                var ReturnStructure = (Dictionary<string, object>)st.FromJson<object>();
+                object getFromReturnStructure(string k)
+                {
+                    object o;
+                    if (!ReturnStructure.TryGetValue(k, out o))
+                        o = null;
+                    return o;
+                }
+
+                try { frm.Root.CurrentVideoFileName = ReturnStructure["recordingFilename"] as string; } catch { }
+                try
+                {
+                    string stime = ReturnStructure["recordTimecode"] as string;
+                    frm.ObsTimeCode = DateTime.ParseExact(stime, "H:mm:ss.fff", CultureInfo.InvariantCulture);                    
+                } catch { }
+
                 if (st.Contains("\"RecordingStopped\""))
                     frm.Root.VideoRecInProgress = VideoRecInProgress.Stopped;
                 else if (st.Contains("\"RecordingPaused\""))
@@ -5992,16 +6018,20 @@ namespace gInk
                     frm.Root.VideoRecInProgress = VideoRecInProgress.Stopped;
                 else if (st.Contains("StreamStarted"))
                     frm.Root.VideoRecInProgress = VideoRecInProgress.Streaming;
-                else if (st.Contains("\"RecordingStarted\"") || st.Contains("\"RecordingResumed\""))
+                else if (st.Contains("\"RecordingStarted\"") || st.Contains("\"RecordingStarting\"") || st.Contains("\"RecordingResumed\""))
                     frm.Root.VideoRecInProgress = VideoRecInProgress.Recording;
                 // cases from getInitialStatus;
-                else if (st.Contains("\"recording - paused\": true") || st.Contains("\"recording-paused\": true") || st.Contains("\"isRecordingPaused\": true"))
+                //else if (st.Contains("\"recording - paused\": true") || st.Contains("\"recording-paused\": true") || st.Contains("\"isRecordingPaused\": true"))
+                else if ((getFromReturnStructure("recording-paused") as bool? == true) || (getFromReturnStructure("isRecordingPaused") as bool? == true))
                     frm.Root.VideoRecInProgress = VideoRecInProgress.Paused;
-                else if (st.Contains("\"recording\": true") || st.Contains("\"isRecording\": true"))
+                //else if (st.Contains("\"recording\": true") || st.Contains("\"isRecording\": true"))
+                else if ((getFromReturnStructure("recording") as bool? == true)|| (getFromReturnStructure("isRecording") as bool? == true))
                     frm.Root.VideoRecInProgress = VideoRecInProgress.Recording;
-                else if (st.Contains("\"streaming\": true"))
+                //else if (st.Contains("\"streaming\": true"))
+                else if ((getFromReturnStructure("streaming") as bool? == true))
                     frm.Root.VideoRecInProgress = VideoRecInProgress.Streaming;
-                else if (st.Contains("\"recording\": false") || st.Contains("\"isRecording\": false") || st.Contains("\"streaming\": false"))
+                //else if (st.Contains("\"recording\": false") || st.Contains("\"isRecording\": false") || st.Contains("\"streaming\": false"))
+                else if ((getFromReturnStructure("recording") as bool? != true) && (getFromReturnStructure("isRecording") as bool? != true) && (getFromReturnStructure("streaming") as bool? != true))
                     frm.Root.VideoRecInProgress = VideoRecInProgress.Stopped;
                 frm.SetVidBgImage();
                 //Console.WriteLine("vidbg " + frm.Root.VideoRecInProgress.ToString());

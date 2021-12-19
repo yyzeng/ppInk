@@ -71,7 +71,7 @@ namespace gInk
     };
 
     public enum VideoRecordMode {NoVideo=0 , OBSRec=1 , OBSBcst=2 , FfmpegRec=3 };
-    public enum VideoRecInProgress { Stopped=0, Starting=1, Recording=2, Stopping = 3, Pausing=4, Paused=5, Resuming=6, Streaming = 7 };
+    public enum VideoRecInProgress { Dead = -2, Unknown = -1, Stopped=0, Starting=1, Recording=2, Stopping = 3, Pausing=4, Paused=5, Resuming=6, Streaming = 7 };
 
     public enum SnapInPointerKeys { None=0, Shift=1, Control=2, Alt=3 };
 
