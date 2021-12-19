@@ -1007,8 +1007,10 @@ namespace gInk
                     while (Root.VideoRecordWindowInProgress)
                         Task.Delay(50);
                     Task.Delay(100);
-                    //Task.Run(() => SendInWs(Root.ObsWs, "GetRecordingStatus", new CancellationToken()));
-                    Task.Run(() => SendInWs(Root.ObsWs, "GetStreamingStatus", new CancellationToken()));
+                    if(Root.VideoRecordMode == VideoRecordMode.OBSRec)
+                        Task.Run(() => SendInWs(Root.ObsWs, "GetRecordingStatus", new CancellationToken()));
+                    else
+                        Task.Run(() => SendInWs(Root.ObsWs, "GetStreamingStatus", new CancellationToken()));
                 }
                 prev = btVideo;
             }
@@ -1346,8 +1348,14 @@ namespace gInk
         {
             if (msg.Msg == 0x001C) //WM_ACTIVATEAPP : generated through alt+tab
             {
-                if (Initializing)        // This is normally because we have not yet finish initialisation, we ignore the action...
+                if (Initializing || AddM3UEntryInProgress)        // This is normally because we have not yet finish initialisation, we ignore the action...
                     return;
+                //tests showed that this is useless
+                /*if (Control.MouseButtons == MouseButtons.Right)
+                {
+                    Root.FormCollection.AddM3UEntry();
+                    return;
+                }*/
                 if (Root.FormDisplay != null && Root.FormDisplay.Visible)
                 {
                     //Console.WriteLine(Root.FormDisplay.HasFocus() ? "WM_ACT" : "!WM");
@@ -1392,6 +1400,8 @@ namespace gInk
 
         private void SetVidBgImage()
         {
+            if(Root.VideoRecInProgress == VideoRecInProgress.Dead)
+                btVideo.BackgroundImage = getImgFromDiskOrRes("VidDead", ImageExts);
             if (Root.VideoRecInProgress == VideoRecInProgress.Stopped)
                 btVideo.BackgroundImage = getImgFromDiskOrRes("VidStop", ImageExts);
             else if (Root.VideoRecInProgress == VideoRecInProgress.Recording)
@@ -3993,11 +4003,26 @@ namespace gInk
 
         public void btDock_Click(object sender, EventArgs e)
         {
+            longClickTimer.Stop();
+            if (sender is ContextMenu)
+            {
+                sender = (sender as ContextMenu).SourceControl;
+                MouseTimeDown = DateTime.FromBinary(0);
+            }
+
             if (ToolbarMoved)
             {
                 ToolbarMoved = false;
                 return;
             }
+
+            TimeSpan tsp = DateTime.Now - MouseTimeDown;
+            if (Root.CurrentVideoFileName!="" && sender != null && tsp.TotalSeconds > Root.LongClickTime)    // longclick or rightclick on dock buttons to open addM3Entry only
+            {
+                AddM3UEntry();
+                return;
+            }
+
 
             gpSubTools.Visible = false;
 
@@ -5866,6 +5891,9 @@ namespace gInk
             rect.Height = (int)(rect.Height * ScreenScalingFactor / 2) * 2;
 
             Root.FFmpegProcess = new Process();
+            Root.CurrentVideoFileName = Root.ExpandVarCmd(Root.FFMpegFileName, rect.X, rect.Y, rect.Width, rect.Height);
+            Root.IndexRecordCounter = 0;
+            Root.CurrentVideoStartTime = DateTime.Now;
             string[] cmdArgs = Root.ExpandVarCmd(Root.FFMpegCmd, rect.X, rect.Y, rect.Width, rect.Height).Split(new char[] { ' ' }, 2);
             Console.WriteLine(cmdArgs[0]+" "+cmdArgs[1]);
 
@@ -5886,6 +5914,7 @@ namespace gInk
             //ExitSnapping();
         }
 
+        DateTime ObsTimeCode;
         static async Task ReceiveObsMesgs(FormCollection frm)
         {
             string HashEncode(string input)
@@ -5993,10 +6022,14 @@ namespace gInk
 #endif
             while ((frm.Root.ObsWs == null || frm.Root.VideoRecordWindowInProgress) && !frm.Root.ObsCancel.Token.IsCancellationRequested)// frm.Root.ObsWs.State != WebSocketState.Open)
                 await Task.Delay(50);
+            frm.Root.CurrentIndexFileName = "";
+            frm.Root.IndexRecordCounter = 0;
             if (frm.Root.VideoRecordMode == VideoRecordMode.OBSRec)
                 await Task.Run(() => SendInWs(frm.Root.ObsWs, "StartRecording", frm.Root.ObsCancel.Token));
             else if (frm.Root.VideoRecordMode == VideoRecordMode.OBSBcst)
                 await Task.Run(() => SendInWs(frm.Root.ObsWs, "StartStreaming", frm.Root.ObsCancel.Token));
+            await Task.Delay(100);
+            await Task.Run(() => SendInWs(frm.Root.ObsWs, "GetStreamingStatus", frm.Root.ObsCancel.Token));
             //Console.WriteLine("ExitStartRec");
         }
 
@@ -6019,6 +6052,8 @@ namespace gInk
                 }
                 Task.Run(() => ObsStopRecording(this));
             }
+            Root.CurrentVideoFileName = "";
+            Root.CurrentIndexFileName = "";            
         }
 
         static async Task ObsStopRecording(FormCollection frm)
@@ -6050,8 +6085,9 @@ namespace gInk
 
         static async Task SendInWs(ClientWebSocket ws, string cmd, CancellationToken ct, string parameters = "")
         {
-            //Console.WriteLine("enter " + cmd);
-            string msg = string.Format("{{\"message-id\":\"{0}\",\"request-type\":\"{1}\" {2} }}", (int)(DateTime.UtcNow.TimeOfDay.TotalSeconds), cmd, parameters);
+            int i = (int)(DateTime.UtcNow.TimeOfDay.TotalMilliseconds);
+            //Console.WriteLine(i.ToString()+" : enter " + cmd);
+            string msg = string.Format("{{\"message-id\":\"{0}\",\"request-type\":\"{1}\" {2} }}", i, cmd, parameters);
             byte[] sendBytes = Encoding.UTF8.GetBytes(msg);
             var sendBuffer = new ArraySegment<byte>(sendBytes);
             while ((ws.State != WebSocketState.Open) && !ct.IsCancellationRequested)// frm.Root.ObsWs.State != WebSocketState.Open)
@@ -7216,6 +7252,76 @@ namespace gInk
             catch
             {
                 return "?????";
+            }
+        }
+
+        public bool AddM3UEntryInProgress = false;
+        public bool AddM3UEntry(string st = null)
+        {
+            try
+            {
+                if (Root.CurrentVideoFileName == "")
+                    return false;
+                int sec;
+                if (Root.VideoRecordMode==VideoRecordMode.OBSRec)
+                {
+                    ObsTimeCode = DateTime.MinValue;
+                    int i=100;
+                    SendInWs(Root.ObsWs, "GetRecordingStatus", new CancellationToken());
+                    Console.WriteLine(DateTime.Now);
+                    while(ObsTimeCode== DateTime.MinValue && i-->=0)
+                        Task.Delay(50);
+                    Console.WriteLine(i.ToString()+" - "+DateTime.Now.ToString());
+                    sec = (int)(ObsTimeCode.TimeOfDay.TotalSeconds);
+                }
+                else
+                    sec=(int)((DateTime.Now - Root.CurrentVideoStartTime).TotalSeconds);
+
+                if (st == null)
+                {
+                    st = Root.ExpandVarCmd(Root.IndexDefaultText, 0, 0, 0, 0);
+                    if (Root.NoEditM3UEntry)
+                    {
+                        Root.trayIcon.ShowBalloonTip(100, "", string.Format(Root.Local.M3UBalloonText, st), ToolTipIcon.Info);
+                    }
+                    else
+                    {
+                        AddM3UEntryInProgress = true;
+                        bool interact = Root.FormCollection.Visible && Root.PointerMode;
+                        if (interact) AllowInteractions(false);
+                        Screen scr = Screen.FromPoint(MousePosition);
+                        FormInput inp = new FormInput(Root.Local.M3UTextCaption, Root.Local.M3UTextLabel, Root.ExpandVarCmd(Root.IndexDefaultText, 0, 0, 0, 0), false, Root, null);
+                        inp.Top = ((int)(scr.Bounds.Top + scr.Bounds.Bottom - inp.Height) / 2);//System.Windows.SystemParameters.PrimaryScreenHeight)-inp.Height) / 2;
+                        inp.Left = ((int)(scr.Bounds.Left + scr.Bounds.Right - inp.Width) / 2);// System.Windows.SystemParameters.PrimaryScreenWidth) - inp.Width) / 2;
+                        DialogResult ret = inp.ShowDialog();  // cancellation process is within the cancel button
+                        AddM3UEntryInProgress = false;
+                        if (interact)
+                        {
+                            TextEdited = true;
+                            AllowInteractions(false);
+                        }
+                        if (ret == DialogResult.OK)
+                            st = inp.InputSL.Text;
+                        else
+                            return false;
+                    }
+                }
+                
+                if (Root.CurrentIndexFileName == "")
+                    Root.CurrentIndexFileName = Path.ChangeExtension(Root.CurrentVideoFileName, ".m3u");
+                if (!File.Exists(Root.CurrentIndexFileName))
+                {
+                    File.WriteAllText(Root.CurrentIndexFileName, "#EXTM3U\n\n");
+                }
+                File.AppendAllText(Root.CurrentIndexFileName, string.Format("#EXTINF:-1,{0}\n#EXTVLCOPT:start-time={1}\n{2}\n\n", st, sec, Root.MakeRelativePath(Root.CurrentIndexFileName, Root.CurrentVideoFileName)));
+                if (Root.UndockOnIndexCreate)
+                    Root.UnDock();
+                return true;
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("!!! @m3u: " + e.Message);
+                return false;
             }
         }
 

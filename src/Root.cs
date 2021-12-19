@@ -99,24 +99,32 @@ namespace gInk
 
 		public bool PreFilterMessage(ref Message m)
 		{
-			if (m.Msg == 0x0312 || m.Msg == Program.StartInkingMsg)                    // 0x0312 is the global hotkey 
+			if (m.Msg == 0x0312 || m.Msg == Program.StartInkingMsg)                    // 0x0312 is the global hotkey WM_HOTKEY
             {
                 //Keys key = (Keys)(((int)m.LParam >> 16) & 0xFFFF);                  // The key of the hotkey that was pressed.
                 //int modifier = (int)m.LParam & 0xFFFF;       // The modifier of the hotkey that was pressed.
-                //int id = m.WParam.ToInt32();                                        // The id of the hotkey that was pressed.
-                bool activePointer = (m.Msg == 0x0312 && (Root.FormCollection != null && Root.FormCollection.Visible));
-                Root.callshortcut();
-                if (activePointer)           // StartInkingMsg is received twice, therefore we have to froce pointerMode at that time...
+                int id = (m.Msg == 0x0312)?m.WParam.ToInt32():0;                                        // The id of the hotkey that was pressed.
+                if(id ==1)      // Hotkey_CreateIndex;
                 {
-                    Root.FormCollection.btPointer_Click(null,null);
-                    if (Root.AltTabPointer && !Root.PointerMode && !Root.IsDockedBeforePen && !Root.FormCollection.Initializing) // to unfold the bar if AltTabPointer option has been set
-                    {
-                        Root.UnDock();
-                    }
-
+                    Root?.FormCollection?.AddM3UEntry(null);
+                    return true;
                 }
-                return true;
-			}
+                else
+                {
+                    bool activePointer = (m.Msg == 0x0312 && (Root.FormCollection != null && Root.FormCollection.Visible));
+                    Root.callshortcut();
+                    if (activePointer)           // StartInkingMsg is received twice, therefore we have to froce pointerMode at that time...
+                    {
+                        Root.FormCollection.btPointer_Click(null, null);
+                        if (Root.AltTabPointer && !Root.PointerMode && !Root.IsDockedBeforePen && !Root.FormCollection.Initializing) // to unfold the bar if AltTabPointer option has been set
+                        {
+                            Root.UnDock();
+                        }
+
+                    }
+                    return true;
+                }
+            }
 			return false;
 		}
 	}
@@ -373,8 +381,23 @@ namespace gInk
         public VideoRecordMode VideoRecordMode = VideoRecordMode.NoVideo;
         public string ObsUrl = "ws://localhost:4444";
         public string ObsPwd = "obs";
-        public string FFMpegCmd = "ffmpeg.exe -f gdigrab  -framerate 15 -offset_x $xx$ -offset_y $yy$ -video_size $ww$x$hh$ -show_region 1 -i desktop -vcodec libx264 %USERPROFILE%/CAPT_%DD%%MM%%YY%_%H%%M%%S%_$nn$.mkv";
+        public string FFMpegFileName = "CAPT_%DD%%MM%%YY%_%H%%M%%S%_$nn$.mkv";
+        public string FFMpegCmd = "ffmpeg.exe -f gdigrab  -framerate 15 -offset_x $xx$ -offset_y $yy$ -video_size $ww$x$hh$ -show_region 1 -i desktop -vcodec libx264 %USERPROFILE%/$FN$";
+
+        public bool CreateM3U = true;
+        public Hotkey Hotkey_CreateIndex = new Hotkey();
+        public bool CreateIndexOnUndock = false;
+        public string IndexDefaultText = "%H%:%M%:%S% = ";
+        public bool UndockOnIndexCreate = false;
+        public bool NoEditM3UEntry = false;
+
+        //public string VideoOutFileName = "";
+
+        public string CurrentVideoFileName= "";
+        public string CurrentIndexFileName = "";
+        public DateTime CurrentVideoStartTime;
         public int VideoRecordCounter = 0;
+        public int IndexRecordCounter = 0;
         public VideoRecInProgress VideoRecInProgress = VideoRecInProgress.Stopped;
         public Process FFmpegProcess = null;
         public bool VideoRecordWindowInProgress = false;
@@ -429,11 +452,15 @@ namespace gInk
         public string ExpandVarCmd(string cmd, int x, int y, int w, int h)
         {
             cmd = Environment.ExpandEnvironmentVariables(cmd);
+            cmd = cmd.Replace("$FN$", CurrentVideoFileName);
             cmd = cmd.Replace("$xx$", x.ToString());
             cmd = cmd.Replace("$yy$", y.ToString());
             cmd = cmd.Replace("$ww$", w.ToString());
             cmd = cmd.Replace("$hh$", h.ToString());
             cmd = cmd.Replace("$nn$", VideoRecordCounter.ToString());
+            cmd = cmd.Replace("$NN$", VideoRecordCounter.ToString("000"));
+            cmd = cmd.Replace("$ii$", IndexRecordCounter.ToString());
+            cmd = cmd.Replace("$II$", IndexRecordCounter.ToString("000"));
             DateTime dt = DateTime.Now;
             cmd = cmd.Replace("$H$", dt.Hour.ToString("00"));
             cmd = cmd.Replace("$M$", dt.Minute.ToString("00"));
@@ -443,6 +470,11 @@ namespace gInk
             cmd = cmd.Replace("$YY$", (dt.Year % 100).ToString("00"));
             cmd = cmd.Replace("$YYYY$", dt.Year.ToString("00"));
             return cmd;
+        }
+
+        public bool IsVideoRecordingSelected()
+        {
+            return VideoRecordMode == VideoRecordMode.FfmpegRec || VideoRecordMode == VideoRecordMode.OBSRec;
         }
 
 
@@ -528,10 +560,18 @@ namespace gInk
 
         private void TrayIcon_BalloonTipClicked(object sender, EventArgs e)
 		{
-			//string snapbasepath = SnapshotBasePath;
-			//snapbasepath = Environment.ExpandEnvironmentVariables(snapbasepath);
-			//System.Diagnostics.Process.Start(snapbasepath);
-			string fullpath = System.IO.Path.GetFullPath(SnapshotFileFullPath);
+            //string snapbasepath = SnapshotBasePath;
+            //snapbasepath = Environment.ExpandEnvironmentVariables(snapbasepath);
+            //System.Diagnostics.Process.Start(snapbasepath);            
+            string fullpath;
+            try
+            {
+                fullpath = System.IO.Path.GetFullPath(SnapshotFileFullPath);
+            }
+            catch
+            {
+                fullpath = ExpandVarCmd(SnapshotBasePath,0,0,0,0);
+            }
 			System.Diagnostics.Process.Start("explorer.exe", string.Format("/select,\"{0}\"", fullpath));
 		}
 
@@ -774,6 +814,9 @@ namespace gInk
 
 		public void UnDock()
 		{
+            if (FormCollection != null && FormCollection.AddM3UEntryInProgress)
+                return;
+
             if ((FormDisplay == null || !FormDisplay.Visible) || (FormCollection == null || !FormCollection.Visible))
 				return;
 
@@ -787,7 +830,12 @@ namespace gInk
             }
 			FormCollection.ButtonsEntering = 1;
 			UponButtonsUpdate |= 0x2;
-		}
+
+            if(CreateIndexOnUndock && CurrentIndexFileName != "")
+            {
+                FormCollection.AddM3UEntry();
+            }
+        }
 
 		public void Pointer()
 		{
@@ -952,8 +1000,8 @@ namespace gInk
 					sLine.Substring(0, 1) != "!" &&
 					sLine.Substring(0, 1) != "[" &&
 					sLine.Substring(0, 1) != "#" &&
-					sLine.Contains("=") &&
-					!sLine.Substring(sLine.IndexOf("=") + 1).Contains("=")
+					sLine.Contains("=")
+					// && !sLine.Substring(sLine.IndexOf("=") + 1).Contains("=")
 				)
 				{
 					sName = sLine.Substring(0, sLine.IndexOf("="));
@@ -1488,8 +1536,29 @@ namespace gInk
                         case "OBS_WS_PWD":
                             ObsPwd = sPara;
                             break;
+                        case "FFMPEG_FILENAME":
+                            FFMpegFileName = sPara;
+                            break;
                         case "FFMPEG_CMD":
                             FFMpegCmd = sPara;
+                            break;
+                        case "CREATE_M3U":
+                            CreateM3U = (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON");
+                            break;
+                        case "HOTKEY_CREATEINDEX":
+                            Hotkey_CreateIndex.Parse(sPara);
+                            break;
+                        case "CREATE_INDEX_ON_UNDOCK":
+                            CreateIndexOnUndock = (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON");
+                            break;
+                        case "UNDOCK_ON_CREATE_INDEX":
+                            UndockOnIndexCreate = (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON");
+                            break;
+                        case "INDEX_DEFAULT":
+                            IndexDefaultText = sPara;
+                            break;
+                        case "NOEDIT_M3U_ENTRY":
+                            NoEditM3UEntry = (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON");
                             break;
                         case "RESTSERVER_URL":
                             APIRestUrl = sPara;
@@ -2165,8 +2234,29 @@ namespace gInk
                         case "OBS_WS_PWD":
                             sPara = ObsPwd;
                             break;
+                        case "FFMPEG_FILENAME":
+                            sPara = FFMpegFileName;
+                            break;
                         case "FFMPEG_CMD":
                             sPara = FFMpegCmd;
+                            break;
+                        case "CREATE_M3U":
+                            sPara = CreateM3U ? "True" : "False";
+                            break;
+                        case "HOTKEY_CREATEINDEX":
+                            sPara = Hotkey_CreateIndex.ToString();
+                            break;
+                        case "CREATE_INDEX_ON_UNDOCK":
+                            sPara = CreateIndexOnUndock ? "True" : "False";                            
+                            break;
+                        case "UNDOCK_ON_CREATE_INDEX":
+                            sPara = UndockOnIndexCreate ? "True" : "False";
+                            break;
+                        case "INDEX_DEFAULT":
+                            sPara = IndexDefaultText;
+                            break;
+                        case "NOEDIT_M3U_ENTRY":
+                            sPara = NoEditM3UEntry ? "True" : "False";
                             break;
                         case "RESTSERVER_URL":
                             sPara = APIRestUrl;
@@ -2328,7 +2418,7 @@ namespace gInk
 			FormOptions.Show();
 		}
 
-		public void SetHotkey()
+        public void SetHotkey()
 		{
 			int modifier = 0;
 			if (Hotkey_Global.Control) modifier |= 0x2;
@@ -2337,20 +2427,25 @@ namespace gInk
 			if (Hotkey_Global.Win) modifier |= 0x8;
 			if (modifier != 0)
 				RegisterHotKey(IntPtr.Zero, 0, modifier, Hotkey_Global.Key);
-		}
+            modifier = 0;
+            if(IsVideoRecordingSelected() && CreateM3U)
+            {
+                if (Hotkey_CreateIndex.Control) modifier |= 0x2;
+                if (Hotkey_CreateIndex.Alt) modifier |= 0x1;
+                if (Hotkey_CreateIndex.Shift) modifier |= 0x4;
+                if (Hotkey_CreateIndex.Win) modifier |= 0x8;
+                if (modifier != 0)
+                    RegisterHotKey(IntPtr.Zero, 1, modifier, Hotkey_CreateIndex.Key);
+            }
+        }
 
-		public void UnsetHotkey()
+        public void UnsetHotkey()
 		{
-			int modifier = 0;
-			if (Hotkey_Global.Control) modifier |= 0x2;
-			if (Hotkey_Global.Alt) modifier |= 0x1;
-			if (Hotkey_Global.Shift) modifier |= 0x4;
-			if (Hotkey_Global.Win) modifier |= 0x8;
-			if (modifier != 0)
-				UnregisterHotKey(IntPtr.Zero, 0);
-		}
+            try {  UnregisterHotKey(IntPtr.Zero, 0); } catch { }
+            try { UnregisterHotKey(IntPtr.Zero, 1); } catch { }
+        }
 
-		public void ChangeLanguage(string filename)
+        public void ChangeLanguage(string filename)
 		{
 			Local.LoadLocalFile(filename);
 

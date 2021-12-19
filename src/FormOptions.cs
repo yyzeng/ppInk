@@ -326,8 +326,17 @@ namespace gInk
 
             WsUrlTxt.Text = Root.ObsUrl;
             WsPwdTxt.Text = Root.ObsPwd;
+            FfmegFileNameTxt.Text = Root.FFMpegFileName;
             FfmpegCmdTxt.Text = Root.FFMpegCmd;
-            switch(Root.VideoRecordMode)
+
+            CreateM3u.Checked = Root.CreateM3U;
+            M3UIndexOnUndockCb.Checked = Root.CreateIndexOnUndock;
+            hiCreateM3UIndex.Hotkey = Root.Hotkey_CreateIndex;
+            M3UIndexDefaultTxt.Text = Root.IndexDefaultText;
+            UndockOnM3UIndexCb.Checked = Root.UndockOnIndexCreate;
+            NoEditM3UIndexCb.Checked = Root.NoEditM3UEntry;
+
+            switch (Root.VideoRecordMode)
             {
                 case VideoRecordMode.NoVideo :
                     OptNoVideo.Checked = true;
@@ -501,6 +510,12 @@ namespace gInk
             this.LblFfmpegCmd.Text = Root.Local.LblFfmpegCmd;
             this.LblFfmpegNote.Text = Root.Local.LblFfmpegNote;
 
+            CreateM3u.Text = Root.Local.CreateM3UGroup;
+            M3UIndexOnUndockCb.Text = Root.Local.CreateIndexOnUndock;
+            LblIndexHotKey.Text = Root.Local.LblM3UIndexHotKey;
+            M3UIndexDefTextLbl.Text = Root.Local.M3UIndexDefaultText;
+            UndockOnM3UIndexCb.Text = Root.Local.UndockOnM3UIndexCreate;
+            NoEditM3UIndexCb.Text = Root.Local.NoEditM3UIndex;
 
             for (int p = 0; p < Root.MaxPenCount; p++)
 			{
@@ -523,6 +538,8 @@ namespace gInk
             FitToCurveEd.Text = Root.Local.OptionsFitToCurve;
             lbLineStyle.Text = Root.Local.OptionsLineStyle;
             Click4StrokeCb.Text = Root.Local.OptionsClick4Stroke;
+            //CreateM3u.Text = Root.Local.CreateM3uText;
+            //LblIndexHotKey.Text = Root.Local.LblIndexHotKey;
 
             comboLanguage.Items.Clear();
 			List<string> langs = Root.Local.GetLanguagenames();
@@ -917,6 +934,9 @@ namespace gInk
         {
             if ((sender as RadioButton).Checked)
                 Root.VideoRecordMode = (VideoRecordMode)Int32.Parse((string)(sender as Control).Tag);
+            M3UOptions.Enabled = Root.IsVideoRecordingSelected() && Root.CreateM3U;
+            Root.UnsetHotkey();
+            Root.SetHotkey();
         }
 
         private void ToolbarDwg_Click(object sender, EventArgs e)
@@ -1329,6 +1349,43 @@ namespace gInk
         private void MagnetAngleEd_Validated(object sender, EventArgs e)
         {
             Root.MagneticAngle = float.Parse(MagnetAngleEd.Text);
+        }
+
+
+        private void IndexOnDockUndockCb_CheckedChanged(object sender, EventArgs e)
+        {
+            Root.CreateIndexOnUndock = M3UIndexOnUndockCb.Checked;
+        }
+
+        private void FfmegFileNameTxt_Validated(object sender, EventArgs e)
+        {
+            Root.FFMpegFileName = FfmegFileNameTxt.Text;
+        }
+
+        private void IndexDefaultTxt_Validated(object sender, EventArgs e)
+        {
+            Root.IndexDefaultText = M3UIndexDefaultTxt.Text;
+        }
+
+        private void CreateM3u_CheckedChanged(object sender, EventArgs e)
+        {
+            Root.CreateM3U = CreateM3u.Checked;
+            M3UOptions.Enabled = Root.IsVideoRecordingSelected() && Root.CreateM3U;
+        }
+
+        private void IndexDefaultTxt_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void UndockOnIndexCb_CheckedChanged(object sender, EventArgs e)
+        {
+            Root.UndockOnIndexCreate = UndockOnM3UIndexCb.Checked;
+        }
+
+        private void NoEditM3Cb_CheckedChanged(object sender, EventArgs e)
+        {
+            Root.NoEditM3UEntry = NoEditM3UIndexCb.Checked;
         }
     }
 }

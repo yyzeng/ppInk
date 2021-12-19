@@ -65,6 +65,7 @@ namespace gInk
             gInk.Hotkey hotkey34 = new gInk.Hotkey();
             gInk.Hotkey hotkey35 = new gInk.Hotkey();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormOptions));
+            gInk.Hotkey hotkey36 = new gInk.Hotkey();
             this.lbPens4 = new System.Windows.Forms.Label();
             this.lbHkZoom = new System.Windows.Forms.Label();
             this.lbHkClipart3 = new System.Windows.Forms.Label();
@@ -177,6 +178,17 @@ namespace gInk
             this.OptFfmpeg = new System.Windows.Forms.RadioButton();
             this.OptObsBcast = new System.Windows.Forms.RadioButton();
             this.VideoTab = new System.Windows.Forms.TabPage();
+            this.LblFileName = new System.Windows.Forms.Label();
+            this.FfmegFileNameTxt = new System.Windows.Forms.TextBox();
+            this.CreateM3u = new System.Windows.Forms.CheckBox();
+            this.M3UOptions = new System.Windows.Forms.GroupBox();
+            this.NoEditM3UIndexCb = new System.Windows.Forms.CheckBox();
+            this.UndockOnM3UIndexCb = new System.Windows.Forms.CheckBox();
+            this.hiCreateM3UIndex = new gInk.HotkeyInputBox();
+            this.LblIndexHotKey = new System.Windows.Forms.Label();
+            this.M3UIndexDefTextLbl = new System.Windows.Forms.Label();
+            this.M3UIndexDefaultTxt = new System.Windows.Forms.TextBox();
+            this.M3UIndexOnUndockCb = new System.Windows.Forms.CheckBox();
             this.lbPens2 = new System.Windows.Forms.Label();
             this.ZoomEnabledCb = new System.Windows.Forms.ComboBox();
             this.ZoomScaleLbl = new System.Windows.Forms.Label();
@@ -217,6 +229,7 @@ namespace gInk
             this.cbWhiteIcon = new System.Windows.Forms.CheckBox();
             this.tbSnapPath = new System.Windows.Forms.TextBox();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.MagnetAngleEd = new System.Windows.Forms.TextBox();
             this.SpotLightBox = new System.Windows.Forms.GroupBox();
             this.SpotOnAltCb = new System.Windows.Forms.CheckBox();
             this.SpotRadTb = new System.Windows.Forms.TextBox();
@@ -263,6 +276,8 @@ namespace gInk
             this.cbPanEnabled = new System.Windows.Forms.CheckBox();
             this.cbAllowDragging = new System.Windows.Forms.CheckBox();
             this.lblToolbarHeight = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
@@ -280,13 +295,11 @@ namespace gInk
             this.lbcbPens = new System.Windows.Forms.Label();
             this.FadingTimeEd = new System.Windows.Forms.TextBox();
             this.WidthAtPenSelCb = new System.Windows.Forms.CheckBox();
-            this.MagnetAngleEd = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
             this.tabPage3.SuspendLayout();
             this.SnapInPointerGrp.SuspendLayout();
             this.DashStyleGrp.SuspendLayout();
             this.VideoTab.SuspendLayout();
+            this.M3UOptions.SuspendLayout();
             this.ZoomBox.SuspendLayout();
             this.BoardBx.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -1424,7 +1437,7 @@ namespace gInk
             // 
             this.OptObsRecord.AutoSize = true;
             this.OptObsRecord.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.OptObsRecord.Location = new System.Drawing.Point(61, 53);
+            this.OptObsRecord.Location = new System.Drawing.Point(61, 34);
             this.OptObsRecord.Name = "OptObsRecord";
             this.OptObsRecord.Size = new System.Drawing.Size(112, 17);
             this.OptObsRecord.TabIndex = 0;
@@ -1496,7 +1509,7 @@ namespace gInk
             // LblFfmpegNote
             // 
             this.LblFfmpegNote.AutoSize = true;
-            this.LblFfmpegNote.Location = new System.Drawing.Point(87, 322);
+            this.LblFfmpegNote.Location = new System.Drawing.Point(58, 418);
             this.LblFfmpegNote.Name = "LblFfmpegNote";
             this.LblFfmpegNote.Size = new System.Drawing.Size(416, 117);
             this.LblFfmpegNote.TabIndex = 12;
@@ -1504,16 +1517,16 @@ namespace gInk
             // 
             // FfmpegCmdTxt
             // 
-            this.FfmpegCmdTxt.Location = new System.Drawing.Point(193, 278);
+            this.FfmpegCmdTxt.Location = new System.Drawing.Point(213, 258);
             this.FfmpegCmdTxt.Name = "FfmpegCmdTxt";
-            this.FfmpegCmdTxt.Size = new System.Drawing.Size(514, 20);
+            this.FfmpegCmdTxt.Size = new System.Drawing.Size(494, 20);
             this.FfmpegCmdTxt.TabIndex = 11;
             this.FfmpegCmdTxt.TextChanged += new System.EventHandler(this.FfmpegCmdTxt_TextChanged);
             // 
             // LblFfmpegCmd
             // 
             this.LblFfmpegCmd.AutoSize = true;
-            this.LblFfmpegCmd.Location = new System.Drawing.Point(87, 281);
+            this.LblFfmpegCmd.Location = new System.Drawing.Point(87, 261);
             this.LblFfmpegCmd.Name = "LblFfmpegCmd";
             this.LblFfmpegCmd.Size = new System.Drawing.Size(77, 13);
             this.LblFfmpegCmd.TabIndex = 10;
@@ -1521,16 +1534,16 @@ namespace gInk
             // 
             // WsPwdTxt
             // 
-            this.WsPwdTxt.Location = new System.Drawing.Point(193, 138);
+            this.WsPwdTxt.Location = new System.Drawing.Point(213, 113);
             this.WsPwdTxt.Name = "WsPwdTxt";
-            this.WsPwdTxt.Size = new System.Drawing.Size(100, 20);
+            this.WsPwdTxt.Size = new System.Drawing.Size(149, 20);
             this.WsPwdTxt.TabIndex = 9;
             this.WsPwdTxt.TextChanged += new System.EventHandler(this.WsPwdTxt_TextChanged);
             // 
             // LblWsPwd
             // 
             this.LblWsPwd.AutoSize = true;
-            this.LblWsPwd.Location = new System.Drawing.Point(87, 141);
+            this.LblWsPwd.Location = new System.Drawing.Point(87, 116);
             this.LblWsPwd.Name = "LblWsPwd";
             this.LblWsPwd.Size = new System.Drawing.Size(53, 13);
             this.LblWsPwd.TabIndex = 8;
@@ -1541,7 +1554,7 @@ namespace gInk
             this.OptNoVideo.AutoSize = true;
             this.OptNoVideo.Checked = true;
             this.OptNoVideo.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.OptNoVideo.Location = new System.Drawing.Point(61, 17);
+            this.OptNoVideo.Location = new System.Drawing.Point(61, 6);
             this.OptNoVideo.Name = "OptNoVideo";
             this.OptNoVideo.Size = new System.Drawing.Size(139, 17);
             this.OptNoVideo.TabIndex = 7;
@@ -1554,7 +1567,7 @@ namespace gInk
             // LblObsNote
             // 
             this.LblObsNote.AutoSize = true;
-            this.LblObsNote.Location = new System.Drawing.Point(58, 173);
+            this.LblObsNote.Location = new System.Drawing.Point(58, 148);
             this.LblObsNote.Name = "LblObsNote";
             this.LblObsNote.Size = new System.Drawing.Size(431, 26);
             this.LblObsNote.TabIndex = 6;
@@ -1563,15 +1576,15 @@ namespace gInk
             // 
             // WsUrlTxt
             // 
-            this.WsUrlTxt.Location = new System.Drawing.Point(193, 112);
+            this.WsUrlTxt.Location = new System.Drawing.Point(213, 87);
             this.WsUrlTxt.Name = "WsUrlTxt";
-            this.WsUrlTxt.Size = new System.Drawing.Size(70, 20);
+            this.WsUrlTxt.Size = new System.Drawing.Size(258, 20);
             this.WsUrlTxt.TabIndex = 5;
             // 
             // LblWsUrl
             // 
             this.LblWsUrl.AutoSize = true;
-            this.LblWsUrl.Location = new System.Drawing.Point(87, 115);
+            this.LblWsUrl.Location = new System.Drawing.Point(87, 90);
             this.LblWsUrl.Name = "LblWsUrl";
             this.LblWsUrl.Size = new System.Drawing.Size(89, 13);
             this.LblWsUrl.TabIndex = 3;
@@ -1581,7 +1594,7 @@ namespace gInk
             // 
             this.OptFfmpeg.AutoSize = true;
             this.OptFfmpeg.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.OptFfmpeg.Location = new System.Drawing.Point(61, 241);
+            this.OptFfmpeg.Location = new System.Drawing.Point(61, 199);
             this.OptFfmpeg.Name = "OptFfmpeg";
             this.OptFfmpeg.Size = new System.Drawing.Size(131, 17);
             this.OptFfmpeg.TabIndex = 2;
@@ -1594,7 +1607,7 @@ namespace gInk
             // 
             this.OptObsBcast.AutoSize = true;
             this.OptObsBcast.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.OptObsBcast.Location = new System.Drawing.Point(61, 76);
+            this.OptObsBcast.Location = new System.Drawing.Point(61, 51);
             this.OptObsBcast.Name = "OptObsBcast";
             this.OptObsBcast.Size = new System.Drawing.Size(128, 17);
             this.OptObsBcast.TabIndex = 1;
@@ -1605,6 +1618,9 @@ namespace gInk
             // 
             // VideoTab
             // 
+            this.VideoTab.Controls.Add(this.LblFileName);
+            this.VideoTab.Controls.Add(this.FfmegFileNameTxt);
+            this.VideoTab.Controls.Add(this.CreateM3u);
             this.VideoTab.Controls.Add(this.LblFfmpegNote);
             this.VideoTab.Controls.Add(this.FfmpegCmdTxt);
             this.VideoTab.Controls.Add(this.LblFfmpegCmd);
@@ -1617,6 +1633,7 @@ namespace gInk
             this.VideoTab.Controls.Add(this.OptFfmpeg);
             this.VideoTab.Controls.Add(this.OptObsBcast);
             this.VideoTab.Controls.Add(this.OptObsRecord);
+            this.VideoTab.Controls.Add(this.M3UOptions);
             this.VideoTab.Location = new System.Drawing.Point(4, 22);
             this.VideoTab.Name = "VideoTab";
             this.VideoTab.Padding = new System.Windows.Forms.Padding(3);
@@ -1624,6 +1641,123 @@ namespace gInk
             this.VideoTab.TabIndex = 3;
             this.VideoTab.Text = "Video";
             this.VideoTab.UseVisualStyleBackColor = true;
+            // 
+            // LblFileName
+            // 
+            this.LblFileName.AutoSize = true;
+            this.LblFileName.Location = new System.Drawing.Point(87, 235);
+            this.LblFileName.Name = "LblFileName";
+            this.LblFileName.Size = new System.Drawing.Size(84, 13);
+            this.LblFileName.TabIndex = 16;
+            this.LblFileName.Text = "Filename ($FN$)";
+            // 
+            // FfmegFileNameTxt
+            // 
+            this.FfmegFileNameTxt.Location = new System.Drawing.Point(213, 232);
+            this.FfmegFileNameTxt.Name = "FfmegFileNameTxt";
+            this.FfmegFileNameTxt.Size = new System.Drawing.Size(149, 20);
+            this.FfmegFileNameTxt.TabIndex = 15;
+            this.FfmegFileNameTxt.Validated += new System.EventHandler(this.FfmegFileNameTxt_Validated);
+            // 
+            // CreateM3u
+            // 
+            this.CreateM3u.AutoSize = true;
+            this.CreateM3u.Location = new System.Drawing.Point(61, 296);
+            this.CreateM3u.Name = "CreateM3u";
+            this.CreateM3u.Size = new System.Drawing.Size(108, 17);
+            this.CreateM3u.TabIndex = 13;
+            this.CreateM3u.Text = "Create m3u index";
+            this.CreateM3u.UseVisualStyleBackColor = true;
+            this.CreateM3u.CheckedChanged += new System.EventHandler(this.CreateM3u_CheckedChanged);
+            // 
+            // M3UOptions
+            // 
+            this.M3UOptions.Controls.Add(this.NoEditM3UIndexCb);
+            this.M3UOptions.Controls.Add(this.UndockOnM3UIndexCb);
+            this.M3UOptions.Controls.Add(this.hiCreateM3UIndex);
+            this.M3UOptions.Controls.Add(this.LblIndexHotKey);
+            this.M3UOptions.Controls.Add(this.M3UIndexDefTextLbl);
+            this.M3UOptions.Controls.Add(this.M3UIndexDefaultTxt);
+            this.M3UOptions.Controls.Add(this.M3UIndexOnUndockCb);
+            this.M3UOptions.Location = new System.Drawing.Point(61, 296);
+            this.M3UOptions.Name = "M3UOptions";
+            this.M3UOptions.Size = new System.Drawing.Size(437, 119);
+            this.M3UOptions.TabIndex = 14;
+            this.M3UOptions.TabStop = false;
+            // 
+            // NoEditM3UIndexCb
+            // 
+            this.NoEditM3UIndexCb.AutoSize = true;
+            this.NoEditM3UIndexCb.Location = new System.Drawing.Point(246, 94);
+            this.NoEditM3UIndexCb.Name = "NoEditM3UIndexCb";
+            this.NoEditM3UIndexCb.Size = new System.Drawing.Size(119, 17);
+            this.NoEditM3UIndexCb.TabIndex = 6;
+            this.NoEditM3UIndexCb.Text = "No Edit, Notify only ";
+            this.NoEditM3UIndexCb.UseVisualStyleBackColor = true;
+            this.NoEditM3UIndexCb.CheckedChanged += new System.EventHandler(this.NoEditM3Cb_CheckedChanged);
+            // 
+            // UndockOnM3UIndexCb
+            // 
+            this.UndockOnM3UIndexCb.AutoSize = true;
+            this.UndockOnM3UIndexCb.Location = new System.Drawing.Point(246, 43);
+            this.UndockOnM3UIndexCb.Name = "UndockOnM3UIndexCb";
+            this.UndockOnM3UIndexCb.Size = new System.Drawing.Size(164, 17);
+            this.UndockOnM3UIndexCb.TabIndex = 5;
+            this.UndockOnM3UIndexCb.Text = "Undock when Creating Index";
+            this.UndockOnM3UIndexCb.UseVisualStyleBackColor = true;
+            this.UndockOnM3UIndexCb.CheckedChanged += new System.EventHandler(this.UndockOnIndexCb_CheckedChanged);
+            // 
+            // hiCreateM3UIndex
+            // 
+            this.hiCreateM3UIndex.BackColor = System.Drawing.Color.White;
+            this.hiCreateM3UIndex.ExternalConflictFlag = false;
+            this.hiCreateM3UIndex.Hotkey = hotkey36;
+            this.hiCreateM3UIndex.ImeMode = System.Windows.Forms.ImeMode.Disable;
+            this.hiCreateM3UIndex.Location = new System.Drawing.Point(152, 17);
+            this.hiCreateM3UIndex.Name = "hiCreateM3UIndex";
+            this.hiCreateM3UIndex.RequireModifier = false;
+            this.hiCreateM3UIndex.Size = new System.Drawing.Size(120, 20);
+            this.hiCreateM3UIndex.TabIndex = 4;
+            this.hiCreateM3UIndex.Enter += new System.EventHandler(this.hiGlobal_Enter);
+            this.hiCreateM3UIndex.Leave += new System.EventHandler(this.hiGlobal_Leave);
+            // 
+            // LblIndexHotKey
+            // 
+            this.LblIndexHotKey.AutoSize = true;
+            this.LblIndexHotKey.Location = new System.Drawing.Point(26, 20);
+            this.LblIndexHotKey.Name = "LblIndexHotKey";
+            this.LblIndexHotKey.Size = new System.Drawing.Size(104, 13);
+            this.LblIndexHotKey.TabIndex = 3;
+            this.LblIndexHotKey.Text = "Create Index Hotkey";
+            // 
+            // M3UIndexDefTextLbl
+            // 
+            this.M3UIndexDefTextLbl.AutoSize = true;
+            this.M3UIndexDefTextLbl.Location = new System.Drawing.Point(26, 69);
+            this.M3UIndexDefTextLbl.Name = "M3UIndexDefTextLbl";
+            this.M3UIndexDefTextLbl.Size = new System.Drawing.Size(65, 13);
+            this.M3UIndexDefTextLbl.TabIndex = 2;
+            this.M3UIndexDefTextLbl.Text = "Default Text";
+            // 
+            // M3UIndexDefaultTxt
+            // 
+            this.M3UIndexDefaultTxt.Location = new System.Drawing.Point(152, 62);
+            this.M3UIndexDefaultTxt.Name = "M3UIndexDefaultTxt";
+            this.M3UIndexDefaultTxt.Size = new System.Drawing.Size(258, 20);
+            this.M3UIndexDefaultTxt.TabIndex = 1;
+            this.M3UIndexDefaultTxt.TextChanged += new System.EventHandler(this.IndexDefaultTxt_TextChanged);
+            this.M3UIndexDefaultTxt.Validated += new System.EventHandler(this.IndexDefaultTxt_Validated);
+            // 
+            // M3UIndexOnUndockCb
+            // 
+            this.M3UIndexOnUndockCb.AutoSize = true;
+            this.M3UIndexOnUndockCb.Location = new System.Drawing.Point(29, 43);
+            this.M3UIndexOnUndockCb.Name = "M3UIndexOnUndockCb";
+            this.M3UIndexOnUndockCb.Size = new System.Drawing.Size(167, 17);
+            this.M3UIndexOnUndockCb.TabIndex = 0;
+            this.M3UIndexOnUndockCb.Text = "Create index when undocking";
+            this.M3UIndexOnUndockCb.UseVisualStyleBackColor = true;
+            this.M3UIndexOnUndockCb.CheckedChanged += new System.EventHandler(this.IndexOnDockUndockCb_CheckedChanged);
             // 
             // lbPens2
             // 
@@ -2107,6 +2241,16 @@ namespace gInk
             this.tabPage1.Size = new System.Drawing.Size(767, 566);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "General";
+            // 
+            // MagnetAngleEd
+            // 
+            this.MagnetAngleEd.Location = new System.Drawing.Point(719, 312);
+            this.MagnetAngleEd.Name = "MagnetAngleEd";
+            this.MagnetAngleEd.Size = new System.Drawing.Size(28, 20);
+            this.MagnetAngleEd.TabIndex = 60;
+            this.MagnetAngleEd.Text = "15.0";
+            this.MagnetAngleEd.Validating += new System.ComponentModel.CancelEventHandler(this.Float_Validating);
+            this.MagnetAngleEd.Validated += new System.EventHandler(this.MagnetAngleEd_Validated);
             // 
             // SpotLightBox
             // 
@@ -2603,6 +2747,24 @@ namespace gInk
             this.lblToolbarHeight.TabIndex = 28;
             this.lblToolbarHeight.Text = "height(%scr)                  Movable\r\n\r\n\r\nchanges after closing toolbar";
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(709, 315);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(12, 13);
+            this.label2.TabIndex = 61;
+            this.label2.Text = "/";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(747, 316);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(11, 13);
+            this.label4.TabIndex = 62;
+            this.label4.Text = "°";
+            // 
             // timer1
             // 
             this.timer1.Enabled = true;
@@ -2767,34 +2929,6 @@ namespace gInk
             this.WidthAtPenSelCb.UseVisualStyleBackColor = true;
             this.WidthAtPenSelCb.CheckedChanged += new System.EventHandler(this.WidthAtPenSelCb_CheckedChanged);
             // 
-            // MagnetAngleEd
-            // 
-            this.MagnetAngleEd.Location = new System.Drawing.Point(719, 312);
-            this.MagnetAngleEd.Name = "MagnetAngleEd";
-            this.MagnetAngleEd.Size = new System.Drawing.Size(28, 20);
-            this.MagnetAngleEd.TabIndex = 60;
-            this.MagnetAngleEd.Text = "15.0";
-            this.MagnetAngleEd.Validating += new System.ComponentModel.CancelEventHandler(this.Float_Validating);
-            this.MagnetAngleEd.Validated += new System.EventHandler(this.MagnetAngleEd_Validated);
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(709, 315);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(12, 13);
-            this.label2.TabIndex = 61;
-            this.label2.Text = "/";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(747, 316);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(11, 13);
-            this.label4.TabIndex = 62;
-            this.label4.Text = "°";
-            // 
             // FormOptions
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2817,6 +2951,8 @@ namespace gInk
             this.DashStyleGrp.PerformLayout();
             this.VideoTab.ResumeLayout(false);
             this.VideoTab.PerformLayout();
+            this.M3UOptions.ResumeLayout(false);
+            this.M3UOptions.PerformLayout();
             this.ZoomBox.ResumeLayout(false);
             this.ZoomBox.PerformLayout();
             this.BoardBx.ResumeLayout(false);
@@ -3058,5 +3194,16 @@ namespace gInk
         private System.Windows.Forms.TextBox MagnetAngleEd;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.CheckBox CreateM3u;
+        private System.Windows.Forms.GroupBox M3UOptions;
+        private System.Windows.Forms.Label M3UIndexDefTextLbl;
+        private System.Windows.Forms.TextBox M3UIndexDefaultTxt;
+        private System.Windows.Forms.CheckBox M3UIndexOnUndockCb;
+        private System.Windows.Forms.Label LblFileName;
+        private System.Windows.Forms.TextBox FfmegFileNameTxt;
+        private HotkeyInputBox hiCreateM3UIndex;
+        private System.Windows.Forms.Label LblIndexHotKey;
+        private System.Windows.Forms.CheckBox UndockOnM3UIndexCb;
+        private System.Windows.Forms.CheckBox NoEditM3UIndexCb;
     }
 }
