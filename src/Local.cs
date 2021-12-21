@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Reflection;
 
 namespace gInk
 {
@@ -19,210 +20,201 @@ namespace gInk
 
 		public string[] ButtonNamePen = new string[10];
 
-        public string ButtonNameToogle = "Toggle Fading";
-        public string ButtonNamePenwidth = "Pen width";
-		public string ButtonNameErasor = "Eraser";
-		public string ButtonNamePan = "move one drawing | Pan all drawings";
-        public string ButtonNameScaleRotate = "Scale | Rotate";
-        public string ButtonNameMousePointer = "Mouse pointer";
-		public string ButtonNameInkVisible = "Ink visible";
-		public string ButtonNameSnapshot = "Snapshot";
-		public string ButtonNameUndo = "Undo";
-		public string ButtonNameRedo = "Redo";
-		public string ButtonNameClear = "Clear";
-		public string ButtonNameExit = "Exit drawing";
-		public string ButtonNameDock = "Dock/Undock";
-        public string ButtonNameClose = "Close\n(in addition to Alt+F4)";
-        public string ButtonNameHand = "Handfree drawing (standard | color filled | Outside | White filled | Black filled)";
-        public string ButtonNameLine = "Line Shape";
-        public string ButtonNameRect = "Rectangle shape (empty | color filled | Outside | White filled | Black filled)";
-        public string ButtonNameOval = "Ellipsis shape (empty | color filled | Outside | White filled | Black filled)";
-        public string ButtonNameArrow = "Arrow shape (head at start | at end)";
-        public string ButtonNameNumb = "Numbered chip (put | reset number)";
-        public string ButtonNameText = "Text (Left|Right aligned)";
-        public string ButtonNameEdit = "Edit Text|chip";
-        public string ButtonNameMagn = "Magnetic Effect";
-        public string ButtonNameClipArt = "ClipArt";
-        public string ButtonNameVideo = "Video Record";
-        public string SaveStroke = "Save Strokes\n(long =opendialog ; short = {0})";
-        public string LoadStroke = "Load Strokes\n(long =opendialog ; short = {0})";
-        public string ButtonNameZoom = "Zoom";
-        public string ButtonNameLasso = "Lasso Selection(Left=Add;Right=Remove;Button=Reset Selection)";
+        public string ButtonNameToogle;
+        public string ButtonNamePenwidth;
+		public string ButtonNameErasor;
+		public string ButtonNamePan;
+        public string ButtonNameScaleRotate;
+        public string ButtonNameMousePointer;
+        public string ButtonNameInkVisible;
+        public string ButtonNameSnapshot;
+        public string ButtonNameUndo;
+        public string ButtonNameRedo;
+        public string ButtonNameClear;
+        public string ButtonNameExit;
+        public string ButtonNameDock;
+        public string ButtonNameClose;
+        public string ButtonNameHand;
+        public string ButtonNameLine;
+        public string ButtonNameRect;
+        public string ButtonNameOval;
+        public string ButtonNameArrow;
+        public string ButtonNameNumb;
+        public string ButtonNameText;
+        public string ButtonNameEdit;
+        public string ButtonNameMagn;
+        public string ButtonNameClipArt;
+        public string ButtonNameVideo;
+        public string SaveStroke;
+        public string LoadStroke;
+        public string ButtonNameZoom;
+        public string ButtonNameLasso;
 
-        public string QuestionClipArtUpdate = "Cliparts seem to have been updated during edition.\nDo you want to update le default list?";
-        public string ButtonActivateDebug = "Debug Window";
+        public string QuestionClipArtUpdate;
+        public string ButtonActivateDebug;
 
-        public string SubToolsBarCbText = "Enable Secondary ToolBar";
-        public string OptionPensOnTwoLinesCb = "Pens on two lines";
-        public string OptionsSwapSnapshotBehavior = "Short = Snap && exit\nLong=Snap && cont";
-
-
-        public string StrokeFileExists = "{0} Already Exists\nDo you want to override it?";
-        public string FileCanNotWrite = "{0}\ncan not be written.";
-        public string SnappingInPointerMessage = "Snapshot ({0})";
-
-        public string BoardTitle = "Clean Desktop";
-        public string BoardText = "Erase all drawings and fill it with...";
-        public string BoardTransparent = "Transparent";
-        public string BoardWhite= "White";
-        public string BoardGray= "Customed ";
-        public string BoardBlack = "Black";
-        public string BoardLast = "Last selected";
-
-        public string OptionsGeneralBoardBox = "Background Board";
-        public string BoardCustColorModifyTitle="Board Customed color";
-        public string OptionsGeneralBoardAtOpenLbl="Background at toolbar opening";
-        public string OptionsGeneralBoardCustColorLbl="Customed Background color";
-
-        public string OptionsGeneralAPIRest = "REST server url";
-
-        public string OptionsZoomEnabled = "0 - No Zoom\n1 - Magnifier\n2 - Frozen Area\n3 - Both";
-
-        public string OptionsZoomDim = "Dim.";
-        public string OptionsZoomScale = "Scale";
-        public string OptionsZoomContinous = "Continous";
-
-        public string OptionsSpotLightBox = "Spot On Cursor";
-        public string OptionsSpotLightRadius = "Rad. (%Scr)";
-        public string OptionsSpotOnAlt = "Display On Alt";
-
-        public string ArrowDlg = "Arrow Definition";
+        public string SubToolsBarCbText;
+        public string OptionPensOnTwoLinesCb;
+        public string OptionsSwapSnapshotBehavior;
 
 
-        public string OptionMeasureGroup = "Measurement Tools";
-        public string OptionMeasureLenLabel = "1 pixel =";
-        public string OptionMeasureAngle = "Angle CounterClockwise";
-        public string FormatLength = "Length : {0:N1} {1}";
-        public string FormatAngle = "Angle : {0:N0}°";
-        public string FormaTotalLength = "Total({2}) : {0:N1} {1}";
+        public string StrokeFileExists;
+        public string FileCanNotWrite;
+        public string SnappingInPointerMessage;
 
-        public string ButtonOkText = "&OK";
-        public string ButtonCancelText = "&Cancel";
-        public string ButtonExitText = "&Exit";
-        public string ButtonFontText = "&Font";
-        public string ButtonSaveText = "&Save";
-        public string ButtonPrevText = "&Previous";
-        public string ButtonNextText = "&Next";
-        public string ButtonAddText = "&Add";
-        public string ButtonDelText = "&Delete";
-        public string DlgTextCaption = "Edit Text";
-        public string DlgTextLabel = "Text Input";
-        public string DlgTagCaption = "Tag Numbering";
-        public string DlgTagLabel = "Enter Starting Number";
-        public string TextFramingText = "Transparent background;Frame + Transparent background;White Background;Frame + White Background;Black Background;Frame + Black Background";
-        public string FormClipartsTitle = "ClipArts";
-        public string ButtonInsertText = "&Insert";
-        public string ButtonFromClipBText = "&From Clipboard";
-        public string ButtonLoadImageText = "&Load Image";
-        public string ButtonDeleteText = "&Delete entry";
-        public string CheckBoxAutoCloseText =  "Auto\nClose";
-        public string PatternStoreParamTxt = "Save\nPattern Setup";
-        public string ListFillingsText = "No Frame;Empty;Color filled;White filled;Black filled;Line Of Patterns";
+        public string BoardTitle;
+        public string BoardText;
+        public string BoardTransparent;
+        public string BoardWhite;
+        public string BoardGray;
+        public string BoardBlack;
+        public string BoardLast;
+
+        public string OptionsGeneralBoardBox;
+        public string BoardCustColorModifyTitle;
+        public string OptionsGeneralBoardAtOpenLbl;
+        public string OptionsGeneralBoardCustColorLbl;
+
+        public string OptionsGeneralAPIRest;
+
+        public string OptionsZoomEnabled;
+
+        public string OptionsZoomDim;
+        public string OptionsZoomScale;
+        public string OptionsZoomContinous;
+
+        public string OptionsSpotLightBox;
+        public string OptionsSpotLightRadius;
+        public string OptionsSpotOnAlt;
+
+        public string ArrowDlg;
+
+
+        public string OptionMeasureGroup;
+        public string OptionMeasureLenLabel;
+        public string OptionMeasureAngle;
+        public string FormatLength;
+        public string FormatAngle;
+        public string FormaTotalLength;
+
+        public string ButtonOkText;
+        public string ButtonCancelText;
+        public string ButtonExitText;
+        public string ButtonFontText;
+        public string ButtonSaveText;
+        public string ButtonPrevText;
+        public string ButtonNextText;
+        public string ButtonAddText;
+        public string ButtonDelText;
+        public string DlgTextCaption;
+        public string DlgTextLabel;
+        public string DlgTagCaption;
+        public string DlgTagLabel;
+        public string TextFramingText;
+        public string FormClipartsTitle;
+        public string ButtonInsertText;
+        public string ButtonFromClipBText;
+        public string ButtonLoadImageText;
+        public string ButtonDeleteText;
+        public string CheckBoxAutoCloseText;
+        public string PatternStoreParamTxt;
+        public string ListFillingsText;
         public int LineOfPatternsListPos = 5; // provide Line Of Patterns Positions in list above
 
 
-        public string MenuEntryExit = "Exit";
-		public string MenuEntryOptions = "Options";
-		public string MenuEntryAbout = "About";
+        public string MenuEntryExit;
+		public string MenuEntryOptions;
+        public string MenuEntryAbout;
 
-		public string OptionsTabGeneral = "General";
-		public string OptionsTabPens = "Pens";
-		public string OptionsTabHotkeys = "Hotkeys";
+        public string OptionsTabGeneral;
+        public string OptionsTabPens;
+        public string OptionsTabHotkeys;
 
-		public string OptionsGeneralLanguage = "Language";
-        public string OptionsGeneralToolBarColorText = "Click on toolbar to select background color";
-        public string OptionsGeneralAltTabActivateText = "Engage Pointer and Auto-Fold with Alt+Tab";
-        public string OptionsGeneralToolbarHeight = "height(%scr)\n\n\nchanges after closing toolbar";
+        public string OptionsGeneralLanguage;
+        public string OptionsGeneralToolBarColorText;
+        public string OptionsGeneralAltTabActivateText;
+        public string OptionsGeneralToolbarHeight;
 
-        public string OptionsGeneralCanvascursor = "Canvus cursor";
-		public string OptionsGeneralCanvascursorArrow = "Arrow";
-		public string OptionsGeneralCanvascursorPentip = "Pen tip";
-		public string OptionsGeneralSnapshotsavepath = "Snapshot save path";
-        public string OptionsGeneralOpenIntoSnapMode = "Start Snapshot Capture immediately after Opening Toolbar";
-        public string OptionsGeneralWhitetrayicon = "Use white tray icon";
-		public string OptionsGeneralAllowdragging = "Allow dragging toolbar";
-        public string OptionsGeneralShowFloatingWindow = "Show Floating Window (at next restart)";
-        public string OptionsGeneralSaveFloatingWindowPos = "Save Floating &window Pos";
-        public string OptionsGeneralArrowHead = "ArrowHead";
-        public string OptionsGeneralArrowHeadApt = "Aperture(°)";
-        public string OptionsGeneralArrowHeadLen = "Length(%Scr)";
-        public string OptionsGeneralDefaultTextLbl = "Default Text";
-        public string OptionsGeneralDefaultTextBtn = "Select &Font && Size";
-        public string OptionsGeneralDefaultArrHdBtn = "Default Arrow Head At Start";
-        public string OptionsGeneralMagnetLbl = "Magnetic radius(%Scr) (<=0 = disabled)";
-        public string OptionsGeneralSaveConfigToFile = "Save to Files";
-        public string OptionsCaptureStrokesOnly = "Snapshot Strokes only";
-        public string OptionsGeneralNotePenwidth = "Notes: (1)pen width panel overides each individual pen width settings\n  (2) Transparency and size of floating window to be modified directly in config.ini";
+        public string OptionsGeneralCanvascursor;
+        public string OptionsGeneralCanvascursorArrow;
+        public string OptionsGeneralCanvascursorPentip;
+        public string OptionsGeneralSnapshotsavepath;
+        public string OptionsGeneralOpenIntoSnapMode;
+        public string OptionsGeneralWhitetrayicon;
+		public string OptionsGeneralAllowdragging;
+        public string OptionsGeneralShowFloatingWindow;
+        public string OptionsGeneralSaveFloatingWindowPos;
+        public string OptionsGeneralArrowHead;
+        public string OptionsGeneralArrowHeadApt;
+        public string OptionsGeneralArrowHeadLen;
+        public string OptionsGeneralDefaultTextLbl;
+        public string OptionsGeneralDefaultTextBtn;
+        public string OptionsGeneralDefaultArrHdBtn;
+        public string OptionsGeneralMagnetLbl;
+        public string OptionsGeneralSaveConfigToFile;
+        public string OptionsCaptureStrokesOnly;
+        public string OptionsGeneralNotePenwidth;
 
-		public string OptionsPensShow = "Show";
-		public string OptionsPensColor = "Color";
-		public string OptionsPensAlpha = "Alpha";
-		public string OptionsPensWidth = "Width";
-		public string OptionsPensPencil = "Pencil";
-		public string OptionsPensHighlighter = "Highlighter";
-        public string OptionsPensFading = "Fading (after...sec)";
-        public string OptionsPensWidthAtSelection = "Apply Width on Pen Selection\n(even with width selector)";
-        public string OptionsInverseMouseWheel = "Inverse MouseWheel control\nWheel = Pen Width\nShift+Wheel = Pen Selection";
-        public string OptionsInverseMouseWheelChecked = "Inverse MouseWheel control\nWheel = Pen Selection\nShift+Wheel = Pen Width";
-        public string OptionsFitToCurve = "Smooth Curves";
-        public string OptionsClick4Stroke = "Click on Pen Buttons to change Line Style";
+        public string OptionsPensShow;
+        public string OptionsPensColor;
+        public string OptionsPensAlpha;
+        public string OptionsPensWidth;
+        public string OptionsPensPencil;
+        public string OptionsPensHighlighter;
+        public string OptionsPensFading;
+        public string OptionsPensWidthAtSelection;
+        public string OptionsInverseMouseWheel;
+        public string OptionsInverseMouseWheelChecked;
+        public string OptionsFitToCurve;
+        public string OptionsClick4Stroke;
 
-        public string OptionsPensThin = "Thin";
-		public string OptionsPensNormal = "Normal";
-		public string OptionsPensThick = "Thick";
+        public string OptionsPensThin;
+        public string OptionsPensNormal;
+        public string OptionsPensThick;
 
-        public string OptionsHotKeySnapInPointerGrp = "Snaphsot in Pointer Mode";
-        public string OptionsHotKeySnapInPointerLbl = "press and hold....                .... and press twice\n\n\nBoth None = Disabled";
+        public string OptionsHotKeySnapInPointerGrp;
+        public string OptionsHotKeySnapInPointerLbl;
         public string OptionsHotKeySnapInPointerKeys = "None\nShift\nCtrl\nAlt";                            // Order to be respected!!!
-        public string OptionsHotKeyAltAsOneCommand = "Process Alt as Temporary Command (Alt will be ignored in hotkeys)";
-        public string OptionsHotkeysglobal = "Global hotkey (start drawing, switch between mouse pointer and drawing)";
-		public string OptionsHotkeysEnableinpointer = "Enable all following hotkeys in mouse pointer mode (may cause a mess)";
+        public string OptionsHotKeyAltAsOneCommand;
+        public string OptionsHotkeysglobal;
+        public string OptionsHotkeysEnableinpointer;
 
-        public string OptionsHotkeysPenWidthPlus = "Pen Width +";
-        public string OptionsHotkeysPenWidthMinus = "Pen Width -";
-        public string OptionsHotkeysColorPicker = "Color Picker";
-        public string OptionsHotkeysColorEdit = "Color/Pen Edit";
-        public string OptionsLineStyle = "Line Style";
+        public string OptionsHotkeysPenWidthPlus;
+        public string OptionsHotkeysPenWidthMinus;
+        public string OptionsHotkeysColorPicker;
+        public string OptionsHotkeysColorEdit;
+        public string OptionsLineStyle;
 
-        public string VideoTab="Video";
-        public string OptNoVideo="No video recording";
-        public string OptObsRecord="OBS recording";
-        public string OptObsBcast="OBS broadcasting";
-        public string LblWsUrl="WebSocket URL";
-        public string LblWsPwd="Password";
-        public string LblObsNote = "Note : OBS should be started before starting record\nOBS should be installed with Websocket plugin,with port and password configured";
-        public string OptFfmpeg="FFmpeg recording";
-        public string LblFfmpegCmd="Command Line";
-        public string LblFfmpegNote = "Note :substitution in command line\n" +
-                                      "            $xx$ $yy$                                             : upper left corner\n" +
-                                      "            $ww$ $hh$                                             : width and height of capture\n" +
-                                      "            $DD$ $MM$ $YY$ $YYYY$               : date\n"+
-                                      "            $H$ $M$ $S$                                      : time\n"+
-                                      "            %DD% %MM% %YY% %YYYY%     : date at ppInk startup\n"+
-                                      "            %H% %M% %S%                               : time at ppInk startup\n"+
-                                      "            $nn$                                                      : counter(restarted at 1 at ppInk restart) $NN$ for 3 digits\n"+
-                                      "            $ii$                                                      : counter(restarted at 1 at each video restart) $II$ for 3 digits\n" +
-                                      "            %VAR%                                                : use of environment variable VAR";
-		public string NotificationSnapshot = "Snapshot saved. Click here to browse snapshots.";
+        public string VideoTab;
+        public string OptNoVideo;
+        public string OptObsRecord;
+        public string OptObsBcast;
+        public string LblWsUrl;
+        public string LblWsPwd;
+        public string LblObsNote;
+        public string OptFfmpeg;
+        public string LblFfmpegCmd;
+        public string LblFfmpegNote;
+        public string NotificationSnapshot;
 
-        public string PanSubToolsHints = "Move one stroke\nPan all strokes\nCopy one stroke";
-        public string ScaleSubToolsHints = "Resize one stroke/group\nRotate one stroke/group";
-        public string HandSubToolsHints = "Handfree drawing\nColor filled drawing\nEmpty Drawing\nWhite filled drawing\nBlack filled drawing";
-        public string LineSubToolsHints = "Segment\nPolyLine\nColored Polygon\nEmpty Polygon\nWhite Polygon\nBlack Polygon";
-        public string RectSubToolsHints = "Rectangle\nColor filled Rectangle\nEmpty Rectangle\nWhite filled Rectangle\nBlack filled Rectangle";
-        public string OvalSubToolsHints = "Ellipsis\nColored Ellipsis\nEmpty Ellipsis\nWhite Ellipsis\nBlack Ellipsis";
-        public string ArrowSubToolsHints = "Arrow starting by head\nArrow starting by tail";
-        public string TextSubToolsHints = "Left Aligned Text\nRight Aligned Text";
+        public string PanSubToolsHints;
+        public string ScaleSubToolsHints;
+        public string HandSubToolsHints;
+        public string LineSubToolsHints;
+        public string RectSubToolsHints;
+        public string OvalSubToolsHints;
+        public string ArrowSubToolsHints;
+        public string TextSubToolsHints;
 
-        public string M3UTextCaption = "Video index M3U file";
-        public string M3UTextLabel = "Index label";
-        public string M3UBalloonText = "Video index\n{0}\nadded";
-        public string CreateM3UGroup = "Create M3U index file";
-        public string CreateIndexOnUndock = "Create index when undocking";
-        public string LblM3UIndexHotKey = "Create video index hotkey";
-        public string M3UIndexDefaultText = "Index default text";
-        public string UndockOnM3UIndexCreate = "Undock on new index";
-        public string NoEditM3UIndex = "Notify(no edit) new index";
+        public string M3UTextCaption;
+        public string M3UTextLabel;
+        public string M3UBalloonText;
+        public string CreateM3UGroup;
+        public string CreateIndexOnUndock;
+        public string LblM3UIndexHotKey;
+        public string M3UIndexDefaultText;
+        public string UndockOnM3UIndexCreate;
+        public string NoEditM3UIndex;
 
 
 
@@ -326,17 +318,27 @@ namespace gInk
 			return "";
 		}
 
-		public void LoadLocalFile(string loname)
-		{
-			string filename = "./lang/" + loname + ".txt";
+        public void LoadLocalFile(string loname)
+        {
+            //
+            LoadLocalStream(new StreamReader(new MemoryStream(Encoding.UTF8.GetBytes(Properties.Resources.en_us))));
+                        
+            string filename = "./lang/" + loname + ".txt";
 
-			if (!File.Exists(filename))
-				filename = AppDomain.CurrentDomain.BaseDirectory + "lang/" + loname + ".txt";
-			if (!File.Exists(filename))
-				return;
+            if (!File.Exists(filename))
+                filename = AppDomain.CurrentDomain.BaseDirectory + "lang/" + loname + ".txt";
+            if (!File.Exists(filename))
+                return;
 
-			FileStream fini = new FileStream(filename, FileMode.Open);
-			StreamReader srini = new StreamReader(fini);
+            FileStream fini = new FileStream(filename, FileMode.Open);
+            StreamReader srini = new StreamReader(fini);
+            LoadLocalStream(srini);
+            fini.Close();
+            CurrentLanguageFile = loname;
+        }
+
+        public void LoadLocalStream(StreamReader srini)
+        {
 			string sLine = "";
 			string sName = "", sPara = "";
 			while (sLine != null)
@@ -378,9 +380,9 @@ namespace gInk
 						fi.SetValue(this, sPara);
 				}
 			}
-			fini.Close();
+			//fini.Close();
             LoadKeyNames();
-			CurrentLanguageFile = loname;
+			//CurrentLanguageFile = loname;
 		}
 	}
 }

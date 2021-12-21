@@ -361,6 +361,33 @@ namespace gInk.Properties {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à LanguageName = &quot;English&quot;
+        ///
+        ///ButtonNamePen0 = &quot;Pen 0&quot;
+        ///ButtonNamePen1 = &quot;Pen 1&quot;
+        ///ButtonNamePen2 = &quot;Pen 2&quot;
+        ///ButtonNamePen3 = &quot;Pen 3&quot;
+        ///ButtonNamePen4 = &quot;Pen 4&quot;
+        ///ButtonNamePen5 = &quot;Pen 5&quot;
+        ///ButtonNamePen6 = &quot;Pen 6&quot;
+        ///ButtonNamePen7 = &quot;Pen 7&quot;
+        ///ButtonNamePen8 = &quot;Pen 8&quot;
+        ///ButtonNamePen9 = &quot;Pen 9&quot;
+        ///
+        ///ButtonNamePenwidth = &quot;Pen Width&quot;
+        ///ButtonNameToogle = &quot;Toggle Fading&quot;
+        ///ButtonNameErasor = &quot;Eraser&quot;
+        ///ButtonNamePan = &quot;Move | Copy | Scale\nRotate | Pan&quot;
+        ///ButtonNameScaleRotate = &quot;Scale | Rotate (direct access)&quot;
+        ///ButtonNameMo [le reste de la chaîne a été tronqué]&quot;;.
+        /// </summary>
+        public static string en_us {
+            get {
+                return ResourceManager.GetString("en_us", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
         public static System.Drawing.Bitmap eraser {
