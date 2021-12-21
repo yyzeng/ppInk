@@ -359,6 +359,7 @@ namespace gInk
         public bool FitToCurve = true;
 		public bool gpPenWidthVisible = false;
 		public string SnapshotFileFullPath = ""; // used to record the last snapshot file name, to select it when the balloon is clicked
+        public string SnapshotFileTemplate = "$YYYY$-$MM$-$DD$ $H$-$M$-$S$.png";
         public bool SnapIgnoreBackgroundStroke = true; // for the moment not customizable by user
 
         public int FormTop = 100, FormLeft = 100, FormWidth = 48, FormOpacity = -50; // negative opacity means that the window is not displayed
@@ -1253,6 +1254,9 @@ namespace gInk
                             if (!SnapshotBasePath.EndsWith("/"))
                                 SnapshotBasePath += "/";
                             break;
+                        case "SNAPSHOT_FILE":
+                            SnapshotFileTemplate = sPara;
+                            break;
                         case "OPEN_INTO_SNAP":
                             if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
                                 OpenIntoSnapMode = true;
@@ -2052,6 +2056,9 @@ namespace gInk
                         case "SNAPSHOT_PATH":
 							sPara = SnapshotBasePath;
 							break;
+                        case "SNAPSHOT_FILE":
+                            sPara = SnapshotFileTemplate;
+                            break;
                         case "OPEN_INTO_SNAP":
                             sPara = OpenIntoSnapMode?"True":"False";
                             break;

@@ -816,8 +816,8 @@ namespace gInk
 
 		public void SnapShot(Rectangle rect,string dest="")
 		{
-			string snapbasepath = Root.SnapshotBasePath;
-			snapbasepath = Environment.ExpandEnvironmentVariables(snapbasepath);
+			string snapbasepath = Root.ExpandVarCmd(Root.SnapshotBasePath,0,0,0,0);
+			//snapbasepath = Environment.ExpandEnvironmentVariables(snapbasepath);
 			//if (Root.SnapshotBasePath == "%USERPROFILE%/Pictures/gInk/")
 			if (!System.IO.Directory.Exists(snapbasepath))
 				System.IO.Directory.CreateDirectory(snapbasepath);
@@ -872,14 +872,33 @@ namespace gInk
                     Clipboard.SetImage(tempbmp);
                 //DateTime now = DateTime.Now;
                 //string nowstr = now.Year.ToString() + "-" + now.Month.ToString("D2") + "-" + now.Day.ToString("D2") + " " + now.Hour.ToString("D2") + "-" + now.Minute.ToString("D2") + "-" + now.Second.ToString("D2");
-                string savefilename = DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss'.png'");
-				Root.SnapshotFileFullPath = snapbasepath + savefilename;
+                string savefilename = Root.ExpandVarCmd(Root.SnapshotFileTemplate, 0, 0, 0, 0);//DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss'.png'");
+                Root.SnapshotFileFullPath = snapbasepath + savefilename;
 
                 if (dest == "")
                     dest = Root.SnapshotFileFullPath;
                 else
                     dest = Environment.ExpandEnvironmentVariables(dest);
-                tempbmp.Save(dest, System.Drawing.Imaging.ImageFormat.Png);
+
+                ImageFormat ifo=null;
+                switch(System.IO.Path.GetExtension(dest).ToLower())
+                {
+                    case ".png": ifo = ImageFormat.Png;break;
+                    case ".jpg":
+                    case ".jpeg": ifo = ImageFormat.Jpeg; break;
+                    case ".bmp": ifo = ImageFormat.Bmp; break;
+                    case ".emf": ifo = ImageFormat.Emf; break;
+                    case ".exf":
+                    case ".exif": ifo = ImageFormat.Exif; break;
+                    case ".tif":
+                    case ".tiff": ifo = ImageFormat.Tiff; break;
+                    case ".wmf": ifo = ImageFormat.Wmf; break;
+                    case ".gif": ifo = ImageFormat.Gif; break;
+                }
+                if(ifo==null)
+                    tempbmp.Save(dest);
+                else
+                    tempbmp.Save(dest, ifo);
 
 				tempbmp.Dispose();
 

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
+using System.IO;
 
 namespace gInk
 {
@@ -178,6 +179,7 @@ namespace gInk
 
 
             tbSnapPath.Text = Root.SnapshotBasePath;
+            tbSnapFileTemplate.Text = Root.SnapshotFileTemplate;
             this.OpenIntoSnapCb.Checked = Root.OpenIntoSnapMode;
             ShowFloatingWinCb.Checked = Root.FormOpacity > 0;
             ArrHdAperture.Text = (Root.ArrowAngle * 180.0 / Math.PI).ToString("#0",CultureInfo.InvariantCulture);
@@ -1386,6 +1388,53 @@ namespace gInk
         private void NoEditM3Cb_CheckedChanged(object sender, EventArgs e)
         {
             Root.NoEditM3UEntry = NoEditM3UIndexCb.Checked;
+        }
+
+        private void tbSnapFileTemplate_TextChanged(object sender, EventArgs e)
+        {
+            string s = Root.ExpandVarCmd(tbSnapFileTemplate.Text, 0, 0, 0, 0);
+            if (s.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+            {
+                tbSnapFileTemplate.BackColor = Color.Orange;
+            }
+            else
+            {
+                tbSnapFileTemplate.BackColor = Color.White;
+            }
+            toolTip.SetToolTip(tbSnapFileTemplate, "ex: " + s);
+        }
+
+        private void tbSnapFileTemplate_Validating(object sender, CancelEventArgs e)
+        {
+            if (Root.ExpandVarCmd(tbSnapFileTemplate.Text,0,0,0,0).IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+            {
+                tbSnapFileTemplate.BackColor = Color.Orange;
+                e.Cancel = true;
+            }
+            else
+            {
+                tbSnapFileTemplate.BackColor = Color.White;
+                e.Cancel = false;
+            }
+        }
+
+        private void tbSnapFileTemplate_Validated(object sender, EventArgs e)
+        {
+            Root.SnapshotFileTemplate = tbSnapFileTemplate.Text;
+        }
+
+        private void tbSnapPath_TextChanged(object sender, EventArgs e)
+        {
+            string s = Root.ExpandVarCmd(tbSnapPath.Text, 0, 0, 0, 0).Replace("/","\\");
+            if (s.IndexOfAny(Path.GetInvalidPathChars()) >= 0)
+            {
+                tbSnapPath.BackColor = Color.Orange;
+            }
+            else
+            {
+                tbSnapPath.BackColor = Color.White;
+            }
+            toolTip.SetToolTip(tbSnapPath, "ex: " + s);
         }
     }
 }
