@@ -2432,7 +2432,7 @@ namespace gInk
 			if (Hotkey_Global.Alt) modifier |= 0x1;
 			if (Hotkey_Global.Shift) modifier |= 0x4;
 			if (Hotkey_Global.Win) modifier |= 0x8;
-			if (modifier != 0)
+			//if (modifier != 0)
 				RegisterHotKey(IntPtr.Zero, 0, modifier, Hotkey_Global.Key);
             modifier = 0;
             if(IsVideoRecordingSelected() && CreateM3U)
@@ -2441,7 +2441,7 @@ namespace gInk
                 if (Hotkey_CreateIndex.Alt) modifier |= 0x1;
                 if (Hotkey_CreateIndex.Shift) modifier |= 0x4;
                 if (Hotkey_CreateIndex.Win) modifier |= 0x8;
-                if (modifier != 0)
+                //if (modifier != 0)
                     RegisterHotKey(IntPtr.Zero, 1, modifier, Hotkey_CreateIndex.Key);
             }
         }
