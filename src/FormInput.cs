@@ -38,6 +38,7 @@ namespace gInk
             if (ML)
             {
                 InputML.Visible = true;
+                txt = txt.Replace("\r\n", "\n").Replace("\n", "\r\n"); //in order to get multiline text to be correctly editable after restore
                 InputML.Text = txt;
                 ActiveControl = InputML;
             }
