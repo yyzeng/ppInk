@@ -217,6 +217,7 @@ namespace gInk
         // advanced options
         public string CloseOnSnap = "blankonly";
         public bool AlwaysHideToolbar = false;
+        public bool KeepDockedAtOpen = false;
         public float ToolbarHeight = 0.06f;
         public int AltAsOneCommand = 2;
 
@@ -612,7 +613,7 @@ namespace gInk
             FormButtonHitter.Initialize();
             FormDisplay.Initialize();
 
-            Docked = false;
+            Docked = KeepDockedAtOpen;//false;
             PointerMode = false; // we have to reset pointer mode when starting drawing;
             ResizeDrawingWindow = false;
             UponTakingSnap = false;
@@ -1393,6 +1394,10 @@ namespace gInk
 							if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
 								AlwaysHideToolbar = true;
 							break;
+                        case "TOOLBAR_DOCKED_AT_OPEN":
+                            if (sPara.ToUpper() == "TRUE" || sPara == "1" || sPara.ToUpper() == "ON")
+                                KeepDockedAtOpen = true;                           
+							break;
 						case "UNDO_ICON":
 							if (sPara.ToUpper() == "FALSE" || sPara == "0" || sPara.ToUpper() == "OFF")
 								UndoEnabled = false;
@@ -2137,10 +2142,10 @@ namespace gInk
 								sPara = "BlankOnly";
 							break;
 						case "ALWAYS_HIDE_TOOLBAR":
-							if (AlwaysHideToolbar)
-								sPara = "True";
-							else
-								sPara = "False";
+							sPara = AlwaysHideToolbar ? "True" : "False";
+                            break;
+                        case "TOOLBAR_DOCKED_AT_OPEN":
+                            sPara = KeepDockedAtOpen ? "True" : "False";
 							break;
 						case "UNDO_ICON":
 							if (UndoEnabled)

@@ -140,6 +140,7 @@ namespace gInk
         public string OptionsGeneralCanvascursorPentip;
         public string OptionsGeneralSnapshotsavepath;
         public string OptionsGeneralOpenIntoSnapMode;
+        public string OptionGeneralStartFolded;
         public string OptionsGeneralWhitetrayicon;
 		public string OptionsGeneralAllowdragging;
         public string OptionsGeneralShowFloatingWindow;

@@ -297,6 +297,7 @@ namespace gInk
             this.FadingTimeEd = new System.Windows.Forms.TextBox();
             this.WidthAtPenSelCb = new System.Windows.Forms.CheckBox();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.StartFoldedCb = new System.Windows.Forms.CheckBox();
             this.tabPage3.SuspendLayout();
             this.SnapInPointerGrp.SuspendLayout();
             this.DashStyleGrp.SuspendLayout();
@@ -2052,7 +2053,7 @@ namespace gInk
             this.comboCanvasCursor.Items.AddRange(new object[] {
             "Arrow",
             "Pen tip"});
-            this.comboCanvasCursor.Location = new System.Drawing.Point(559, 145);
+            this.comboCanvasCursor.Location = new System.Drawing.Point(559, 148);
             this.comboCanvasCursor.Name = "comboCanvasCursor";
             this.comboCanvasCursor.Size = new System.Drawing.Size(198, 21);
             this.comboCanvasCursor.TabIndex = 6;
@@ -2071,7 +2072,7 @@ namespace gInk
             // lbCanvascursor
             // 
             this.lbCanvascursor.AutoSize = true;
-            this.lbCanvascursor.Location = new System.Drawing.Point(455, 148);
+            this.lbCanvascursor.Location = new System.Drawing.Point(455, 151);
             this.lbCanvascursor.Name = "lbCanvascursor";
             this.lbCanvascursor.Size = new System.Drawing.Size(75, 13);
             this.lbCanvascursor.TabIndex = 5;
@@ -2180,6 +2181,7 @@ namespace gInk
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.tabPage1.Controls.Add(this.StartFoldedCb);
             this.tabPage1.Controls.Add(this.tbSnapFileTemplate);
             this.tabPage1.Controls.Add(this.MagnetAngleEd);
             this.tabPage1.Controls.Add(this.SpotLightBox);
@@ -2321,7 +2323,7 @@ namespace gInk
             // SwapSnapsBehviorsCb
             // 
             this.SwapSnapsBehviorsCb.AutoSize = true;
-            this.SwapSnapsBehviorsCb.Location = new System.Drawing.Point(644, 211);
+            this.SwapSnapsBehviorsCb.Location = new System.Drawing.Point(644, 218);
             this.SwapSnapsBehviorsCb.Margin = new System.Windows.Forms.Padding(2);
             this.SwapSnapsBehviorsCb.Name = "SwapSnapsBehviorsCb";
             this.SwapSnapsBehviorsCb.Size = new System.Drawing.Size(114, 30);
@@ -2450,7 +2452,7 @@ namespace gInk
             // CaptStrokesOnlyCb
             // 
             this.CaptStrokesOnlyCb.AutoSize = true;
-            this.CaptStrokesOnlyCb.Location = new System.Drawing.Point(458, 218);
+            this.CaptStrokesOnlyCb.Location = new System.Drawing.Point(458, 225);
             this.CaptStrokesOnlyCb.Name = "CaptStrokesOnlyCb";
             this.CaptStrokesOnlyCb.Size = new System.Drawing.Size(126, 17);
             this.CaptStrokesOnlyCb.TabIndex = 53;
@@ -2603,7 +2605,7 @@ namespace gInk
             // OpenIntoSnapCb
             // 
             this.OpenIntoSnapCb.AutoSize = true;
-            this.OpenIntoSnapCb.Location = new System.Drawing.Point(458, 183);
+            this.OpenIntoSnapCb.Location = new System.Drawing.Point(458, 181);
             this.OpenIntoSnapCb.Name = "OpenIntoSnapCb";
             this.OpenIntoSnapCb.Size = new System.Drawing.Size(299, 17);
             this.OpenIntoSnapCb.TabIndex = 25;
@@ -2694,7 +2696,7 @@ namespace gInk
             // lbLanguage
             // 
             this.lbLanguage.AutoSize = true;
-            this.lbLanguage.Location = new System.Drawing.Point(73, 148);
+            this.lbLanguage.Location = new System.Drawing.Point(73, 151);
             this.lbLanguage.Name = "lbLanguage";
             this.lbLanguage.Size = new System.Drawing.Size(55, 13);
             this.lbLanguage.TabIndex = 8;
@@ -2943,6 +2945,17 @@ namespace gInk
             this.WidthAtPenSelCb.Text = "Apply Width on Pen Selection\r\n(even with width selector)";
             this.WidthAtPenSelCb.UseVisualStyleBackColor = true;
             this.WidthAtPenSelCb.CheckedChanged += new System.EventHandler(this.WidthAtPenSelCb_CheckedChanged);
+            // 
+            // StartFoldedCb
+            // 
+            this.StartFoldedCb.AutoSize = true;
+            this.StartFoldedCb.Location = new System.Drawing.Point(458, 202);
+            this.StartFoldedCb.Name = "StartFoldedCb";
+            this.StartFoldedCb.Size = new System.Drawing.Size(137, 17);
+            this.StartFoldedCb.TabIndex = 64;
+            this.StartFoldedCb.Text = "Start with toolbar folded";
+            this.StartFoldedCb.UseVisualStyleBackColor = true;
+            this.StartFoldedCb.CheckedChanged += new System.EventHandler(this.StartFoldedCb_CheckedChanged);
             // 
             // FormOptions
             // 
@@ -3222,5 +3235,6 @@ namespace gInk
         private System.Windows.Forms.CheckBox NoEditM3UIndexCb;
         private System.Windows.Forms.TextBox tbSnapFileTemplate;
         private System.Windows.Forms.ToolTip toolTip;
+        private System.Windows.Forms.CheckBox StartFoldedCb;
     }
 }
