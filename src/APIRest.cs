@@ -220,8 +220,8 @@ namespace gInk
                             }
                             if (query.ContainsKey("W"))
                             {
-                                if (query.TryGetValue("W", out s) && int.TryParse(s, out w) && 0 <= w && w <= 255)
-                                    Root.PenAttr[i].Width = w;
+                                if (query.TryGetValue("W", out s) && float.TryParse(s, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out f) && 0 <= f )
+                                    Root.PenAttr[i].Width = f;
                                 else
                                     resp.StatusCode = 400;
                             }
@@ -232,7 +232,7 @@ namespace gInk
                                 { try { Root.PenAttr[i].ExtendedProperties.Remove(Root.FADING_PEN); } catch { }; }
                                 else if (ff == "true")
                                     Root.PenAttr[i].ExtendedProperties.Add(Root.FADING_PEN, Root.TimeBeforeFading);
-                                else if (float.TryParse(ff, out f))
+                                else if (float.TryParse(ff, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out f))
                                     Root.PenAttr[i].ExtendedProperties.Add(Root.FADING_PEN, f);
                                 else
                                     resp.StatusCode = 400;
@@ -264,7 +264,8 @@ namespace gInk
                             }
                             if (i == Root.CurrentPen)
                             {
-                                Root.SelectPen(Root.CurrentPen);
+                                Root.SelectPen((i+1)%Root.MaxPenCount);
+                                Root.SelectPen(i);
                             }
                             Root.FormCollection.btPen[i].BackgroundImage = Root.FormCollection.buildPenIcon(Root.PenAttr[i].Color, Root.PenAttr[i].Transparency, i == Root.CurrentPen,
                                                                                                             Root.PenAttr[i].ExtendedProperties.Contains(Root.FADING_PEN), Root.LineStyleToString(Root.PenAttr[i].ExtendedProperties));
@@ -288,7 +289,7 @@ namespace gInk
                             }
                             else
                                 ff = "false";
-                            ret = string.Format("{{\"Pen\":{0},\n\"Red\":{1}, \"Green\":{2}, \"Blue\":{3}, \"Transparency\":{4},\n\"Width\":{5},\n\"Style\":\"{8}\",\n\"Fading\":{6},\n\"Enabled\":{7}\n}}",
+                            ret = string.Format(CultureInfo.InvariantCulture, "{{\"Pen\":{0},\n\"Red\":{1}, \"Green\":{2}, \"Blue\":{3}, \"Transparency\":{4},\n\"Width\":{5},\n\"Style\":\"{8}\",\n\"Fading\":{6},\n\"Enabled\":{7}\n}}", 
                                                 i, Root.PenAttr[i].Color.R, Root.PenAttr[i].Color.G, Root.PenAttr[i].Color.B, Root.PenAttr[i].Transparency,
                                                 Root.PenAttr[i].Width, ff, Root.PenEnabled[i]?"true":"false",Root.LineStyleToString(Root.PenAttr[i].ExtendedProperties));
                         }
